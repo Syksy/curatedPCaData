@@ -1,0 +1,14 @@
+Package: curatedPCaData
+Title: curated Prostate Cancer Data
+Version: 0.0-1
+Authors@R: person("First", "Last", email = "first.last@example.com",
+                  role = c("aut", "cre"))
+Description: Foo Bar
+Depends: R (>= 3.1.0)
+Imports:
+Suggests:
+License: GPL (>= 3)
+Encoding: UTF-8
+RoxygenNote: 6.1.1
+VignetteBuilder: R.rsp
+LazyData: true
