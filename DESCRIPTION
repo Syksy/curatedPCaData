@@ -1,11 +1,13 @@
 Package: curatedPCaData
 Title: curated Prostate Cancer Data
-Version: 0.0-1
+Version: 0.0-2
+Date: 2020-04-03
 Authors@R: person("First", "Last", email = "first.last@example.com",
                   role = c("aut", "cre"))
+Maintainer: 
 Description: Foo Bar
 Depends: R (>= 3.1.0)
-Imports:
+Imports: cgdsr, annotate, org.Hs.eg.db, biomaRt, GenomicFeatures, GEOquery
 Suggests:
 License: GPL (>= 3)
 Encoding: UTF-8
