@@ -9,20 +9,20 @@
 # Install and update packages for curatedPCaData processing
 curatedPCaDataPackages <- function(
 	verb = 1, 	# Level of verbosity; <1 omits any output
-	update = TRUE, 	# Whether BioConductor packages should be updated (encouraged, dependencies may be out of date)
-	ask = FALSE, 	# Whether user should be asked to update Bioconductor packages manually
 	biocV = "3.10"	# Assumed BiocManager/Bioconductor version
-	
-	
 ){
-	noteloadBioc <- function(pckgName="") {
+	noteloadBioc <- function(
+		pckgName="",	# Name of the package as character string
+		update = TRUE, 	# Whether BioConductor packages should be updated (encouraged, dependencies may be out of date)
+		ask = FALSE 	# Whether user should be asked to update Bioconductor packages manually
+	) {
 		# Optional verbosity, by default printing out brief cat
 		if(verb>=1){ cat(paste("Loading/installing '",pckgName,"'...\n"))}
 		# Always make sure BiocManager is functional before going to Bioconductor-packages
 		if (!requireNamespace("BiocManager", quietly = TRUE))
 		{
 			install.packages("BiocManager")
-			BiocManager::install(version = biocV, update=update, ask=ask)
+			BiocManager::install(version = biocV, update = update, ask = ask)
 			# May require manual input depending on parameters provided to 'install':
 			#> BiocManager::install(version = '3.10')
 			#Upgrade 83 packages to Bioconductor version '3.10'? [y/n]:
@@ -30,7 +30,7 @@ curatedPCaDataPackages <- function(
 		}
 		# Load/install package of interest
 		if(!require(pckgName, character.only=TRUE)){
-			BiocManager::install(as.character(pckgName), version = biocV, update=update, ask=ask) 
+			BiocManager::install(as.character(pckgName), version = biocV, update = update, ask = ask) 
 			library(pckgName, character.only=TRUE)
 		}
 	}
@@ -40,30 +40,42 @@ curatedPCaDataPackages <- function(
 	# Utilized by multiple pipelines
 	#
 	##
+
+	# Some base packages that are required downstream and may be in use if not installed early
+	try({noteloadBioc("S4Vectors")})
+	try({noteloadBioc("GenomicFeatures")})
 	
 	# For fetching data directly from GEO
-	noteloadBioc("GEOquery")
+	try({noteloadBioc("GEOquery")})
+
+	# Unique gene name lists / required by rCGH (some may be redundant)
+	try({noteloadBioc("TxDb.Hsapiens.UCSC.hg18.knownGene", update = FALSE)})
+	try({noteloadBioc("TxDb.Hsapiens.UCSC.hg19.knownGene", update = FALSE)})
+	try({noteloadBioc("TxDb.Hsapiens.UCSC.hg38.knownGene", update = FALSE)})
 
 	# Ref: Commo F, Guinney J, Ferte C, Bot B, Lefebvre C, Soria JC, and Andre F.
 	# rcgh : a comprehensive array-based genomic profile platform for precision
 	# medicine. Bioinformatics, 2015.
 	# https://bioconductor.org/packages/release/bioc/vignettes/rCGH/inst/doc/rCGH.pdf
-	noteloadBioc("rCGH")
+	try({noteloadBioc("rCGH")})
 
 	# GenomicRanges
-	noteloadBioc("GenomicFeatures")
-
-	# Unique gene name lists
-	noteloadBioc("TxDb.Hsapiens.UCSC.hg38.knownGene")
+	try({noteloadBioc("GenomicFeatures")})
 
 	# Required by Taylor, et al. (CNA)
-	noteloadBioc("BiocParallel")
+	try({noteloadBioc("BiocParallel")})
 
 	# Required by Taylor, et al. (GEX)
 	#BiocManager::install("frma", version = "3.8") # No longer in use for the pipeline
-	noteloadBioc("affy")
-	noteloadBioc("oligo")
-}
+	try({noteloadBioc("oligo")})
 
-curatedPCaDataPackages()
+	try({noteloadBioc("affy")}) # Taylor, et al.; Sun, et al.
+	
+	# Required by Sun, et al. (GEX)
+	try({noteloadBioc("hgu133a.db")})
+	
+
+}
+# Runnable as:
+# > curatedPCaDataPackages()
 
