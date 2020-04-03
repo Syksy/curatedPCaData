@@ -17,13 +17,13 @@ Generate_GEX_Sun <- function(
 	#invisible(lapply(supfiles2, FUN=gunzip))
 	# Read Affymetrix MA
 	Sun <- affy::ReadAffy()
-	colnames(exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
+	colnames(affy::exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
 	# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
 	GEX_Sun <- affy::rma(Sun)
 	# Removing .CEL and packaging names from the GEO-compatible sample names
-	colnames(GEX_Sun) <- gsub(".CEL.gz", "", colnames(exprs(GEX_Sun)))
+	colnames(GEX_Sun) <- gsub(".CEL.gz", "", colnames(affy::exprs(GEX_Sun)))
 	#GEX_Sun <- Sun2
-	keys <- mappedkeys(hgu133a.db::hgu133aGENENAME)
+	keys <- hgu133a.db::mappedkeys(hgu133a.db::hgu133aGENENAME)
 	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(GEX_Sun), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
 	rownames(GEX_Sun) <- make.unique(nam)
