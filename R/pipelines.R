@@ -23,10 +23,10 @@ Generate_GEX_Sun <- function(
 	# Removing .CEL and packaging names from the GEO-compatible sample names
 	colnames(GEX_Sun) <- gsub(".CEL.gz", "", colnames(affy::exprs(GEX_Sun)))
 	#GEX_Sun <- Sun2
-	keys <- hgu133a.db::mappedkeys(hgu133a.db::hgu133aGENENAME)
+	keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
 	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(GEX_Sun), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
-	rownames(GEX_Sun) <- make.unique(nam)
+	#rownames(GEX_Sun) <- make.unique(nam)
 	# Remove downloaded files
 	if(cleanup){
 		# First GEO download
@@ -39,7 +39,85 @@ Generate_GEX_Sun <- function(
 	GEX_Sun	
 }
 
+Generate_GEX_TCGA <- function(
+	genes, # List of gene symbols to iterate over
+	...
+){
+	#http://www.cbioportal.org/study?id=prad_tcga#summary
+	#mycgds <- cgdsr::CGDS("http://www.cbioportal.org/public-portal/")
+	mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+	# Get the summary lists for 'omics and case profiles	
+	TCGA <- cgdsr::getCaseLists(mycgds,"prad_tcga")
+	TCGA_genetic <- cgdsr::getGeneticProfiles(mycgds,"prad_tcga")
+	# Use the wrapper function to iterative calls for split gene lists
+	#GEX_TCGA <- curatedPCaData::getProfileDataWrapper(
+	GEX_TCGA <- getProfileDataWrapper(
+		x=mycgds, # cgdsr object
+		#genes=curatedPCaData:::.getGeneNames()$hgnc, # All unique gene symbols
+		genes=genes, # All unique gene symbols
+		geneticProfiles="prad_tcga_rna_seq_v2_mrna", # mRNA expression
+		caseList="prad_tcga_sequenced", # Case list
+		verb = 2
+	)
+	# TODO: Filter out low quality samples based on list provided by Travis
+	# Return GEX for TCGA
+	GEX_TCGA
+}
+
+Generate_cBioPortal <- function(
+	genes, # List of gene symbols to iterate over
+	geneticProfiles, # for cgdsr calls, platform and dataset specific string
+	caseList, # for cgdsr calls, platform and dataset specific string
+	...
+){
+	#http://www.cbioportal.org/study?id=prad_tcga#summary
+	mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+	# Use the wrapper function to iterative calls for split gene lists
+	dat <- getProfileDataWrapper(
+		x=mycgds, # cgdsr object
+		#genes=curatedPCaData:::.getGeneNames()$hgnc, # All unique gene symbols
+		genes=genes, # All unique gene symbols
+		geneticProfiles="prad_tcga_rna_seq_v2_mrna", # Omics profile
+		caseList="prad_tcga_sequenced" # Case list
+	)
+	# TODO: Filter out low quality samples based on list provided by Travis
+	# Return omics matrix
+	dat
+}
+
+####
+#
+# Supporting variables
+#
+####
+
+# Extract whole list of desired gene names in various formats
+genes <- .getGeneNames()
+
+####
+#
+# TCGA 
+# GEX + CNA
+#
+####
+
+## Get the summary lists for 'omics and case profiles (gives names for omics 'geneticProfiles' and 'caseList')
+# cgdsr::getCaseLists(mycgds,"prad_tcga")
+# cgdsr::getGeneticProfiles(mycgds,"prad_tcga")
+
+# Running TCGA GEX:
+GEX_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_rna_seq_v2_mrna", caseList="prad_tcga_sequenced")
+
+# Running TCGA CNA:
+CNA_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_gistic", caseList="prad_tcga_sequenced")
+
+####
+#
+# Sun, et al.
+# GEX
+#
+####
+
 # Running Sun, et al.:
 GEX_Sun <- Generate_GEX_Sun()
-
 
