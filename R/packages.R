@@ -35,6 +35,18 @@ curatedPCaDataPackages <- function(
 		}
 	}
 
+	###
+	#
+	# Double checking that some CRAN R-packages are available
+	# TODO: Move to Requires/Imports/Suggests
+	# 
+	###
+
+	if(!require("RMariaDB")){
+		install.packages("RMariaDB")
+		library("RMariaDB")
+	}
+
 	##
 	#
 	# Utilized by multiple pipelines
@@ -74,7 +86,8 @@ curatedPCaDataPackages <- function(
 	# Required by Sun, et al. (GEX)
 	try({noteloadBioc("hgu133a.db")})
 	
-
+	
+	
 }
 # Runnable as:
 # > curatedPCaDataPackages()
