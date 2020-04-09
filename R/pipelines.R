@@ -3,6 +3,7 @@
 Generate_GEX_Sun <- function(
 	wd, # Working directory; may be needed to download large files, so ought to be one with sufficient free space
 	cleanup = FALSE, # Remove tarballs etc in working directory; careful not to remove any other potential *tz, trying to be selective, so turn on manually
+	collapseFUN = function(z) { apply(z, MARGIN=2, FUN=median) }, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
 	...
 ){
 	if(!missing(wd)) setwd(wd)
@@ -26,6 +27,7 @@ Generate_GEX_Sun <- function(
 	keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
 	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(GEX_Sun), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
+	GEX_Sun <- do.call("rbind", by(as.matrix(exprs(GEX_Sun)), INDICES=nam, FUN=collapseFUN))
 	#rownames(GEX_Sun) <- make.unique(nam)
 	# Remove downloaded files
 	if(cleanup){
@@ -35,8 +37,8 @@ Generate_GEX_Sun <- function(
 		file.remove(supfiles2)
 	}
 	# TODO: Transform into a MultiAssayExperiment-object prior to returning object (MAE_Sun)
-	# Now returning ExpressionSet
-	GEX_Sun	
+	# Return numeric matrix
+	as.matrix(GEX_Sun)
 }
 
 Generate_GEX_TCGA <- function(
