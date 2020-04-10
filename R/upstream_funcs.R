@@ -10,7 +10,6 @@
 #
 ###
 
-
 #' Wrapper to fetch omics for larger gene lists from cBioPortal's URL-based interface and then bind them together
 #'
 #' @param x See parameter 'x' in cgdsr::getProfileData
@@ -58,7 +57,6 @@ getProfileDataWrapper <- function(
 	splitsize = 100, # How many genes are fetched at one time
 	verb = 1 # If call should be verbose; 0 = silent, 1 = info
 ){
-	require("cgdsr")
 	genesplit <- rep(1:ceiling(length(genes)/splitsize), each=splitsize)[1:length(genes)]
 	splitgenes <- split(genes, f=genesplit)
 	# Fetch split gene name lists as separate calls
@@ -71,21 +69,18 @@ getProfileDataWrapper <- function(
 	})))	
 }
 
-#' Function for downloading ICGC files from a certain release using http and then open the packaged tar.gz
-.icgcDownload <- function(url){
-	# Pick filename from the end of the URL
-	filename <- strsplit(url, "/")
-	filename <- filename[[1]][[length(filename[[1]])]]
-	# Download file into parsed *.tsv.gz 
-	download.file(url=url, destfile=filename)
-	# gunzip the files open
-	R.utils::gunzip(filename)
-}
-
 #' Preliminary function for fetching gene names
-.getGeneNames(){
+.getGeneNames <- function(
+	update = TRUE, # Whether Bioconductor packages require updating; sometimes a key package has been updated, but may also be optional
+	ask = FALSE # Do not prompt user for 'a/s/n' package update selection by default
+){
+	# Bioconductor;
+	# Warning! Old packages may cause some dependencies to fail, while their updating may fail if they're already in use for the session
+	# Safest is to update all Bioconductor packages before analyses / running pipelines
+	if (!requireNamespace("BiocManager", quietly = TRUE))
+	    install.packages("BiocManager")
+	BiocManager::install(version = "3.10", update=update, ask=ask)
 	# BioConductor 'annotate' package for all sorts of conversions and genetic location info, etc
-	source("https://bioconductor.org/biocLite.R")
 	# Annotation for microarrays
 	# For Entrez <-> Hugo Gene Symbol mapping
 	# http://bioconductor.org/packages/release/bioc/html/annotate.html
@@ -123,19 +118,12 @@ getProfileDataWrapper <- function(
 	list(hgnc = genenames, hg38_genes = hg38_genes, refseq_genes = refseq_genes)
 }
 
-###
-#
-# Data clean-up and processing tools
-#
-###
-
-
 # Hidden function that renames missing sample names in rCGH files from the corresponding input file name
 .renameSampleName <- function(
 	x
 ){
 	try({
-		if(!class(x)=="rCGH-Agilent"){
+		if(!"rCGH-Agilent" %in% class(x)){
 			stop("This function is intended for Agilent aCGH analyzed with rCGH R Package (class \'rCGH-Agilent\')")		
 		}
 		# e.g. append "GSM525575.txt" -> ""GSM525575"
@@ -144,29 +132,21 @@ getProfileDataWrapper <- function(
 	})
 }
 
-# Create an integer {-2,-1,0,1,2} matrix for CVA from manually processed GISTIC 2.0 with similar interpretation as processed TCGA data etc
-.importGISTIC <- function(
-	# GISTIC 2.0 output file as obtained from a GenePattern run; default name here from the result package
-	file = "all_thresholded.by_genes.txt"
-){
-	tmp <- read.table(file, sep="\t", header=TRUE)
-	# Omit fields that are no longer required
-	tmp <- tmp[,-which(colnames(tmp) %in% c("Locus.ID", "Cytoband"))]
-	# Fetch rownames for the new matrix and prune |-suffix
-	rnames <- as.character(tmp[,"Gene.Symbol"])
-	rnames <- unlist(lapply(rnames, FUN=function(z) { strsplit(z, '|', fixed=TRUE)[[1]][1] }))
-	# Cast into an integer matrix with corresponding column names
-	tmp <- tmp[,-which(colnames(tmp) == "Gene.Symbol")]
-	cnames <- colnames(tmp)
-	tmp <- as.matrix(tmp)
-	# Integers are sufficient to represent the 5 possible values
-	class(tmp) <- "integer"
-	# Gene / locus names pruned
-	rownames(tmp) <- rnames
-	# Column names i.e. GSM-compatible sample names
-	colnames(tmp) <- cnames
-	# Return the newly formatted matrix
-	tmp
+###
+#
+# Functions for the ICGC datasets
+#
+###
+
+#' Function for downloading ICGC files from a certain release using http and then open the packaged tar.gz
+.icgcDownload <- function(url){
+	# Pick filename from the end of the URL
+	filename <- strsplit(url, "/")
+	filename <- filename[[1]][[length(filename[[1]])]]
+	# Download file into parsed *.tsv.gz 
+	download.file(url=url, destfile=filename)
+	# gunzip the files open
+	R.utils::gunzip(filename)
 }
 
 # Process exp_array.*.tsv and exp_seq.*.tsv from ICGC
@@ -315,4 +295,71 @@ getProfileDataWrapper <- function(
 		}
 	}
 	m
+}
+
+###
+#
+# GISTIC 
+# log2 FC <-> GISTIC 2.0 discrete notation for CNA
+#
+###
+
+# Export rCGH objects to be processed using GISTIC 2.0 in order to harmonize data with cBioPortal CNAs
+# 
+# From GISTIC 2.0 documentation 
+# (URL1: https://cbioportal.readthedocs.io/en/latest/Data-Loading-Tips-and-Best-Practices.html )
+# (URL2: ftp://ftp.broadinstitute.org/pub/GISTIC2.0/GISTICDocumentation_standalone.htm )
+# (URL3: https://cloud.genepattern.org/gp/pages/login.jsf )
+# -> Conflicting information on input files required?
+#
+# the tab-delimited input segmentation file requires:
+#The column headers are: 
+#(1)  Sample           (sample name)
+#(2)  Chromosome  (chromosome number)
+#(3)  Start Position  (segment start position, in bases)
+#(4)  End Position   (segment end position, in bases)
+#(5)  Num markers      (number of markers in segment)
+#(6)  Seg.CN       (log2() -1 of copy number)
+.exportGISTIC <- function(
+	x, # Should be a list of rCGH-objects for which rCGH:segmentCGH has been run, then segmentation file extracted using getSegTable
+	file = "inputGISTIC.tsv" # Output file name for GISTIC 2.0
+){
+	try({
+		if(!class(x)=="list" | !all(lapply(x, FUN=class)=="rCGH-Agilent")){
+			stop("Input should be a list of rCGH-objects")
+		}
+		outputs <- lapply(x, FUN=function(z) {
+			tmp <- getSegTable(z)[,c("ID", "chrom", "loc.start", "loc.end", "num.mark", "seg.mean")]			
+			tmp[,"ID"] <- z@info["sampleName"]
+			tmp
+		})
+		output <- do.call("rbind", outputs)
+		colnames(output) <- c("Sample", "Chrom", "Start", "Stop", "NumMark", "Seg.CN")
+		write.table(output, file=file, sep="\t", row.names=F, col.names=T)
+	})
+}
+
+# Create an integer {-2,-1,0,1,2} matrix for CVA from manually processed GISTIC 2.0 with similar interpretation as processed TCGA data etc
+.importGISTIC <- function(
+	# GISTIC 2.0 output file as obtained from a GenePattern run; default name here from the result package
+	file = "all_thresholded.by_genes.txt"
+){
+	tmp <- read.table(file, sep="\t", header=TRUE)
+	# Omit fields that are no longer required
+	tmp <- tmp[,-which(colnames(tmp) %in% c("Locus.ID", "Cytoband"))]
+	# Fetch rownames for the new matrix and prune |-suffix
+	rnames <- as.character(tmp[,"Gene.Symbol"])
+	rnames <- unlist(lapply(rnames, FUN=function(z) { strsplit(z, '|', fixed=TRUE)[[1]][1] }))
+	# Cast into an integer matrix with corresponding column names
+	tmp <- tmp[,-which(colnames(tmp) == "Gene.Symbol")]
+	cnames <- colnames(tmp)
+	tmp <- as.matrix(tmp)
+	# Integers are sufficient to represent the 5 possible values
+	class(tmp) <- "integer"
+	# Gene / locus names pruned
+	rownames(tmp) <- rnames
+	# Column names i.e. GSM-compatible sample names
+	colnames(tmp) <- cnames
+	# Return the newly formatted matrix
+	tmp
 }
