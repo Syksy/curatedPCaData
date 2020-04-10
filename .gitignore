@@ -1,3 +1,8 @@
 *.tws
 .Rproj.user
 _notes
+.DS_Store
+.Rhistory
+
+#temporary script
+*-Ex.R
