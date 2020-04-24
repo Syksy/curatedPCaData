@@ -8,8 +8,14 @@ Authors@R: c(person("Daniel", "Laajala", email = "teelaa@utu.fi.com",
              role = "ctb"))
 Description: A selection of annotated prostate cancer datasets. 
 Depends: R (>= 3.1.0), S4Vectors (>= 0.23.18)
-Imports: cgdsr, annotate, org.Hs.eg.db, biomaRt, GenomicFeatures, GEOquery
-Suggests:
+Imports: 
+    cgdsr,
+    annotate,
+    org.Hs.eg.db,
+    biomaRt,
+    GenomicFeatures,
+    GEOquery,
+    AnnotationDbi
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0

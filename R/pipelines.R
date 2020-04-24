@@ -6,6 +6,8 @@
 #' @param cleanup Logical. Remove tarballs and other files from working directory.
 #' @param ... Additional arguments. 
 #' @return Gene expression object of a particular type 
+#' @example 
+#' GEX_Sun <- Generate_GEX_Sun()
 Generate_GEX_Sun <- function(
 	file_directory, 
 	cleanup = FALSE, 
@@ -29,7 +31,7 @@ Generate_GEX_Sun <- function(
 	# Removing .CEL and packaging names from the GEO-compatible sample names
 	colnames(GEX_Sun) <- gsub(".CEL.gz", "", colnames(affy::exprs(GEX_Sun)))
 	#GEX_Sun <- Sun2
-	keys <- hgu133a.db::mappedkeys(hgu133a.db::hgu133aGENENAME)
+	keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
 	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(GEX_Sun), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
 	rownames(GEX_Sun) <- make.unique(nam)
@@ -39,13 +41,10 @@ Generate_GEX_Sun <- function(
 		file.remove(rownames(supfiles))
 		# Tarballs
 		file.remove(supfiles2)
+		# Remove empty folder
+		file.remove(paste0(getwd(),"/GSE25136"))
 	}
 	# TODO: Transform into a MultiAssayExperiment-object prior to returning object (MAE_Sun)
 	# Now returning ExpressionSet
 	GEX_Sun	
 }
-
-# Running Sun, et al.:
-GEX_Sun <- Generate_GEX_Sun()
-
-
