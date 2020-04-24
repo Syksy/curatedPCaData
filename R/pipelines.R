@@ -1,12 +1,18 @@
-
-
+#' Generate gene expression data for Sun et al. 
+#' 
+#' @param file_directory Character string indicating directory for downloading files. 
+#' Files may be large, so please check that there is sufficient free space. 
+#' If NULL then files are downloaded into current directory.
+#' @param cleanup Logical. Remove tarballs and other files from working directory.
+#' @param ... Additional arguments. 
+#' @return Gene expression object of a particular type 
 Generate_GEX_Sun <- function(
-	wd, # Working directory; may be needed to download large files, so ought to be one with sufficient free space
-	cleanup = FALSE, # Remove tarballs etc in working directory; careful not to remove any other potential *tz, trying to be selective, so turn on manually
+	file_directory, 
+	cleanup = FALSE, 
 	collapseFUN = function(z) { apply(z, MARGIN=2, FUN=median) }, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
 	...
 ){
-	if(!missing(wd)) setwd(wd)
+	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
 	# Supplementary files include the raw CEL files
 	supfiles <- GEOquery::getGEOSuppFiles('GSE25136')
 	# Download size: 269.5 MB
