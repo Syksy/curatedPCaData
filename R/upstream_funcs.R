@@ -57,7 +57,6 @@ getProfileDataWrapper <- function(
 	splitsize = 100, # How many genes are fetched at one time
 	verb = 1 # If call should be verbose; 0 = silent, 1 = info
 ){
-	# require("cgdsr")
 	genesplit <- rep(1:ceiling(length(genes)/splitsize), each=splitsize)[1:length(genes)]
 	splitgenes <- split(genes, f=genesplit)
 	# Fetch split gene name lists as separate calls
@@ -71,9 +70,17 @@ getProfileDataWrapper <- function(
 }
 
 #' Preliminary function for fetching gene names
-.getGeneNames(){
+.getGeneNames <- function(
+	update = TRUE, # Whether Bioconductor packages require updating; sometimes a key package has been updated, but may also be optional
+	ask = FALSE # Do not prompt user for 'a/s/n' package update selection by default
+){
+	# Bioconductor;
+	# Warning! Old packages may cause some dependencies to fail, while their updating may fail if they're already in use for the session
+	# Safest is to update all Bioconductor packages before analyses / running pipelines
+	if (!requireNamespace("BiocManager", quietly = TRUE))
+	    install.packages("BiocManager")
+	BiocManager::install(version = "3.10", update=update, ask=ask)
 	# BioConductor 'annotate' package for all sorts of conversions and genetic location info, etc
-	source("https://bioconductor.org/biocLite.R")
 	# Annotation for microarrays
 	# For Entrez <-> Hugo Gene Symbol mapping
 	# http://bioconductor.org/packages/release/bioc/html/annotate.html
@@ -116,7 +123,7 @@ getProfileDataWrapper <- function(
 	x
 ){
 	try({
-		if(!("rCGH-Agilent" %in% class(x)){
+		if(!"rCGH-Agilent" %in% class(x)){
 			stop("This function is intended for Agilent aCGH analyzed with rCGH R Package (class \'rCGH-Agilent\')")		
 		}
 		# e.g. append "GSM525575.txt" -> ""GSM525575"
