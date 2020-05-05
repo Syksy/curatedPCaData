@@ -1,12 +1,13 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.0-2
+Version: 0.0.9
 Date: 2020-04-03
 Authors@R: c(person("Daniel", "Laajala", email = "teelaa@utu.fi.com",
                   role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org",
              role = "ctb"))
-Description: A selection of annotated prostate cancer datasets. 
+Description: A selection of annotated prostate cancer datasets including TCGA, 
+    Sun et al., and others. 
 Depends: R (>= 3.1.0), S4Vectors (>= 0.23.18)
 Imports: 
     cgdsr,
@@ -19,7 +20,10 @@ Imports:
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0
-VignetteBuilder: R.rsp
+VignetteBuilder: knitr
 LazyData: true
 URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
+Suggests: 
+    knitr,
+    rmarkdown
