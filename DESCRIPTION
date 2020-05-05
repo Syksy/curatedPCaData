@@ -10,13 +10,16 @@ Description: A selection of annotated prostate cancer datasets including TCGA,
     Sun et al., and others. 
 Depends: R (>= 3.1.0), S4Vectors (>= 0.23.18)
 Imports: 
+    progress,
     cgdsr,
-    annotate,
-    org.Hs.eg.db,
     biomaRt,
     GenomicFeatures,
+    here,
     GEOquery,
-    AnnotationDbi
+    utils,
+    affy,
+    AnnotationDbi,
+    hgu133a.db
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0
