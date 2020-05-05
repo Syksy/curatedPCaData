@@ -10,3 +10,12 @@ _notes
 # TCGA data file
 GDCdata/
 MANIFEST.TXT
+inst/doc
+
+# ignore random scripts
+R/clinical_recoding.R
+R/load_data.R
+R/packages.R
+R/pipelines.R 
+R/upstream_funcs.R 
+
