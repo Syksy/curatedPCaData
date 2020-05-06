@@ -240,13 +240,6 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
 
 ############################################################################## TCGA ############# 
 # https://docs.gdc.cancer.gov/Data_Dictionary/viewer/#?view=table-entity-list&anchor=clinical
-
-table(clinical_TCGA_333$CLINICAL_GLEASON)
-table(clinical_TCGA_333$CLINICAL_GLEASON_CATEGORY)
-table(clinical_TCGA_333$CLINICAL_GLEASON_SUM)
-
-
-
 clinical_TCGA_333 <- clinical_TCGA_333 %>% 
   mutate(PSA = PREOPERATIVE_PSA) %>% 
   mutate(gleason = case_when(

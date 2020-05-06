@@ -44,10 +44,10 @@ mycgds = CGDS("https://www.cbioportal.org/")
 test(mycgds)
 
 # Get list of cancer studies at server
-# a <- getCancerStudies(mycgds) # We want prad_eururol_2017
+a <- getCancerStudies(mycgds) # We want prad_eururol_2017
 
 # Get available case lists (collection of samples) for a given cancer study
-# mycaselist = getCaseLists(mycgds,"prad_eururol_2017") # In here I want prad_eururol_2017_all
+mycaselist = getCaseLists(mycgds,"prad_eururol_2017") # In here I want prad_eururol_2017_all
 
 # Get clinical data for the case list
 clinical_SUN = getClinicalData(mycgds,"prad_eururol_2017_all")
@@ -56,6 +56,13 @@ clinical_SUN = getClinicalData(mycgds,"prad_eururol_2017_all")
 ############################################################################## TCGA_333 ############# 
 # Get clinical data for the case list
 clinical_TCGA_333 = getClinicalData(mycgds,"prad_tcga_pub_all")
+clinical_TCGA_333$bcr_patient_barcode <- substr(rownames(clinical_TCGA_333), start = 1, stop = 12)
+a <- merge.data.frame(clinical_TCGA_333, clinical_tcga, 
+                      by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode", 
+                      all.x = TRUE, all.y = FALSE)
+clinical_TCGA_33 <- a %>% 
+  select(c("bcr_patient_barcode", "PREOPERATIVE_PSA", "REVIEWED_GLEASON", "REVIEWED_GLEASON_CATEGORY",
+           "REVIEWED_GLEASON_SUM", "AGE", "clinical_T"))
 
 # clinical_TCGA_333$bcr_patient_barcode <- substr(rownames(clinical_TCGA_333), start = 1, stop = 12)
 # a <- merge.data.frame(clinical_TCGA_333, clinical_tcga, 
