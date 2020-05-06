@@ -33,7 +33,7 @@ clinical_tcga$last_contact_days_to.x == clinical_tcga$last_contact_days_to.y
 table(clinical_tcga$therapy_regimen.y)
 # Cleaning
 rm(query, clinical_tab_all)
-############################################################################## For cBioPortal 
+############################################################################## From cBioPortal 
 
 ############################################################################## SUN ############# 
 # Use package cgdsr
@@ -52,15 +52,39 @@ test(mycgds)
 # Get clinical data for the case list
 clinical_SUN = getClinicalData(mycgds,"prad_eururol_2017_all")
 
+
 ############################################################################## TCGA_333 ############# 
 # Get clinical data for the case list
 clinical_TCGA_333 = getClinicalData(mycgds,"prad_tcga_pub_all")
 
+# clinical_TCGA_333$bcr_patient_barcode <- substr(rownames(clinical_TCGA_333), start = 1, stop = 12)
+# a <- merge.data.frame(clinical_TCGA_333, clinical_tcga, 
+#                       by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode", 
+#                       all.x = TRUE, all.y = FALSE)
+# clinical_TCGA_333b <- a %>% 
+#   select(c("bcr_patient_barcode", "PREOPERATIVE_PSA", "REVIEWED_GLEASON", "REVIEWED_GLEASON_CATEGORY",
+#            "REVIEWED_GLEASON_SUM", "AGE", "clinical_T"))
+
+
 ############################################################################## MSKCC ############# 
-# Get clinical data for the case list
 clinical_MSKCC = getClinicalData(mycgds,"prad_cdk12_mskcc_2020_all")
 
+
 ############################################################################## CPC-GENE ############# 
-# Get clinical data for the case list
 clinical_CPC_GENE = getClinicalData(mycgds,"prad_cpcg_2017_all")
+
+
+############################################################################## From ICGC 
+
+############################################################################## ICGC-FR #############
+icgc <- list()
+icgc[["PRAD-FR"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/donor.tsv.gz")
+
+install.packages("remotes")
+remotes::install_github("Syksy/curatedTools")
+ICGC.PRAD.FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
+
+
 
