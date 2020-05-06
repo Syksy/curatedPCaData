@@ -237,6 +237,7 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
     TRUE                                                                        ~ NA_character_
   ))
 
+  ))
 
 ############################################################################## TCGA ############# 
 # https://docs.gdc.cancer.gov/Data_Dictionary/viewer/#?view=table-entity-list&anchor=clinical
@@ -244,7 +245,6 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
 table(clinical_TCGA_333$CLINICAL_GLEASON)
 table(clinical_TCGA_333$CLINICAL_GLEASON_CATEGORY)
 table(clinical_TCGA_333$CLINICAL_GLEASON_SUM)
-
 
 
 clinical_TCGA_333 <- clinical_TCGA_333 %>% 
@@ -308,4 +308,51 @@ clinical_ICGC_FR <- clinical_ICGC_FR %>%
   mutate(AGE = donor_age_at_diagnosis)
 
 table(clinical_ICGC_FR$donor_tumour_stage_at_diagnosis)
+clinical_CPC_GENE <- clinical_CPC_GENE %>%
+  mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
+  mutate(gleason = case_when(
+    GLEASON_SCORE %in% c("3+3", "6")                                             ~ "<=6",
+    GLEASON_SCORE %in% c("3+4", "3+4;5", "4+3","4+3;5", "7")                     ~ "7", 
+    # Add "3+4;5" here (only 2 patients) and "4+3;5" (only 1 patient)
+    GLEASON_SCORE %in% c("3+5", "4+4")                                           ~ "8"
+  )) %>% 
+  mutate(tstage = case_when(
+    CLIN_T_STAGE == "T1B"                                                        ~ "T1b", # Found in dictionary but not in data...
+    CLIN_T_STAGE == "T1C"                                                        ~ "T1c",
+    CLIN_T_STAGE == "T2"                                                         ~ "T2",
+    CLIN_T_STAGE == "T2A"                                                        ~ "T2a",
+    CLIN_T_STAGE == "T2B"                                                        ~ "T2b",
+    CLIN_T_STAGE == "T2C"                                                        ~ "T2c",
+    CLIN_T_STAGE == "T3A"                                                        ~ "T3Aa",
+    CLIN_T_STAGE == "T3B"                                                        ~ "T3Ab"
+  )) %>%
+  mutate(isup = case_when(
+    GLEASON_SCORE %in% c("3+3", "6")                                             ~ 1,
+    GLEASON_SCORE %in% c("3+4", "3+4;5") |
+      (GLEASON_PATTERN_PRIMARY == "3" &
+         GLEASON_PATTERN_SECONDARY == "4")                                       ~ 2,
+    GLEASON_SCORE %in% c("4+3", "4+3;5") |
+      (GLEASON_PATTERN_PRIMARY == "4" &
+         GLEASON_PATTERN_SECONDARY == "3")                                       ~ 3
+  )) %>%
+  mutate(capra_psa = case_when( 
+    PSA <= 6                                                                     ~ 0,
+    (PSA > 6 & PSA <= 10)                                                        ~ 1,
+    (PSA > 10 & PSA <= 20)                                                       ~ 2,
+    (PSA > 20 & PSA <= 30)                                                       ~ 3,
+    PSA > 30                                                                     ~ 4
+  )) %>%
+  mutate(capra_gleason = case_when(
+    gleason == "<=6"                                                             ~ 0,
+    gleason == "7"                                                               ~ 1,
+    gleason ==  "8"                                                              ~ 3
+  )) %>%
+  mutate(capra_tstage = case_when(
+    str_detect(tstage, "(T1|T2)")                                                ~ 0,
+    str_detect(tstage, "(T3|T4)")                                                ~ 1
+  )) %>%
+  mutate(capra_age = case_when(
+    AGE < 50                                                                     ~ 0,
+    AGE >= 50                                                                    ~ 1
+  ))
 
