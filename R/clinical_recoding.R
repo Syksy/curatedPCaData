@@ -119,7 +119,7 @@ clinical_SUN <- clinical_SUN %>%
 
 ############################################################################## CPC-GENE ############# 
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
-  mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
+  transmutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
   mutate(gleason = case_when(
     GLEASON_SCORE %in% c("3+3", "6")                                             ~ "<=6",
     GLEASON_SCORE %in% c("3+4", "3+4;5", "4+3","4+3;5", "7")                     ~ "7", 
@@ -248,7 +248,7 @@ table(clinical_TCGA_333$CLINICAL_GLEASON_SUM)
 
 
 clinical_TCGA_333 <- clinical_TCGA_333 %>% 
-  mutate(PSA = PREOPERATIVE_PSA) %>% 
+  transmutate(PSA = PREOPERATIVE_PSA) %>% 
   mutate(gleason = case_when(
     REVIEWED_GLEASON_SUM == 6                                                    ~ "<=6",
     REVIEWED_GLEASON_SUM == 7                                                    ~ "7",
@@ -305,8 +305,9 @@ clinical_ICGC_FR <- clinical_ICGC_FR %>%
     str_detect(donor_tumour_stage_at_diagnosis, "T2b")                          ~ "T2b",
     str_detect(donor_tumour_stage_at_diagnosis, "T2")                           ~ "T2"
   )) %>% 
-  mutate(AGE = donor_age_at_diagnosis)
+  transmutate(AGE = donor_age_at_diagnosis)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 table(clinical_ICGC_FR$donor_tumour_stage_at_diagnosis)
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
@@ -356,9 +357,8 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
     AGE < 50                                                                     ~ 0,
     AGE >= 50                                                                    ~ 1
   ))
-=======
+
 clinical_ICGC_UK <- read_delim("/Users/colinccm/Downloads/donor.PRAD-UK.tsv", delim = "\t")
->>>>>>> Update loading and recoding
 
 clinical_ICGC_UK <- clinical_ICGC_UK %>% 
   mutate(tstage = case_when(
@@ -368,3 +368,5 @@ clinical_ICGC_UK <- clinical_ICGC_UK %>%
     str_detect(donor_tumour_stage_at_diagnosis, "T2")                           ~ "T2"
   )) %>% 
   mutate(AGE = donor_age_at_diagnosis)
+  transmutate(AGE = donor_age_at_diagnosis)
+
