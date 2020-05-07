@@ -19,20 +19,70 @@ library(TCGAbiolinks)
 
 # Load data
 TCGAbiolinks:::getProjectSummary("TCGA-PRAD")
+# $data_categories
+# case_count file_count               data_category
+# 1        498       2755     Transcriptome Profiling
+# 2        498       4032 Simple Nucleotide Variation
+# 3        500       2182                 Biospecimen
+# 4        500        537                    Clinical
+# 5        498        553             DNA Methylation
+# 6        498       3059       Copy Number Variation
+# 7        498       2178            Sequencing Reads
 query <- GDCquery(project = "TCGA-PRAD", 
                   data.category = "Clinical",
                   data.type = "Clinical Supplement", 
                   data.format = "BCR Biotab"
                   )
+clinical_tab_all <- GDCdownload(query)
 clinical_tab_all <- GDCprepare(query)
+clinical_tcga <- Reduce(function(...) merge(..., by="bcr_patient_barcode", all=TRUE), clinical_tab_all) 
+query <- GDCquery(project = "TCGA-PRAD", 
+                  data.category = "Clinical",
+                  data.type = "Clinical Supplement", 
+                  data.format = "BCR XML"
+)
+clinical <- GDCprepare_clinic(query, clinical.info = "patient")
+clin <- merge.data.frame(clinical_tcga, clinical, 
+                 by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode",
+                 all.x = TRUE, all.y = TRUE)
+# clinical_tcga$American Joint Committee on Cancer Tumor Stage Code
+# 
+# clinical_tab_al <- GDCprepare(query)
+# clinXML <- bind_rows(clinical_tab_al)
+# 
+# query <- GDCquery(project = "TCGA-PRAD", 
+#                   data.category = "Biospecimen",
+#                   data.type = "Biospecimen Supplement", 
+#                   data.format = "BCR Biotab"
+# )
+# clinical_tab_all <- GDCdownload(query)
+# clinical_tab_all <- GDCprepare(query)
+# clinical_tab_all$ssf_tumor_samples_prad
+# 
+# b <- merge(clinical_tab_all$ssf_normal_controls_prad, clinical_tab_all$biospecimen_diagnostic_slides_prad)
+# colnames(b)
+# c <- merge(b, clinical_tab_all$biospecimen_slide_prad)
+# d <- merge.data.frame(c, clinical_tab_all$ssf_tumor_samples_prad, 
+#                       by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode",
+#                       all.x = TRUE, all.y = TRUE)
+# e <- merge(d, clinical_tab_all$biospecimen_analyte_prad)
+# f <- merge(e, clinical_tab_all$biospecimen_sample_prad)
+
+# a <- merge(clinical_tcga, f)
+# colnames(a)
 
 
-clinical_tcga <- Reduce(function(...) merge(..., by="bcr_patient_barcode", all=TRUE), clinical_tab_all) #%>% 
-# select()
+query1 <- GDCquery(project = "TCGA-COAD", 
+                  data.category = "Clinical", 
+                  file.type = "xml", 
+                  barcode = c("TCGA-RU-A8FL","TCGA-AA-3972"))
+GDCdownload(query1)
 
+
+clinical_tcga <- Reduce(function(...) merge(..., by="bcr_patient_barcode", all=TRUE), clinical_tab_all) 
 colnames(clinical_tcga)
-clinical_tcga$last_contact_days_to.x == clinical_tcga$last_contact_days_to.y
-table(clinical_tcga$therapy_regimen.y)
+#clinical_tcga$last_contact_days_to.x == clinical_tcga$last_contact_days_to.y
+
 # Cleaning
 rm(query, clinical_tab_all)
 ############################################################################## From cBioPortal 
@@ -61,14 +111,15 @@ clinical_TCGA_333 = getClinicalData(mycgds,"prad_tcga_pub_all")
 
 
 clinical_TCGA_333$bcr_patient_barcode <- substr(rownames(clinical_TCGA_333), start = 1, stop = 12)
-a <- merge.data.frame(clinical_TCGA_333, clinical_tcga, 
+
+a <- merge.data.frame(clinical_TCGA_333, clinical[, c("bcr_patient_barcode", "stage_event_tnm_categories")], 
                       by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode",
-                      all.x = TRUE, all.y = FALSE)
+                      all.x = TRUE, all.y = TRUE)
 # clinical_TCGA_333b <- a %>% 
 #   select(c("bcr_patient_barcode", "PREOPERATIVE_PSA", "REVIEWED_GLEASON", "REVIEWED_GLEASON_CATEGORY",
 #            "REVIEWED_GLEASON_SUM", "AGE", "clinical_T"))
 colnames(a)
-
+table(a$stage_event_tnm_categories)
 ############################################################################## MSKCC ############# 
 clinical_MSKCC = getClinicalData(mycgds,"prad_cdk12_mskcc_2020_all")
 
