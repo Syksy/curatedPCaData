@@ -249,7 +249,7 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
     REVIEWED_GLEASON_SUM %in% c(9, 10)                                           ~ "9-10"
   )) %>%
   # mutate(tstage = case_when(
-  #   T_clinical == 1                                                              ~ "T1", # Found in dictionary but not in data...
+  #   T_clinical == 1                                                              ~ "T1", # Not available for the 333 patients...
   #   T_clinical == 2                                                              ~ "T2",
   #   T_clinical == 3                                                              ~ "T3",
   #   T_clinical == 4                                                              ~ "T4"
@@ -288,7 +288,7 @@ clinical_MSKCC <- clinical_MSKCC
 # no relevant info...
 
 ############################################################################## ICGC-FR #############
-
+# ICGC doesn't have much clinical information (canada has only Tx stage)
 clinical_ICGC_FR <- read_delim("/Users/colinccm/Downloads/donor.PRAD-FR.tsv", delim = "\t")
 
 clinical_ICGC_FR <- clinical_ICGC_FR %>% 
@@ -300,5 +300,13 @@ clinical_ICGC_FR <- clinical_ICGC_FR %>%
   )) %>% 
   mutate(AGE = donor_age_at_diagnosis)
 
-table(clinical_ICGC_FR$donor_tumour_stage_at_diagnosis)
+clinical_ICGC_UK <- read_delim("/Users/colinccm/Downloads/donor.PRAD-UK.tsv", delim = "\t")
 
+clinical_ICGC_UK <- clinical_ICGC_UK %>% 
+  mutate(tstage = case_when(
+    str_detect(donor_tumour_stage_at_diagnosis, "T1c")                          ~ "T1c",
+    str_detect(donor_tumour_stage_at_diagnosis, "T2a")                          ~ "T2a",
+    str_detect(donor_tumour_stage_at_diagnosis, "T2b")                          ~ "T2b",
+    str_detect(donor_tumour_stage_at_diagnosis, "T2")                           ~ "T2"
+  )) %>% 
+  mutate(AGE = donor_age_at_diagnosis)
