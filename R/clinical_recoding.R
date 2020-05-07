@@ -241,12 +241,14 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
 
 ############################################################################## TCGA ############# 
 # https://docs.gdc.cancer.gov/Data_Dictionary/viewer/#?view=table-entity-list&anchor=clinical
+<<<<<<< HEAD
 
 table(clinical_TCGA_333$CLINICAL_GLEASON)
 table(clinical_TCGA_333$CLINICAL_GLEASON_CATEGORY)
 table(clinical_TCGA_333$CLINICAL_GLEASON_SUM)
 
-
+# clinical T is not available for the 333 patients... we may be able to impute it from the other
+# 166 patients left
 clinical_TCGA_333 <- clinical_TCGA_333 %>% 
   transmutate(PSA = PREOPERATIVE_PSA) %>% 
   mutate(gleason = case_when(
@@ -307,8 +309,6 @@ clinical_ICGC_FR <- clinical_ICGC_FR %>%
   )) %>% 
   transmutate(AGE = donor_age_at_diagnosis)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 table(clinical_ICGC_FR$donor_tumour_stage_at_diagnosis)
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
   mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
