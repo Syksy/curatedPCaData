@@ -87,13 +87,9 @@ icgc[["PRAD-FR"]] <-
 
 install.packages("remotes")
 remotes::install_github("Syksy/curatedTools")
-<<<<<<< HEAD
 ICGC.PRAD.FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
-=======
 clinical_ICGC_FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
 
 icgc[["PRAD-UK"]] <- 
   c(
     "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-UK/donor.PRAD-UK.tsv.gz")
->>>>>>> Update loading and recoding
-
