@@ -1,3 +1,6 @@
+# Paper to read
+# http://tau.amegroups.com/article/view/24493/23261
+
 # Load data
 
 ############################################################################## TCGA ############# 
@@ -11,7 +14,6 @@
 #   install.packages("BiocManager")
 # BiocManager::install(version = "3.10")
 # library(BiocManager)
-
 # BiocManager::install("TCGAbiolinks")
 library(TCGAbiolinks)
 
@@ -56,22 +58,16 @@ clinical_SUN = getClinicalData(mycgds,"prad_eururol_2017_all")
 ############################################################################## TCGA_333 ############# 
 # Get clinical data for the case list
 clinical_TCGA_333 = getClinicalData(mycgds,"prad_tcga_pub_all")
+
+
 clinical_TCGA_333$bcr_patient_barcode <- substr(rownames(clinical_TCGA_333), start = 1, stop = 12)
 a <- merge.data.frame(clinical_TCGA_333, clinical_tcga, 
-                      by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode", 
+                      by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode",
                       all.x = TRUE, all.y = FALSE)
-clinical_TCGA_33 <- a %>% 
-  select(c("bcr_patient_barcode", "PREOPERATIVE_PSA", "REVIEWED_GLEASON", "REVIEWED_GLEASON_CATEGORY",
-           "REVIEWED_GLEASON_SUM", "AGE", "clinical_T"))
-
-# clinical_TCGA_333$bcr_patient_barcode <- substr(rownames(clinical_TCGA_333), start = 1, stop = 12)
-# a <- merge.data.frame(clinical_TCGA_333, clinical_tcga, 
-#                       by.x = "bcr_patient_barcode", by.y = "bcr_patient_barcode", 
-#                       all.x = TRUE, all.y = FALSE)
 # clinical_TCGA_333b <- a %>% 
 #   select(c("bcr_patient_barcode", "PREOPERATIVE_PSA", "REVIEWED_GLEASON", "REVIEWED_GLEASON_CATEGORY",
 #            "REVIEWED_GLEASON_SUM", "AGE", "clinical_T"))
-
+colnames(a)
 
 ############################################################################## MSKCC ############# 
 clinical_MSKCC = getClinicalData(mycgds,"prad_cdk12_mskcc_2020_all")
@@ -87,11 +83,13 @@ clinical_CPC_GENE = getClinicalData(mycgds,"prad_cpcg_2017_all")
 icgc <- list()
 icgc[["PRAD-FR"]] <- 
   c(
-    "https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/donor.tsv.gz")
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-FR/donor.tsv.gz")
 
 install.packages("remotes")
 remotes::install_github("Syksy/curatedTools")
-ICGC.PRAD.FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
+clinical_ICGC_FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
 
-
+icgc[["PRAD-UK"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-UK/donor.PRAD-UK.tsv.gz")
 
