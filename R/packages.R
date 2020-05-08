@@ -65,6 +65,7 @@ curatedPCaDataPackages <- function(
 	try({noteloadBioc("TxDb.Hsapiens.UCSC.hg19.knownGene", update = FALSE)})
 	try({noteloadBioc("TxDb.Hsapiens.UCSC.hg38.knownGene", update = FALSE)})
 
+	## Needed for CNA processing
 	# Ref: Commo F, Guinney J, Ferte C, Bot B, Lefebvre C, Soria JC, and Andre F.
 	# rcgh : a comprehensive array-based genomic profile platform for precision
 	# medicine. Bioinformatics, 2015.
@@ -78,15 +79,25 @@ curatedPCaDataPackages <- function(
 	try({noteloadBioc("BiocParallel")})
 
 	# Required by Taylor, et al. (GEX)
-	#BiocManager::install("frma", version = "3.8") # No longer in use for the pipeline
 	try({noteloadBioc("oligo")})
 
-	try({noteloadBioc("affy")}) # Taylor, et al.; Sun, et al.
+	# Taylor, et al.; Sun, et al.
+	try({noteloadBioc("affy")}) 
 	
 	# Required by Sun, et al. (GEX)
 	try({noteloadBioc("hgu133a.db")})
 	
+	# Required by Taylor, et al. (GEX)
+	try({noteloadBioc("pd.huex.1.0.st.v2")})
 	
+	###
+	#
+	# Generalized, non-dataset or 'omics specific toolkits
+	#
+	###
+	
+	# MultiAssayExperiment-objects
+	try({noteloadBioc("MultiAssayExperiment")
 	
 }
 # Runnable as:
