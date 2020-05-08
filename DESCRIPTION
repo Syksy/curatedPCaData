@@ -1,10 +1,11 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.0-2
-Date: 2020-04-03
+Version: 0.0-3
+Date: 2020-04-08
 Authors@R: c(person("Daniel", "Laajala", email = "teelaa@utu.fi.com",
                   role = c("aut", "cre")),
-             person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org",
+             person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org",role = "ctb"),
+             person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org",
              role = "ctb"))
 Description: A selection of annotated prostate cancer datasets. 
 Depends: R (>= 3.1.0), S4Vectors (>= 0.23.18)

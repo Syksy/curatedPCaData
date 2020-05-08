@@ -47,6 +47,107 @@ Generate_GEX_Sun <- function(
 	as.matrix(GEX_Sun)
 }
 
+#' Gene expression data from Taylor et al.
+#'
+#' GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21032
+#' Available data types; Affymetrix Exon arrays, 2 separate types
+Generate_GEX_Taylor <- function(
+	file_directory, 
+	clean = FALSE,
+	...
+){
+	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	# First download CEL files from GEO
+	CELs <- read.celfiles(list.celfiles())	
+	#> CELs
+	#ExonFeatureSet (storageMode: lockedEnvironment)
+	#assayData: 6553600 features, 370 samples 
+	#  element names: exprs 
+	#protocolData
+	#  rowNames: GSM526134_YX_Exon1_PCA0001.CEL GSM526135_YX_Exon1_PCA0002.CEL ... GSM528049_YX_Exon1_PAN0174.CEL (370
+	#    total)
+	#  varLabels: exprs dates
+	#  varMetadata: labelDescription channel
+	#phenoData
+	#  rowNames: GSM526134_YX_Exon1_PCA0001.CEL GSM526135_YX_Exon1_PCA0002.CEL ... GSM528049_YX_Exon1_PAN0174.CEL (370
+	#    total)
+	#  varLabels: index
+	#  varMetadata: labelDescription channel
+	#featureData: none
+	#experimentData: use 'experimentData(object)'
+	#Annotation: pd.huex.1.0.st.v2
+	RMAs <- rma(CELs)
+	featureData(RMAs) <- getNetAffx(RMAs, "transcript")
+	sampleNames(RMAs) <- unlist(lapply(strsplit(list.celfiles(), "_"), FUN=function(z) z[[1]])) # GSM######-type names from GEO
+	nameMapTaylor <- data.frame(
+		GSM = unlist(lapply(strsplit(list.celfiles(), "_"), FUN=function(z) z[[1]])), # GEO, GSM-names
+		ID = gsub(".CEL", "", unlist(lapply(strsplit(list.celfiles(), "_"), FUN=function(z) z[[4]]))) # mapping to PCA0001, PCA0002, ...
+	)
+	# 
+	GEX_Taylor <- RMAs
+	# Proper naming
+	nam <- fData(GEX_Taylor)[,8]
+	nam2 <- unlist(lapply(nam, FUN=function(z) { strsplit(z, " // ")[[1]][2] }))
+	nam2[is.na(nam2)] <- "NA"
+	rownames(GEX_Taylor) <- make.unique(nam2)
+	# Return constructed gene expression matrix
+	GEX_Taylor
+}
+
+#' Copy number alterations from Taylor et al.
+#'
+#' GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21032
+#' Agilent aCGH
+#' Platform in GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL4091
+#' Agilent-014693 Human Genome CGH Microarray 244A
+#' Ref: Taylor BS, Schultz N, Hieronymus H, Gopalan A et al. Integrative genomic profiling of human prostate cancer. Cancer Cell 2010 Jul 13;18(1):11-22. 
+Generate_CNA_Taylor <- function(
+	file_directory, 
+	clean = FALSE,
+	...
+){
+	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	# Read the raw Agilent CGH data
+	# Name samples according to the filename
+	# Agilent-014693 Human Genome CGH Microarray 244A (Feature number version)
+	# rCGH says for readAgilent-function: "Agilent from 44 to 400K are supported."
+	TaylorCGH <- lapply(list.files(), FUN=function(z) { 
+		try({
+			cat("\n\nProcessing: ",z,"\n\n"); 
+			rCGH::readAgilent(z, genome="hg38", sampleName=gsub(".txt", "", z)) 
+		})
+	})
+	#> list.files()[which(unlist(lapply(TaylorCGH, FUN=class))=="try-error")]
+	#[1] "GSM525755.txt" "GSM525763.txt"
+	# Some files appear broken; missing columns?
+	
+	# Signal adjustments
+	TaylorCGH <- lapply(TaylorCGH, FUN=function(z){
+		try({
+			rCGH::adjustSignal(z) 
+		})
+	})
+	# Segmentation
+	TaylorCGH <- lapply(TaylorCGH, FUN=function(z){
+		try({
+			rCGH::segmentCGH(z) 
+		})
+	})
+	# EM-algorithm normalization
+	TaylorCGH <- lapply(TaylorCGH, FUN=function(z){
+		try({
+			rCGH::EMnormalize(z) 
+		})
+	})
+	# For the old pipeline with lacking sampleName but included fileName, run:
+	CNA_Taylor <- lapply(CNA_Taylor, FUN=.renameSampleName)
+	### TODO:
+	## Export a compiled GISTIC 2.0 -compatible file from the segmented samples
+	##exportGISTIC(CNA_Taylor, file="inputGISTIC_Taylor.tsv")
+	CNA_Taylor
+	
+}	
+
 Generate_GEX_TCGA <- function(
 	genes, # List of gene symbols to iterate over
 	...
@@ -119,6 +220,32 @@ GEX_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_r
 # Running TCGA CNA:
 CNA_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_gistic", caseList="prad_tcga_sequenced")
 
+# Running TCGA MAE:
+# Generate a placeholder MAE-object for TCGA 'omics
+MAE_TCGA <- MultiAssayExperiment()
+# Curated data dictionary file
+colData(MAE_TCGA) <- S4Vectors::DataFrame(
+	# TODO: Adjust path to function directly with stored external files in a package
+	read.table("../data-raw/prad_tcga_curated_pdata.txt", 
+	sep="\t", header=TRUE)
+)
+# Create a sampleMap
+sampleMap(MAE_TCGA) <- S4Vectors::DataFrame(
+	rbind(
+		data.frame(assay = "GEX", primary = colData(MAE_TCGA)$sample_name, colname = colData(MAE_TCGA)$sample_name),
+		data.frame(assay = "CNA", primary = colData(MAE_TCGA)$sample_name, colname = colData(MAE_TCGA)$sample_name)
+	)
+)
+# Insert 'omics as experiments with constructor for ExperimentList
+experiments(MAE_TCGA) <- 
+	MultiAssayExperiment::ExperimentList(list(
+		GEX = GEX_TCGA[,which(colnames(GEX_TCGA) %in% colData(MAE_TCGA)$sample_name)],
+		CNA = CNA_TCGA[,which(colnames(CNA_TCGA) %in% colData(MAE_TCGA)$sample_name)]
+	)
+)
+
+
+
 ####
 #
 # Sun, et al.
@@ -129,3 +256,7 @@ CNA_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_g
 # Running Sun, et al.:
 GEX_Sun <- Generate_GEX_Sun()
 
+
+
+# Note from Jordan & Christelle 
+# N=333 in TCGA provisional, Cell 2015
