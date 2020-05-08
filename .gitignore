@@ -10,3 +10,6 @@ _notes
 # TCGA data file
 GDCdata/
 MANIFEST.TXT
+
+# R data frames containing all data for quick access
+/data/ALL.RData
