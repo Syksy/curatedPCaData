@@ -307,6 +307,84 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
   mutate(capra_tstage = case_when(
     str_detect(tstage, "(T1|T2)")                                                ~ 0,
     str_detect(tstage, "(T3|T4)")                                                ~ 1
+  )) %>%
+  mutate(capra_age = case_when(
+    AGE < 50                                                                     ~ 0,
+    AGE >= 50                                                                    ~ 1
+  )) %>% #----------------------------------------Risk calculation start here, need to go in a function
+  mutate(damico = case_when(
+    tstage %in% c("T2c", "T3", "T4", "T3a", "T3b", "T3c", "T4a", "T4b") |
+      PSA > 20 |
+      gleason %in% c("8", "9-10")                                                ~ "High",
+    tstage == "T2b" |
+      (PSA > 10 & PSA <= 20) |
+      gleason == "7"                                                             ~ "Intermediate",
+    tstage %in% c("T1", "T1a", "T1b", "T1c", "T2a", "T2") &
+      PSA <= 10 &
+      gleason == "<=6"                                                           ~ "Low",
+    TRUE                                                                         ~ NA_character_
+  )) %>%
+  mutate(nice = case_when( 
+    tstage %in% c("T2c", "T3", "T3a", "T3b", "T3c", "T4", "T4a", "T4b") | 
+      PSA > 20 |
+      gleason %in% c("8", "9-10")                                               ~ "High",
+    tstage == "T2b" |
+      gleason == "7" |
+      (PSA >= 10 & PSA <= 20)                                                   ~ "Intermediate",
+    tstage %in% c("T1", "T1a", "T1b", "T1c", "T2", "T2a") & 
+      PSA < 10 & 
+      gleason == "<=6"                                                          ~ "Low",
+    TRUE                                                                        ~ NA_character_
+  )) %>%
+  mutate(eau = case_when(
+    tstage %in% c("T2c", "T3", "T4", "T3a", "T3b", "T3c", "T4a", "T4b") |
+      PSA > 20 |
+      gleason %in% c("8", "9-10")                                               ~ "High",
+    tstage == "T2b" |
+      (PSA >= 10 & PSA <= 20) |
+      gleason == "7"                                                            ~ "Intermediate",
+    tstage %in% c("T1", "T1a", "T1b", "T1c", "T2a", "T2") &
+      PSA < 10 &
+      gleason == "<=6"                                                          ~ "Low",
+    TRUE                                                                        ~ NA_character_
+  )) %>%
+  mutate(GUROC = case_when(
+    PSA > 20 |
+      gleason %in% c("8", "9-10") |
+      tstage %in% c("T3", "T3a", "T3b", "T3c", "T4a", "T4b", "T4", "T4c")       ~ "High",
+    # wriie low before intermediate to compare with "not otherwise low risk
+    PSA <= 10 &
+      gleason == "<=6" &
+      tstage %in% c("T1", "T1a", "T1b" , "T1c", "T2", "T2a")                    ~ "Low", 
+    PSA <= 20 &
+      gleason %in% c("<=6", "7") &
+      tstage %in% c("T1", "T1a", "T1b" , "T1c", "T2", "T2a", "T2b", "T2c")      ~ "Intermediate", 
+    TRUE                                                                        ~ NA_character_
+  )) %>% 
+  # https://www.ncbi.nlm.nih.gov/pubmed/27483464/ 
+  mutate(CPG = case_when( 
+    (PSA > 20 & isup == 4) |
+      (PSA > 20 & tstage %in% c("T3", "T3a", "T3b", "T3c")) |
+      (isup == 4 &tstage %in% c("T3", "T3a", "T3b", "T3c")) |
+      isup == 5 |
+      tstage %in% c("T4", "T4a", "T4b", "T4c") ~ "Very High",
+    PSA > 20 | isup == 4 | tstage %in% c("T3", "T3a", "T3b", "T3c")             ~ "High",
+    ((PSA >= 10 & PSA <= 20) & isup  == 2 &
+       tstage %in% c("T1", "T1a", "T1b", "T1c", "T2", "T2a", "T2b", "T2c")) |
+      (isup == 3 &
+         tstage %in% c("T1", "T1a", "T1b", "T1c", "T2", "T2a", "T2b", "T2c"))   ~ "Intermediate Unfavorable",                                             
+    isup == 2 | (PSA >= 10 & PSA <= 20) &
+      tstage %in% c("T1", "T1a", "T1b", "T1c", "T2", "T2a", "T2b", "T2c")       ~ "Intermediate Favorable",
+    PSA < 10 & isup == 1 &
+      tstage %in% c("T1", "T1a", "T1b" , "T1c", "T2", "T2a", "T2b", "T2c")      ~ "Low",
+    TRUE                                                                        ~ NA_character_
+  )) %>%
+  mutate(capra_score = rowSums(select(.,capra_psa:capra_age), na.rm = TRUE)) %>%
+  mutate(capra = case_when(
+    capra_score %in% c(0:2)                                                     ~ "Low",
+    capra_score %in% c(3:5)                                                     ~ "Intermediate",
+    capra_score %in% c(6:10)                                                    ~ "High",
+    TRUE                                                                        ~ NA_character_
   ))
 
 ############################################################################## MSKCC ############# 
