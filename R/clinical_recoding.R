@@ -41,15 +41,18 @@ clinical_SUN <- clinical_SUN %>%
   mutate(capra_age = case_when(
     AGE < 50                                                                    ~ 0,
     AGE >= 50                                                                   ~ 1
-  )) %>% 
-  mutate(damico = case_when( #----------------------------------------Risk calculation start here, need to go in a function
-    tstage %in% c("T2c", "T3a", "T3b", "T4") |
-      PSA > 20 |
+  )) %>% #----------------------------------------Risk calculation start here, need to go in a function
+  mutate(damico = case_when(
+    tstage %in% c("T2c", "T3", "T4", "T3a", "T3b", "T3c", "T4a", "T4b") |
+      psa > 20 |
       gleason %in% c("8", "9-10")                                               ~ "High",
-    (PSA > 10 & PSA <= 20) |
+    tstage == "T2b" |
+      (psa > 10 & psa <= 20) |
       gleason == "7"                                                            ~ "Intermediate",
-    PSA <= 10 &
-      gleason == "<=6"                                                          ~ "Low"
+    tstage %in% c("T1", "T1a", "T1b", "T1c", "T2a", "T2") &
+      psa <= 10 &
+      gleason == "<=6"                                                          ~ "Low", # no Low because T2c is the minimum stage in this data
+    TRUE                                                                        ~ NA_character_
   )) %>%
   mutate(nice = case_when( 
     tstage %in% c("T2c", "T3", "T3a", "T3b", "T3c", "T4", "T4a", "T4b") | 
@@ -117,12 +120,13 @@ clinical_SUN <- clinical_SUN %>%
 
 ############################################################################## CPC-GENE ############# 
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
-  mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
+  rename(PSA = PSA_MOST_RECENT_RESULTS) %>% 
+  # mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
   mutate(gleason = case_when(
     GLEASON_SCORE %in% c("3+3", "6")                                             ~ "<=6",
     GLEASON_SCORE %in% c("3+4", "3+4;5", "4+3","4+3;5", "7")                     ~ "7", 
     # Add "3+4;5" here (only 2 patients) and "4+3;5" (only 1 patient)
-    GLEASON_SCORE %in% c("3+5", "4+4")                                           ~ "8"
+    GLEASON_SCORE %in% c("3+5", "4+4")                                           ~ "8" # doesn't have 8
   )) %>% 
   mutate(tstage = case_when(
     CLIN_T_STAGE == "T1B"                                                        ~ "T1b", # Found in dictionary but not in data...
@@ -131,8 +135,8 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
     CLIN_T_STAGE == "T2A"                                                        ~ "T2a",
     CLIN_T_STAGE == "T2B"                                                        ~ "T2b",
     CLIN_T_STAGE == "T2C"                                                        ~ "T2c",
-    CLIN_T_STAGE == "T3A"                                                        ~ "T3Aa",
-    CLIN_T_STAGE == "T3B"                                                        ~ "T3Ab"
+    CLIN_T_STAGE == "T3A"                                                        ~ "T3a",
+    CLIN_T_STAGE == "T3B"                                                        ~ "T3b"
   )) %>%
   mutate(isup = case_when(
     GLEASON_SCORE %in% c("3+3", "6")                                             ~ 1,
@@ -153,7 +157,7 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
   mutate(capra_gleason = case_when(
     gleason == "<=6"                                                             ~ 0,
     gleason == "7"                                                               ~ 1,
-    gleason ==  "8"                                                              ~ 3
+    gleason ==  "8"                                                              ~ 3 # does't have 8
   )) %>%
   mutate(capra_tstage = case_when(
     str_detect(tstage, "(T1|T2)")                                                ~ 0,
@@ -162,15 +166,18 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
   mutate(capra_age = case_when(
     AGE < 50                                                                     ~ 0,
     AGE >= 50                                                                    ~ 1
-  )) %>% 
-  mutate(damico = case_when( #----------------------------------------Risk calculation start here, need to go in a function
-    tstage %in% c("T2c", "T3a", "T3b", "T4") |
+  )) %>% #----------------------------------------Risk calculation start here, need to go in a function
+  mutate(damico = case_when(
+    tstage %in% c("T2c", "T3", "T4", "T3a", "T3b", "T3c", "T4a", "T4b") |
       PSA > 20 |
-      gleason %in% c("8", "9-10")                                               ~ "High",
-    (PSA > 10 & PSA <= 20) |
-      gleason == "7"                                                            ~ "Intermediate",
-    PSA <= 10 &
-      gleason == "<=6"                                                          ~ "Low"
+      gleason %in% c("8", "9-10")                                                ~ "High",
+    tstage == "T2b" |
+      (PSA > 10 & PSA <= 20) |
+      gleason == "7"                                                             ~ "Intermediate",
+    tstage %in% c("T1", "T1a", "T1b", "T1c", "T2a", "T2") &
+      PSA <= 10 &
+      gleason == "<=6"                                                           ~ "Low",
+    TRUE                                                                         ~ NA_character_
   )) %>%
   mutate(nice = case_when( 
     tstage %in% c("T2c", "T3", "T3a", "T3b", "T3c", "T4", "T4a", "T4b") | 
@@ -241,7 +248,7 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
 # clinical T is not available for the 333 patients... we may be able to impute it from the other
 # 166 patients left
 clinical_TCGA_333 <- clinical_TCGA_333 %>% 
-  mutate(PSA = PREOPERATIVE_PSA) %>% 
+  rename(PSA = PREOPERATIVE_PSA) %>% 
   mutate(gleason = case_when(
     REVIEWED_GLEASON_SUM == 6                                                    ~ "<=6",
     REVIEWED_GLEASON_SUM == 7                                                    ~ "7",
@@ -251,7 +258,7 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
   mutate(tstage = case_when(
     str_detect(stage_event_tnm_categories, "T1a")                                ~ "T1a",
     str_detect(stage_event_tnm_categories, "T1b")                                ~ "T1b",
-    str_detect(stage_event_tnm_categories, "T1c")                                ~ "T1c",
+    str_detect(stage_event_tnm_categories, "T1c")                                ~ "T1c", # T1cM0T3aN0????????
     str_detect(stage_event_tnm_categories, "T1")                                 ~ "T1",
     str_detect(stage_event_tnm_categories, "T2a")                                ~ "T2a",
     str_detect(stage_event_tnm_categories, "T2b")                                ~ "T2b",
