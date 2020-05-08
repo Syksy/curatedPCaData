@@ -1,10 +1,11 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.0.9
-Date: 2020-04-03
+Version: 0.0.10
+Date: 2020-07-08
 Authors@R: c(person("Daniel", "Laajala", email = "teelaa@utu.fi.com",
                   role = c("aut", "cre")),
-             person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org",
+             person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org",role = "ctb"),
+             person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org",
              role = "ctb"))
 Description: A selection of annotated prostate cancer datasets including TCGA, 
     Sun et al., and others. 
