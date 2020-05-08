@@ -1,6 +1,4 @@
-# Import library
 
-library(tidyverse)
 ############################################################################## SUN ############# 
 
 clinical_SUN <- clinical_SUN %>% 
@@ -119,7 +117,7 @@ clinical_SUN <- clinical_SUN %>%
 
 ############################################################################## CPC-GENE ############# 
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
-  transmutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
+  mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
   mutate(gleason = case_when(
     GLEASON_SCORE %in% c("3+3", "6")                                             ~ "<=6",
     GLEASON_SCORE %in% c("3+4", "3+4;5", "4+3","4+3;5", "7")                     ~ "7", 
@@ -250,19 +248,32 @@ table(clinical_TCGA_333$CLINICAL_GLEASON_SUM)
 # clinical T is not available for the 333 patients... we may be able to impute it from the other
 # 166 patients left
 clinical_TCGA_333 <- clinical_TCGA_333 %>% 
-  transmutate(PSA = PREOPERATIVE_PSA) %>% 
+  mutate(PSA = PREOPERATIVE_PSA) %>% 
   mutate(gleason = case_when(
     REVIEWED_GLEASON_SUM == 6                                                    ~ "<=6",
     REVIEWED_GLEASON_SUM == 7                                                    ~ "7",
     REVIEWED_GLEASON_SUM == 8                                                    ~ "8",
     REVIEWED_GLEASON_SUM %in% c(9, 10)                                           ~ "9-10"
   )) %>%
-  # mutate(tstage = case_when(
-  #   T_clinical == 1                                                              ~ "T1", # Not available for the 333 patients...
-  #   T_clinical == 2                                                              ~ "T2",
-  #   T_clinical == 3                                                              ~ "T3",
-  #   T_clinical == 4                                                              ~ "T4"
-  # )) %>%
+  mutate(tstage = case_when(
+    str_detect(stage_event_tnm_categories, "T1a")                                ~ "T1a",
+    str_detect(stage_event_tnm_categories, "T1b")                                ~ "T1b",
+    str_detect(stage_event_tnm_categories, "T1c")                                ~ "T1c",
+    str_detect(stage_event_tnm_categories, "T1")                                 ~ "T1",
+    str_detect(stage_event_tnm_categories, "T2a")                                ~ "T2a",
+    str_detect(stage_event_tnm_categories, "T2b")                                ~ "T2b",
+    str_detect(stage_event_tnm_categories, "T2c")                                ~ "T2c",
+    str_detect(stage_event_tnm_categories, "T2")                                 ~ "T2",
+    str_detect(stage_event_tnm_categories, "T3a")                                ~ "T3a",
+    str_detect(stage_event_tnm_categories, "T3b")                                ~ "T3b",
+    str_detect(stage_event_tnm_categories, "T3c")                                ~ "T3c",
+    str_detect(stage_event_tnm_categories, "T3")                                 ~ "T3",
+    str_detect(stage_event_tnm_categories, "T4a")                                ~ "T4a",
+    str_detect(stage_event_tnm_categories, "T4b")                                ~ "T4b",
+    str_detect(stage_event_tnm_categories, "T4c")                                ~ "T4c",
+    str_detect(stage_event_tnm_categories, "T4")                                 ~ "T4",
+    TRUE                                                                         ~ NA_character_
+  )) %>%
   mutate(isup = case_when(
   REVIEWED_GLEASON %in% c("1+1", "1+2", "1+3", "2+1", "2+2", "2+3",
                           "3+1", "3+2", "3+3")                                   ~ 1,
@@ -285,12 +296,11 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
                             "3+4", "3+5")                                        ~ 1,
     REVIEWED_GLEASON %in% c("4+1", "4+2", "4+3", "4+4", "4+5",
                             "5+1", "5+2", "5+3", "5+4", "5+5")                   ~ 3
-  )) #%>%
-  # mutate(capra_tstage = case_when(
-  #   str_detect(tstage, "(T1|T2)")                                                ~ 0,
-  #   str_detect(tstage, "(T3|T4)")                                                ~ 1
-  # ))
-
+  )) %>%
+  mutate(capra_tstage = case_when(
+    str_detect(tstage, "(T1|T2)")                                                ~ 0,
+    str_detect(tstage, "(T3|T4)")                                                ~ 1
+  ))
 
 ############################################################################## MSKCC ############# 
 clinical_MSKCC <- clinical_MSKCC
@@ -307,7 +317,7 @@ clinical_ICGC_FR <- clinical_ICGC_FR %>%
     str_detect(donor_tumour_stage_at_diagnosis, "T2b")                          ~ "T2b",
     str_detect(donor_tumour_stage_at_diagnosis, "T2")                           ~ "T2"
   )) %>% 
-  transmutate(AGE = donor_age_at_diagnosis)
+  mutate(AGE = donor_age_at_diagnosis)
 
 table(clinical_ICGC_FR$donor_tumour_stage_at_diagnosis)
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
