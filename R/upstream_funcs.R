@@ -139,7 +139,10 @@ getProfileDataWrapper <- function(
 ###
 
 #' Function for downloading ICGC files from a certain release using http and then open the packaged tar.gz
-.icgcDownload <- function(url){
+.icgcDownload <- function(
+	url, # ICGC download URL
+	cleanup = TRUE # TODO: Clean up intermediate downloaded files
+){
 	# Pick filename from the end of the URL
 	filename <- strsplit(url, "/")
 	filename <- filename[[1]][[length(filename[[1]])]]
