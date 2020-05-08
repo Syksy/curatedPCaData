@@ -149,9 +149,11 @@ Generate_CNA_Taylor <- function(
 }	
 
 Generate_GEX_TCGA <- function(
+	file_directory, 
 	genes, # List of gene symbols to iterate over
 	...
 ){
+	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
 	#http://www.cbioportal.org/study?id=prad_tcga#summary
 	#mycgds <- cgdsr::CGDS("http://www.cbioportal.org/public-portal/")
 	mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
@@ -173,6 +175,83 @@ Generate_GEX_TCGA <- function(
 	GEX_TCGA
 }
 
+## Multiple specific data pulls from the ICGC depo
+
+#' PRAD-CA (PRAD-CA Prostate Adenocarcinoma - CA)
+Generate_ICGC_CA <- function(
+	file_directory, 
+	# Relevant available files for the Canadian ICGC dataset
+	filelist = c(
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/copy_number_somatic_mutation.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/donor.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/donor_exposure.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/donor_family.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/donor_therapy.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/exp_array.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/meth_array.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/sample.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/simple_somatic_mutation.open.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/specimen.PRAD-CA.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-CA/structural_somatic_mutation.PRAD-CA.tsv.gz"
+	)
+){
+	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	ICGC.PRAD.CA <- lapply(filelist, FUN=.icgcDownload)
+	ICGC.PRAD.CA
+}
+
+## PRAD-CN (PRAD-CN Prostate Cancer - CN)
+## -> OMIT?
+
+#' PRAD-FR (PRAD-FR Prostate Cancer - Adenocarcinoma - FR)
+Generate_ICGC_FR <- function(
+	file_directory, 
+	# Relevant available files for the Canadian ICGC dataset
+	filelist = c(
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/copy_number_somatic_mutation.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/donor.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/donor_family.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/donor_surgery.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/exp_array.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/exp_seq.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/sample.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/simple_somatic_mutation.open.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/specimen.PRAD-FR.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-FR/structural_somatic_mutation.PRAD-FR.tsv.gz"
+	)
+){
+	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	ICGC.PRAD.FR <- lapply(filelist, FUN=.icgcDownload)
+	ICGC.PRAD.FR
+}
+
+
+#' PRAD-UK (PRAD-UK Prostate Adenocarcinoma - UK)
+Generate_ICGC_UK <- function(
+	file_directory, 
+	# Relevant available files for the Canadian ICGC dataset
+	filelist = c(
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/copy_number_somatic_mutation.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/donor.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/donor_exposure.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/donor_family.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/donor_therapy.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/sample.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/simple_somatic_mutation.open.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/specimen.PRAD-UK.tsv.gz",
+		"https://dcc.icgc.org/api/v1/download?fn=/release_27/Projects/PRAD-UK/structural_somatic_mutation.PRAD-UK.tsv.gz"
+	)
+){
+	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	ICGC.PRAD.UK <- lapply(filelist, FUN=.icgcDownload)
+	ICGC.PRAD.UK
+}
+
+## PRAD-US (PRAD-US Prostate Adenocarcinoma - TCGA, US)
+## -> OMIT?
+
+
+#' Generic function for pulling data from cBioPortal
 Generate_cBioPortal <- function(
 	genes, # List of gene symbols to iterate over
 	geneticProfiles, # for cgdsr calls, platform and dataset specific string
