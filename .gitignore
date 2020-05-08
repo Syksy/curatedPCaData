@@ -20,3 +20,6 @@ R/pipelines.R
 R/upstream_funcs.R 
 
 R-4.0.0.pkg
+
+# R data frames containing all data for quick access
+/data/ALL.RData

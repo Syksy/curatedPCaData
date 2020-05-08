@@ -61,3 +61,15 @@ curatedPCaData::tcga_gex[1:5,1:5]
 ## TCGA.J4.A83N.01 1092.4076       NaN      NaN   NaN 431.5684
 ## TCGA.2A.A8VV.01 1223.2027       NaN      NaN   NaN 433.4628
 ```
+
+Project TODO check-list
+* Functional MAE-objects
+* Double-check N-counts and sample lists (e.g. TCGA N=333)
+* 3 example datasets
+* Instead of pregenerated *_pdata-txt files, have original creation scripts embedded
+* Double-check relative paths inside package
+* Explore the additional curated fields / software / packages:
+* > Neoantigen load (would require BAM/VCF in most software?)
+* > Cell composition (xCell)
+* > Zone of Origin
+* > ...

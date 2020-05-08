@@ -293,6 +293,9 @@ genes <- .getGeneNames()
 # cgdsr::getCaseLists(mycgds,"prad_tcga")
 # cgdsr::getGeneticProfiles(mycgds,"prad_tcga")
 
+# Note from Jordan & Christelle 
+# N=333 in TCGA provisional, Cell 2015
+
 # Running TCGA GEX:
 GEX_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_rna_seq_v2_mrna", caseList="prad_tcga_sequenced")
 
@@ -335,7 +338,30 @@ experiments(MAE_TCGA) <-
 # Running Sun, et al.:
 GEX_Sun <- Generate_GEX_Sun()
 
+# MultiAssayExperiment for Sun et al. (albeit only one 'omics)
+MAE_Sun <- MultiAssayExperiment()
+# Curated data dictionary file
+colData(MAE_Sun) <- S4Vectors::DataFrame(
+	read.table("../data-raw/GSE25136_curated_pdata.txt", 
+	sep="\t", header=TRUE)
+)
+## Create a sampleMap
+# Not needed for Sun, but maybe would be good to include for consistency
+# sampleMap(MAE_Sun) <- S4Vectors::DataFrame(
+# 	...
+# )	
+
+experiments(MAE_Sun) <- 
+	MultiAssayExperiment::ExperimentList(list(
+		GEX = GEX_Sun
+	)
+)
 
 
-# Note from Jordan & Christelle 
-# N=333 in TCGA provisional, Cell 2015
+####
+#
+# Taylor, et al.
+# GEX + CNA
+#
+####
+
