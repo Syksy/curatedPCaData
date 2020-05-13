@@ -4,3 +4,9 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^_notes$
+^R/clinical_recoding\.R$
+^R/load_data\.R$
+^R/packages\.R$
+^R/pipelines\.R$
+^R/upstream_funcs\.R$
+^data-raw$
