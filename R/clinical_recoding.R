@@ -407,3 +407,66 @@ clinical_ICGC_UK <- clinical_ICGC_UK %>%
     str_detect(donor_tumour_stage_at_diagnosis, "T2")                           ~ "T2"
   )) %>% 
   mutate(AGE = donor_age_at_diagnosis)
+
+
+############################################################################## Taylor ############# 
+
+clinical_taylor_all$patient_id <- rownames(clinical_taylor_all)
+clinical_taylor_all <- clinical_taylor_all %>% 
+  filter(str_detect(patient_id, "PCA")) %>% 
+  #------------------------------------------------------------------------------ I am missing PSA
+  mutate(gleason = case_when(
+    GLEASON_SCORE == "6"                                                      ~ "<=6",
+    GLEASON_SCORE == "7"                                                      ~ "7",
+    GLEASON_SCORE == "8"                                                      ~ "8",
+    GLEASON_SCORE %in% c("9", "10")                                           ~ "9-10"
+  )) %>%
+  mutate(tstage = case_when(
+    CLIN_T_STAGE == "T1C"                                ~ "T1c", 
+    CLIN_T_STAGE == "T2"                                 ~ "T2",
+    CLIN_T_STAGE == "T2A"                                ~ "T2a",
+    CLIN_T_STAGE == "T2B"                                ~ "T2b",
+    CLIN_T_STAGE == "T2C"                                ~ "T2c",
+    CLIN_T_STAGE == "T3"                                 ~ "T3",
+    CLIN_T_STAGE == "T3A"                                ~ "T3a",
+    CLIN_T_STAGE == "T3B"                                ~ "T3b",
+    CLIN_T_STAGE == "T3C"                                ~ "T3c",
+    CLIN_T_STAGE == "T4"                                 ~ "T4",
+    TRUE                                                                         ~ NA_character_
+  )) %>%
+  mutate(isup = case_when(
+    GLEASON_SCORE == "6"                                                         ~ 1,
+    GLEASON_SCORE_1 == "3" &
+      GLEASON_SCORE_2 == "4"                                                     ~ 2,
+    GLEASON_SCORE_1 == "4" &
+      GLEASON_SCORE_2 == "3"                                                     ~ 3,
+    GLEASON_SCORE == "8"                                                         ~ 4,
+    GLEASON_SCORE == "9"                                                         ~ 5
+  )) %>%
+  # mutate(capra_psa = case_when( 
+  #   PSA <= 6                                                                    ~ 0,
+  #   (PSA > 6 & PSA <= 10)                                                       ~ 1,
+  #   (PSA > 10 & PSA <= 20)                                                      ~ 2,
+  #   (PSA > 20 & PSA <= 30)                                                      ~ 3,
+  #   PSA > 30                                                                    ~ 4
+  # )) %>%
+  mutate(capra_gleason = case_when(
+    GLEASON_SCORE == "6"                                                         ~ 0,
+    GLEASON_SCORE_1 == "3" &
+      GLEASON_SCORE_2 %in% c("4", "5")                                           ~ 1,
+    GLEASON_SCORE_1 %in% c("4", "5") &
+      GLEASON_SCORE_2 %in% c("3", "4", "5", "4", "5")                            ~ 3
+  )) %>%
+  mutate(capra_tstage = case_when(
+    str_detect(tstage, "(T1|T2)")                                               ~ 0,
+    str_detect(tstage, "(T3|T4)")                                               ~ 1
+  # )) %>%
+  # mutate(capra_age = case_when(
+  #   AGE < 50                                                                    ~ 0,
+  #   AGE >= 50                                                                   ~ 1
+  ))
+# No PSA, No age -> not able to calculate risk. Needs to find it somewhere else
+
+
+
+
