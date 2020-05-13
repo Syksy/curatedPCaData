@@ -27,6 +27,11 @@ test(mycgds)
 clinical_SUN = getClinicalData(mycgds,"prad_eururol_2017_all")
 
 
+############################################################################## Taylor ############# 
+
+
+clinical_taylor = getClinicalData(mycgds,"prad_mskcc_all")
+
 ############################################################################## TCGA_333 ############# 
 clinical_TCGA_333 = getClinicalData(mycgds,"prad_tcga_pub_all")
 # Rename the patients id for later merge
