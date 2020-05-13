@@ -29,9 +29,11 @@ clinical_SUN = getClinicalData(mycgds,"prad_eururol_2017_all")
 
 ############################################################################## Taylor ############# 
 
-
 clinical_taylor = getClinicalData(mycgds,"prad_mskcc_all")
-
+clinical_taylor = getClinicalData(mycgds,"prad_mskcc_tumors") #prad_mskcc
+clinical_taylor1 = getClinicalData(mycgds,"prad_mskcc_primary")
+clinical_taylor_all = getClinicalData(mycgds,"prad_mskcc_all")
+>>>>>>> Start loading, recoding Taylor
 ############################################################################## TCGA_333 ############# 
 clinical_TCGA_333 = getClinicalData(mycgds,"prad_tcga_pub_all")
 # Rename the patients id for later merge

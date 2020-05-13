@@ -468,6 +468,12 @@ clinical_ICGC_UK <- clinical_ICGC_UK %>%
 
 clinical_taylor$patient_id <- rownames(clinical_taylor)
 clinical_taylor <- clinical_taylor %>% 
+
+
+############################################################################## Taylor ############# 
+
+clinical_taylor_all$patient_id <- rownames(clinical_taylor_all)
+clinical_taylor_all <- clinical_taylor_all %>% 
   filter(str_detect(patient_id, "PCA")) %>% 
   #------------------------------------------------------------------------------ I am missing PSA
   mutate(gleason = case_when(
@@ -522,3 +528,9 @@ clinical_taylor <- clinical_taylor %>%
   ))
 # No PSA, No age -> not able to calculate risk. Needs to find it somewhere else
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> Start loading, recoding Taylor
