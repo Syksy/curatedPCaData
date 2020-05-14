@@ -2,7 +2,7 @@
 ############################################################################## SUN ############# 
 
 clinical_SUN <- clinical_SUN %>% 
-  rename("psa" = psa) %>% 
+  rename("psa" = PSA) %>% 
   mutate(gleason = case_when(
     GLEASON_SCORE == "3+3"                                                      ~ "<=6",
     GLEASON_SCORE %in% c("3+4", "4+3")                                          ~ "7",
