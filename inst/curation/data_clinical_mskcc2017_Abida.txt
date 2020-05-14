@@ -1,0 +1,505 @@
+PATIENT_ID	SAMPLE_ID	SAMPLE_TYPE	METASTATIC_SITE	CLINICAL_STATE	CLINICAL_GLEASON	PURITY	GENE_PANEL	SAMPLE_COVERAGE	FRACTION_GENOME_ALTERED	MUTATIONS_PER_MEGABASE	ONCOTREE_CODE	CANCER_TYPE	CANCER_TYPE_DETAILED
+P-0000140	P-0000140-T01-IM3	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	60	IMPACT341	629	0.55	0.83	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0000197	P-0000197-T01-IM3	Metastasis	Liver	Metastatic castration-resistant	NA	30	IMPACT341	1188	0.06	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000318	P-0000318-T01-IM3	Metastasis	Liver	Metastatic castration-resistant	NA	60	IMPACT341	782	0.56	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000373	P-0000373-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT341	708	0	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000377	P-0000377-T01-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	70	IMPACT341	706	0.51	5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000377	P-0000377-T02-IM3	Primary	Not Applicable	Locoregional	9	60	IMPACT341	564	0.46	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000377	P-0000377-T03-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	80	IMPACT341	805	0.42	7.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000377	P-0000377-T04-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	30	IMPACT410	834	0.06	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000391	P-0000391-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	8	50	IMPACT341	704	0.01	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000401	P-0000401-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT341	552	0.24	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000431	P-0000431-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT341	530	0.2	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000441	P-0000441-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT341	734	0.22	5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000442	P-0000442-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	8	50	IMPACT341	922	0.14	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000449	P-0000449-T01-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT341	919	0.35	13.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000449	P-0000449-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	80	IMPACT410	873	0.4	16.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000479	P-0000479-T01-IM3	Primary	Not Applicable	Locoregional	8	60	IMPACT341	537	0.05	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000484	P-0000484-T01-IM3	Primary	Not Applicable	Locoregional	9	60	IMPACT341	571	0	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000504	P-0000504-T01-IM3	Primary	Not Applicable	Locoregional	9	80	IMPACT341	655	0.02	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000505	P-0000505-T01-IM3	Primary	Not Applicable	Locoregional	9	10	IMPACT341	698	0	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000509	P-0000509-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	50	IMPACT341	651	0.02	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000509	P-0000509-T02-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	70	IMPACT410	1022	0.28	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000521	P-0000521-T01-IM3	Metastasis	Liver	Metastatic castration-resistant	NA	80	IMPACT341	919	0.28	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000541	P-0000541-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	8	60	IMPACT341	515	0.31	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000560	P-0000560-T01-IM3	Primary	Not Applicable	Locoregional	7	80	IMPACT341	560	0.02	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000600	P-0000600-T01-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	50	IMPACT341	814	0.18	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000610	P-0000610-T01-IM3	Primary	Not Applicable	Locoregional	9	70	IMPACT341	308	0.17	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000615	P-0000615-T01-IM3	Primary	Not Applicable	Locoregional	9	40	IMPACT341	796	0.03	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000640	P-0000640-T02-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	30	IMPACT410	695	0.17	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000640	P-0000640-T03-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	70	IMPACT410	404	0.13	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000647	P-0000647-T01-IM3	Primary	Not Applicable	Locoregional	9	60	IMPACT341	805	0.03	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000655	P-0000655-T01-IM3	Metastasis	Lung	Metastatic castration-resistant	NA	70	IMPACT341	614	0.16	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000655	P-0000655-T02-IM3	Primary	Not Applicable	Locoregional	9	50	IMPACT341	290	0.23	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000659	P-0000659-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT341	1267	0.2	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000672	P-0000672-T01-IM3	Primary	Not Applicable	Locoregional	9	50	IMPACT341	603	0.05	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000675	P-0000675-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	30	IMPACT341	616	0	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000683	P-0000683-T01-IM3	Primary	Not applicable	Metastatic non-castrate	NA	30	IMPACT341	256	0.43	5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000691	P-0000691-T01-IM3	Primary	Not Applicable	Locoregional	7	60	IMPACT341	92	0.05	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000725	P-0000725-T01-IM3	Primary	Not Applicable	Locoregional	7	65	IMPACT341	586	0.22	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000755	P-0000755-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT341	513	0.07	24.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000828	P-0000828-T02-IM3	Primary	Not Applicable	Locoregional	9	50	IMPACT341	482	0.31	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000842	P-0000842-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	75	IMPACT341	242	0.03	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000842	P-0000842-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT410	395	0.32	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000847	P-0000847-T01-IM3	Primary	Not Applicable	Locoregional	9	50	IMPACT341	585	0.01	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000888	P-0000888-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	70	IMPACT341	902	0.48	0.83	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0000909	P-0000909-T03-IM3	Primary	Not Applicable	Locoregional	NA	NA	IMPACT341	461	0.02	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000912	P-0000912-T01-IM3	Primary	Not Applicable	Locoregional	7	70	IMPACT341	523	0.07	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000931	P-0000931-T01-IM3	Primary	Not Applicable	Locoregional	7	50	IMPACT341	589	0	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000935	P-0000935-T01-IM3	Metastasis	Liver	Metastatic castration-resistant	NA	30	IMPACT341	578	0.37	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000964	P-0000964-T01-IM3	Primary	Not Applicable	Locoregional	9	70	IMPACT341	618	0.25	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000964	P-0000964-T02-IM3	Metastasis	Lymph Node	Locoregional	NA	15	IMPACT341	434	0	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000966	P-0000966-T01-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT341	260	0.1	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0000966	P-0000966-T02-IM3	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	30	IMPACT341	537	0.18	8.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001021	P-0001021-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	80	IMPACT341	1072	0.49	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001071	P-0001071-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT341	641	0.12	30.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001092	P-0001092-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	50	IMPACT341	1068	0.39	5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001108	P-0001108-T01-IM3	Primary	Not Applicable	Locoregional	8	50	IMPACT341	737	0.04	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001128	P-0001128-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	35	IMPACT341	373	0.03	5.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001141	P-0001141-T01-IM3	Metastasis	Liver	Metastatic non-castrate	NA	40	IMPACT341	730	0.5	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001153	P-0001153-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	25	IMPACT341	619	0.19	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001187	P-0001187-T01-IM3	Primary	Not Applicable	Locoregional	7	50	IMPACT341	453	0.05	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001202	P-0001202-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	60	IMPACT341	572	0.03	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001204	P-0001204-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	15	IMPACT341	1130	0.04	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001204	P-0001204-T02-IM5	Primary	Not applicable	Metastatic castration-resistant	9	30	IMPACT410	630	0.33	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001206	P-0001206-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	7	25	IMPACT341	849	0.32	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001221	P-0001221-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	40	IMPACT341	543	0.13	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001230	P-0001230-T01-IM3	Metastasis	Bone	Metastatic non-castrate	NA	30	IMPACT341	515	0.19	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001242	P-0001242-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	8	40	IMPACT341	543	0.16	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001242	P-0001242-T02-IM3	Metastasis	Bone	Metastatic non-castrate	NA	60	IMPACT341	357	0.2	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001242	P-0001242-T03-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT410	124	0.43	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001244	P-0001244-T02-IM3	Primary	Not Applicable	Metastatic non-castrate	8	20	IMPACT341	586	0.29	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001247	P-0001247-T01-IM3	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	60	IMPACT341	566	0.46	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001262	P-0001262-T01-IM3	Primary	Not Applicable	Locoregional	8	30	IMPACT341	443	0	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001274	P-0001274-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	30	IMPACT341	731	0.11	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001297	P-0001297-T01-IM3	Primary	Not Applicable	Locoregional	8	40	IMPACT341	597	0.11	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001319	P-0001319-T03-IM5	Primary	Not applicable	Metastatic non-castrate	9	30	IMPACT410	506	0.05	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001325	P-0001325-T01-IM3	Primary	Not Applicable	Locoregional	NA	50	IMPACT341	660	0.2	21.67	PRSCC	Prostate Cancer	Prostate Small Cell Carcinoma
+P-0001325	P-0001325-T02-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	80	IMPACT410	618	0.29	26.09	PRSCC	Prostate Cancer	Prostate Small Cell Carcinoma
+P-0001329	P-0001329-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	153	0	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001332	P-0001332-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	NA	IMPACT341	816	0.05	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001332	P-0001332-T02-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	50	IMPACT341	550	0.01	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001337	P-0001337-T01-IM3	Primary	Not Applicable	Locoregional	7	35	IMPACT341	441	0.08	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001382	P-0001382-T01-IM3	Metastasis	Lung	Metastatic castration-resistant	NA	15	IMPACT341	619	0	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001407	P-0001407-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	15	IMPACT341	461	0.19	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001426	P-0001426-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	70	IMPACT341	829	0.36	10	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001445	P-0001445-T01-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	15	IMPACT341	537	0.6	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001446	P-0001446-T01-IM3	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	40	IMPACT341	674	0.51	5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001449	P-0001449-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	30	IMPACT341	351	0.11	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001449	P-0001449-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	50	IMPACT410	807	0.22	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001462	P-0001462-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	30	IMPACT341	392	0.21	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001493	P-0001493-T01-IM3	Primary	Not Applicable	Locoregional	8	30	IMPACT341	966	0.05	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001563	P-0001563-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	678	0.06	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001630	P-0001630-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	30	IMPACT341	383	0	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001636	P-0001636-T01-IM3	Primary	Not Applicable	Locoregional	7	15	IMPACT341	375	0.04	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001684	P-0001684-T01-IM3	Metastasis	Bone	Metastatic non-castrate	NA	20	IMPACT341	194	0.15	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001684	P-0001684-T02-IM3	Primary	Not Applicable	Metastatic non-castrate	9	30	IMPACT341	167	0	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001687	P-0001687-T01-IM3	Metastasis	Bone	Metastatic non-castrate	NA	40	IMPACT341	665	0.39	5	PRSCC	Prostate Cancer	Prostate Small Cell Carcinoma
+P-0001697	P-0001697-T02-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	NA	IMPACT341	247	0.35	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001698	P-0001698-T01-IM3	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	60	IMPACT341	792	0.59	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001717	P-0001717-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT341	663	0.42	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001768	P-0001768-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	40	IMPACT341	376	0.14	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001774	P-0001774-T01-IM3	Primary	Not applicable	Metastatic castration-resistant	NA	60	IMPACT341	583	0.09	37.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001776	P-0001776-T01-IM3	Primary	Not Applicable	Locoregional	9	40	IMPACT341	530	0.02	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001795	P-0001795-T01-IM3	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	40	IMPACT341	1293	0.51	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001822	P-0001822-T01-IM3	Primary	Not Applicable	Locoregional	9	60	IMPACT341	793	0.21	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001829	P-0001829-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	184	0.06	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001845	P-0001845-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	10	15	IMPACT341	418	0.17	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001859	P-0001859-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT341	1139	0.21	5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001859	P-0001859-T02-IM3	Primary	Not Applicable	Metastatic castration-resistant	9	40	IMPACT341	914	0.2	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001861	P-0001861-T01-IM3	Primary	Not Applicable	Locoregional	NA	11	IMPACT341	509	0.04	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001876	P-0001876-T02-IM5	Primary	Not applicable	Metastatic non-castrate	8	20	IMPACT410	379	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001884	P-0001884-T01-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	15	IMPACT341	682	0.16	6.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001884	P-0001884-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	10	IMPACT410	651	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001895	P-0001895-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	7	10	IMPACT341	612	0.24	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0001899	P-0001899-T01-IM3	Metastasis	Liver	Metastatic castration-resistant	NA	40	IMPACT341	1473	0.35	1.67	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0002101	P-0002101-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	7	20	IMPACT341	136	0.04	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002123	P-0002123-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	262	0.26	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002123	P-0002123-T02-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	20	IMPACT410	1031	0.1	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002149	P-0002149-T01-IM3	Primary	Not Applicable	Locoregional	7	30	IMPACT341	653	0.09	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002149	P-0002149-T02-IM3	Primary	Not applicable	Locoregional	7	30	IMPACT341	618	0.14	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002196	P-0002196-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	50	IMPACT341	971	0	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002206	P-0002206-T01-IM3	Primary	Not Applicable	Locoregional	7	30	IMPACT341	848	0.02	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002223	P-0002223-T01-IM3	Primary	Not Applicable	Locoregional	7	50	IMPACT341	332	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002273	P-0002273-T01-IM3	Primary	Not Applicable	Locoregional	8	40	IMPACT341	401	0.28	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002273	P-0002273-T02-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	30	IMPACT341	310	0.35	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002273	P-0002273-T03-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	10	IMPACT410	764	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002289	P-0002289-T01-IM3	Primary	Not Applicable	Locoregional	9	40	IMPACT341	728	0.02	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002296	P-0002296-T01-IM3	Metastasis	Liver	Metastatic castration-resistant	NA	30	IMPACT341	953	0.38	6.67	PRSCC	Prostate Cancer	Prostate Small Cell Carcinoma
+P-0002303	P-0002303-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	20	IMPACT341	773	0.23	5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002304	P-0002304-T01-IM3	Primary	Not Applicable	Locoregional	9	20	IMPACT341	801	0.15	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002306	P-0002306-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	791	0	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002314	P-0002314-T01-IM3	Primary	Not Applicable	Locoregional	7	50	IMPACT341	894	0.01	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002334	P-0002334-T01-IM3	Primary	Not Applicable	Locoregional	9	60	IMPACT341	398	0.17	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002364	P-0002364-T01-IM3	Primary	Not Applicable	Locoregional	8	40	IMPACT341	402	0.11	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002375	P-0002375-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	50	IMPACT341	610	0.5	5.83	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0002382	P-0002382-T01-IM3	Primary	Not Applicable	Metastatic castration-resistant	9	60	IMPACT341	793	0.38	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002397	P-0002397-T01-IM3	Primary	Not Applicable	Locoregional	9	30	IMPACT341	622	0.07	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002398	P-0002398-T01-IM3	Metastasis	Lymph Node	Locoregional	NA	60	IMPACT341	659	0.17	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002398	P-0002398-T02-IM3	Primary	Not Applicable	Locoregional	9	NA	IMPACT341	212	0.16	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002439	P-0002439-T01-IM3	Primary	Not Applicable	Locoregional	7	50	IMPACT341	458	0	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002453	P-0002453-T01-IM3	Primary	Not Applicable	Locoregional	7	NA	IMPACT341	411	0.05	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002499	P-0002499-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	NA	IMPACT341	646	0	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002516	P-0002516-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	NA	IMPACT341	1039	0.61	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002537	P-0002537-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	50	IMPACT410	669	0.2	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002564	P-0002564-T01-IM3	Metastasis	Lymph Node	Locoregional	NA	50	IMPACT341	468	0.22	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002583	P-0002583-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	495	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002612	P-0002612-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	NA	IMPACT341	511	0.11	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002739	P-0002739-T01-IM3	Primary	Not Applicable	Locoregional	9	20	IMPACT341	189	0.12	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002740	P-0002740-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	20	IMPACT341	271	0.01	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002796	P-0002796-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	20	IMPACT341	281	0.13	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002840	P-0002840-T01-IM3	Primary	Not Applicable	Locoregional	9	30	IMPACT341	966	0.04	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002840	P-0002840-T02-IM3	Metastasis	Lymph Node	Locoregional	NA	60	IMPACT341	767	0	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002880	P-0002880-T01-IM3	Primary	Not Applicable	Locoregional	7	30	IMPACT341	528	0.07	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002894	P-0002894-T01-IM3	Metastasis	Liver	Metastatic castration-resistant	NA	50	IMPACT341	663	0.49	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002895	P-0002895-T01-IM3	Primary	Not Applicable	Locoregional	8	20	IMPACT341	181	0.05	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002897	P-0002897-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	159	0.12	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002898	P-0002898-T01-IM3	Primary	Not Applicable	Locoregional	9	30	IMPACT341	389	0.02	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002898	P-0002898-T02-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	80	IMPACT410	576	0.2	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002901	P-0002901-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT341	364	0.45	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002901	P-0002901-T03-IM5	Primary	Not applicable	Locoregional	9	60	IMPACT410	350	0.25	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002959	P-0002959-T01-IM3	Primary	Not Applicable	Locoregional	7	20	IMPACT341	252	0.05	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002959	P-0002959-T02-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	654	0.08	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002961	P-0002961-T01-IM3	Primary	Not Applicable	Locoregional	7	30	IMPACT341	424	0.06	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002962	P-0002962-T01-IM3	Primary	Not Applicable	Locoregional	8	60	IMPACT341	803	0.07	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002971	P-0002971-T01-IM3	Metastasis	Lymph Node	Locoregional	NA	20	IMPACT341	673	0.01	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002971	P-0002971-T02-IM5	Primary	Not applicable	Locoregional	7	50	IMPACT410	623	0.15	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002974	P-0002974-T01-IM3	Primary	Not Applicable	Locoregional	8	70	IMPACT341	967	0.13	0.83	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002984	P-0002984-T01-IM3	Metastasis	Bone	Metastatic castration-resistant	NA	50	IMPACT341	637	0.31	4.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002990	P-0002990-T01-IM3	Metastasis	Lymph Node	Metastatic non-castrate	NA	70	IMPACT341	702	0.22	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002990	P-0002990-T02-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT410	779	0.26	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0002999	P-0002999-T01-IM3	Primary	Not Applicable	Locoregional	7	70	IMPACT341	468	0.07	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003001	P-0003001-T01-IM3	Primary	Not Applicable	Locoregional	9	20	IMPACT341	410	0.06	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003023	P-0003023-T01-IM3	Primary	Not Applicable	Locoregional	7	50	IMPACT341	741	0	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003026	P-0003026-T01-IM3	Primary	Not Applicable	Locoregional	7	20	IMPACT341	532	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003028	P-0003028-T01-IM3	Primary	Not Applicable	Locoregional	9	20	IMPACT341	577	0.03	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003033	P-0003033-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	8	30	IMPACT410	562	0.27	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003033	P-0003033-T02-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	50	IMPACT410	596	0.31	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003037	P-0003037-T01-IM5	Primary	Not Applicable	Locoregional	NA	30	IMPACT410	644	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003040	P-0003040-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	70	IMPACT410	791	0.52	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003052	P-0003052-T01-IM3	Primary	Not Applicable	Locoregional	8	40	IMPACT341	382	0.13	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003061	P-0003061-T01-IM3	Primary	Not Applicable	Locoregional	7	40	IMPACT341	236	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003101	P-0003101-T01-IM5	Metastasis	lung	Metastatic castration-resistant	NA	NA	IMPACT410	461	0.15	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003139	P-0003139-T01-IM5	Primary	Not Applicable	Locoregional	9	60	IMPACT410	655	0.08	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003139	P-0003139-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	70	IMPACT410	918	0.51	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003150	P-0003150-T01-IM5	Metastasis	Lung	Metastatic non-castrate	NA	60	IMPACT410	221	0.39	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003150	P-0003150-T02-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	299	0.07	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003181	P-0003181-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	70	IMPACT410	855	0.54	1.45	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0003181	P-0003181-T02-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	60	IMPACT410	301	0.4	0.72	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0003226	P-0003226-T01-IM5	Metastasis	Bone	Metastatic non-castrate	NA	20	IMPACT410	459	0.2	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003390	P-0003390-T01-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	201	0.03	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003395	P-0003395-T01-IM5	Metastasis	bone	Metastatic non-castrate	NA	30	IMPACT410	441	0.58	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003400	P-0003400-T01-IM5	Primary	Not applicable	Locoregional	7	20	IMPACT410	669	0.04	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003419	P-0003419-T02-IM5	Primary	Not applicable	Locoregional	8	NA	IMPACT410	763	0.05	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003442	P-0003442-T02-IM5	Primary	Not applicable	Locoregional	NA	80	IMPACT410	578	0.23	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003450	P-0003450-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT410	715	0.59	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003468	P-0003468-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	10	IMPACT410	596	0.64	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003468	P-0003468-T02-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT410	382	0.64	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003504	P-0003504-T02-IM5	Primary	Not applicable	Locoregional	7	10	IMPACT410	463	0.21	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003506	P-0003506-T01-IM5	Primary	Not applicable	Metastatic non-castrate	9	50	IMPACT410	521	0.19	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003511	P-0003511-T01-IM5	Primary	Not applicable	Metastatic castration-resistant	NA	30	IMPACT410	624	0.23	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003511	P-0003511-T02-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	10	IMPACT410	483	0.22	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003511	P-0003511-T03-IM5	Primary	Not applicable	Locoregional	10	30	IMPACT410	633	0.22	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003519	P-0003519-T01-IM5	Primary	Not applicable	Metastatic non-castrate	NA	10	IMPACT410	409	0.11	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003535	P-0003535-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	80	IMPACT410	921	0.59	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003538	P-0003538-T01-IM5	Primary	Not applicable	Metastatic non-castrate	9	60	IMPACT410	632	0.25	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003538	P-0003538-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	10	IMPACT410	614	0.17	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003541	P-0003541-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	30	IMPACT410	572	0.19	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003556	P-0003556-T01-IM5	Primary	Not applicable	Locoregional	7	30	IMPACT410	393	0.06	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003592	P-0003592-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT410	404	0.22	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003592	P-0003592-T02-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	50	IMPACT410	646	0.12	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003597	P-0003597-T01-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	218	0.08	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003597	P-0003597-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	60	IMPACT410	514	0.27	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003602	P-0003602-T01-IM5	Primary	Not applicable	Locoregional	9	40	IMPACT410	459	0.22	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003605	P-0003605-T01-IM5	Primary	Not applicable	Locoregional	7	30	IMPACT410	481	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003616	P-0003616-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT410	142	0.05	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003619	P-0003619-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	80	IMPACT410	472	0.53	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003625	P-0003625-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT410	455	0.47	5.07	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003626	P-0003626-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	30	IMPACT410	575	0.6	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003637	P-0003637-T01-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	344	0.01	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003655	P-0003655-T01-IM5	Primary	Not applicable	Locoregional	7	70	IMPACT410	591	0.16	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003665	P-0003665-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	80	IMPACT410	590	0.19	21.01	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003678	P-0003678-T01-IM5	Primary	Not applicable	Metastatic castration-resistant	NA	10	IMPACT410	621	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003689	P-0003689-T01-IM5	Primary	Not applicable	Locoregional	9	20	IMPACT410	103	0.05	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003695	P-0003695-T01-IM5	Primary	Not applicable	Locoregional	7	30	IMPACT410	294	0.01	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003741	P-0003741-T01-IM5	Primary	Not applicable	Metastatic non-castrate	10	30	IMPACT410	231	0.17	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003758	P-0003758-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	561	0.59	2.9	PRSCC	Prostate Cancer	Prostate Small Cell Carcinoma
+P-0003799	P-0003799-T01-IM5	Primary	Not applicable	Locoregional	9	20	IMPACT410	510	0.07	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003799	P-0003799-T02-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	60	IMPACT410	1019	0.42	0.72	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0003852	P-0003852-T01-IM5	Primary	Not applicable	Metastatic non-castrate	9	30	IMPACT410	541	0.18	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003856	P-0003856-T01-IM5	Metastasis	liver	Metastatic non-castrate	NA	70	IMPACT410	329	0.16	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003908	P-0003908-T01-IM3	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	70	IMPACT341	704	0.03	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003925	P-0003925-T01-IM3	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT341	670	0.2	3.33	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003939	P-0003939-T01-IM3	Primary	Not Applicable	Metastatic non-castrate	9	60	IMPACT341	894	0	2.5	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003945	P-0003945-T01-IM3	Primary	Not applicable	Metastatic castration-resistant	NA	90	IMPACT341	534	0.1	1.67	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0003971	P-0003971-T02-IM5	Primary	Not applicable	Locoregional	9	30	IMPACT410	102	0.13	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004039	P-0004039-T01-IM5	Primary	Not applicable	Locoregional	7	30	IMPACT410	113	0.05	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004061	P-0004061-T02-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	50	IMPACT410	716	0.17	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004063	P-0004063-T01-IM5	Primary	Not applicable	Locoregional	7	30	IMPACT410	224	0.15	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004138	P-0004138-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	30	IMPACT410	566	0.05	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004221	P-0004221-T01-IM5	Primary	Not applicable	Locoregional	7	30	IMPACT410	426	0.05	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004231	P-0004231-T01-IM5	Primary	Not applicable	Metastatic non-castrate	9	60	IMPACT410	951	0.7	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004231	P-0004231-T02-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	50	IMPACT410	610	0.7	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004243	P-0004243-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	70	IMPACT410	358	0.36	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004283	P-0004283-T01-IM5	Primary	Not applicable	Locoregional	9	40	IMPACT410	153	0.02	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004285	P-0004285-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT410	471	0	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004290	P-0004290-T03-IM5	Primary	Not Applicable	Locoregional	9	20	IMPACT410	797	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004311	P-0004311-T01-IM5	Primary	Not applicable	Metastatic castration-resistant	8	50	IMPACT410	387	0.18	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004312	P-0004312-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	40	IMPACT410	388	0.61	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004325	P-0004325-T01-IM5	Primary	Not applicable	Metastatic non-castrate	7	20	IMPACT410	671	0.01	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004343	P-0004343-T01-IM5	Primary	Not applicable	Locoregional	6	20	IMPACT410	426	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004345	P-0004345-T01-IM5	Primary	Not applicable	Locoregional	9	40	IMPACT410	497	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004355	P-0004355-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	40	IMPACT410	277	0.17	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004389	P-0004389-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	60	IMPACT410	508	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004435	P-0004435-T01-IM5	Primary	Not applicable	Locoregional	9	40	IMPACT410	583	0.07	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004448	P-0004448-T01-IM5	Primary	Not applicable	Locoregional	9	50	IMPACT410	612	0.1	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004482	P-0004482-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	60	IMPACT410	696	0.09	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004489	P-0004489-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	484	0.38	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004508	P-0004508-T01-IM5	Primary	Not applicable	Locoregional	8	30	IMPACT410	890	0.03	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004514	P-0004514-T01-IM5	Primary	Not applicable	Locoregional	9	40	IMPACT410	696	0.04	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004522	P-0004522-T01-IM5	Primary	Not applicable	Locoregional	7	40	IMPACT410	107	0.49	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004526	P-0004526-T01-IM5	Primary	Not applicable	Metastatic non-castrate	9	30	IMPACT410	718	0.01	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004532	P-0004532-T01-IM5	Primary	Not applicable	Locoregional	7	40	IMPACT410	309	0.01	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004538	P-0004538-T01-IM5	Primary	Not applicable	Locoregional	9	30	IMPACT410	698	0.07	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004539	P-0004539-T01-IM5	Primary	Not applicable	Locoregional	7	30	IMPACT410	682	0.09	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004556	P-0004556-T01-IM5	Primary	Not applicable	Locoregional	8	20	IMPACT410	739	0	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004593	P-0004593-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	50	IMPACT410	230	0.45	7.25	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004594	P-0004594-T01-IM5	Primary	Not applicable	Locoregional	8	40	IMPACT410	358	0	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004597	P-0004597-T02-IM5	Primary	Not Applicable	Metastatic non-castrate	9	20	IMPACT410	775	0.22	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004600	P-0004600-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	40	IMPACT410	1047	0.65	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004600	P-0004600-T02-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	40	IMPACT410	420	0.52	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004634	P-0004634-T01-IM5	Primary	Not applicable	Locoregional	9	30	IMPACT410	700	0.04	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004675	P-0004675-T01-IM5	Primary	Not applicable	Locoregional	9	30	IMPACT410	742	0.02	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004704	P-0004704-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	40	IMPACT410	433	0.17	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004735	P-0004735-T01-IM5	Primary	Not applicable	Locoregional	NA	20	IMPACT410	581	0	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004756	P-0004756-T01-IM5	Primary	Not applicable	Locoregional	7	70	IMPACT410	384	0.08	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004816	P-0004816-T01-IM5	Primary	Not applicable	Locoregional	7	40	IMPACT410	181	0.33	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004826	P-0004826-T01-IM5	Primary	Not applicable	Metastatic non-castrate	7	40	IMPACT410	681	0.16	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004830	P-0004830-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	50	IMPACT410	412	0.39	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004892	P-0004892-T01-IM5	Metastasis	Lung	Metastatic non-castrate	NA	40	IMPACT410	904	0.16	8.7	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004910	P-0004910-T01-IM5	Metastasis	Lung	Metastatic castration-resistant	NA	50	IMPACT410	531	0.12	30.43	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004910	P-0004910-T02-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	316	0	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004910	P-0004910-T03-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	50	IMPACT410	518	0.13	28.99	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004910	P-0004910-T04-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	20	IMPACT410	637	0.05	26.09	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0004946	P-0004946-T01-IM5	Primary	Not applicable	Locoregional	9	40	IMPACT410	565	0.03	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005014	P-0005014-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT410	759	0.23	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005045	P-0005045-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT410	412	0.16	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005047	P-0005047-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	30	IMPACT410	856	0.3	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005050	P-0005050-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	80	IMPACT410	802	0.18	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005052	P-0005052-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	40	IMPACT410	712	0.05	0	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0005052	P-0005052-T02-IM5	Metastasis	Liver	Metastatic non-castrate	NA	70	IMPACT410	344	0.01	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005064	P-0005064-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	60	IMPACT410	527	0.43	3.62	PRSCC	Prostate Cancer	Prostate Small Cell Carcinoma
+P-0005065	P-0005065-T02-IM5	Primary	Not applicable	Locoregional	9	60	IMPACT410	395	0.57	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005065	P-0005065-T03-IM5	Metastasis	Lung	Metastatic castration-resistant	NA	60	IMPACT410	594	0.57	6.52	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005078	P-0005078-T01-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	319	0.03	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005081	P-0005081-T01-IM5	Primary	Not applicable	Locoregional	7	40	IMPACT410	319	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005098	P-0005098-T01-IM5	Primary	Not applicable	Metastatic non-castrate	9	30	IMPACT410	422	0.09	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005098	P-0005098-T02-IM5	Primary	Not applicable	Metastatic non-castrate	9	30	IMPACT410	1242	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005111	P-0005111-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	30	IMPACT410	566	0	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005147	P-0005147-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT410	512	0.04	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005213	P-0005213-T01-IM5	Primary	Not applicable	Locoregional	9	60	IMPACT410	674	0.03	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005216	P-0005216-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	10	IMPACT410	870	0.52	5.07	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005217	P-0005217-T03-IM5	Primary	Not Applicable	Metastatic non-castrate	NA	10	IMPACT410	855	0.21	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005344	P-0005344-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT410	607	0.24	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005348	P-0005348-T01-IM5	Primary	Not applicable	Locoregional	7	10	IMPACT410	717	0.07	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005374	P-0005374-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT410	2148	0.34	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005422	P-0005422-T01-IM5	Primary	Not applicable	Metastatic castration-resistant	8	10	IMPACT410	650	0.01	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005428	P-0005428-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	542	0.29	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005436	P-0005436-T01-IM5	Primary	Not applicable	Locoregional	7	60	IMPACT410	388	0.13	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005445	P-0005445-T01-IM5	Primary	Not applicable	Locoregional	8	50	IMPACT410	317	0.02	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005454	P-0005454-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT410	967	0.23	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005459	P-0005459-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	60	IMPACT410	907	0.33	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005460	P-0005460-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	889	0.07	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005463	P-0005463-T01-IM5	Primary	Not Applicable	Locoregional	9	20	IMPACT410	716	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005546	P-0005546-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT410	861	0.11	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005552	P-0005552-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	667	0.04	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005555	P-0005555-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	60	IMPACT410	1119	0.62	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005557	P-0005557-T01-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	762	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005570	P-0005570-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	529	0.12	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005571	P-0005571-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	60	IMPACT410	291	0.51	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005596	P-0005596-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	50	IMPACT410	937	0.43	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005630	P-0005630-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	542	0.02	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005636	P-0005636-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	1073	0.08	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005639	P-0005639-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	8	30	IMPACT410	346	0.12	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005649	P-0005649-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	10	IMPACT410	627	0.38	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005692	P-0005692-T01-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	965	0.1	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005697	P-0005697-T03-IM5	Primary	Not Applicable	Locoregional	8	80	IMPACT410	654	0.18	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005698	P-0005698-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	NA	30	IMPACT410	687	0.12	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005713	P-0005713-T01-IM5	Metastasis	Lung	Metastatic non-castrate	NA	80	IMPACT410	324	0.2	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005756	P-0005756-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	NA	IMPACT410	1188	0.43	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005760	P-0005760-T01-IM5	Primary	Not Applicable	Locoregional	7	50	IMPACT410	675	0.23	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005761	P-0005761-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	20	IMPACT410	936	0.01	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005768	P-0005768-T02-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	70	IMPACT410	527	0.19	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005771	P-0005771-T02-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	50	IMPACT410	548	0.23	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005773	P-0005773-T02-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	70	IMPACT410	581	0.39	7.25	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0005774	P-0005774-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	20	IMPACT410	475	0.19	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005787	P-0005787-T01-IM5	Metastasis	Lung	Metastatic castration-resistant	NA	80	IMPACT410	735	0.19	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005787	P-0005787-T02-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	40	IMPACT410	777	0.15	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005802	P-0005802-T01-IM5	Primary	Not Applicable	Locoregional	9	50	IMPACT410	854	0.16	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005804	P-0005804-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	8	60	IMPACT410	699	0.1	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005806	P-0005806-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	50	IMPACT410	484	0.41	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005810	P-0005810-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	30	IMPACT410	974	0.1	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005811	P-0005811-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	80	IMPACT410	1069	0.21	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005864	P-0005864-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	907	0.08	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005867	P-0005867-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	20	IMPACT410	843	0.1	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005890	P-0005890-T01-IM5	Metastasis	Bone	Metastatic non-castrate	NA	20	IMPACT410	723	0.02	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005902	P-0005902-T01-IM5	Primary	Not Applicable	Locoregional	8	80	IMPACT410	385	0.2	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005933	P-0005933-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT410	836	0.33	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005953	P-0005953-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT410	982	0.24	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005953	P-0005953-T02-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	80	IMPACT410	610	0.23	1.45	PRSCC	Prostate Cancer	Prostate Small Cell Carcinoma
+P-0005956	P-0005956-T01-IM5	Primary	Not Applicable	Locoregional	8	80	IMPACT410	785	0.1	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005970	P-0005970-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	50	IMPACT410	925	0.45	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0005976	P-0005976-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	80	IMPACT410	1409	0.7	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006029	P-0006029-T01-IM5	Metastasis	Bone	Metastatic non-castrate	NA	60	IMPACT410	713	0	5.07	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006057	P-0006057-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	NA	20	IMPACT410	872	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006108	P-0006108-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	30	IMPACT410	954	0.15	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006108	P-0006108-T02-IM5	Primary	Not Applicable	Metastatic non-castrate	9	15	IMPACT410	691	0.02	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006128	P-0006128-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	20	IMPACT410	996	0.04	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006231	P-0006231-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	20	IMPACT410	1089	0.09	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006247	P-0006247-T01-IM5	Primary	Not Applicable	Locoregional	NA	30	IMPACT410	730	0.01	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006346	P-0006346-T01-IM5	Primary	Not Applicable	Locoregional	7	30	IMPACT410	525	0.06	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006378	P-0006378-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	818	0.05	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006379	P-0006379-T01-IM5	Primary	Not Applicable	Locoregional	7	50	IMPACT410	620	0.03	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006389	P-0006389-T01-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	111	0.02	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006393	P-0006393-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	70	IMPACT410	78	0.35	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006440	P-0006440-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	898	0.06	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006461	P-0006461-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	30	IMPACT410	799	0.2	6.52	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006508	P-0006508-T01-IM5	Primary	Not Applicable	Locoregional	7	70	IMPACT410	217	0.1	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006574	P-0006574-T01-IM5	Primary	Not Applicable	Locoregional	9	70	IMPACT410	589	0.03	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006584	P-0006584-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	10	IMPACT410	618	0.17	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006595	P-0006595-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	70	IMPACT410	1175	0.21	5.07	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006602	P-0006602-T02-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	30	IMPACT410	199	0.11	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006603	P-0006603-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	NA	IMPACT410	658	0.44	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006619	P-0006619-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	30	IMPACT410	1047	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006635	P-0006635-T01-IM5	Primary	Not Applicable	Locoregional	9	70	IMPACT410	879	0.18	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006655	P-0006655-T01-IM5	Primary	Not Applicable	Locoregional	6	60	IMPACT410	625	0.14	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006670	P-0006670-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	60	IMPACT410	395	0.4	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006689	P-0006689-T01-IM5	Primary	Not Applicable	Locoregional	NA	40	IMPACT410	617	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006692	P-0006692-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	70	IMPACT410	831	0.62	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006749	P-0006749-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	10	IMPACT410	672	0.26	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006751	P-0006751-T01-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	70	IMPACT410	879	0.25	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006757	P-0006757-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	644	0.02	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006806	P-0006806-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	40	IMPACT410	856	0.6	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006837	P-0006837-T01-IM5	Primary	Not Applicable	Locoregional	9	50	IMPACT410	668	0.03	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006840	P-0006840-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	20	IMPACT410	1001	0.31	5.8	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006856	P-0006856-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	40	IMPACT410	779	0.5	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006894	P-0006894-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	10	IMPACT410	406	0.1	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006905	P-0006905-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	10	IMPACT410	981	0.52	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006931	P-0006931-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	20	IMPACT410	650	0.09	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006962	P-0006962-T01-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	790	0.04	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006994	P-0006994-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	852	0.41	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0006997	P-0006997-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	7	20	IMPACT410	537	0.08	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007005	P-0007005-T01-IM5	Primary	Not Applicable	Locoregional	9	40	IMPACT410	814	0.07	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007006	P-0007006-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	20	IMPACT410	578	0.1	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007025	P-0007025-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	10	IMPACT410	981	0.25	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007043	P-0007043-T01-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	30	IMPACT410	470	0.22	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007078	P-0007078-T02-IM5	Primary	Not Applicable	Locoregional	9	50	IMPACT410	1341	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007098	P-0007098-T01-IM5	Primary	Not Applicable	Locoregional	9	25	IMPACT410	487	0.21	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007137	P-0007137-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	8	10	IMPACT410	788	0.08	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007139	P-0007139-T01-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	70	IMPACT410	1049	0.31	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007143	P-0007143-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	50	IMPACT410	756	0.27	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007182	P-0007182-T01-IM5	Metastasis	Bone	Metastatic non-castrate	NA	70	IMPACT410	387	0.61	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007184	P-0007184-T01-IM5	Primary	Not Applicable	Locoregional	8	30	IMPACT410	700	0.03	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007219	P-0007219-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	15	IMPACT410	757	0.03	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007267	P-0007267-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	60	IMPACT410	874	0.15	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007289	P-0007289-T02-IM5	Primary	Not applicable	Locoregional	NA	80	IMPACT410	657	0.57	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007307	P-0007307-T01-IM5	Primary	Not Applicable	Locoregional	7	60	IMPACT410	857	0.14	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007313	P-0007313-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	80	IMPACT410	624	0.28	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007332	P-0007332-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	50	IMPACT410	231	0.06	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007343	P-0007343-T01-IM5	Primary	Not Applicable	Locoregional	8	30	IMPACT410	644	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007346	P-0007346-T01-IM5	Primary	Not Applicable	Locoregional	NA	30	IMPACT410	725	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007358	P-0007358-T02-IM5	Primary	Not Applicable	Metastatic castration-resistant	9	90	IMPACT410	1028	0.25	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007359	P-0007359-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	40	IMPACT410	570	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007366	P-0007366-T01-IM5	Primary	Not Applicable	Locoregional	9	50	IMPACT410	656	0.09	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007393	P-0007393-T01-IM5	Primary	Not Applicable	Locoregional	9	80	IMPACT410	853	0.15	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007402	P-0007402-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	25	IMPACT410	763	0.19	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007416	P-0007416-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	95	IMPACT410	361	0.62	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007515	P-0007515-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	95	IMPACT410	924	0.51	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007529	P-0007529-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	40	IMPACT410	721	0	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007533	P-0007533-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	80	IMPACT410	811	0.32	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007538	P-0007538-T01-IM5	Primary	Not Applicable	Locoregional	9	25	IMPACT410	234	0	9.42	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007547	P-0007547-T01-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	80	IMPACT410	674	0.37	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007576	P-0007576-T01-IM5	Primary	Not Applicable	Locoregional	7	80	IMPACT410	691	0.08	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007625	P-0007625-T01-IM5	Primary	Not Applicable	Locoregional	9	60	IMPACT410	451	0.07	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007629	P-0007629-T01-IM5	Metastasis	Bone	Metastatic non-castrate	NA	20	IMPACT410	455	0.27	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007647	P-0007647-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	NA	IMPACT410	875	0.11	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007655	P-0007655-T01-IM5	Primary	Not Applicable	Locoregional	6	25	IMPACT410	517	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007734	P-0007734-T01-IM5	Metastasis	Liver	Metastatic non-castrate	NA	80	IMPACT410	131	0.46	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007749	P-0007749-T01-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	40	IMPACT410	884	0.24	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007770	P-0007770-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	60	IMPACT410	1170	0.45	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007786	P-0007786-T01-IM5	Primary	Not Applicable	Locoregional	8	40	IMPACT410	639	0	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007848	P-0007848-T01-IM5	Primary	Not Applicable	Locoregional	7	60	IMPACT410	654	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007856	P-0007856-T01-IM5	Primary	Not applicable	Locoregional	NA	30	IMPACT410	724	0.23	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007874	P-0007874-T01-IM5	Primary	Not Applicable	Locoregional	9	50	IMPACT410	619	0.06	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007875	P-0007875-T01-IM5	Primary	Not Applicable	Locoregional	9	50	IMPACT410	861	0.17	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007877	P-0007877-T01-IM5	Primary	Not Applicable	Locoregional	7	30	IMPACT410	617	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007881	P-0007881-T01-IM5	Primary	Not Applicable	Locoregional	6	30	IMPACT410	415	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007900	P-0007900-T01-IM5	Primary	Not Applicable	Metastatic castration-resistant	NA	70	IMPACT410	844	0.45	2.9	PRNE	Prostate Cancer	Prostate Neuroendocrine Carcinoma
+P-0007965	P-0007965-T01-IM5	Primary	Not Applicable	Locoregional	7	30	IMPACT410	703	0.01	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0007968	P-0007968-T01-IM5	Primary	Not Applicable	Locoregional	9	80	IMPACT410	468	0.13	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008048	P-0008048-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT410	918	0.02	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008057	P-0008057-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	25	IMPACT410	846	0.19	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008067	P-0008067-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	231	0.15	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008069	P-0008069-T01-IM5	Metastasis	Liver	Metastatic non-castrate	NA	15	IMPACT410	895	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008074	P-0008074-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT410	862	0.18	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008077	P-0008077-T01-IM5	Metastasis	Lung	Metastatic non-castrate	NA	40	IMPACT410	243	0.13	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008098	P-0008098-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT410	882	0.29	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008139	P-0008139-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	10	IMPACT410	256	0.18	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008147	P-0008147-T01-IM5	Primary	Not Applicable	Locoregional	8	30	IMPACT410	730	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008206	P-0008206-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	70	IMPACT410	1141	0.68	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008232	P-0008232-T01-IM5	Primary	Not Applicable	Locoregional	8	60	IMPACT410	373	0.15	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008235	P-0008235-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	35	IMPACT410	788	0.07	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008301	P-0008301-T01-IM5	Metastasis	Bone	Metastatic non-castrate	NA	10	IMPACT410	916	0.03	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008304	P-0008304-T01-IM5	Primary	Not Applicable	Locoregional	8	60	IMPACT410	615	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008315	P-0008315-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	60	IMPACT410	987	0.27	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008326	P-0008326-T01-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	478	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008330	P-0008330-T01-IM5	Metastasis	Lung	Metastatic non-castrate	NA	60	IMPACT410	961	0.31	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008339	P-0008339-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	10	IMPACT410	505	0.02	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008344	P-0008344-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	20	IMPACT410	1035	0.57	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008348	P-0008348-T01-IM5	Primary	Not Applicable	Locoregional	7	30	IMPACT410	519	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008351	P-0008351-T01-IM5	Primary	Not Applicable	Locoregional	9	40	IMPACT410	632	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008356	P-0008356-T01-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	464	0.02	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008383	P-0008383-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	10	IMPACT410	878	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008390	P-0008390-T01-IM5	Metastasis	Liver	Metastatic castration-resistant	NA	70	IMPACT410	1331	0.56	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008431	P-0008431-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	10	IMPACT410	840	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008441	P-0008441-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	70	IMPACT410	960	0.55	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008452	P-0008452-T01-IM5	Primary	Not Applicable	Locoregional	7	60	IMPACT410	540	0.02	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008461	P-0008461-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	716	0.12	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008470	P-0008470-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	10	80	IMPACT410	441	0.34	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008525	P-0008525-T01-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	1014	0.08	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008542	P-0008542-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	10	IMPACT410	1108	0.27	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008542	P-0008542-T03-IM5	Primary	Not Applicable	Locoregional	7	20	IMPACT410	514	0.01	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008591	P-0008591-T01-IM5	Metastasis	Other Soft Tissue	Metastatic castration-resistant	NA	70	IMPACT410	794	0.54	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008592	P-0008592-T01-IM5	Primary	Not Applicable	Locoregional	7	60	IMPACT410	732	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008597	P-0008597-T01-IM5	Primary	Not Applicable	Locoregional	7	60	IMPACT410	913	0.04	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008655	P-0008655-T01-IM5	Primary	Not Applicable	Locoregional	9	30	IMPACT410	689	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008661	P-0008661-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	40	IMPACT410	854	0.12	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008667	P-0008667-T01-IM5	Primary	Not Applicable	Locoregional	8	30	IMPACT410	663	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008669	P-0008669-T01-IM5	Primary	Not Applicable	Locoregional	8	20	IMPACT410	1117	0	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008682	P-0008682-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	80	IMPACT410	664	0.06	18.84	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008769	P-0008769-T02-IM5	Metastasis	Lung	Metastatic non-castrate	NA	80	IMPACT410	673	0.19	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008771	P-0008771-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	80	IMPACT410	826	0.18	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008810	P-0008810-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	8	60	IMPACT410	877	0.3	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008812	P-0008812-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	80	IMPACT410	961	0.24	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008852	P-0008852-T01-IM5	Primary	Not Applicable	Locoregional	9	90	IMPACT410	507	0.15	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008858	P-0008858-T01-IM5	Primary	Not Applicable	Locoregional	9	80	IMPACT410	482	0.1	5.07	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008869	P-0008869-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	40	IMPACT410	600	0.09	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008879	P-0008879-T01-IM5	Primary	Not Applicable	Locoregional	9	50	IMPACT410	642	0.01	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008920	P-0008920-T01-IM5	Metastasis	Other Soft Tissue	Metastatic non-castrate	NA	70	IMPACT410	699	0.18	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008928	P-0008928-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	40	IMPACT410	1164	0.05	2.9	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008954	P-0008954-T01-IM5	Metastasis	Lymph Node	Metastatic non-castrate	NA	95	IMPACT410	919	0.33	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008960	P-0008960-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	80	IMPACT410	980	0.58	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0008966	P-0008966-T01-IM5	Metastasis	Lymph Node	Metastatic castration-resistant	NA	50	IMPACT410	876	0.26	4.35	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009002	P-0009002-T01-IM5	Metastasis	Liver	Metastatic non-castrate	NA	20	IMPACT410	1058	0.04	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009006	P-0009006-T01-IM5	Primary	Not Applicable	Locoregional	7	30	IMPACT410	253	0.08	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009024	P-0009024-T01-IM5	Primary	Not applicable	Metastatic non-castrate	NA	75	IMPACT410	938	0.32	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009044	P-0009044-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	80	IMPACT410	936	0.22	3.62	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009056	P-0009056-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	10	IMPACT410	1107	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009073	P-0009073-T01-IM5	Primary	Not Applicable	Locoregional	7	50	IMPACT410	597	0.09	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009077	P-0009077-T01-IM5	Primary	Not Applicable	Locoregional	7	40	IMPACT410	634	0	0	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009082	P-0009082-T01-IM5	Metastasis	Bone	Metastatic castration-resistant	NA	90	IMPACT410	838	0.42	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009085	P-0009085-T01-IM5	Primary	Not Applicable	Locoregional	8	50	IMPACT410	842	0.07	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009090	P-0009090-T01-IM5	Primary	Not Applicable	Locoregional	9	10	IMPACT410	801	0	0.72	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009151	P-0009151-T01-IM5	Primary	Not Applicable	Metastatic non-castrate	9	30	IMPACT410	339	0.04	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009190	P-0009190-T01-IM5	Primary	Not Applicable	Locoregional	7	30	IMPACT410	975	0.01	1.45	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+P-0009352	P-0009352-T01-IM5	Primary	Not Applicable	Locoregional	NA	25	IMPACT410	998	0.06	2.17	PRAD	Prostate Cancer	Prostate Adenocarcinoma

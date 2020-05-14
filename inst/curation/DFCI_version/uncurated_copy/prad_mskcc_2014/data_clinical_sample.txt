@@ -1,0 +1,109 @@
+#Patient Identifier	Sample Identifier	Sample Type	CNA Data	BIOPSY GLEASON SCORE 1	BIOPSY GLEASON SCORE 2	BIOPSY GLEASON SCORE	sms	ECE	ECE Binary	svi	LNI	PATH GLEASON SCORE 1	PATH GLEASON SCORE 2	PATH GLEASON SCORE	stephanson 5yr nomogram	Oncotree Code	Cancer Type	Cancer Type Detailed
+#Identifier to uniquely specify a patient.	A unique sample identifier.	The type of sample (i.e., normal, primary, met, recurrence).	CNA data.	BIOPSY GLEASON SCORE 1	BIOPSY GLEASON SCORE 2	BIOPSY GLEASON SCORE	sms	ECE	ECE Binary	svi	Lymph Node Invovlement	PATH GLEASON SCORE 1	PATH GLEASON SCORE 2	PATH GLEASON SCORE	stephanson 5yr nomogram	Oncotree Code	Cancer Type	Cancer Type Detailed
+#STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING
+#1	1	9	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+PATIENT_ID	SAMPLE_ID	SAMPLE_TYPE	CNA_DATA	BIOPSY_GLEASON_SCORE_1	BIOPSY_GLEASON_SCORE_2	BIOPSY_GLEASON_SCORE	SMS	ECE	ECE_BINARY	SVI	LNI	PATH_GLEASON_SCORE_1	PATH_GLEASON_SCORE_2	PATH_GLEASON_SCORE	STEPHANSON_5YR_NOMOGRAM	ONCOTREE_CODE	CANCER_TYPE	CANCER_TYPE_DETAILED
+PCA0318	PCA0318	Primary	2.9281013	3	4	7	Negative	None	No	Negative	Negative	3	4	7	97.00693488	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0301	PCA0301	Primary	0.1623892	4	4	8	Negative	Focal	Yes	Negative	Negative	4	4	8	76.6892314	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0334	PCA0334	Primary	0.0470761	3	4	7	Positive	Invades Capsule	No	Negative	Negative	3	4	7	95.89979649	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0375	PCA0375	Primary	0.1817346	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	98.14146161	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0314	PCA0314	Primary	0.3027872	4	3	7	Negative	Focal	Yes	Positive	Negative	5	3	8	60.24832726	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0317	PCA0317	Primary	18.8553982	4	4	8	Positive	Established	Yes	Positive	Positive	5	4	9	3.093795292	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0336	PCA0336	Primary	15.6128556	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	96.57979012	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0346	PCA0346	Primary	4.3548547	4	5	9	Positive	Established	Yes	Positive	Positive	4	5	9	10.90684608	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0300	PCA0300	Primary	25.3151406	4	3	7	Tumor present at the apical margin.	Focal	Yes	Negative	Negative	4	3	7	70.13084888	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0302	PCA0302	Primary	5.1307046	3	3	6	Positive	Established	Yes	Negative	Negative	4	3	7	68.15625429	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0303	PCA0303	Primary	0.2471087	3	3	6	Negative	None	No	Negative	Negative	3	4	7	96.49181962	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0304	PCA0304	Primary	0.2084784	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	96.5955317	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0305	PCA0305	Primary	0.1482648	3	3	6	Negative	None	No	Negative	Negative	3	3	6	98.18032384	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0306	PCA0306	Primary	0.1125704	3	3	6	Positive	FOCAL	Yes	Negative	Negative	3	3	6	90.99119306	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0307	PCA0307	Primary	4.3427755	3	4	7	Positive	Established	Yes	Negative	Negative	3	4	7	89.97220993	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0308	PCA0308	Primary	1.7288217	3	4	7	Positive	Established	Yes	Positive	Negative	4	3	7	40.47600031	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0309	PCA0309	Primary	8.6103081	3	4	7	Positive	Established	Yes	Negative	Negative	4	4	8	65.11791945	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0310	PCA0310	Primary	0.1535364	3	4	7	Negative	FOCAL	Yes	Negative	Negative	4	3	7	79.0270865	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0311	PCA0311	Primary	8.1160663	3	4	7	Negative	Established	Yes	Positive	Negative	3	4	7	82.50359297	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0312	PCA0312	Primary	3.075491	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	3	6	98.2073009	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0313	PCA0313	Primary	1.3324873	3	3	6	Positive	FOCAL	Yes	Negative	Negative	3	4	7	87.78517246	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0315	PCA0315	Primary	3.6106016	3	4	7	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.03099728	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0316	PCA0316	Primary	0.7207387	3	3	6	Negative	None	No	Negative	Negative	3	3	6	98.10784459	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0319	PCA0319	Primary	0.1433115	3	3	6	Negative	None	No	Negative	Negative	3	3	6	99.05759692	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0320	PCA0320	Primary	1.1026285	4	4	8	Positive	Established	Yes	Positive	Negative	4	3	7	29.50749099	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0321	PCA0321	Primary	0.1597745	4	3	7	Negative	Invades Capsule	No	Negative	Positive	4	3	7	90.24220705	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0322	PCA0322	Primary	4.2634535	3	3	6	Negative	Established	Yes	Negative	Negative	3	3	6	96.83847427	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0323	PCA0323	Primary	15.1162827	4	5	9	Negative	Established	Yes	Negative	Negative	4	5	9	75.56040883	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0324	PCA0324	Primary	7.8168397	3	4	7	Negative	FOCAL	Yes	Negative	Negative	3	4	7	93.85312796	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0325	PCA0325	Primary	1.6664467	3	3	6	Negative	Established	Yes	Negative	Negative	3	4	7	93.39342117	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0326	PCA0326	Primary	1.7786014	3	3	6	Negative	Established	Yes	Positive	Negative	3	3	6	88.37109804	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0327	PCA0327	Primary	0.2096433	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.20457196	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0328	PCA0328	Primary	0.2999429	4	4	8	Negative	Invades Capsule	No	Negative	Negative	4	5	9	85.41170955	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0329	PCA0329	Primary	0.2227074	3	5	8	Negative	Focal	Yes	Negative	Negative	4	3	7	81.21763468	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0331	PCA0331	Primary	0.8118826	3	3	6	Positive	Invades Capsule	No	Negative	Negative	3	4	7	95.96970677	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0332	PCA0332	Primary	5.5283051	4	3	7	Positive	Established	Yes	Positive	Not Done	4	3	7	57.22625852	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0333	PCA0333	Primary	0.1888304	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.58313894	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0335	PCA0335	Primary	2.699642	3	3	6	Negative	FOCAL	Yes	Negative	Negative	3	4	7	92.02321768	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0337	PCA0337	Primary	1.0972583	4	4	8	Negative	Established	Yes	Negative	Negative	4	3	7	83.29637051	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0338	PCA0338	Primary	4.5894925	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.33707905	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0339	PCA0339	Primary	11.5492863	3	4	7	Negative	Established	Yes	Negative	Negative	3	4	7	93.01852584	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0340	PCA0340	Primary	0.1423996	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	3	6	98.84128571	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0341	PCA0341	Primary	1.202829	4	4	8	Negative	None	No	Negative	Negative	3	4	7	96.97058201	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0342	PCA0342	Primary	1.0204494	3	3	6	Negative	None	No	Negative	Negative	3	3	6	98.30427766	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0343	PCA0343	Primary	9.3844811	4	5	9	Positive	Established	Yes	Positive	Positive	4	5	9	17.67987609	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0344	PCA0344	Primary	0.2130048	3	3	6	Negative	None	No	Negative	Negative	4	3	7	93.05775166	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0345	PCA0345	Primary	11.1580621	3	4	7	Negative	Invades Capsule	No	Negative	Negative	4	3	7	92.69109964	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0347	PCA0347	Primary	5.8809542	3	4	7	Negative	Invades Capsule	No	Negative	Negative	4	3	7	94.19718981	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0348	PCA0348	Primary	0.100582	3	4	7	Negative	None	No	Negative	Negative	3	3	6	98.62158895	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0349	PCA0349	Primary	0.0822244	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	3	6	98.35467339	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0350	PCA0350	Primary	7.414548	3	3	6	Negative	Focal	Yes	Negative	Negative	3	4	7	92.76998639	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0351	PCA0351	Primary	0.1685721	3	4	7	Negative	Invades Capsule	No	Negative	Negative	3	4	7	96.81456089	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0352	PCA0352	Primary	0.1076925	3	4	7	Negative	Established	Yes	Positive	Positive	3	4	7	73.91797304	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0353	PCA0353	Primary	2.9879377	3	3	6	Negative	None	No	Negative	Negative	3	4	7	97.21837044	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0354	PCA0354	Primary	9.2169073	4	3	7	Negative	Established	Yes	Negative	Positive	4	3	7	76.4687717	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0355	PCA0355	Primary	0.2244728	3	3	6	Negative	Invades Capsule	No	Negative	Negative	4	3	7	95.60980797	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0356	PCA0356	Primary	0.1770888	3	3	6	Negative	None	No	Negative	Not Done	3	3	6	98.54444265	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0357	PCA0357	Primary	4.8947718	4	3	7	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.4514842	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0358	PCA0358	Primary	0.3021948	3	4	7	Negative	Established	Yes	Negative	Negative	3	4	7	92.77323484	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0359	PCA0359	Primary	0.1968243	3	3	6	Negative	Focal	Yes	Negative	Negative	3	3	6	96.18577957	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0360	PCA0360	Primary	0.1717349	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.16714621	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0361	PCA0361	Primary	0.0838745	3	3	6	Negative	None	No	Negative	Negative	3	4	7	97.57310152	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0362	PCA0362	Primary	0.6825233	4	4	8	Negative	None	No	Negative	Negative	4	3	7	93.99219155	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0363	PCA0363	Primary	0.1612004	3	4	7	Negative	Established	Yes	Positive	Negative	3	4	7	84.66464877	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0364	PCA0364	Primary	0.1937774	3	3	6	Negative	Established	Yes	Negative	Negative	3	4	7	91.8751657	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0365	PCA0365	Primary	0.162958	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.61633873	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0366	PCA0366	Primary	0.1532693	3	4	7	Negative	Focal	Yes	Negative	Negative	3	4	7	93.14140677	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0367	PCA0367	Primary	0.7360305	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	96.61492109	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0368	PCA0368	Primary	13.8880551	3	3	6	Negative	None	No	Negative	Negative	3	4	7	96.94510102	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0369	PCA0369	Primary	2.170759	3	3	6	Negative	Established	Yes	Negative	Negative	3	4	7	92.21696854	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0370	PCA0370	Primary	22.6107274	3	4	7	Negative	Established	Yes	Negative	Negative	4	3	7	87.08275557	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0371	PCA0371	Primary	0.1975106	3	4	7	Negative	Focal	Yes	Negative	Negative	3	4	7	93.74825358	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0372	PCA0372	Primary	0.3828419	3	3	6	Negative	None	No	Negative	Negative	3	3	6	98.8053143	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0373	PCA0373	Primary	0.269898	3	4	7	Negative	None	No	Negative	Negative	3	4	7	98.14499021	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0374	PCA0374	Primary	0.2995935	3	4	7	Free of tumor	Invades Capsule	No	Negative	Negative	3	4	7	96.7031002	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0376	PCA0376	Primary	50.2723357	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.4486053	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0377	PCA0377	Primary	0.1775899	4	4	8	Positive	Established	Yes	Positive	Positive	4	4	8	7.688673586	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0378	PCA0378	Primary	20.6694897	4	4	8	Negative	None	No	Negative	Negative	4	3	7	89.76866007	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0379	PCA0379	Primary	0.1812303	3	3	6	Negative	None	No	Negative	Negative	3	4	7	96.98215723	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0380	PCA0380	Primary	0.091057	3	3	6	Negative	Focal	Yes	Negative	Negative	3	4	7	94.0261662	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0381	PCA0381	Primary	4.3218778	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.14202285	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0382	PCA0382	Primary	0.1234781	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	3	6	98.54280353	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0383	PCA0383	Primary	3.5736614	3	3	6	Negative	None	No	Negative	Negative	3	4	7	96.61256075	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0384	PCA0384	Primary	7.1573125	3	3	6	Negative	Established	Yes	Negative	Negative	4	5	9	78.61270308	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0385	PCA0385	Primary	0.2399915	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.21534252	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0386	PCA0386	Primary	0.2402256	3	3	6	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.36996889	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0387	PCA0387	Primary	8.8809968	3	4	7	Negative	Focal	Yes	Negative	Negative	4	3	7	87.84890175	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0388	PCA0388	Primary	2.8572903	3	4	7	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.39425182	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0389	PCA0389	Primary	0.1573032	3	3	6	Negative	Established	Yes	Negative	Negative	3	4	7	94.19075847	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0390	PCA0390	Primary	3.2314659	3	3	6	Negative	Focal	Yes	Negative	Negative	3	3	6	96.64462209	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0391	PCA0391	Primary	0.1821983	3	4	7	Negative	Invades Capsule	No	Negative	Negative	3	4	7	97.59110808	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0392	PCA0392	Primary	9.0833369	3	4	7	Negative	Established	Yes	Negative	Negative	4	3	7	86.5231216	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0393	PCA0393	Primary	0.0427553	3	4	7	Negative	Focal	Yes	Negative	Negative	3	4	7	94.1216588	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0394	PCA0394	Primary	0.0713592	4	3	7	Negative	Established	Yes	Positive	Negative	4	3	7	68.77686977	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0395	PCA0395	Primary	6.7263554	3	4	7	Positive	Established	Yes	Positive	Negative	4	3	7	62.26018071	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0396	PCA0396	Primary	0.2024286	3	4	7	Negative	Invades Capsule	No	Negative	Negative	3	4	7	96.85177207	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0397	PCA0397	Primary	0.2057895	3	4	7	Negative	Established	Yes	Negative	Negative	3	4	7	93.64681244	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0398	PCA0398	Primary	12.0341886	4	3	7	Negative	Established	Yes	Negative	Negative	4	3	7	85.75083017	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0399	PCA0399	Primary	0.1756284	4	3	7	Negative	None	No	Negative	Negative	3	4	7	98.05318117	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0400	PCA0400	Primary	0.00323	3	4	7	Positive	Established	Yes	Negative	Negative	3	4	7	91.29773974	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0401	PCA0401	Primary	8.3057509	3	4	7	Negative	Focal	Yes	Negative	Negative	3	4	7	93.95238757	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0402	PCA0402	Primary	2.8239277	4	3	7	Negative	Focal	Yes	Negative	Negative	3	4	7	93.20688248	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0403	PCA0403	Primary	0.1048549	3	3	6	Negative	None	No	Negative	Negative	3	4	7	97.93156981	PRAD	Prostate Cancer	Prostate Adenocarcinoma
+PCA0404	PCA0404	Primary	13.9304278	4	3	7	Negative	Established	Yes	Negative	Negative	3	4	7	94.85135674	PRAD	Prostate Cancer	Prostate Adenocarcinoma
