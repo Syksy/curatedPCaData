@@ -3,6 +3,7 @@
 
 clinical_SUN <- clinical_SUN %>% 
   # PSA is already there as "PSA"
+  rename("psa" = PSA) %>% 
   mutate(gleason = case_when(
     GLEASON_SCORE == "3+3"                                                      ~ "<=6",
     GLEASON_SCORE %in% c("3+4", "4+3")                                          ~ "7",
@@ -527,10 +528,3 @@ clinical_taylor_all <- clinical_taylor_all %>%
   #   AGE >= 50                                                                   ~ 1
   ))
 # No PSA, No age -> not able to calculate risk. Needs to find it somewhere else
-
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> Start loading, recoding Taylor
