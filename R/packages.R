@@ -59,6 +59,7 @@ curatedPCaDataPackages <- function(
 	##
 
 	# Some base packages that are required downstream and may be in use if not installed early
+	try({noteloadBioc("Biobase")})
 	try({noteloadBioc("S4Vectors")})
 	try({noteloadBioc("GenomicFeatures")})
 	
