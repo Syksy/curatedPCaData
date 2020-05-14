@@ -34,4 +34,4 @@ refseq_genes <- GenomicFeatures::genes(hg38_genes)
 tcga_gene_names <- list(hgnc = genenames, hg38_genes = hg38_genes, refseq_genes = refseq_genes)
 
 # save data for internal use 
-# usethis::use_data(tcga_gene_names, internal = TRUE)
+usethis::use_data(tcga_gene_names, internal = TRUE)
