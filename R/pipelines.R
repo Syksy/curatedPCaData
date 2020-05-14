@@ -1,3 +1,9 @@
+###
+#
+# Sun, et al. portion
+#
+###
+
 #' Generate gene expression data for Sun et al. 
 #' 
 #' @param file_directory Character string indicating directory for downloading files. 
@@ -29,12 +35,11 @@ Generate_GEX_Sun <- function(
 	GEX_Sun <- affy::rma(Sun)
 	# Removing .CEL and packaging names from the GEO-compatible sample names
 	colnames(GEX_Sun) <- gsub(".CEL.gz", "", colnames(affy::exprs(GEX_Sun)))
-	#GEX_Sun <- Sun2
 	keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
 	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(GEX_Sun), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
-	GEX_Sun <- do.call("rbind", by(as.matrix(exprs(GEX_Sun)), INDICES=nam, FUN=collapseFUN))
-	#rownames(GEX_Sun) <- make.unique(nam)
+	# Collapse probes
+	GEX_Sun <- do.call("rbind", by(as.matrix(affy::exprs(GEX_Sun)), INDICES=nam, FUN=collapseFUN))
 	# Remove downloaded files
 	if(cleanup){
 		# First GEO download
@@ -42,10 +47,50 @@ Generate_GEX_Sun <- function(
 		# Tarballs
 		file.remove(supfiles2)
 	}
-	# TODO: Transform into a MultiAssayExperiment-object prior to returning object (MAE_Sun)
 	# Return numeric matrix
 	as.matrix(GEX_Sun)
 }
+
+#' Generate MultiAssaYExperiment-object for Sun, et al.
+Generate_MAE_Sun <- function(
+	pdata = "../data-raw/GSE25136_curated_pdata.txt",
+	image.file,	# If user wishes to save an .RData object of the MAE-object, a file name can be specified
+	cleanup,	# Whether intermediate files ought to be cleaned
+	...
+){
+	# Generate gene expression matrix from GEO
+	GEX_Sun <- Generate_GEX_Sun()
+	# Start constructing colData
+	tmpColDat <- S4Vectors::DataFrame(
+		read.table(pdata, # Curated data dictionary file
+		sep="\t", header=TRUE)
+	)
+	rownames(tmpColDat) <- tmpColDat$sample_name
+	# Generate a MAE-object for Sun GEX
+	MAE_Sun <- MultiAssayExperiment::MultiAssayExperiment(
+		experiments = MultiAssayExperiment::ExperimentList(
+			"GEX" = GEX_Sun
+		),
+		colData = tmpColDat,
+		sampleMap <- S4Vectors::DataFrame(
+			rbind(
+				data.frame(assay = "GEX", primary = tmpColDat$patient_id, colname = tmpColDat$sample_name)
+			)
+		)
+	)
+	# Optionally save an external R workspace file with the MAE object
+	if(!missing(image.file)) save(MAE_Sun, file=image.file)
+	# Return MAE object
+	MAE_Sun
+}
+
+
+####
+#
+# Taylor, et al. portion
+#
+###
+
 
 #' Gene expression data from Taylor et al.
 #'
@@ -162,6 +207,12 @@ Generate_CNA_Taylor <- function(
 	
 }	
 
+####
+#
+# TCGA portion
+#
+###
+
 #' Generate a MultiAssayExperiment-object of TCGA GEX + CNA
 Generate_MAE_TCGA <- function(
 	pdata = "../data-raw/prad_tcga_curated_pdata.txt",	# Location of the curated pdata txt-file
@@ -229,7 +280,11 @@ Generate_cBioPortal <- function(
 	dat
 }
 
-
+###
+#
+# ICGC portion
+#
+###
 
 ## Multiple specific data pulls from the ICGC depo
 
@@ -317,6 +372,16 @@ genes <- .getGeneNames()
 
 ####
 #
+# Sun, et al.
+# GEX
+#
+####
+
+# Running Sun, et al.:
+MAE_Sun <- Generate_MAE_Sun()
+
+####
+#
 # TCGA 
 # GEX + CNA
 #
@@ -330,35 +395,6 @@ genes <- .getGeneNames()
 # N=333 in TCGA provisional, Cell 2015
 
 MAE_TCGA <- Generate_MAE_TCGA()
-
-####
-#
-# Sun, et al.
-# GEX
-#
-####
-
-# Running Sun, et al.:
-GEX_Sun <- Generate_GEX_Sun()
-
-# MultiAssayExperiment for Sun et al. (albeit only one 'omics)
-MAE_Sun <- MultiAssayExperiment()
-# Curated data dictionary file
-colData(MAE_Sun) <- S4Vectors::DataFrame(
-	read.table("../data-raw/GSE25136_curated_pdata.txt", 
-	sep="\t", header=TRUE)
-)
-## Create a sampleMap
-# Not needed for Sun, but maybe would be good to include for consistency
-# sampleMap(MAE_Sun) <- S4Vectors::DataFrame(
-# 	...
-# )	
-
-experiments(MAE_Sun) <- 
-	MultiAssayExperiment::ExperimentList(list(
-		GEX = GEX_Sun
-	)
-)
 
 
 ####
