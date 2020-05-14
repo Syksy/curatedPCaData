@@ -387,8 +387,8 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
   ))
 
 ############################################################################## MSKCC ############# 
-clinical_MSKCC <- clinical_MSKCC
-# no relevant info...
+# clinical_MSKCC <- clinical_MSKCC
+# no relevant info... sad because 1465 patients...
 
 ############################################################################## ICGC-FR #############
 # ICGC doesn't have much clinical information (canada has only Tx stage)
