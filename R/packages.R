@@ -47,6 +47,11 @@ curatedPCaDataPackages <- function(
 		library("RMariaDB")
 	}
 
+	if(!require("pillar")){
+		install.packages("pillar")
+		library("pillar")
+	}
+
 	##
 	#
 	# Utilized by multiple pipelines

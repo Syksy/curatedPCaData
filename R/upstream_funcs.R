@@ -77,30 +77,37 @@ getProfileDataWrapper <- function(
 	# Bioconductor;
 	# Warning! Old packages may cause some dependencies to fail, while their updating may fail if they're already in use for the session
 	# Safest is to update all Bioconductor packages before analyses / running pipelines
-	if (!requireNamespace("BiocManager", quietly = TRUE))
-	    install.packages("BiocManager")
-	BiocManager::install(version = "3.10", update=update, ask=ask)
+	#if (!requireNamespace("BiocManager", quietly = TRUE))
+	#    install.packages("BiocManager")
+	#BiocManager::install(version = "3.10", update=update, ask=ask)
 	# BioConductor 'annotate' package for all sorts of conversions and genetic location info, etc
 	# Annotation for microarrays
 	# For Entrez <-> Hugo Gene Symbol mapping
 	# http://bioconductor.org/packages/release/bioc/html/annotate.html
-	if(!require(annotate)) {
-		biocLite("annotate", suppressUpdates=T)
-		library(annotate)
-	}
+	#if(!require(annotate)) {
+	#	biocLite("annotate", suppressUpdates=T)
+	#	library(annotate)
+	#}
 	# Genome wide annotation for Human
 	# For Entrez <-> Hugo Gene Symbol mapping (database)
 	# https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html
-	if(!require(org.Hs.eg.db)){
-		biocLite("org.Hs.eg.db", suppressUpdates=T)
-		library(org.Hs.eg.db)
-	}
-
+	#if(!require(org.Hs.eg.db)){
+	#	biocLite("org.Hs.eg.db", suppressUpdates=T)
+	#	library(org.Hs.eg.db)
+	#}
+	#
 	# biomaRt
-	if(!require(biomaRt)){
-		biocLite("biomaRt", suppressUpdates=T)
-		library(biomaRt)
-	}
+	#if(!require(biomaRt)){
+	#	biocLite("biomaRt", suppressUpdates=T)
+	#	library(biomaRt)
+	#}
+
+	if (!requireNamespace("BiocManager", quietly = TRUE))
+	    install.packages("BiocManager")
+
+	if(!require("biomaRt")) BiocManager::install("biomaRt")
+	if(!require("annotate")) BiocManager::install("annotate")
+	if(!require("org.Hs.eg.db")) BiocManager::install("org.Hs.eg.db")
 
 	# Fetch gene names
 	ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
