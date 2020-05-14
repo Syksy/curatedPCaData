@@ -2,7 +2,7 @@ generate_gex_geo <- function(
   file_directory, 
   geo_code = "GSE25136", # code for Sun et al. 
   cleanup = TRUE, 
-  collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
+  collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
