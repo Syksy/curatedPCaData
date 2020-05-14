@@ -57,6 +57,13 @@ Generate_GEX_Taylor <- function(
 	...
 ){
 	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	# Fetch supplementary files from Taylor et al. from GEO
+	# Be wary as the tarball already is 24.2 Gb
+	supfiles <- GEOquery::getGEOSuppFiles('GSE21032')
+	# Step in the internal directory created by GEOquery
+	setwd("GSE21032")
+	# Open the tarball
+	utils::untar(tarfile=rownames(supfiles))
 	# First download CEL files from GEO
 	CELs <- read.celfiles(list.celfiles())	
 	#> CELs
@@ -107,6 +114,13 @@ Generate_CNA_Taylor <- function(
 	...
 ){
 	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	# Fetch supplementary files from Taylor et al. CNA from GEO
+	# Be wary as the tarball already is 14.9 Gb
+	supfiles <- GEOquery::getGEOSuppFiles('GSE21035')
+	# Step in the internal directory created by GEOquery
+	setwd("GSE21035")
+	# Open the tarball
+	utils::untar(tarfile=rownames(supfiles))
 	# Read the raw Agilent CGH data
 	# Name samples according to the filename
 	# Agilent-014693 Human Genome CGH Microarray 244A (Feature number version)
@@ -148,32 +162,74 @@ Generate_CNA_Taylor <- function(
 	
 }	
 
-Generate_GEX_TCGA <- function(
-	file_directory, 
-	genes, # List of gene symbols to iterate over
+#' Generate a MultiAssayExperiment-object of TCGA GEX + CNA
+Generate_MAE_TCGA <- function(
+	pdata = "../data-raw/prad_tcga_curated_pdata.txt",	# Location of the curated pdata txt-file
+	image.file,	# If user wishes to save an .RData object of the MAE-object, a file name can be specified
+	# clean,	# No clean-up required for TCGA as no intermediate files are generated
 	...
 ){
-	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
+	# Running TCGA GEX:
+	GEX_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_rna_seq_v2_mrna", caseList="prad_tcga_sequenced")
+
+	# Running TCGA CNA:
+	CNA_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_gistic", caseList="prad_tcga_sequenced")
+
+	# Running TCGA MAE:
+	
+	# Start constructing colData
+	tmpColDat <- S4Vectors::DataFrame(
+		read.table(pdata, # Curated data dictionary file
+		sep="\t", header=TRUE)
+	)
+	# Sanitize '-'-symbols in TCGA names as R tends to replace mathematical operators or whitespace with '.'s
+	tmpColDat$sample_name <- gsub("-", ".", tmpColDat$sample_name, fixed=TRUE)
+	# Set row names
+	rownames(tmpColDat) <- tmpColDat$patient_id
+
+	# Generate a MAE-object for TCGA 'omics
+	MAE_TCGA <- MultiAssayExperiment::MultiAssayExperiment(
+		experiments = MultiAssayExperiment::ExperimentList(
+			"GEX" = t(GEX_TCGA),
+			"CNA" = t(CNA_TCGA)
+		),
+		colData = tmpColDat,
+		sampleMap <- S4Vectors::DataFrame(
+			rbind(
+				data.frame(assay = "GEX", primary = tmpColDat$patient_id, colname = tmpColDat$sample_name),
+				data.frame(assay = "CNA", primary = tmpColDat$patient_id, colname = tmpColDat$sample_name)
+			)
+		)
+	)
+	# Optionally save an external R workspace file with the MAE object
+	if(!missing(image.file)) save(MAE_TCGA, file=image.file)
+	# Return MAE object
+	MAE_TCGA
+}
+
+#' Generic function for pulling data from cBioPortal; useful for e.g. TCGA pulling on multiple omics layers
+Generate_cBioPortal <- function(
+	genes, # List of gene symbols to iterate over
+	geneticProfiles="prad_tcga_rna_seq_v2_mrna", # for cgdsr calls, platform and dataset specific string
+	caseList="prad_tcga_sequenced", # for cgdsr calls, platform and dataset specific string
+	...
+){
 	#http://www.cbioportal.org/study?id=prad_tcga#summary
-	#mycgds <- cgdsr::CGDS("http://www.cbioportal.org/public-portal/")
 	mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-	# Get the summary lists for 'omics and case profiles	
-	TCGA <- cgdsr::getCaseLists(mycgds,"prad_tcga")
-	TCGA_genetic <- cgdsr::getGeneticProfiles(mycgds,"prad_tcga")
 	# Use the wrapper function to iterative calls for split gene lists
-	#GEX_TCGA <- curatedPCaData::getProfileDataWrapper(
-	GEX_TCGA <- getProfileDataWrapper(
+	dat <- getProfileDataWrapper(
 		x=mycgds, # cgdsr object
 		#genes=curatedPCaData:::.getGeneNames()$hgnc, # All unique gene symbols
 		genes=genes, # All unique gene symbols
-		geneticProfiles="prad_tcga_rna_seq_v2_mrna", # mRNA expression
-		caseList="prad_tcga_sequenced", # Case list
-		verb = 2
+		geneticProfiles=geneticProfiles, # Omics profile
+		caseList=caseList # Case list
 	)
 	# TODO: Filter out low quality samples based on list provided by Travis
-	# Return GEX for TCGA
-	GEX_TCGA
+	# Return omics matrix
+	dat
 }
+
+
 
 ## Multiple specific data pulls from the ICGC depo
 
@@ -250,29 +306,6 @@ Generate_ICGC_UK <- function(
 ## PRAD-US (PRAD-US Prostate Adenocarcinoma - TCGA, US)
 ## -> OMIT?
 
-
-#' Generic function for pulling data from cBioPortal
-Generate_cBioPortal <- function(
-	genes, # List of gene symbols to iterate over
-	geneticProfiles, # for cgdsr calls, platform and dataset specific string
-	caseList, # for cgdsr calls, platform and dataset specific string
-	...
-){
-	#http://www.cbioportal.org/study?id=prad_tcga#summary
-	mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-	# Use the wrapper function to iterative calls for split gene lists
-	dat <- getProfileDataWrapper(
-		x=mycgds, # cgdsr object
-		#genes=curatedPCaData:::.getGeneNames()$hgnc, # All unique gene symbols
-		genes=genes, # All unique gene symbols
-		geneticProfiles="prad_tcga_rna_seq_v2_mrna", # Omics profile
-		caseList="prad_tcga_sequenced" # Case list
-	)
-	# TODO: Filter out low quality samples based on list provided by Travis
-	# Return omics matrix
-	dat
-}
-
 ####
 #
 # Supporting variables
@@ -296,37 +329,7 @@ genes <- .getGeneNames()
 # Note from Jordan & Christelle 
 # N=333 in TCGA provisional, Cell 2015
 
-# Running TCGA GEX:
-GEX_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_rna_seq_v2_mrna", caseList="prad_tcga_sequenced")
-
-# Running TCGA CNA:
-CNA_TCGA <- Generate_cBioPortal(genes = genes$hgnc, geneticProfiles="prad_tcga_gistic", caseList="prad_tcga_sequenced")
-
-# Running TCGA MAE:
-# Generate a placeholder MAE-object for TCGA 'omics
-MAE_TCGA <- MultiAssayExperiment()
-# Curated data dictionary file
-colData(MAE_TCGA) <- S4Vectors::DataFrame(
-	# TODO: Adjust path to function directly with stored external files in a package
-	read.table("../data-raw/prad_tcga_curated_pdata.txt", 
-	sep="\t", header=TRUE)
-)
-# Create a sampleMap
-sampleMap(MAE_TCGA) <- S4Vectors::DataFrame(
-	rbind(
-		data.frame(assay = "GEX", primary = colData(MAE_TCGA)$sample_name, colname = colData(MAE_TCGA)$sample_name),
-		data.frame(assay = "CNA", primary = colData(MAE_TCGA)$sample_name, colname = colData(MAE_TCGA)$sample_name)
-	)
-)
-# Insert 'omics as experiments with constructor for ExperimentList
-experiments(MAE_TCGA) <- 
-	MultiAssayExperiment::ExperimentList(list(
-		GEX = GEX_TCGA[,which(colnames(GEX_TCGA) %in% colData(MAE_TCGA)$sample_name)],
-		CNA = CNA_TCGA[,which(colnames(CNA_TCGA) %in% colData(MAE_TCGA)$sample_name)]
-	)
-)
-
-
+MAE_TCGA <- Generate_MAE_TCGA()
 
 ####
 #
