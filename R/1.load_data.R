@@ -102,6 +102,7 @@ clinical_CPC_GENE = getClinicalData(mycgds,"prad_cpcg_2017_all")
 
 ############################################################################## ICGC-FR #############
 icgc <- list()
+# RF
 icgc[["PRAD-FR"]] <- 
   c(
     "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-FR/donor.tsv.gz")
@@ -111,9 +112,20 @@ remotes::install_github("Syksy/curatedTools")
 ICGC.PRAD.FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
 clinical_ICGC_FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
 
+# UK
 icgc[["PRAD-UK"]] <- 
   c(
     "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-UK/donor.PRAD-UK.tsv.gz")
+icgc[["PRAD-CA_specimen"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-UK/specimen.PRAD-UK.tsv.gz")
 
+# CA
+icgc[["PRAD-CA"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-CA/donor.tsv.gz")
+icgc[["PRAD-CA_specimen"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-CA/specimen.PRAD-CA.tsv.gz")
 # Cleaning
 rm(query, clinical, icgc, mycgds)
