@@ -59,7 +59,7 @@ Generate_MAE_Sun <- function(
 	...
 ){
 	# Generate gene expression matrix from GEO
-	GEX_Sun <- Generate_GEX_Sun()
+	GEX_Sun <- Generate_GEX_Sun(cleanup = cleanup)
 	# Start constructing colData
 	tmpColDat <- S4Vectors::DataFrame(
 		read.table(pdata, # Curated data dictionary file
@@ -98,7 +98,7 @@ Generate_MAE_Sun <- function(
 #' Available data types; Affymetrix Exon arrays, 2 separate types
 Generate_GEX_Taylor <- function(
 	file_directory, 
-	clean = FALSE,
+	cleanup = FALSE,
 	...
 ){
 	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
@@ -142,6 +142,9 @@ Generate_GEX_Taylor <- function(
 	nam2 <- unlist(lapply(nam, FUN=function(z) { strsplit(z, " // ")[[1]][2] }))
 	nam2[is.na(nam2)] <- "NA"
 	rownames(GEX_Taylor) <- make.unique(nam2)
+	## TODO:
+	# cleanup
+	
 	# Return constructed gene expression matrix
 	GEX_Taylor
 }
@@ -155,7 +158,7 @@ Generate_GEX_Taylor <- function(
 #' Ref: Taylor BS, Schultz N, Hieronymus H, Gopalan A et al. Integrative genomic profiling of human prostate cancer. Cancer Cell 2010 Jul 13;18(1):11-22. 
 Generate_CNA_Taylor <- function(
 	file_directory, 
-	clean = FALSE,
+	cleanup = FALSE,
 	...
 ){
 	if(!missing(file_directory)) setwd(file_directory) # exchange setwd with here::here()
@@ -201,11 +204,58 @@ Generate_CNA_Taylor <- function(
 	# For the old pipeline with lacking sampleName but included fileName, run:
 	CNA_Taylor <- lapply(CNA_Taylor, FUN=.renameSampleName)
 	### TODO:
+	
+	# cleanup
+	
 	## Export a compiled GISTIC 2.0 -compatible file from the segmented samples
 	##exportGISTIC(CNA_Taylor, file="inputGISTIC_Taylor.tsv")
 	CNA_Taylor
 	
 }	
+
+#' Generate MultiAssaYExperiment-object for Taylor, et al.
+Generate_MAE_Taylor <- function(
+	pdata = "../data-raw/prad_mskcc_curated_pdata.txt",
+	image.file,	# If user wishes to save an .RData object of the MAE-object, a file name can be specified
+	cleanup,	# Whether intermediate files ought to be cleaned
+	...
+){
+	# Gene expression from GEO
+	GEX_Taylor <- Generate_GEX_Taylor(cleanup=cleanup)
+	# Copy number alterations from GEO
+	CNA_Taylor <- Generate_CNA_Taylor(cleanup=cleanup)
+	
+	# Running Taylor MAE:
+	
+	# Start constructing colData
+	tmpColDat <- S4Vectors::DataFrame(
+		#read.table(pdata, # Curated data dictionary file
+		read.table("D:/Gits/curatedPCaData/data-raw/prad_mskcc_curated_pdata.txt", # Curated data dictionary file
+		sep="\t", header=TRUE)
+	)
+	# Set row names
+	rownames(tmpColDat) <- tmpColDat$patient_id
+
+	# Generate a MAE-object for TCGA 'omics
+	MAE_Taylor <- MultiAssayExperiment::MultiAssayExperiment(
+		experiments = MultiAssayExperiment::ExperimentList(
+			"GEX" = t(GEX_Taylor)#,
+			#"CNA" = t(CNA_Taylor)
+		),
+		colData = tmpColDat,
+		sampleMap <- S4Vectors::DataFrame(
+			rbind(
+				data.frame(assay = "GEX", primary = tmpColDat$patient_id, colname = tmpColDat$sample_name)#,
+				#data.frame(assay = "CNA", primary = tmpColDat$patient_id, colname = tmpColDat$sample_name)
+			)
+		)
+	)	
+	
+	# Optionally save an external R workspace file with the MAE object
+	if(!missing(image.file)) save(MAE_Taylor, file=image.file)
+	# Return MAE-object from Taylor et al.
+	MAE_Taylor
+}
 
 ####
 #
