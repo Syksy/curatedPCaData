@@ -19,7 +19,10 @@ Imports:
     utils,
     affy,
     AnnotationDbi,
-    hgu133a.db
+    hgu133a.db,
+    magrittr,
+    dplyr,
+    MultiAssayExperiment
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0
