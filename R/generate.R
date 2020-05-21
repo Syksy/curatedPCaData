@@ -1,6 +1,6 @@
 generate_gex_geo <- function(
   file_directory, 
-  geo_code = "GSE25136", # code for Sun et al. 
+  geo_code = "GSE25136", # code for Sun et al. (Taylor et al. - GSE21032)
   cleanup = TRUE, 
   collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   ...
@@ -11,25 +11,35 @@ generate_gex_geo <- function(
 
   # Open the tarball(s)
   utils::untar(tarfile = rownames(supfiles))
-  # Make sure to function in a working directory where the are no other tarballs present
-  gz_files <- list.files()
-  gz_files <- gz_files[grep(".gz", gz_files)]
-
-  # Read Affymetrix MA
-  Sun <- affy::ReadAffy()
-  colnames(affy::exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
   
-  # Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
-  gex <- affy::rma(Sun)
+  # if(geo_code == "GSE25136"){
+    # Make sure to function in a working directory where the are no other tarballs present
+    gz_files <- list.files()
+    gz_files <- gz_files[grep(".gz", gz_files)]
   
-  # Removing .CEL and packaging names from the GEO-compatible sample names
-  colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
-
-  keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-  nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
-                                                                  as.character(hgu133a.db::hgu133aALIAS2PROBE))])
-  nam[is.na(nam)] <- "NA"
-  gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
+    # Read Affymetrix MA
+    Sun <- affy::ReadAffy()
+    colnames(affy::exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
+    
+    # Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
+    gex <- affy::rma(Sun)
+    
+    # Removing .CEL and packaging names from the GEO-compatible sample names
+    colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
+  
+    keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
+    nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
+                                                                    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
+    nam[is.na(nam)] <- "NA"
+    gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
+    
+  # } #else if (geo_code == "GSE21032") {
+    
+    # breaks here -----
+    # Error: vector memory exhausted (limit reached?)
+    # cels <- oligo::read.celfiles(affy::list.celfiles(), pkgname='pd.huex.1.0.st.v2')	
+    
+ # }
 
   # Remove downloaded files
   if(cleanup){
