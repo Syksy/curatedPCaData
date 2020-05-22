@@ -11,11 +11,11 @@ library(tidyverse)
 
 ############################################################################## SUN ############# 
 # Use package cgdsr
-# install.packages('cgdsr')
+install.packages('cgdsr')
 library(cgdsr)
 # Create CGDS object
 mycgds = CGDS("https://www.cbioportal.org/")
-test(mycgds)
+# test(mycgds)
 
 # Get list of cancer studies at server
 # a <- getCancerStudies(mycgds) # We want prad_eururol_2017
@@ -31,7 +31,20 @@ clinical_SUN = getClinicalData(mycgds,"prad_eururol_2017_all")
 
 
 clinical_taylor = getClinicalData(mycgds,"prad_mskcc_all")
+### Geoquery because missing age and psa
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#   install.packages("BiocManager")
+# 
+# BiocManager::install("GEOquery")
+# library(GEOquery)
+# 
+# geoData <- getGEO("GSE21034", GSEMatrix = TRUE)
+# dat <- geoData[["GSE21034-GPL10264_series_matrix.txt.gz"]]@phenoData@data
+# getGEOfile("GSE21034")
+# filePaths = getGEOSuppFiles("GSE21034")
+# df1 <- getGSEDataTables("GSE21034")
 
+# not working
 ############################################################################## TCGA_333 ############# 
 clinical_TCGA_333 = getClinicalData(mycgds,"prad_tcga_pub_all")
 # Rename the patients id for later merge
@@ -42,11 +55,11 @@ clinical_TCGA_333$bcr_patient_barcode <- substr(rownames(clinical_TCGA_333), sta
 
 # TCGAbiolinks package # https://bioc.ism.ac.jp/packages/3.2/bioc/vignettes/TCGAbiolinks/inst/doc/tcgaBiolinks.html
 # install packages
-# if (!requireNamespace("BiocManager", quietly = TRUE))
-#   install.packages("BiocManager")
-# BiocManager::install(version = "3.10")
-# library(BiocManager)
-# BiocManager::install("TCGAbiolinks")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version = "3.10")
+library(BiocManager)
+BiocManager::install("TCGAbiolinks")
 library(TCGAbiolinks)
 
 # Load data
@@ -87,6 +100,7 @@ clinical_CPC_GENE = getClinicalData(mycgds,"prad_cpcg_2017_all")
 
 ############################################################################## ICGC-FR #############
 icgc <- list()
+# RF
 icgc[["PRAD-FR"]] <- 
   c(
     "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-FR/donor.tsv.gz")
@@ -95,9 +109,20 @@ install.packages("remotes")
 remotes::install_github("Syksy/curatedTools")
 clinical_ICGC_FR <- lapply(icgc[["PRAD-FR"]], FUN=curatedTools:::.icgcDownload)
 
+# UK
 icgc[["PRAD-UK"]] <- 
   c(
     "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-UK/donor.PRAD-UK.tsv.gz")
+icgc[["PRAD-CA_specimen"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-UK/specimen.PRAD-UK.tsv.gz")
 
+# CA
+icgc[["PRAD-CA"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-CA/donor.tsv.gz")
+icgc[["PRAD-CA_specimen"]] <- 
+  c(
+    "https://dcc.icgc.org/api/v1/download?fn=/current/Projects/PRAD-CA/specimen.PRAD-CA.tsv.gz")
 # Cleaning
 rm(query, clinical, icgc, mycgds)
