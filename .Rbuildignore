@@ -1,3 +1,5 @@
+^.*\.tws$
+^.*\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
