@@ -35,8 +35,8 @@ devtools::install_github("Syksy/curatedPCaData")
 
 ## Usage
 
-```{r, eval=FALSE}
+```{r}
 library(curatedPCaData)
 
-# insert basic example here 
+curatedPCaData::tcga_gex[1:5,1:5]
 ```
