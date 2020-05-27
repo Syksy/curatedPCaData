@@ -20,11 +20,11 @@ taylor_gex <- curatedPCaData:::generate_cbioportal(
   geneticProfiles="prad_mskcc_mrna_median_Zscores",
   caseList="prad_mskcc_sequenced"
 )
-usethis::use_data(tcga_gex, overwrite = TRUE)
+usethis::use_data(taylor_gex, overwrite = TRUE)
 
 taylor_cna <- curatedPCaData:::generate_cbioportal(
   genes = tcga_gene_names,
   geneticProfiles="prad_mskcc_cna",
   caseList="prad_mskcc_sequenced"
 )
-usethis::use_data(tcga_cna, overwrite = TRUE)
+usethis::use_data(taylor_cna, overwrite = TRUE)
