@@ -1,0 +1,50 @@
+---
+title: "TCGA-example"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TCGA-example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+```
+
+This vignette introduces `curatedPCaData` and provides an overview of the  package using data fro TCGA as an example. 
+
+***
+
+3 different types of datasets are currently available: 
+    + `_gex.rda` contains gene expression values
+    + `_cna.rda` contains copy number values
+    + `_clinical.rda` contains clinical/phenotype information
+    
+The TCGA data included in the package contains all 3 of these. 
+
+## Introduction 
+
+In this vignette, we will : 
+
+1. Examine the data as provided in `curatedPCaData`
+2. Format the data  
+3. Calculate ... 
+4. Run a simple analysis 
+
+## The data 
+
+All datasets are currently housed within the `data/` folder of the package and follows a simply naming convention of `first-author` and `data type` separated by a `_` (see dataset types above).
+
+Use the base r function `load()` to import the datasets. 
+
+```{r importing}
+library(curatedPCaData)
+
+load()
+```

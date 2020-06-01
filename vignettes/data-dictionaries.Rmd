@@ -1,0 +1,153 @@
+---
+title: "Data Dictionary"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{data-dictionaries}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+library(kableExtra)
+
+var_name <- c("study_name", "patient_id", "sample_name",
+              "alt_sample_name", "overall_survival_status",
+              "days_to_overall_survival", "age_at_initial_diagnosis",
+              "year_diagnosis", "gleason_grade","gleason_major",
+              "gleason_minor", "source_of_gleason", "geade_group",
+              "T_pathological", "T_substage_pathological",
+              "T_clinical", "T_substage_clinical",
+              "ERG_fusion_CNA", "ERG_fusion_IHC", "ERG_fusion_GEX",
+              "disease_specific_recurrence_status",
+              "days_to_disease_specific_recurrence", 
+              "metastasis_occurrence_status", "days_to_metastatic_occurrence",
+              "psa", "race", "smoking_status", "extraprostatic_extension",
+              "perineural_invasion", "seminal_vesicle_invasion",
+              "angiolymphatic_invasion", "androgen_ablation", "capsule", 
+              "M_stage", "M_substage", "other_patient", "sample_type", 
+              "genomic_alterations", "tumor_margins_positive", "tissue_source", 
+              "metastatic_site", "microdissected", "frozen_ffpe", 
+              "other_feature", "batch", "other_sample", 
+              "tumor_purity_pathology", "tumor_purity_demix", 
+              "tumor_purity_absolute", "zone_of_origin", 
+              "zone_of_origin_estimated", "immune_infiltration", 
+              "mutational_signatures", "neoantigen_load", "AR_activity", 
+              "N_stage", "N_substage", "therapy_radiation_initial", 
+              "therapy_radiation_salvage", "therapy_surgery_intial", 
+              "therapy_hormonal_initial", "other_treatment")
+
+var_class <- c("character", "character", "character",
+               "character", "integer", "numeric", rep("integer", 5),
+               "character", "character", "integer", "character",
+               "integer", "character", rep("integer", 4), 
+               "numeric", "integer", "numeric", "numeric",
+               "character", rep("integer", 6), 
+               rep("character", 3), "string", "character", "string", "integer",
+               "character", "character", "integer", rep("character", 3),
+               "string", rep("integer", 3), "character", "character", 
+               rep("string", 3), "integer", "character", "charatcer", 
+               rep("integer", 4), "string")
+
+is_unique <- c("non-unqiue", "non-unique", "unique",
+               "unique", rep("non-unique", 58))
+
+is_required <- c("required", "required", "required",
+                 rep("optional", 59))
+
+allowed_values <- c("\\*", "\\*", "\\*", "\\*",
+                    "1|0", "[1-10000]", "[1-9][0-9]", "[1900-2010]",
+                    "2|3|4|5|6|7|8|9|10", "2|3|4|5", "2|3|4|5", 
+                    "biopsy | prostatectomy | tissue_block", 
+                    "<=6|3+4|4+3|>=8", "1|2|3|4", "a|b|c", "1|2|3|4",
+                    "a|b|c", rep("1|0", 4), "[1-10000]", "1|0", "[1-10000]",
+                    "[1-10000]", "caucasian | african_american | asian | other", 
+                    rep("1|0", 6), "extensive | focal | intact", "X|0|1", 
+                    "[abc]", "\\*", 
+                    "primary | metastatic | adjacentnormal | healthy | BPH | PIN | atrophic.epithelium | normal.stroma | BPH.stroma | healthy.stroma | cell.line | xenograft", 
+                    "\\*", "1|0", 
+                    "biopsy | TURP | prostatectomy | prostatectomy_and_TURP | autopsy | cystoprostatectomy", 
+                    "liver | lung | bone | brain | lymph_node | soft_tissue", "1|0", 
+                    "frozen | FFPE", "CRPC | cribriform | neuroendocrine", "\\*", 
+                    "\\*", "[0-100]", "[0-100]", "[0-100]", 
+                    "transitional | peripheral | mixed | central", 
+                    "transitional | peripheral", "[]", "[]", "[]", 
+                    "[0-100]", "X|0|1|2|3", "[abc]", "1|0", "1|0", "1|0", 
+                    "1|0", 
+                    "fish_oil | no_neoadjuvant | prednisone | selenium | vitaminE | taxane")
+
+var_desc <- c("the study name that will link this information to the study meta-data", 
+              "a unique identifier for the patient. A single patient may have more than one sample taken",
+              "primary sample identifier", 
+              "if another identifier is used, for example in supplemental tables or GEO accession ids", 
+              "binarized status of the patient, where 1 represents death and 0 represents no reported death",
+              "time to death or last follow-up in days", "in years", 
+              "the year at which the patient was diagnoses with disease",
+              "Gleason grade  (integer): total of two grades added together",
+              "Gleason grade  (integer) for the major site score",
+              "Gleason grade  (integer) for the minor site score",
+              "source of where the pathogist performed Gleason grading",
+              "separation of the gleason grades into groups that show different prognosis", 
+              "pathological T stage (assessment made after surgery), based on tumor only", 
+              "pathological T substage (assessment made after surgery), based on tumor only", 
+              "clinical T stage (at time of diagnosis) based on tumor only",
+              "clinical T substage  (at time of diagnosis) based on tumor only",
+              "presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by copy number alteration analysis",
+              "presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by immunohistochemistry",
+              "presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by gene expression",
+              "binarized status of the patient, where 1 represents an recurrence and 0 represents no reported recurrence",
+              "time to recurrence or last follow-up in days",
+              "binarized status of the patient, where 1 represents a metastatic occurrence and 0 represents no reported metastatic occurrence",
+              "time to metastatic occurrence or last follow-up in days",
+              "prostate specific angigen level at diagnosis",
+              "race", 
+              "smoker (past or current) or non-smoker", 
+              "spread of prostate cancer out of the prostate gland.  Denotes a later stage of prostate cancer (NOTE: We do not currently distinguish between focal, established and multifocal, which are all currently translated into this template as y).",
+              "cancer has spread to the seminal vesicles",
+              "cancer has spread to blood vessels and lymph vessels",
+              "medical treatment to suppress or block the production of male sex hormones", 
+              "status of the prostate capsule (??)",
+              "At the time of surgery. X: cannot evaluate distant metastasis, 0: there is no distant metastasis, 1: there is distant metastasis",
+              "M1a: the cancer has spread to lymph nodes beyond the regional ones, M1b: the cancer has spread to_bone, M1c: the cancer has spread to other sites (regardless of bone involvement)",
+              "a string that captures any additional patient information, features separated by bar (e.g. feature 1|feature 2|feature 3)",
+              "type of tissue isolated from the patient and used for further -omic profiling. healthy should be only from individuals without cancer, adjacentnormal from individuals with cancer, metastatic for non-primary tumors",
+              "captures the list of reported alterations in the sample, in the format, gene:event, separated by a bar (eg. TP53:mutation|ETV1:fusion|PTEN:deletion)",
+              "Histologically altered cells in any surgical margins",
+              "the source of the sample",
+              "site where the metastatic sample was taken from",
+              "microdissected or not", "frozen or FFPE", 
+              "other descriptions of the sample", 
+              "An way that describes a batch if a batch effect can be modeled (can be numeric or categorigal)",
+              "a string that captures any additional sample information, features separated by bar (e.g. feature 1|feature 2|feature 3)",
+              "estimate of the tumor purity according to pathological assessment",
+              "estimate of the tumor purity in the sample using the Demix method",
+              "estimate of the tumor purity in the sample using Absolute",
+              "zone of origin assessed through tissue pathology",
+              "estimate of zone of origin using the method from Sinnott et al.",
+              "estimate of immune infiltration using CIBERSORT",
+              "estimate of mutational signatures using deconstructSigs",
+              "estimate of mutational load using NetMHCPan",
+              "AR 20-gene signature", 
+              "regional lymph node status at the time of surgery.  X: cannot be measured, 0: no cancer in nearby lymph nodes, 1,2,3: the number and location of lymph nodes that contain cancer",
+              "1a: the cancer has spread to lymph nodes beyond the regional ones, 1b: the cancer has spread to_bone, M1c: the cancer has spread to other sites (regardless of bone involvement)",
+              "was radiation given as a primary therapy?",
+              "was radiation given after relapse from surgery?",
+              "was surgery given as a primary therapy?",
+              "was hormonal therapy given as a primary therapy?",
+              "any other treatments")
+
+clinical_dictionary <- as.data.frame(cbind(var_name, var_class, is_required, 
+                                           is_unique, allowed_values, var_desc))
+
+knitr::kable(clinical_dictionary, "html", 
+             col.names = c("Variable", "Class", "Required?", "Unique?",
+                           "Allowed values", "Description")) %>%
+  kableExtra::column_spec(4, width_min = "1in") 
+```
