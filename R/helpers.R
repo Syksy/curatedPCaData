@@ -1,11 +1,10 @@
 getProfileDataWrapper <- function(
   x, 
   genes, 
-  geneticProfiles, 
-  caseList, 
   delay = 0.05, # For Sys.sleep to not fetch too fast from cBio API
   splitsize = 100, # How many genes are fetched at one time - max 1000
-  verb = TRUE # If call should be verbose; 0 = silent, 1 = info
+  verb = TRUE, # If call should be verbose; 0 = silent, 1 = info
+  ...
 ){
   genesplit <- rep(1:ceiling(length(genes$hgnc)/splitsize), each=splitsize)[1:length(genes$hgnc)]
   splitgenes <- split(genes$hgnc, f=genesplit)
