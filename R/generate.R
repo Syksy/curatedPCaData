@@ -55,23 +55,44 @@ generate_gex_geo <- function(
   as.matrix(gex)
 }
 
+# generate_cbioportal <- function(
+#   genes, # List of gene symbols to iterate over
+#   geneticProfiles, # for cgdsr calls, platform and dataset specific string
+#   caseList, # for cgdsr calls, platform and dataset specific string
+#   ...
+# ){
+#   mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+#   dat <- getProfileDataWrapper(
+#     x = mycgds, # cgdsr object
+#     genes = tcga_gene_names, # All unique gene symbols
+#     geneticProfiles = geneticProfiles, # Omics profile
+#     caseList = caseList # Case list
+#   )
+#   # TODO: Filter out low quality samples based on list provided by Travis
+#   # Return omics matrix
+#   return(dat)
+# }
+
 generate_cbioportal <- function(
   genes, # List of gene symbols to iterate over
   geneticProfiles, # for cgdsr calls, platform and dataset specific string
   caseList, # for cgdsr calls, platform and dataset specific string
+  delay = 0.05, # For Sys.sleep to not fetch too fast from cBio API
+  splitsize = 100, # How many genes are fetched at one time - max 1000
+  verb = TRUE,
   ...
 ){
-
   mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-  # Use the wrapper function to iterative calls for split gene lists
-  dat <- getProfileDataWrapper(
-    x = mycgds, # cgdsr object
-    genes = tcga_gene_names, # All unique gene symbols
-    geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # Omics profile
-    caseList = "prad_tcga_pub_sequenced" # Case list
-  )
-  # TODO: Filter out low quality samples based on list provided by Travis
-  # Return omics matrix
-  dat
+  genesplit <- rep(1:ceiling(length(genes$hgnc)/splitsize), each=splitsize)[1:length(genes$hgnc)]
+  splitgenes <- split(genes$hgnc, f=genesplit)
+  # Fetch split gene name lists as separate calls
+  pb <- progress::progress_bar$new(total = length(splitgenes))
+  as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN=function(z){
+    # if(verb == TRUE) print(paste("Downloading gene set", z, "of", length(splitgenes), "from cBioportal"))
+    if(verb == TRUE) pb$tick()
+    # Sleep if necessary to avoid API call overflow
+    Sys.sleep(delay)
+    # Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
+    cgdsr::getProfileData(x=x, genes=splitgenes[[z]], geneticProfiles=geneticProfiles, caseList=caseList)
+  })))
 }
-
