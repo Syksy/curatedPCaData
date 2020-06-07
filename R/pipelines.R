@@ -11,7 +11,10 @@
 #' If NULL then files are downloaded into current directory.
 #' @param cleanup Logical. Remove tarballs and other files from working directory.
 #' @param ... Additional arguments. 
+#'
 #' @return Gene expression object of a particular type 
+#'
+#' @export
 Generate_GEX_Sun <- function(
 	file_directory, 
 	cleanup = FALSE, 
@@ -52,6 +55,10 @@ Generate_GEX_Sun <- function(
 }
 
 #' Generate MultiAssaYExperiment-object for Sun, et al.
+#'
+#' TODO
+#'
+#' @export
 Generate_MAE_Sun <- function(
 	pdata = "../data-raw/GSE25136_curated_pdata.txt",
 	image.file,	# If user wishes to save an .RData object of the MAE-object, a file name can be specified
@@ -96,6 +103,8 @@ Generate_MAE_Sun <- function(
 #'
 #' GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21032
 #' Available data types; Affymetrix Exon arrays, 2 separate types
+#'
+#' @export
 Generate_GEX_Taylor <- function(
 	file_directory, 
 	cleanup = FALSE,
