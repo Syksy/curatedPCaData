@@ -98,15 +98,16 @@ Generate_MAE_Sun <- function(
 #
 ###
 
-
 #' Gene expression data from Taylor et al.
+#'
+#' TODO
 #'
 #' GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21032
 #' Available data types; Affymetrix Exon arrays, 2 separate types
 #'
 #' @export
 Generate_GEX_Taylor <- function(
-	file_directory, 
+	file_directory,
 	cleanup = FALSE,
 	...
 ){
@@ -119,7 +120,7 @@ Generate_GEX_Taylor <- function(
 	# Open the tarball
 	utils::untar(tarfile=rownames(supfiles))
 	# First download CEL files from GEO
-	CELs <- read.celfiles(list.celfiles())	
+	CELs <- oligo::read.celfiles(affy::list.celfiles())	
 	#> CELs
 	#ExonFeatureSet (storageMode: lockedEnvironment)
 	#assayData: 6553600 features, 370 samples 
@@ -137,12 +138,12 @@ Generate_GEX_Taylor <- function(
 	#featureData: none
 	#experimentData: use 'experimentData(object)'
 	#Annotation: pd.huex.1.0.st.v2
-	RMAs <- rma(CELs)
-	featureData(RMAs) <- getNetAffx(RMAs, "transcript")
-	sampleNames(RMAs) <- unlist(lapply(strsplit(list.celfiles(), "_"), FUN=function(z) z[[1]])) # GSM######-type names from GEO
+	RMAs <- oligo::rma(CELs)
+	featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
+	sampleNames(RMAs) <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[1]])) # GSM######-type names from GEO
 	nameMapTaylor <- data.frame(
-		GSM = unlist(lapply(strsplit(list.celfiles(), "_"), FUN=function(z) z[[1]])), # GEO, GSM-names
-		ID = gsub(".CEL", "", unlist(lapply(strsplit(list.celfiles(), "_"), FUN=function(z) z[[4]]))) # mapping to PCA0001, PCA0002, ...
+		GSM = unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[1]])), # GEO, GSM-names
+		ID = gsub(".CEL|.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[4]]))) # mapping to PCA0001, PCA0002, ...
 	)
 	# 
 	GEX_Taylor <- RMAs
@@ -152,7 +153,9 @@ Generate_GEX_Taylor <- function(
 	nam2[is.na(nam2)] <- "NA"
 	rownames(GEX_Taylor) <- make.unique(nam2)
 	## TODO:
-	# cleanup
+	if(cleanup){
+		# Remove tarballs and other potential intermediary files
+	}
 	
 	# Return constructed gene expression matrix
 	GEX_Taylor
@@ -160,11 +163,14 @@ Generate_GEX_Taylor <- function(
 
 #' Copy number alterations from Taylor et al.
 #'
-#' GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21032
+#' TODO
+#' GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21035
 #' Agilent aCGH
 #' Platform in GEO: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL4091
 #' Agilent-014693 Human Genome CGH Microarray 244A
 #' Ref: Taylor BS, Schultz N, Hieronymus H, Gopalan A et al. Integrative genomic profiling of human prostate cancer. Cancer Cell 2010 Jul 13;18(1):11-22. 
+#' 
+#' @export
 Generate_CNA_Taylor <- function(
 	file_directory, 
 	cleanup = FALSE,
@@ -182,7 +188,7 @@ Generate_CNA_Taylor <- function(
 	# Name samples according to the filename
 	# Agilent-014693 Human Genome CGH Microarray 244A (Feature number version)
 	# rCGH says for readAgilent-function: "Agilent from 44 to 400K are supported."
-	TaylorCGH <- lapply(list.files(), FUN=function(z) { 
+	TaylorCGH <- lapply(base::list.files(), FUN=function(z) { 
 		try({
 			cat("\n\nProcessing: ",z,"\n\n"); 
 			rCGH::readAgilent(z, genome="hg38", sampleName=gsub(".txt", "", z)) 
@@ -222,11 +228,15 @@ Generate_CNA_Taylor <- function(
 	
 }	
 
-#' Generate MultiAssaYExperiment-object for Taylor, et al.
+#' Generate MultiAssayExperiment-object for Taylor, et al.
+#'
+#' TODO
+#'
+#' @export
 Generate_MAE_Taylor <- function(
 	pdata = "../data-raw/prad_mskcc_curated_pdata.txt",
 	image.file,	# If user wishes to save an .RData object of the MAE-object, a file name can be specified
-	cleanup,	# Whether intermediate files ought to be cleaned
+	cleanup=FALSE,	# Whether intermediate files ought to be cleaned
 	...
 ){
 	# Gene expression from GEO
