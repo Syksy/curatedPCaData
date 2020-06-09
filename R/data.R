@@ -243,3 +243,30 @@
 #' }
 #' 
 "taylor_clinical"
+
+#' Taylor et al gene expression. 
+#'
+#' A matrix containing the gene expression values for the 182 samples from 
+#' the Cancer Cell paper \url{https://pubmed.ncbi.nlm.nih.gov/20579941/}
+#'
+#' @format A matrix with 182 rows and 36630 genes:
+#' \describe{
+#'   \item{genes}{raw gene expression values}
+#'   ...
+#' }
+#' 
+"taylor_gex"
+
+#' Taylor et al copy number alteration
+#'
+#' A matrix containing the CNA values for the 182 samples from 
+#' the Cancer Cell paper \url{https://pubmed.ncbi.nlm.nih.gov/20579941/}
+#'
+#' @format A matrix with 182 rows and 36630 genes:
+#' \describe{
+#'   \item{genes}{raw CNAa values}
+#'   ...
+#' }
+#' 
+"taylor_cna"
+
