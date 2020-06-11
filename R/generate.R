@@ -93,6 +93,6 @@ generate_cbioportal <- function(
     # Sleep if necessary to avoid API call overflow
     Sys.sleep(delay)
     # Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
-    cgdsr::getProfileData(x=x, genes=splitgenes[[z]], geneticProfiles=geneticProfiles, caseList=caseList)
+    cgdsr::getProfileData(mycgds, genes=splitgenes[[z]], geneticProfiles=geneticProfiles, caseList=caseList)
   })))
 }
