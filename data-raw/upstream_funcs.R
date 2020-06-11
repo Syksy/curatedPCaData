@@ -46,7 +46,6 @@
 #'}
 #'
 #' @note Intended to work as a wrapper function for the function 'getProfileData' from package 'cgdsr'. Notice that most parameters are passed on to this underlying function as-is.
-#' @author Teemu Daniel Laajala \email{teelaa@@utu.fi}
 #' @export
 getProfileDataWrapper <- function(
 	x, 
