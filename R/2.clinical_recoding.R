@@ -24,11 +24,11 @@ clinical_SUN <- clinical_SUN %>%
     GLEASON_SCORE %in% c("4+5", "5+4", "5+5")                                   ~ 5
   )) %>%
   mutate(capra_psa = case_when( 
-    PSA <= 6                                                                    ~ 0,
-    (PSA > 6 & PSA <= 10)                                                       ~ 1,
-    (PSA > 10 & PSA <= 20)                                                      ~ 2,
-    (PSA > 20 & PSA <= 30)                                                      ~ 3,
-    PSA > 30                                                                    ~ 4
+    psa <= 6                                                                    ~ 0,
+    (psa > 6 & psa <= 10)                                                       ~ 1,
+    (psa > 10 & psa <= 20)                                                      ~ 2,
+    (psa > 20 & psa <= 30)                                                      ~ 3,
+    psa > 30                                                                    ~ 4
   )) %>%
   mutate(capra_gleason = case_when(
     GLEASON_SCORE == "3+3"                                                      ~ 0,
@@ -42,7 +42,6 @@ clinical_SUN <- clinical_SUN %>%
   mutate(capra_age = case_when(
     AGE < 50                                                                    ~ 0,
     AGE >= 50                                                                   ~ 1
-<<<<<<< HEAD:R/clinical_recoding.R
   )) %>% #----------------------------------------Risk calculation start here, need to go in a function
   mutate(damico = case_when(
     tstage %in% c("T2c", "T3", "T4", "T3a", "T3b", "T3c", "T4a", "T4b") |
@@ -117,15 +116,13 @@ clinical_SUN <- clinical_SUN %>%
     capra_score %in% c(3:5)                                                     ~ "Intermediate",
     capra_score %in% c(6:10)                                                    ~ "High",
     TRUE                                                                        ~ NA_character_
-=======
->>>>>>> Rename code,:R/2.clinical_recoding.R
   ))
 
 
 ############################################################################## CPC-GENE ############# 
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
-  rename(PSA = PSA_MOST_RECENT_RESULTS) %>% 
-  # mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
+  rename(psa = PSA_MOST_RECENT_RESULTS) %>% 
+  # mutate(psa = psa_MOST_RECENT_RESULTS) %>% # Don't have anything else
   mutate(gleason = case_when(
     GLEASON_SCORE %in% c("3+3", "6")                                             ~ "<=6",
     GLEASON_SCORE %in% c("3+4", "3+4;5", "4+3","4+3;5", "7")                     ~ "7", 
@@ -152,11 +149,11 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
          GLEASON_PATTERN_SECONDARY == "3")                                       ~ 3
   )) %>%
   mutate(capra_psa = case_when( 
-    PSA <= 6                                                                     ~ 0,
-    (PSA > 6 & PSA <= 10)                                                        ~ 1,
-    (PSA > 10 & PSA <= 20)                                                       ~ 2,
-    (PSA > 20 & PSA <= 30)                                                       ~ 3,
-    PSA > 30                                                                     ~ 4
+    psa <= 6                                                                     ~ 0,
+    (psa > 6 & psa <= 10)                                                        ~ 1,
+    (psa > 10 & psa <= 20)                                                       ~ 2,
+    (psa > 20 & psa <= 30)                                                       ~ 3,
+    psa > 30                                                                     ~ 4
   )) %>%
   mutate(capra_gleason = case_when(
     gleason == "<=6"                                                             ~ 0,
@@ -170,7 +167,6 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
   mutate(capra_age = case_when(
     AGE < 50                                                                     ~ 0,
     AGE >= 50                                                                    ~ 1
-<<<<<<< HEAD:R/clinical_recoding.R
   )) %>% #----------------------------------------Risk calculation start here, need to go in a function
   mutate(damico = case_when(
     tstage %in% c("T2c", "T3", "T4", "T3a", "T3b", "T3c", "T4a", "T4b") |
@@ -245,8 +241,6 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
     capra_score %in% c(3:5)                                                     ~ "Intermediate",
     capra_score %in% c(6:10)                                                    ~ "High",
     TRUE                                                                        ~ NA_character_
-=======
->>>>>>> Rename code,:R/2.clinical_recoding.R
   ))
 
   ))
@@ -262,6 +256,16 @@ table(clinical_TCGA_333$CLINICAL_GLEASON_SUM)
 # 166 patients left
 clinical_TCGA_333 <- clinical_TCGA_333 %>% 
   rename(PSA = PREOPERATIVE_PSA) %>% 
+=======
+  ))
+
+
+############################################################################## TCGA ############# 
+# https://docs.gdc.cancer.gov/Data_Dictionary/viewer/#?view=table-entity-list&anchor=clinical
+# clinical T is not available for the 333 patients... we may be able to impute it from the other
+# 166 patients left
+clinical_TCGA_333 <- clinical_TCGA_333 %>% 
+  rename(psa = PREOPERATIVE_PSA) %>% 
   mutate(gleason = case_when(
     REVIEWED_GLEASON_SUM == 6                                                    ~ "<=6",
     REVIEWED_GLEASON_SUM == 7                                                    ~ "7",
@@ -295,11 +299,11 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
   REVIEWED_GLEASON == "4+3"                                                      ~ 3
   )) %>%
   mutate(capra_psa = case_when( # need to remove 323
-    PSA <= 6                                                                     ~ 0,
-    (PSA > 6 & PSA <= 10)                                                        ~ 1,
-    (PSA > 10 & PSA <= 20)                                                       ~ 2,
-    (PSA > 20 & PSA <= 30)                                                       ~ 3,
-    PSA > 30                                                                     ~ 4,
+    psa <= 6                                                                     ~ 0,
+    (psa > 6 & psa <= 10)                                                        ~ 1,
+    (psa > 10 & psa <= 20)                                                       ~ 2,
+    (psa > 20 & psa <= 30)                                                       ~ 3,
+    psa > 30                                                                     ~ 4,
     TRUE ~ NA_real_
   )) %>%
   mutate(capra_gleason = case_when(
@@ -317,7 +321,6 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
   mutate(capra_age = case_when(
     AGE < 50                                                                     ~ 0,
     AGE >= 50                                                                    ~ 1
-<<<<<<< HEAD:R/clinical_recoding.R
   )) %>% #----------------------------------------Risk calculation start here, need to go in a function
   mutate(damico = case_when(
     tstage %in% c("T2c", "T3", "T4", "T3a", "T3b", "T3c", "T4a", "T4b") |
@@ -392,8 +395,6 @@ clinical_TCGA_333 <- clinical_TCGA_333 %>%
     capra_score %in% c(3:5)                                                     ~ "Intermediate",
     capra_score %in% c(6:10)                                                    ~ "High",
     TRUE                                                                        ~ NA_character_
-=======
->>>>>>> Rename code,:R/2.clinical_recoding.R
   ))
 
 
@@ -424,7 +425,6 @@ clinical_ICGC_FR <- clinical_ICGC_FR %>%
     AGE >= 50                                                                   ~ 1
   ))
 
-<<<<<<< HEAD:R/clinical_recoding.R
 table(clinical_ICGC_FR$donor_tumour_stage_at_diagnosis)
 clinical_CPC_GENE <- clinical_CPC_GENE %>%
   mutate(PSA = PSA_MOST_RECENT_RESULTS) %>% # Don't have anything else
@@ -474,9 +474,7 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
     AGE >= 50                                                                    ~ 1
   ))
 
-=======
 # UK ---------------- I am missing psa
->>>>>>> Rename code,:R/2.clinical_recoding.R
 clinical_ICGC_UK <- read_delim("/Users/colinccm/Downloads/donor.PRAD-UK.tsv", delim = "\t")
 clinical_ICGC_UK1 <- read_delim("/Users/colinccm/Downloads/specimen.PRAD-UK.tsv", delim = "\t") %>% 
   filter(specimen_type == "Primary tumour - solid tissue")
@@ -495,10 +493,8 @@ clinical_ICGC_UK <- clinical_ICGC_UK %>%
     str_detect(donor_tumour_stage_at_diagnosis, "T2b")                          ~ "T2b",
     str_detect(donor_tumour_stage_at_diagnosis, "T2")                           ~ "T2"
   )) %>% 
-<<<<<<< HEAD:R/clinical_recoding.R
   mutate(AGE = donor_age_at_diagnosis)
   transmutate(AGE = donor_age_at_diagnosis)
-=======
   rename(AGE = donor_age_at_diagnosis) %>%
   mutate(capra_gleason = case_when(
     tumour_grade %in% c("1+1", "1+2", "1+3", "2+1", "2+2", "2+3",
@@ -548,7 +544,6 @@ clinical_ICGC_CA <- clinical_ICGC_CA %>%
     AGE < 50                                                                    ~ 0,
     AGE >= 50                                                                   ~ 1
   ))
->>>>>>> Rename code,:R/2.clinical_recoding.R
 
 rm(clinical_ICGC_UK1, clinical_ICGC_CA1)
 ############################################################################## Taylor ############# 
@@ -556,17 +551,12 @@ rm(clinical_ICGC_UK1, clinical_ICGC_CA1)
 clinical_taylor$patient_id <- rownames(clinical_taylor)
 clinical_taylor <- clinical_taylor %>% 
 
-
 ############################################################################## Taylor ############# 
 
 clinical_taylor_all$patient_id <- rownames(clinical_taylor_all)
 clinical_taylor_all <- clinical_taylor_all %>% 
   filter(str_detect(patient_id, "PCA")) %>% 
-<<<<<<< HEAD:R/clinical_recoding.R
-  #------------------------------------------------------------------------------ I am missing PSA
-=======
   #------------------------------------------------------------------------------ I am missing psa and age
->>>>>>> Rename code,:R/2.clinical_recoding.R
   mutate(gleason = case_when(
     GLEASON_SCORE == "6"                                                      ~ "<=6",
     GLEASON_SCORE == "7"                                                      ~ "7",
@@ -596,11 +586,6 @@ clinical_taylor_all <- clinical_taylor_all %>%
     GLEASON_SCORE == "9"                                                         ~ 5
   )) %>%
   # mutate(capra_psa = case_when( 
-  #   PSA <= 6                                                                    ~ 0,
-  #   (PSA > 6 & PSA <= 10)                                                       ~ 1,
-  #   (PSA > 10 & PSA <= 20)                                                      ~ 2,
-  #   (PSA > 20 & PSA <= 30)                                                      ~ 3,
-  #   PSA > 30                                                                    ~ 4
   # )) %>%
   mutate(capra_gleason = case_when(
     GLEASON_SCORE == "6"                                                         ~ 0,
@@ -617,12 +602,7 @@ clinical_taylor_all <- clinical_taylor_all %>%
   #   AGE < 50                                                                    ~ 0,
   #   AGE >= 50                                                                   ~ 1
   ))
-<<<<<<< HEAD:R/clinical_recoding.R
 # No PSA, No age -> not able to calculate risk. Needs to find it somewhere else
-=======
-
-
-# No psa, No age -> not able to calculate risk. Needs to find it somewhere else
 
 ################################################################################## RISK CLASSIFICATION
 risk_classification <- function(data){
@@ -709,4 +689,4 @@ risk_SUN = risk_classification(clinical_SUN)
 risk_CPC = risk_classification(clinical_CPC_GENE)
 
 risk_TCGA = risk_classification(clinical_TCGA_333)
->>>>>>> Rename code,:R/2.clinical_recoding.R
+
