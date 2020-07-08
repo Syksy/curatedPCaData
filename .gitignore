@@ -10,6 +10,9 @@ _notes
 # TCGA data file
 GDCdata/
 MANIFEST.TXT
+
+# R data frames containing all data for quick access
+data/
 inst/doc
 
 # ignore random scripts
@@ -18,7 +21,6 @@ R/load_data.R
 R/packages.R
 R/pipelines.R 
 R/upstream_funcs.R 
-
 R-4.0.0.pkg
 
 # R data frames containing all data for quick access

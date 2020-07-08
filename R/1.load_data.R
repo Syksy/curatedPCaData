@@ -33,6 +33,7 @@ clinical_taylor = getClinicalData(mycgds,"prad_mskcc_all")
 clinical_taylor = getClinicalData(mycgds,"prad_mskcc_tumors") #prad_mskcc
 clinical_taylor1 = getClinicalData(mycgds,"prad_mskcc_primary")
 clinical_taylor_all = getClinicalData(mycgds,"prad_mskcc_all")
+
 ### Geoquery because missing age and psa
 # if (!requireNamespace("BiocManager", quietly = TRUE))
 #   install.packages("BiocManager")
