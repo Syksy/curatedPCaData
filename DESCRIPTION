@@ -9,7 +9,7 @@ Authors@R: c(person("Daniel", "Laajala", email = "teelaa@utu.fi.com",
              role = "ctb"))
 Description: A selection of annotated prostate cancer datasets including TCGA, 
     Sun et al., and others. 
-Depends: R (>= 4.0.0), S4Vectors (>= 0.23.18)
+Depends: R (>= 3.6.0), S4Vectors (>= 0.23.18)
 Imports: 
     progress,
     cgdsr,
