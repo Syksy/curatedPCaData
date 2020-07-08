@@ -243,8 +243,6 @@ clinical_CPC_GENE <- clinical_CPC_GENE %>%
     TRUE                                                                        ~ NA_character_
   ))
 
-  ))
-
 ############################################################################## TCGA ############# 
 # https://docs.gdc.cancer.gov/Data_Dictionary/viewer/#?view=table-entity-list&anchor=clinical
 
@@ -254,10 +252,9 @@ table(clinical_TCGA_333$CLINICAL_GLEASON_SUM)
 
 # clinical T is not available for the 333 patients... we may be able to impute it from the other
 # 166 patients left
-clinical_TCGA_333 <- clinical_TCGA_333 %>% 
-  rename(PSA = PREOPERATIVE_PSA) %>% 
-=======
-  ))
+#clinical_TCGA_333 <- clinical_TCGA_333 %>% 
+#  rename(PSA = PREOPERATIVE_PSA) %>% 
+#  ))
 
 
 ############################################################################## TCGA ############# 
