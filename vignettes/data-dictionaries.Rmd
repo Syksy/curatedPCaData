@@ -12,11 +12,13 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+library(magrittr)
 ```
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 
-library(kableExtra)
+# library(kableExtra)
 
 var_name <- c("study_name", "patient_id", "sample_name",
               "alt_sample_name", "overall_survival_status",
