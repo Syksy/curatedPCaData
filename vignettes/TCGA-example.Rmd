@@ -41,10 +41,20 @@ In this vignette, we will :
 
 All datasets are currently housed within the `data/` folder of the package and follows a simply naming convention of `first-author` and `data type` separated by a `_` (see dataset types above).
 
-Use the base r function `load()` to import the datasets. 
+For more information on the various datasets and the values within them please see the [data dictionaries vignette](vignettes/data-dictionaries.Rmd). 
 
 ```{r importing}
 library(curatedPCaData)
-
-load()
+dim(tcga_clinical)
 ```
+
+## Formatting 
+
+Individual data pieces can be transformed into an MAE for easier handeling using the `create_mae()` function. The function only takes one argument - the prefix for the dataset. 
+
+```{r transform}
+
+tcga_mae <- create_mae(study_name = "TCGA")
+
+```
+
