@@ -3,3 +3,4 @@
 export("%>%")
 import(S4Vectors)
 importFrom(magrittr,"%>%")
+importFrom(rlang,.data)
