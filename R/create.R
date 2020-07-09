@@ -3,6 +3,8 @@
 #' @param study_name study identifier.
 #' @return A MulitAssayExperiment object containing clinical and gene expression data 
 #' along with any other available data 
+#' 
+#' @importFrom rlang .data
 create_mae <- function(
   study_name = "TCGA"
 ){
@@ -38,7 +40,7 @@ create_mae <- function(
   # with the larger TCGA dataset there is a repeated patient - which makes  this step impossible
   # for the time being - subset to the overlapping patients in gex and clinical? 
   pheno_object <- pheno_object %>% 
-    dplyr::filter(sample_name %in% colnames(gex_object))
+    dplyr::filter(.data$sample_name %in% colnames(gex_object))
     
   rownames(pheno_object) <- pheno_object$patient_id
   
