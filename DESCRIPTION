@@ -22,7 +22,8 @@ Imports:
     hgu133a.db,
     magrittr,
     dplyr,
-    MultiAssayExperiment
+    MultiAssayExperiment,
+    rlang
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0
