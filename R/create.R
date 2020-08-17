@@ -14,7 +14,7 @@ create_mae <- function(
   gex_object <- get(gex_name) 
   
   # import gene expression matrix from generate.R
-  if (isEmpty(grep("*_cna.rda",data_sets, value=TRUE))) {
+  if (length(grep("*_cna.rda",data_sets, value=TRUE))==0) {
     cna_object <- NULL
   } else {
     cna_name <- load(grep("*_cna.rda",data_sets, value=TRUE))

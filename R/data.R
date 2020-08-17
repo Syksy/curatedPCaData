@@ -270,3 +270,18 @@
 #' 
 "taylor_cna"
 
+#' TCGA MAE-object
+#'
+#' TODO
+"mae_tcga"
+
+#' Sun et al. MAE-object
+#'
+#' TODO
+"mae_sun"
+
+#' Taylor et al. MAE-object
+#'
+#' TODO
+"mae_taylor"
+
