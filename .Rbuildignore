@@ -1,5 +1,3 @@
-^.*\.tws$
-^.*\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
@@ -12,3 +10,6 @@
 ^data-raw$
 ^README.Rmd$
 ^R-4\.0\.0\.pkg$
+^vignettes/TCGA-example\.Rmd$
+^vignettes/data-dictionaries\.Rmd$
+
