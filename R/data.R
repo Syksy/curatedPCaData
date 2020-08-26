@@ -272,15 +272,21 @@
 
 #' TCGA MAE-object
 #'
+#' MultiAssayExperiment object containing GEX and CNA from TCGA
+#'
 #' TODO
 "mae_tcga"
 
 #' Sun et al. MAE-object
 #'
+#' MultiAssayExperiment object containing GEX and CNA from Sun et al.
+#'
 #' TODO
 "mae_sun"
 
 #' Taylor et al. MAE-object
+#'
+#' MultiAssayExperiment object containing GEX and CNA from Taylor et al.
 #'
 #' TODO
 "mae_taylor"

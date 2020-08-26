@@ -1,3 +1,4 @@
+#' Download gene expression from GEO using study specific id
 generate_gex_geo <- function(
   file_directory, 
   geo_code = "GSE25136", # code for Sun et al. (Taylor et al. - GSE21032)
@@ -12,7 +13,10 @@ generate_gex_geo <- function(
   # Open the tarball(s)
   utils::untar(tarfile = rownames(supfiles))
   
-  # if(geo_code == "GSE25136"){
+  ##
+  # Sun et al.
+  ##
+  if(geo_code == "GSE25136"){
     # Make sure to function in a working directory where the are no other tarballs present
     gz_files <- list.files()
     gz_files <- gz_files[grep(".gz", gz_files)]
@@ -33,13 +37,23 @@ generate_gex_geo <- function(
     nam[is.na(nam)] <- "NA"
     gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
     
-  # } #else if (geo_code == "GSE21032") {
+  }
+  ##
+  # Taylor et al.
+  ##
+  else if (geo_code == "GSE21032") {
     
     # breaks here -----
     # Error: vector memory exhausted (limit reached?)
     # cels <- oligo::read.celfiles(affy::list.celfiles(), pkgname='pd.huex.1.0.st.v2')	
     
- # }
+  }
+  ##
+  # Unknown, throw an R error
+  ##
+  else{
+  	stop("Unknown GEO id, see allowed parameter values for geo_code")
+  }
 
   # Remove downloaded files
   if(cleanup){
@@ -50,29 +64,11 @@ generate_gex_geo <- function(
     # Remove empty folder
     file.remove(paste0(here::here(), "/", geo_code))
   }
-  # TODO: Transform into a MultiAssayExperiment-object prior to returning object (MAE_Sun)
   # Return numeric matrix
   as.matrix(gex)
 }
 
-# generate_cbioportal <- function(
-#   genes, # List of gene symbols to iterate over
-#   geneticProfiles, # for cgdsr calls, platform and dataset specific string
-#   caseList, # for cgdsr calls, platform and dataset specific string
-#   ...
-# ){
-#   mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-#   dat <- getProfileDataWrapper(
-#     x = mycgds, # cgdsr object
-#     genes = tcga_gene_names, # All unique gene symbols
-#     geneticProfiles = geneticProfiles, # Omics profile
-#     caseList = caseList # Case list
-#   )
-#   # TODO: Filter out low quality samples based on list provided by Travis
-#   # Return omics matrix
-#   return(dat)
-# }
-
+#' Download generic 'omics data from cBioPortal using dataset specific query
 generate_cbioportal <- function(
   genes, # List of gene symbols to iterate over
   geneticProfiles, # for cgdsr calls, platform and dataset specific string
