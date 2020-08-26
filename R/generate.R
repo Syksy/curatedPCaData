@@ -1,9 +1,14 @@
 #' Download gene expression from GEO using study specific id
 generate_gex_geo <- function(
   file_directory, 
+  ## Allowed GEO ids:
+  # "GSE25136" : Sun et al.
+  # "GSE21032" : Taylor et al.
   geo_code = "GSE25136", # code for Sun et al. (Taylor et al. - GSE21032)
   cleanup = TRUE, 
   collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
+  # Function for cleaning rows/cols where cBio returned NaN or similar non-finite values only
+  cleanFUN = janitor::remove_empty,
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
@@ -65,30 +70,50 @@ generate_gex_geo <- function(
     file.remove(paste0(here::here(), "/", geo_code))
   }
   # Return numeric matrix
-  as.matrix(gex)
+  as.matrix(cleanFUN(gex))
 }
 
 #' Download generic 'omics data from cBioPortal using dataset specific query
 generate_cbioportal <- function(
-  genes, # List of gene symbols to iterate over
-  geneticProfiles, # for cgdsr calls, platform and dataset specific string
-  caseList, # for cgdsr calls, platform and dataset specific string
-  delay = 0.05, # For Sys.sleep to not fetch too fast from cBio API
-  splitsize = 100, # How many genes are fetched at one time - max 1000
+  # By default used the gene symbol from package data
+  genes = sort(curatedPCaData:::tcga_gene_names$hgnc), # List of gene symbols to iterate over
+  # geneticProfiles; Allowed platform/data combinations:
+  # "prad_tcga_pub_rna_seq_v2_mrna" : TCGA GEX
+  # "prad_tcga_pub_gistic" : TCGA CNA (GISTIC)
+  # "prad_mskcc_mrna_median_Zscores" : Taylor et al. GEX (z-score normalized)
+  # "prad_mskcc_cna" : Taylor et al. CNA
+  geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # for cgdsr calls, platform and dataset specific string
+  # caseList; Allowed platform/data combinations:
+  # "prad_tcga_pub_sequenced" : TCGA
+  # "prad_mskcc_sequenced" : Taylor et al. 
+  caseList = "prad_tcga_pub_sequenced", # for cgdsr calls, platform and dataset specific string
+  # For Sys.sleep to not fetch too fast from cBio API
+  delay = 0.05, 
+  # Amount of genes fetched at a single API call - max 1000
+  splitsize = 100, 
+  # Function for cleaning rows/cols where cBio returned NaN or similar non-finite values only
+  cleanFUN = janitor::remove_empty,
+  # Verbosity
   verb = TRUE,
   ...
 ){
   mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-  genesplit <- rep(1:ceiling(length(genes$hgnc)/splitsize), each=splitsize)[1:length(genes$hgnc)]
-  splitgenes <- split(genes$hgnc, f=genesplit)
+  genesplit <- rep(1:ceiling(length(genes)/splitsize), each=splitsize)[1:length(genes)]
+  #genesplit <- rep(1:ceiling(length(genes$hgnc)/splitsize), each=splitsize)[1:length(genes$hgnc)]
+  splitgenes <- split(genes, f=genesplit)
+  #splitgenes <- split(genes$hgnc, f=genesplit)
   # Fetch split gene name lists as separate calls
   pb <- progress::progress_bar$new(total = length(splitgenes))
-  as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN=function(z){
-    # if(verb == TRUE) print(paste("Downloading gene set", z, "of", length(splitgenes), "from cBioportal"))
-    if(verb == TRUE) pb$tick()
-    # Sleep if necessary to avoid API call overflow
-    Sys.sleep(delay)
-    # Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
-    cgdsr::getProfileData(mycgds, genes=splitgenes[[z]], geneticProfiles=geneticProfiles, caseList=caseList)
-  })))
+  # Transpose to have genes as row and samples as columns
+  cleanFUN(t(
+    # Bind the API calls as per columns
+    as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN=function(z){
+      # if(verb == TRUE) print(paste("Downloading gene set", z, "of", length(splitgenes), "from cBioportal"))
+      if(verb == TRUE) pb$tick()
+      # Sleep if necessary to avoid API call overflow
+      Sys.sleep(delay)
+      # Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
+      cgdsr::getProfileData(mycgds, genes=splitgenes[[z]], geneticProfiles=geneticProfiles, caseList=caseList)
+    }))
+  ))  
 }
