@@ -6,9 +6,9 @@ generate_gex_geo <- function(
   # "GSE21032" : Taylor et al.
   geo_code = "GSE25136", # code for Sun et al. (Taylor et al. - GSE21032)
   cleanup = TRUE, 
-  collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
+  collapse_probes = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   # Function for cleaning rows/cols where cBio returned NaN or similar non-finite values only
-  cleanFUN = janitor::remove_empty,
+  clean_columns = janitor::remove_empty,
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
@@ -36,11 +36,24 @@ generate_gex_geo <- function(
     # Removing .CEL and packaging names from the GEO-compatible sample names
     colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
   
-    keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
+    # keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
     nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
                                                                     as.character(hgu133a.db::hgu133aALIAS2PROBE))])
     nam[is.na(nam)] <- "NA"
-    gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
+    gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapse_probes))
+    
+    compare_names <- data.frame(original = row.names(gex),
+                                current = limma::alias2SymbolTable(row.names(gex),
+                                                                   species="Hs"))
+    duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
+    
+    compare_names <- compare_names %>% 
+      mutate(new_names = case_when(
+        current %in% duplicated_hugo_symbols ~ original,
+        TRUE ~ current
+      ))
+    
+    row.names(gex) <- compare_names$new_names
     
   }
   ##
@@ -70,7 +83,11 @@ generate_gex_geo <- function(
     file.remove(paste0(here::here(), "/", geo_code))
   }
   # Return numeric matrix
-  as.matrix(cleanFUN(gex))
+  as.matrix(clean_columns(gex))
+  
+  # clean names to match conventions? 
+  # gex <- gex %>% janitor::clean_names()
+  
 }
 
 #' Download generic 'omics data from cBioPortal using dataset specific query
@@ -92,7 +109,7 @@ generate_cbioportal <- function(
   # Amount of genes fetched at a single API call - max 1000
   splitsize = 100, 
   # Function for cleaning rows/cols where cBio returned NaN or similar non-finite values only
-  cleanFUN = janitor::remove_empty,
+  clean_columns = janitor::remove_empty,
   # Verbosity
   verb = TRUE,
   ...
@@ -105,7 +122,7 @@ generate_cbioportal <- function(
   # Fetch split gene name lists as separate calls
   pb <- progress::progress_bar$new(total = length(splitgenes))
   # Transpose to have genes as row and samples as columns
-  cleanFUN(t(
+  gex <- clean_columns(t(
     # Bind the API calls as per columns
     as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN=function(z){
       # if(verb == TRUE) print(paste("Downloading gene set", z, "of", length(splitgenes), "from cBioportal"))
@@ -115,5 +132,9 @@ generate_cbioportal <- function(
       # Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
       cgdsr::getProfileData(mycgds, genes=splitgenes[[z]], geneticProfiles=geneticProfiles, caseList=caseList)
     }))
-  ))  
+  )))  
+  
+  # if cleaning column names 
+  # gex <- gex %>% janitor::clean_names()
+  
 }
