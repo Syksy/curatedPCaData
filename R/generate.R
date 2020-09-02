@@ -6,7 +6,7 @@ generate_gex_geo <- function(
   # "GSE21032" : Taylor et al.
   geo_code = "GSE25136", # code for Sun et al. (Taylor et al. - GSE21032)
   cleanup = TRUE, 
-  collapse_probes = function(z) {apply(z, MARGIN = 2, FUN = stats::median)} # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
+  collapse_probes = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   # Function for cleaning rows/cols where cBio returned NaN or similar non-finite values only
   # clean_columns = janitor::clean_names,
   ...
@@ -48,7 +48,7 @@ generate_gex_geo <- function(
     duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
     
     compare_names <- compare_names %>% 
-      mutate(new_names = case_when(
+      dplyr::mutate(new_names = dplyr::case_when(
         current %in% duplicated_hugo_symbols ~ original,
         TRUE ~ current
       ))
