@@ -16,7 +16,7 @@ create_mae <- function(
   gex_object <- get(gex_name) 
   
   # import gene expression matrix from generate.R
-  if (isEmpty(grep("*_cna.rda",data_sets, value=TRUE))) {
+  if (length(grep("*_cna.rda",data_sets, value=TRUE))==0) {
     cna_object <- NULL
   } else {
     cna_name <- load(grep("*_cna.rda",data_sets, value=TRUE))
@@ -28,12 +28,12 @@ create_mae <- function(
   pheno_object <- get(pheno_name) 
   
   # making sure matrix(s) has samples as columns and genes as rows
-  if(length(intersect(colnames(gex_object), pheno_object$sample_name))==0){
-    gex_object <- t(gex_object)
+  if(length(intersect(row.names(gex_object), pheno_object$sample_name))==0){
+    gex_object <- gex_object
   }
   if(!is.null(cna_object) & 
-     length(intersect(colnames(cna_object), pheno_object$sample_name))==0){
-    cna_object <- t(cna_object)
+     length(intersect(row.names(cna_object), pheno_object$sample_name))==0){
+    cna_object <- cna_object
   }
   
   # need to set pheno_object row names = patient_id for MAE reasons? 
