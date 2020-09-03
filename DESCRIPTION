@@ -26,7 +26,6 @@ Imports:
     rlang
     rCGH
     MultiAssayExperiment
->>>>>>> tdl
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
