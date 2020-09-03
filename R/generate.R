@@ -6,15 +6,9 @@ generate_gex_geo <- function(
   # "GSE25136" : Sun et al.
   geo_code = "GSE21032", # By default Taylor et al.
   cleanup = TRUE, 
-<<<<<<< HEAD
-  collapse_probes = function(z) {apply(z, MARGIN = 2, FUN = stats::median)} # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
-  # Function for cleaning rows/cols where cBio returned NaN or similar non-finite values only
-  # clean_columns = janitor::clean_names,
-=======
   collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   # Function for cleaning rows/cols where GEO samples returned NaN or similar non-finite values only
   cleanFUN = janitor::remove_empty,
->>>>>>> tdl
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
@@ -28,40 +22,6 @@ generate_gex_geo <- function(
   # Sun et al.
   ##
   if(geo_code == "GSE25136"){
-<<<<<<< HEAD
-    # Make sure to function in a working directory where the are no other tarballs present
-    gz_files <- list.files()
-    gz_files <- gz_files[grep(".gz", gz_files)]
-  
-    # Read Affymetrix MA
-    Sun <- affy::ReadAffy()
-    colnames(affy::exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
-    
-    # Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
-    gex <- affy::rma(Sun)
-    
-    # Removing .CEL and packaging names from the GEO-compatible sample names
-    colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
-  
-    keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-    nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
-                                                                    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
-    nam[is.na(nam)] <- "NA"
-    gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapse_probes))
-    
-    compare_names <- data.frame(original = row.names(gex),
-                                current = limma::alias2SymbolTable(row.names(gex),
-                                                                   species="Hs"))
-    duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
-    
-    compare_names <- compare_names %>% 
-      mutate(new_names = case_when(
-        current %in% duplicated_hugo_symbols ~ original,
-        TRUE ~ current
-      ))
-    
-    row.names(gex) <- compare_names$new_names
-=======
 	# Make sure to function in a working directory where the are no other tarballs present
 	gz_files <- list.files()
 	gz_files <- gz_files[grep(".gz", gz_files)]
@@ -83,7 +43,6 @@ generate_gex_geo <- function(
 	nam[is.na(nam)] <- "NA"
 	# Collapse probes
 	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
->>>>>>> tdl
     
 	# Sort genes to alphabetic order for consistency
 	gex <- gex[order(rownames(gex)),]
@@ -167,7 +126,6 @@ generate_cna_geo <- function(
   # "GSE54691" : Hieronymus et al.
   geo_code = "GSE21035", # By default Taylor et al.
   cleanup = TRUE, 
-  #collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   # Function for cleaning rows/cols where GEO samples returned NaN or similar non-finite values only
   cleanFUN = janitor::remove_empty,
   ...
