@@ -40,7 +40,7 @@ uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_tcga_sequenced")
 # create the curated object
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
-  template_name="_notes/template_prad.csv")
+  template_name="data-raw/template_prad.csv")
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "TCGA, provisional") %>%
@@ -114,9 +114,9 @@ curated <- curated %>%
   )) %>% 
   dplyr::mutate(tumor_purity_pathology = uncurated$TUMOR_CONTENT)
 
-tcga_clinical <- curated
+clinical_tcga <- curated
 
-usethis::use_data(tcga_clinical, overwrite = TRUE)
+save(clinical_tcga, file = "data-raw/clinical_tcga.RData")
 
 ###############################################################################
 #  ________  ___  ___  ________           _______  _________            ________  ___              
@@ -135,7 +135,7 @@ uncurated <- Biobase::pData(gse[[1]])
 
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
-  template_name="_notes/template_prad.csv")
+  template_name="data-raw/template_prad.csv")
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Sun, et al.") %>%
@@ -154,9 +154,9 @@ curated <- curated %>%
                                                   "Prostate cancer ")) %>% 
   dplyr::mutate(sample_type = stringr::str_remove(sample_type, " tumor"))
 
-sun_clinical <- curated
+clinical_sun <- curated
 
-usethis::use_data(sun_clinical, overwrite = TRUE)
+save(clinical_sun, file = "data-raw/clinical_sun.RData")
 
 ###############################################################################
 #  _________  ________      ___    ___ ___       ________  ________     
@@ -179,7 +179,7 @@ uncurated <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
 
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
-  template_name="_notes/template_prad.csv")
+  template_name="data-raw/template_prad.csv")
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Taylor, et al.") %>% 
@@ -235,7 +235,7 @@ curated <- curated %>%
 
 taylor_clinical <- curated
 
-usethis::use_data(taylor_clinical, overwrite = TRUE)
+save(taylor_clinical, file = "data-raw/clinical_taylor.RData")
 
 
 
