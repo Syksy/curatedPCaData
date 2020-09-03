@@ -23,8 +23,8 @@ Imports:
     hgu133a.db,
     magrittr,
     dplyr,
-    rlang
-    rCGH
+    rlang,
+    rCGH,
     MultiAssayExperiment
 License: GPL-3
 Encoding: UTF-8
