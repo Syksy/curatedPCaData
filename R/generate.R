@@ -149,8 +149,10 @@ generate_cna_geo <- function(
 	cna <- lapply(base::list.files(), FUN=function(z) { 
 		try({
 			cat("\n\nProcessing: ",z,"\n\n") 
+			# Taylor et al.
 			if(geo_code == "GSE21035"){
 				rCGH::readAgilent(z, genome="hg38", sampleName=gsub(".txt.gz", "", z)) 
+			# Hieronymus et al.
 			}else if(geo_code == "GSE54691"){
 				rCGH::readAgilent(z, genome="hg19", sampleName=gsub(".txt.gz", "", z)) 
 			}
@@ -220,15 +222,15 @@ generate_cna_geo <- function(
 	cna <- as.matrix(cna)
   }
   ##
-  # Other
+  # Other (placeholder)
   ##
-  }else if(geo_code == ""){
+  else if(geo_code == ""){
   
-  
+  }
   ##
   # Unknown
   ##
-  }else{
+  else{
     stop("Unknown GEO id, see allowed parameter values for geo_code")
   }
 
