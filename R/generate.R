@@ -1,10 +1,10 @@
-#' Download gene expression from GEO using study specific id
+#' Download gene expression from GEO using study specific id and process it
 generate_gex_geo <- function(
   file_directory, 
   ## Allowed GEO ids:
-  # "GSE25136" : Sun et al.
   # "GSE21032" : Taylor et al.
-  geo_code = "GSE25136", # code for Sun et al. (Taylor et al. - GSE21032)
+  # "GSE25136" : Sun et al.
+  geo_code = "GSE21032", # By default Taylor et al.
   cleanup = TRUE, 
   collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   # Function for cleaning rows/cols where GEO samples returned NaN or similar non-finite values only
@@ -75,7 +75,7 @@ generate_gex_geo <- function(
 	nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[3]])) 
 	nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[4]])))
 	# Some samples were suffixed with HuEx, while others had Exonl prefix
-	nam <- paste(nam0, ".", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
+	nam <- paste(nam0, "_", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
 
 	# Extract gene names
 	genenames <- unlist(lapply(fData(RMAs)[,"geneassignment"], FUN=function(z) { strsplit(z, " // ")[[1]][2] }))
@@ -111,6 +111,136 @@ generate_gex_geo <- function(
   # Return numeric matrix
   as.matrix(cleanFUN(gex))
 }
+
+
+#' Download copy number variant data from GEO using study specific id and process it
+generate_cna_geo <- function(
+  file_directory, 
+  ## Allowed GEO ids:
+  # "GSE21035" : Taylor et al.
+  # "GSE54691" : Hieronymus et al.
+  geo_code = "GSE21035", # By default Taylor et al.
+  cleanup = TRUE, 
+  #collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
+  # Function for cleaning rows/cols where GEO samples returned NaN or similar non-finite values only
+  cleanFUN = janitor::remove_empty,
+  ...
+){
+  if(!missing(file_directory)) here::set_here(file_directory)
+  # Supplementary files include the raw CEL files
+  supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+
+  # Open the tarball(s)
+  utils::untar(tarfile = rownames(supfiles))
+
+  # Handle various GEO ids
+  
+  ##
+  # same rCGH pipeline applied to datasets:
+  # Taylor et al.
+  # Hieronymus et al.
+  ##
+  if(geo_code %in% c("GSE21035", "GSE54691")){
+  	# Read in Agilent 2-color data
+	cna <- lapply(base::list.files(), FUN=function(z) { 
+		try({
+			cat("\n\nProcessing: ",z,"\n\n") 
+			if(geo_code == "GSE21035"){
+				rCGH::readAgilent(z, genome="hg38", sampleName=gsub(".txt.gz", "", z)) 
+			}else if(geo_code == "GSE54691"){
+				rCGH::readAgilent(z, genome="hg19", sampleName=gsub(".txt.gz", "", z)) 
+			}
+		})
+	})
+	#> list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")]
+	#[1] "GSM525755.txt" "GSM525763.txt"
+	# Some files appear broken in Taylor et al; missing columns?
+	
+	# Omit data that could not be succcessfully read
+	cna <- cna[-which(lapply(cna, FUN=class)=="try-error")]
+	
+	# Signal adjustments
+	cna <- lapply(cna, FUN=function(z){
+		try({
+			rCGH::adjustSignal(z) 
+		})
+	})
+	# Segmentation
+	cna <- lapply(cna, FUN=function(z){
+		try({
+			rCGH::segmentCGH(z) 
+		})
+	})
+	# EM-algorithm normalization
+	cna <- lapply(cna, FUN=function(z){
+		try({
+			rCGH::EMnormalize(z) 
+		})
+	})
+	# Remove additional suffixes from sample names
+	cna <- lapply(cna, FUN=function(z){ 
+		try({
+			if(!"rCGH-Agilent" %in% class(z)){
+				stop("This function is intended for Agilent aCGH analyzed with rCGH R Package (class \'rCGH-Agilent\')")		
+			}
+			# e.g. transform "GSM525575.txt|.gz" -> "GSM525575"
+			z@info["sampleName"] <- gsub(pattern=".gz|.txt", replacement="", z@info["fileName"])
+			z
+		}) 
+	})
+	# Save sample names separately (of 'length(cna)')
+	samplenames <- unlist(lapply(cna, FUN=function(z) { z@info["sampleName"] }))
+	# Get segmentation table
+	cna <- lapply(cna, FUN=function(z){
+		try({
+			rCGH::getSegTable(z)
+		})
+	})
+	# Get per-gene table
+	cna <- lapply(cna, FUN=function(z){
+		try({
+			rCGH::byGeneTable(z)
+		})
+	})
+	# Extract all unique gene symbols present over all samples
+	genenames <- unique(unlist(lapply(cna, FUN=function(z) { z$symbol })))
+	# Bind genes to rows, name samples afterwards
+	cna <- do.call("cbind", lapply(cna, FUN=function(z){
+		# Return CNAs as Log2Ratios
+		z[match(genenames, z$symbol), "Log2Ratio"]
+	}))
+	# Name rows and columns to genes and sample names, respectively
+	rownames(cna) <- genenames
+	colnames(cna) <- samplenames
+	# CNA matrix is ready
+	cna <- as.matrix(cna)
+  }
+  ##
+  # Other
+  ##
+  }else if(geo_code == ""){
+  
+  
+  ##
+  # Unknown
+  ##
+  }else{
+    stop("Unknown GEO id, see allowed parameter values for geo_code")
+  }
+
+  # Remove downloaded files
+  if(cleanup){
+    # First GEO download
+    file.remove(rownames(supfiles))
+    # Tarballs
+    file.remove(gz_files)
+    # Remove empty folder
+    file.remove(paste0(here::here(), "/", geo_code))
+  }
+  # Return numeric matrix
+  as.matrix(cleanFUN(cna))
+}
+
 
 #' Download generic 'omics data from cBioPortal using dataset specific query
 generate_cbioportal <- function(
