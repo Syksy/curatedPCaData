@@ -1,14 +1,14 @@
 # tcga data ------
 # GEX
 gex_tcga <- curatedPCaData:::generate_cbioportal(
-  genes = gene_names, # All unique gene symbols
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
   geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # Omics profile
   caseList = "prad_tcga_pub_sequenced" # Case list
 )
 usethis::use_data_raw(gex_tcga, overwrite = TRUE)
 # CNA
 cna_tcga <- curatedPCaData:::generate_cbioportal(
-  genes = gene_names,
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_tcga_pub_gistic",
   caseList="prad_tcga_pub_sequenced"
 )
@@ -25,7 +25,7 @@ usethis::use_data_raw(gex_sun, overwrite = TRUE)
 # cBioPortal variant
 # GEX
 gex_cbio_taylor <- curatedPCaData:::generate_cbioportal(
-  genes = gene_names,
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_mskcc_mrna_median_Zscores",
   caseList="prad_mskcc_sequenced"
 )
@@ -33,7 +33,7 @@ gex_cbio_taylor <- curatedPCaData:::generate_cbioportal(
 usethis::use_data_raw(gex_cbio_taylor, overwrite = TRUE)
 # CNA
 cna_cbio_taylor <- curatedPCaData:::generate_cbioportal(
-  genes = gene_names,
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_mskcc_cna",
   caseList="prad_mskcc_sequenced"
 )
