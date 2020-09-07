@@ -10,8 +10,7 @@ create_mae(study_name = "TCGA")
 \item{study_name}{study identifier.}
 }
 \value{
-A MulitAssayExperiment object containing clinical and gene expression data 
-along with any other available data
+A MultiAssayExperiment object containing clinical and multi-'omics data
 }
 \description{
 Create multi-assay experiment object.

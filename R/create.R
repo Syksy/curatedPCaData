@@ -1,8 +1,7 @@
 #' Create multi-assay experiment object. 
 #' 
 #' @param study_name study identifier.
-#' @return A MulitAssayExperiment object containing clinical and gene expression data 
-#' along with any other available data 
+#' @return A MultiAssayExperiment object containing clinical and multi-'omics data
 #' 
 #' @importFrom rlang .data
 create_mae <- function(
