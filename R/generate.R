@@ -1,12 +1,15 @@
 #' Download gene expression from GEO using study specific id and process it
 generate_gex_geo <- function(
+  # Base directory for processing data, note a substantial amount of free HD space is required for raw data
   file_directory, 
   ## Allowed GEO ids:
   # "GSE21032" : Taylor et al.
   # "GSE25136" : Sun et al.
   geo_code = "GSE21032", # By default Taylor et al.
+  # Whether downloaded and intermediate files ought to be cleaned up (deleted)
   cleanup = TRUE, 
-  collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
+  # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
+  collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, 
   # Function for cleaning rows/cols where GEO samples returned NaN or similar non-finite values only
   cleanFUN = janitor::remove_empty,
   ...
@@ -120,11 +123,13 @@ generate_gex_geo <- function(
 
 #' Download copy number variant data from GEO using study specific id and process it
 generate_cna_geo <- function(
+  # Base directory for processing data, note a substantial amount of free HD space is required for raw data
   file_directory, 
   ## Allowed GEO ids:
   # "GSE21035" : Taylor et al.
   # "GSE54691" : Hieronymus et al.
   geo_code = "GSE21035", # By default Taylor et al.
+  # Whether downloaded and intermediate files ought to be cleaned up (deleted)
   cleanup = TRUE, 
   # Function for cleaning rows/cols where GEO samples returned NaN or similar non-finite values only
   cleanFUN = janitor::remove_empty,
