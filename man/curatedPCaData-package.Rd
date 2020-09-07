@@ -7,7 +7,7 @@
 \title{curatedPCaData: Curated Prostate Cancer Data}
 \description{
 A selection of annotated prostate cancer datasets including TCGA, 
-    Sun et al., and others.
+    Taylor et al., Sun et al., and others.
 }
 \seealso{
 Useful links:
@@ -18,11 +18,13 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Daniel Laajala \email{teelaa@utu.fi.com}
+\strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi.com}
 
 Other contributors:
 \itemize{
   \item Jordan Creed \email{jordan.h.creed@moffitt.org} [contributor]
+  \item Christelle Colin Leitzinger \email{christelle.colinleitzinger@moffitt.org} [contributor]
+  \item Varsha Sreekanth \email{varsha.sreekanth@cuanschutz.edu} [contributor]
 }
 
 }

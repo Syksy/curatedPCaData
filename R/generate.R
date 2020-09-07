@@ -1,4 +1,4 @@
-#' Download gene expression from GEO using study specific id and process it
+# Download gene expression from GEO using study specific id and process it
 generate_gex_geo <- function(
   # Base directory for processing data, note a substantial amount of free HD space is required for raw data
   file_directory, 
@@ -121,7 +121,7 @@ generate_gex_geo <- function(
 }
 
 
-#' Download copy number variant data from GEO using study specific id and process it
+# Download copy number variant data from GEO using study specific id and process it
 generate_cna_geo <- function(
   # Base directory for processing data, note a substantial amount of free HD space is required for raw data
   file_directory, 
@@ -150,6 +150,8 @@ generate_cna_geo <- function(
   # Hieronymus et al.
   ##
   if(geo_code %in% c("GSE21035", "GSE54691")){
+  	# For now, the package 'rCGH' has to be available in the workspace, otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
+  	library("rCGH")
   	# Read in Agilent 2-color data
 	cna <- lapply(base::list.files(), FUN=function(z) { 
 		try({
@@ -253,10 +255,10 @@ generate_cna_geo <- function(
 }
 
 
-#' Download generic 'omics data from cBioPortal using dataset specific query
+# Download generic 'omics data from cBioPortal using dataset specific query
 generate_cbioportal <- function(
   # By default used the gene symbol from package data
-  genes = sort(curatedPCaData:::tcga_gene_names$hgnc), # List of gene symbols to iterate over
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # List of gene symbols to iterate over
   # geneticProfiles; Allowed platform/data combinations:
   # "prad_tcga_pub_rna_seq_v2_mrna" : TCGA GEX
   # "prad_tcga_pub_gistic" : TCGA CNA (GISTIC)
@@ -277,7 +279,13 @@ generate_cbioportal <- function(
   verb = TRUE,
   ...
 ){
+  # If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
+  if(class(genes)=="list"){
+    genes <- genes$hgnc_symbol
+  }
+  # Establisigh connection to cBioPortal
   mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+  # Split gene name vector into suitable lengths
   genesplit <- rep(1:ceiling(length(genes)/splitsize), each=splitsize)[1:length(genes)]
   splitgenes <- split(genes, f=genesplit)
   # Fetch split gene name lists as separate calls
