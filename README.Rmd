@@ -38,5 +38,5 @@ devtools::install_github("Syksy/curatedPCaData")
 ```{r}
 library(curatedPCaData)
 
-curatedPCaData::tcga_gex[1:5,1:5]
+curatedPCaData::mae_tcga
 ```
