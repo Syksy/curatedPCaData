@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi.com}
+\strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi}
 
 Other contributors:
 \itemize{
