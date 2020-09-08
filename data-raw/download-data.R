@@ -26,6 +26,9 @@ gex_sun <- curatedPCaData:::generate_gex_geo(
 )
 usethis::use_data_raw(gex_sun, overwrite = TRUE)
 #save(gex_sun, file="data-raw/gex_sun.RData")
+# Create MAE object
+mae_sun <- curatedPCaData:::create_mae(study_name = "sun")
+usethis::use_data(mae_sun, internal = FALSE, overwrite = TRUE)
 
 #taylor et al data -----
 # cBioPortal variant
@@ -64,7 +67,7 @@ usethis::use_data_raw(cna_geo_taylor, overwrite = TRUE)
 
 #hieronymus et al data -----
 # CNA
-cna_hieronymus <- curatedPCaData::::generate_gex_geo(
+cna_hieronymus <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE54691"
 )
 #save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")

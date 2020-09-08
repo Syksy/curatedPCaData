@@ -157,6 +157,11 @@ generate_cna_geo <- function(
   # Supplementary files include the raw CEL files
   supfiles <- GEOquery::getGEOSuppFiles(geo_code)
 
+  # Hieronymus et al. requires going to a subfolder
+  if(geo_code == "GSE54691"){
+    setwd("GSE54691") # Contains both CNA input as well as clinical data txt.gz
+  }
+  
   # Open the tarball(s)
   utils::untar(tarfile = rownames(supfiles))
 
@@ -260,11 +265,13 @@ generate_cna_geo <- function(
   }
 
   # Remove downloaded files
+  # TODO: Make sure appropriate permissions exist for removing files
   if(cleanup){
     # First GEO download
     file.remove(rownames(supfiles))
     # Tarballs
-    file.remove(gz_files)
+    # TODO: Neither CNA pipeline produces .gz-files
+    #file.remove(gz_files)
     # Remove empty folder
     file.remove(paste0(here::here(), "/", geo_code))
   }

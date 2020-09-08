@@ -233,7 +233,7 @@ curated <- curated %>%
     TRUE ~ T_substage_pathological
   )) 
 
-taylor_clinical <- curated
+clinical_taylor <- curated
 
 save(taylor_clinical, file = "data-raw/clinical_taylor.RData")
 

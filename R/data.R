@@ -14,9 +14,12 @@
 #' @details This data.frame contains information for the package's internal use, e.g. when calling cBioPortal's wrapper with Hugo symbols. Further, attr-field 'date' shows the exact date of retrieving this data.frame using biomaRt.
 "curatedPCaData_genes"
 
-#' MAE object for TCGA
+#' @title MAE object for TCGA
 #'
 #' TODO
-#'
-#' @export
 "mae_tcga"
+
+#' @title MAE object for Sun et al.
+#'
+#' TODO
+"mae_sun"
