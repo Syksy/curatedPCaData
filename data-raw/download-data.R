@@ -15,6 +15,9 @@ cna_tcga <- curatedPCaData:::generate_cbioportal(
 )
 #save(cna_tcga, file="data-raw/cna_tcga.RData")
 usethis::use_data_raw(cna_tcga, overwrite = TRUE)
+# Create MAE object
+mae_tcga <- curatedPCaData:::create_mae(study_name = "tcga")
+usethis::use_data(mae_tcga, internal = FALSE, overwrite = TRUE)
 
 # sun et al data -----
 # GEX

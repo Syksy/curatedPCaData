@@ -5,26 +5,35 @@
 #' 
 #' @importFrom rlang .data
 create_mae <- function(
-  study_name = "TCGA"
+  # Valid study_name-parameters: tcga, taylor, sun, hieronymus
+  study_name = "TCGA",
+  # Level of verbosity
+  verb = 1,
+  ...
 ){
-  data_sets <- list.files("data/",pattern=paste0(tolower(study_name),"_"))
-  data_sets <- paste0("data/", data_sets)
+  if(verb>=1) print(paste("Starting to process:", study_name))
+  data_sets <- list.files("data-raw/",pattern=tolower(study_name))
+  data_sets <- paste0("data-raw/", data_sets)
   
   # import gene expression matrix from generate.R
-  gex_name <- load(grep("*_gex.rda",data_sets, value=TRUE))
+  gex_name <- load(grep("gex_",data_sets, value=TRUE))
   gex_object <- get(gex_name) 
+  if(verb>=1) print("GEX loaded")
   
   # import gene expression matrix from generate.R
-  if (length(grep("*_cna.rda",data_sets, value=TRUE))==0) {
+  if (length(grep("cna_",data_sets, value=TRUE))==0) {
     cna_object <- NULL
+    if(verb>=1) print("No CNA found")
   } else {
-    cna_name <- load(grep("*_cna.rda",data_sets, value=TRUE))
+    cna_name <- load(grep("cna_",data_sets, value=TRUE))
     cna_object <- get(cna_name) 
+    if(verb>=1) print("CNA loaded")
   }
   
   # import clinical/pheno data from download-clinical.R
-  pheno_name <- load(grep("*_clinical.rda",data_sets, value=TRUE))
+  pheno_name <- load(grep("clinical_",data_sets, value=TRUE))
   pheno_object <- get(pheno_name) 
+  if(verb>=1) print("Clinical information loaded")
   
   # making sure matrix(s) has samples as columns and genes as rows
   if(length(intersect(row.names(gex_object), pheno_object$sample_name))==0){
@@ -42,8 +51,14 @@ create_mae <- function(
     dplyr::filter(.data$sample_name %in% colnames(gex_object))
     
   rownames(pheno_object) <- pheno_object$patient_id
+
   
   # Generate a MAE-object
+  # TODO:
+  # Separate here which 'omics are available; e.g. Hieronymus et al. contains only CNA
+
+  if(verb>=1) print("Data reshaping finished")
+  
   mae_object <- MultiAssayExperiment::MultiAssayExperiment(
     experiments = if(is.null(cna_object)){
       MultiAssayExperiment::ExperimentList(
@@ -66,6 +81,8 @@ create_mae <- function(
                        colname = pheno_object$sample_name))
     }
     )
+
+  if(verb>=1) print(paste("MAE-object successfully created for", study_name))
   
   return(mae_object)
   
