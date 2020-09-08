@@ -12,6 +12,8 @@ generate_gex_geo <- function(
   collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, 
   # Function for cleaning rows/cols where GEO samples returned NaN or similar non-finite values only
   cleanFUN = janitor::remove_empty,
+  ## Old parameter in Jordan's branch:
+  #collapse_probes = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, # Function to collapse probe(s) or select a probe, e.g. mean, median, or function that picks a probe with high variance
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
@@ -46,6 +48,22 @@ generate_gex_geo <- function(
 	nam[is.na(nam)] <- "NA"
 	# Collapse probes
 	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
+    
+    ## TODO: Below snippet from Jordan, to be discussed; annotates new names
+    #
+    #compare_names <- data.frame(original = row.names(gex),
+    #                            current = limma::alias2SymbolTable(row.names(gex),
+    #                                                               species="Hs"))
+    #duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
+    #
+    #compare_names <- compare_names %>% 
+    #  dplyr::mutate(new_names = dplyr::case_when(
+    #    current %in% duplicated_hugo_symbols ~ original,
+    #    TRUE ~ current
+    #  ))
+    #
+    #row.names(gex) <- compare_names$new_names
+    #
     
 	# Sort genes to alphabetic order for consistency
 	gex <- gex[order(rownames(gex)),]
@@ -256,12 +274,16 @@ generate_cna_geo <- function(
 
 
 # Download generic 'omics data from cBioPortal using dataset specific query
+# To examine available profiles after establishing mycgds-connection:
+# cgdsr::getCaseLists(mycgds, cancerStudy="prad_tcga_pub")
+# cgdsr::getGeneticProfiles(mycgds, cancerStudy="prad_tcga_pub")
 generate_cbioportal <- function(
   # By default used the gene symbol from package data
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # List of gene symbols to iterate over
   # geneticProfiles; Allowed platform/data combinations:
   # "prad_tcga_pub_rna_seq_v2_mrna" : TCGA GEX
   # "prad_tcga_pub_gistic" : TCGA CNA (GISTIC)
+  # "prad_tcga_pub_linear_CNA" : TCGA CNA (Capped relative linear copy-number values)
   # "prad_mskcc_mrna_median_Zscores" : Taylor et al. GEX (z-score normalized)
   # "prad_mskcc_cna" : Taylor et al. CNA
   geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # for cgdsr calls, platform and dataset specific string
