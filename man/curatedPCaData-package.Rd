@@ -18,11 +18,13 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Daniel Laajala \email{teelaa@utu.fi.com}
+\strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi.com}
 
 Other contributors:
 \itemize{
   \item Jordan Creed \email{jordan.h.creed@moffitt.org} [contributor]
+  \item Christelle Colin Leitzinger \email{christelle.colinleitzinger@moffitt.org} [contributor]
+  \item Varsha Sreekanth \email{varsha.sreekanth@cuanschutz.edu} [contributor]
 }
 
 }
