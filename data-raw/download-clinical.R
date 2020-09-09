@@ -1,4 +1,5 @@
 library(magrittr)
+library(dplyr)
 
 initial_curated_df <- function(
   df_rownames,
@@ -171,71 +172,80 @@ save(clinical_sun, file = "data-raw/clinical_sun.RData")
 ############################################################################### 
 
 # GEOquery for GSE21032 is BUSTED 
-# gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
-# uncurated <- Biobase::pData(gse[[2]])
+gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
+uncurated <- Biobase::pData(gse[[2]])
 
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-uncurated <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
+# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+# uncurated <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
 
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
 
+# uncurated_edited <- uncurated %>% 
+#   mutate(sample_type = case_when(
+#     stringr::str_starts(characteristics_ch1.3, "tumor type: ") ~ 
+#       stringr::str_remove(characteristics_ch1.3, "tumor type: "),
+#     stringr::str_starts(characteristics_ch1.4, "tumor type: ") ~ 
+#       stringr::str_remove(characteristics_ch1.4, "tumor type: "),
+#     TRUE ~ "Unknown"
+#   )) 
+
 curated <- curated %>% 
   dplyr::mutate(study_name = "Taylor, et al.") %>% 
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
-  dplyr::mutate(sample_type = tolower(uncurated$SAMPLE_CLASS)) %>%
+  dplyr::mutate(sample_type = tolower(uncurated$`tumor type:ch1`)) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
-    sample_type == "tumor" ~ "primary",
+    sample_type == "primary tumor" ~ "primary",
     sample_type == "cell line" ~ "cell.line",
     TRUE ~ sample_type
   )) %>% 
-  dplyr::mutate(gleason_grade = as.numeric(uncurated$GLEASON_SCORE)) %>%
-  dplyr::mutate(gleason_major = uncurated$GLEASON_SCORE_1) %>% 
-  dplyr::mutate(gleason_minor = uncurated$GLEASON_SCORE_2) %>% 
-  dplyr::mutate(grade_group = dplyr::case_when(
-    gleason_grade == 6 ~ "<=6",
-    gleason_grade %in% 8:10 ~ ">=8",
-    gleason_major == 3 & gleason_minor == 4 ~ "3+4",
-    gleason_major == 4 & gleason_minor == 3 ~ "4+3",
-  )) %>% 
-  dplyr::mutate(ERG_fusion_GEX = uncurated$ERG_FUSION_GEX) %>% 
-  dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
-    ERG_fusion_GEX == "Negative" ~ 0,
-    ERG_fusion_GEX == "Positive" ~ 1,
-    TRUE ~ NA_real_
-  )) %>% 
-  dplyr::mutate(ERG_fusion_CNA = uncurated$ERG_FUSION_ACGH) %>% 
-  dplyr::mutate(ERG_fusion_CNA =  dplyr::case_when(
-    ERG_fusion_CNA == "Positive" ~ 1,
-    ERG_fusion_CNA %in% c("Negative", "Flat") ~ 0,
-    TRUE ~ NA_real_
-  )) %>% 
-  dplyr::mutate(disease_specific_recurrence_status = uncurated$DFS_STATUS) %>% 
-  dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
-    disease_specific_recurrence_status == "Recurred" ~ 1,
-    disease_specific_recurrence_status == "DiseaseFree" ~ 0,
-    TRUE ~ NA_real_
-  )) %>% 
-  dplyr::mutate(days_to_disease_specific_recurrence == uncurated$DFS_MONTHS) %>%
-  dplyr::mutate(T_clinical = stringr::str_sub(uncurated$CLIN_T_STAGE,2,2)) %>%
+  dplyr::mutate(gleason_grade = as.numeric(uncurated$`biopsy_gleason_grade:ch1`)) %>%
+  # dplyr::mutate(gleason_major = uncurated$GLEASON_SCORE_1) %>% 
+  # dplyr::mutate(gleason_minor = uncurated$GLEASON_SCORE_2) %>% 
+  # dplyr::mutate(grade_group = dplyr::case_when(
+  #   gleason_grade == 6 ~ "<=6",
+  #   gleason_grade %in% 8:10 ~ ">=8",
+  #   gleason_major == 3 & gleason_minor == 4 ~ "3+4",
+  #   gleason_major == 4 & gleason_minor == 3 ~ "4+3",
+  # )) %>% 
+  # dplyr::mutate(ERG_fusion_GEX = uncurated$ERG_FUSION_GEX) %>% 
+  # dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
+  #   ERG_fusion_GEX == "Negative" ~ 0,
+  #   ERG_fusion_GEX == "Positive" ~ 1,
+  #   TRUE ~ NA_real_
+  # )) %>% 
+  # dplyr::mutate(ERG_fusion_CNA = uncurated$ERG_FUSION_ACGH) %>% 
+  # dplyr::mutate(ERG_fusion_CNA =  dplyr::case_when(
+  #   ERG_fusion_CNA == "Positive" ~ 1,
+  #   ERG_fusion_CNA %in% c("Negative", "Flat") ~ 0,
+  #   TRUE ~ NA_real_
+  # )) %>% 
+  # dplyr::mutate(disease_specific_recurrence_status = uncurated$DFS_STATUS) %>% 
+  # dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
+  #   disease_specific_recurrence_status == "Recurred" ~ 1,
+  #   disease_specific_recurrence_status == "DiseaseFree" ~ 0,
+  #   TRUE ~ NA_real_
+  # )) %>% 
+  # dplyr::mutate(days_to_disease_specific_recurrence == uncurated$DFS_MONTHS) %>%
+  dplyr::mutate(T_clinical = stringr::str_sub(uncurated$`clint_stage:ch1`,2,2)) %>%
   dplyr::mutate(T_clinical = as.numeric(T_clinical)) %>% 
-  dplyr::mutate(T_substage_clinical = tolower(stringr::str_sub(uncurated$CLIN_T_STAGE,3,3))) %>% 
+  dplyr::mutate(T_substage_clinical = tolower(stringr::str_sub(uncurated$`clint_stage:ch1`,3,3))) %>% 
   dplyr::mutate(T_substage_clinical = dplyr::case_when(
     T_substage_clinical == "" ~ NA_character_,
     TRUE ~ T_substage_clinical
   )) %>% 
-  dplyr::mutate(T_pathological = as.numeric(stringr::str_sub(uncurated$PATH_T_STAGE,2,2))) %>% 
-  dplyr::mutate(T_substage_pathological = tolower(stringr::str_sub(uncurated$PATH_T_STAGE,3,3))) %>% 
+  dplyr::mutate(T_pathological = as.numeric(stringr::str_sub(uncurated$`pathological_stage:ch1`,2,2))) %>% 
+  dplyr::mutate(T_substage_pathological = tolower(stringr::str_sub(uncurated$`pathological_stage:ch1`,3,3))) %>% 
   dplyr::mutate(T_substage_pathological = dplyr::case_when(
     T_substage_pathological == "" ~ NA_character_,
     TRUE ~ T_substage_pathological
   )) 
 
-taylor_clinical <- curated
+clinical_taylor <- curated
 
-save(taylor_clinical, file = "data-raw/clinical_taylor.RData")
+save(clinical_taylor, file = "data-raw/clinical_taylor.RData")
 
 
 
