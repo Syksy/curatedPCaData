@@ -8,33 +8,25 @@
 create_mae <- function(
   study_name = "TCGA"
 ){
-  data_sets <- list.files("data/",pattern=paste0(tolower(study_name),"_"))
-  data_sets <- paste0("data/", data_sets)
+  data_sets <- list.files("data-raw/",pattern=paste0("*_",tolower(study_name),".RData"))
+  data_sets <- paste0("data-raw/", data_sets)
   
   # import gene expression matrix from generate.R
-  gex_name <- load(grep("*_gex.rda",data_sets, value=TRUE))
+  gex_name <- load(grep("data-raw/gex_.*.RData",data_sets, value=TRUE))
+  # gex_name <- load(paste0("data-raw/gex_",tolower(study_name),".Rdata"))
   gex_object <- get(gex_name) 
   
   # import gene expression matrix from generate.R
-  if (length(grep("*_cna.rda",data_sets, value=TRUE))==0) {
+  if (length(grep("data-raw/cna_.*.RData", data_sets, value=TRUE))==0) {
     cna_object <- NULL
   } else {
-    cna_name <- load(grep("*_cna.rda",data_sets, value=TRUE))
+    cna_name <- load(grep("data-raw/cna_.*.RData", data_sets, value=TRUE))
     cna_object <- get(cna_name) 
   }
   
   # import clinical/pheno data from download-clinical.R
-  pheno_name <- load(grep("*_clinical.rda",data_sets, value=TRUE))
+  pheno_name <- load(grep("data-raw/clinical_.*.RData", data_sets, value=TRUE))
   pheno_object <- get(pheno_name) 
-  
-  # making sure matrix(s) has samples as columns and genes as rows
-  if(length(intersect(row.names(gex_object), pheno_object$sample_name))==0){
-    gex_object <- gex_object
-  }
-  if(!is.null(cna_object) & 
-     length(intersect(row.names(cna_object), pheno_object$sample_name))==0){
-    cna_object <- cna_object
-  }
   
   # need to set pheno_object row names = patient_id for MAE reasons? 
   # with the larger TCGA dataset there is a repeated patient - which makes  this step impossible
