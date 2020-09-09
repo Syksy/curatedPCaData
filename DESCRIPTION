@@ -24,7 +24,9 @@ Imports:
     magrittr,
     dplyr,
     MultiAssayExperiment,
-    rlang
+    rlang,
+    janitor,
+    limma
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
