@@ -23,3 +23,8 @@
 #'
 #' TODO
 "mae_sun"
+
+#' @title MAE object for Taylor et al.
+#'
+#' TODO
+"mae_taylor"
