@@ -10,6 +10,6 @@
 ^data-raw$
 ^README.Rmd$
 ^R-4\.0\.0\.pkg$
-^vignettes/TCGA-example\.Rmd$
-^vignettes/data-dictionaries\.Rmd$
+#^vignettes/TCGA-example\.Rmd$
+#^vignettes/data-dictionaries\.Rmd$
 
