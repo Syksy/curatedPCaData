@@ -12,49 +12,60 @@ vignette: >
 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
 )
 
 ```
 
-This vignette introduces `curatedPCaData` and provides an overview of the  package using data fro TCGA as an example. 
+This vignette introduces `curatedPCaData` and provides an overview of the  package using data from TCGA as an example. 
 
 ***
 
-3 different types of datasets are currently available: 
-    + `_gex.rda` contains gene expression values
-    + `_cna.rda` contains copy number values
-    + `_clinical.rda` contains clinical/phenotype information
+3 different types of raw data are currently available: 
+    + `gex_*.RData` contains gene expression values
+    + `cna_*.RData` contains copy number values
+    + `clincial_*.RData` contains clinical/phenotype information
     
-The TCGA data included in the package contains all 3 of these. 
+These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune scores. 
+These individual elements are combined into a `MultiAssayExperiment object` (abbreviation: `MAE`, in lower case by convention). 
+
+The raw data types are combined into these mae objects:
+    + `mae_tcga.RData` for TCGA
+    + `mae_taylor.RData` for Taylor et al. (covers both GEO and cBioPortal sources)
+    + `mae_sun.RData` for Sun et al.
 
 ## Introduction 
 
 In this vignette, we will : 
 
-1. Examine the data as provided in `curatedPCaData`
-2. Format the data  
-3. Calculate ... 
-4. Run a simple analysis 
+1. Examine the data as provided in `curatedPCaData`. 
+2. Run a simple analysis 
 
 ## The data 
 
-All datasets are currently housed within the `data/` folder of the package and follows a simply naming convention of `first-author` and `data type` separated by a `_` (see dataset types above).
-
-For more information on the various datasets and the values within them please see the [data dictionaries vignette](vignettes/data-dictionaries.Rmd). 
+The individual elements are housed within the `data-raw/` folder of the package and follows a simply naming convention of `data type` and `first author` separated by a `_` (see dataset types above). 
+A `MAE` for each study is provided to the users under the `data/` folder. 
 
 ```{r importing}
 library(curatedPCaData)
-dim(tcga_clinical)
+mae_tcga
 ```
 
-## Formatting 
+All functions and individual elements for creating the final `MAE` were created using internal functions (accessible with `:::`) and saved in the `data-raw/` folder in the github and is not compiled with the package.
 
-Individual data pieces can be transformed into an MAE for easier handeling using the `create_mae()` function. The function only takes one argument - the prefix for the dataset. 
+## Simple analysis
 
-```{r transform}
 
-tcga_mae <- create_mae(study_name = "TCGA")
+
+```{r subset_data}
+
+wide_tcga = MultiAssayExperiment::wideFormat(mae_tcga["PTEN", , ],
+    colDataCols=c("overall_survival_status", "days_to_overall_survival", "gleason_grade"))
+
+summary(glm(days_to_overall_survival ~ gex_PTEN + cna_PTEN + gleason_grade, data = wide_tcga))
 
 ```
+
 

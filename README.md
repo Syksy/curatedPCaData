@@ -30,6 +30,60 @@ devtools::install_github("Syksy/curatedPCaData")
 
 ```r
 library(curatedPCaData)
+## Loading required package: S4Vectors
+## Loading required package: stats4
+## Loading required package: BiocGenerics
+## Loading required package: parallel
+## 
+## Attaching package: 'BiocGenerics'
+## The following objects are masked from 'package:parallel':
+## 
+##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ, clusterExport, clusterMap, parApply,
+##     parCapply, parLapply, parLapplyLB, parRapply, parSapply, parSapplyLB
+## The following objects are masked from 'package:stats':
+## 
+##     IQR, mad, sd, var, xtabs
+## The following objects are masked from 'package:base':
+## 
+##     anyDuplicated, append, as.data.frame, basename, cbind, colnames, dirname, do.call, duplicated, eval,
+##     evalq, Filter, Find, get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank, rbind, Reduce, rownames, sapply,
+##     setdiff, sort, table, tapply, union, unique, unsplit, which, which.max, which.min
+## 
+## Attaching package: 'S4Vectors'
+## The following object is masked from 'package:base':
+## 
+##     expand.grid
+## Loading required package: MultiAssayExperiment
+## Loading required package: SummarizedExperiment
+## Loading required package: GenomicRanges
+## Loading required package: IRanges
+## 
+## Attaching package: 'IRanges'
+## The following object is masked from 'package:grDevices':
+## 
+##     windows
+## Loading required package: GenomeInfoDb
+## Loading required package: Biobase
+## Welcome to Bioconductor
+## 
+##     Vignettes contain introductory material; view with 'browseVignettes()'. To cite Bioconductor, see
+##     'citation("Biobase")', and for packages 'citation("pkgname")'.
+## Loading required package: DelayedArray
+## Loading required package: matrixStats
+## 
+## Attaching package: 'matrixStats'
+## The following objects are masked from 'package:Biobase':
+## 
+##     anyMissing, rowMedians
+## 
+## Attaching package: 'DelayedArray'
+## The following objects are masked from 'package:matrixStats':
+## 
+##     colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges
+## The following objects are masked from 'package:base':
+## 
+##     aperm, apply, rowsum
 
 curatedPCaData::mae_tcga
 ## A MultiAssayExperiment object of 2 listed
@@ -59,11 +113,16 @@ curatedPCaData::mae_tcga[["cna"]][1:4,1:4]
 ## A2M                0.002           0.009          -0.021          -0.001
 MultiAssayExperiment::colData(curatedPCaData::mae_tcga)[1:3,1:5]
 ## DataFrame with 3 rows and 5 columns
-##                     study_name   patient_id     sample_name                      alt_sample_name overall_survival_status
-##                    <character>  <character>     <character>                          <character>               <numeric>
-## TCGA.EJ.5502 TCGA, provisional TCGA.EJ.5502 TCGA.EJ.5502.01 d36a0b54-6e09-4ee2-923b-c1516d78bb03                       0
-## TCGA.YJ.A8SW TCGA, provisional TCGA.YJ.A8SW TCGA.YJ.A8SW.01 8A96A7A8-0413-42B9-9173-FD63761DD83A                       0
-## TCGA.EJ.5525 TCGA, provisional TCGA.EJ.5525 TCGA.EJ.5525.01 351af15c-b213-4621-8bcb-3f4ddcf72553                       0
+##                     study_name   patient_id     sample_name                      alt_sample_name
+##                    <character>  <character>     <character>                          <character>
+## TCGA.EJ.5502 TCGA, provisional TCGA.EJ.5502 TCGA.EJ.5502.01 d36a0b54-6e09-4ee2-923b-c1516d78bb03
+## TCGA.YJ.A8SW TCGA, provisional TCGA.YJ.A8SW TCGA.YJ.A8SW.01 8A96A7A8-0413-42B9-9173-FD63761DD83A
+## TCGA.EJ.5525 TCGA, provisional TCGA.EJ.5525 TCGA.EJ.5525.01 351af15c-b213-4621-8bcb-3f4ddcf72553
+##              overall_survival_status
+##                            <numeric>
+## TCGA.EJ.5502                       0
+## TCGA.YJ.A8SW                       0
+## TCGA.EJ.5525                       0
 
 curatedPCaData::mae_taylor
 ## A MultiAssayExperiment object of 4 listed
