@@ -7,7 +7,7 @@
 \title{curatedPCaData: Curated Prostate Cancer Data}
 \description{
 A selection of annotated prostate cancer datasets including TCGA, 
-    Sun et al., and others.
+    Taylor et al., Sun et al., and others.
 }
 \seealso{
 Useful links:
@@ -18,7 +18,11 @@ Useful links:
 
 }
 \author{
+<<<<<<< HEAD
 \strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi.com}
+=======
+\strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi}
+>>>>>>> db064e9bd1d04bd273fcbab8e201097e6c6a8d3f
 
 Other contributors:
 \itemize{

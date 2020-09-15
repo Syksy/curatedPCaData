@@ -119,6 +119,7 @@ Generate_GEX_Taylor <- function(
 	setwd("GSE21032")
 	# Open the tarball
 	utils::untar(tarfile=rownames(supfiles))
+	# Intermediate cleanup
 	# First download CEL files from GEO
 	CELs <- oligo::read.celfiles(affy::list.celfiles())	
 	#> CELs
@@ -141,24 +142,56 @@ Generate_GEX_Taylor <- function(
 	RMAs <- oligo::rma(CELs)
 	featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
 	sampleNames(RMAs) <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[1]])) # GSM######-type names from GEO
+	#> RMAs
+	#ExpressionSet (storageMode: lockedEnvironment)
+	#assayData: 22011 features, 370 samples 
+	#  element names: exprs 
+	#protocolData
+	#  rowNames: GSM526134 GSM526135 ... GSM528049 (370 total)
+	#  varLabels: exprs dates
+	#  varMetadata: labelDescription channel
+	#phenoData
+	#  rowNames: GSM526134 GSM526135 ... GSM528049 (370 total)
+	#  varLabels: index
+	#  varMetadata: labelDescription channel
+	#featureData
+	#  featureNames: 2315554 2315633 ... 7385696 (22011 total)
+	#  fvarLabels: transcriptclusterid probesetid ... category (17 total)
+	#  fvarMetadata: labelDescription
+	#experimentData: use 'experimentData(object)'
+	#Annotation: pd.huex.1.0.st.v2
 	nameMapTaylor <- data.frame(
 		GSM = unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[1]])), # GEO, GSM-names
 		ID = gsub(".CEL|.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[4]]))) # mapping to PCA0001, PCA0002, ...
 	)
 	# 
-	GEX_Taylor <- RMAs
+	#GEX_Taylor <- RMAs
 	# Proper naming
-	nam <- fData(GEX_Taylor)[,8]
-	nam2 <- unlist(lapply(nam, FUN=function(z) { strsplit(z, " // ")[[1]][2] }))
-	nam2[is.na(nam2)] <- "NA"
-	rownames(GEX_Taylor) <- make.unique(nam2)
-	## TODO:
+	#nam <- fData(GEX_Taylor)[,8]
+	genenames <- unlist(lapply(fData(RMAs)[,"geneassignment"], FUN=function(z) { strsplit(z, " // ")[[1]][2] }))
+	#> sum(is.na(genenames))
+	#[1] 4373
+	#genenames[is.na(genenames)] <- "NA"
+	#> dim(gex)
+	#[1] 22011   370
+	gex <- as.matrix(Biobase::exprs(RMAs))
+	#> dim(gex[-which(is.na(genenames)),])
+	#[1] 17638   370
+	gex <- gex[-which(is.na(genenames)),]
+	rownames(gex) <- genenames[-which(is.na(genenames))]
+	# Map the coventionally used Taylor sample names instead of GEO codes 
+	# Compatible with e.g. cBioPortal sample names
+	colnames(gex) <- nameMapTaylor[match(colnames(gex), nameMapTaylor$GSM),"ID"]
+	#rownames(GEX_Taylor) <- make.unique(nam2)
+	#rownames(RMAs) <- make.unique(genenames)
 	if(cleanup){
-		# Remove tarballs and other potential intermediary files
+		# Remove tarballs and other potential intermediary files left in the GSE21032-folder
+		# Careful not create the working directory anywhere else! (Assume setwd-like call above)
+		file.remove(list.files())
 	}
 	
 	# Return constructed gene expression matrix
-	GEX_Taylor
+	gex
 }
 
 #' Copy number alterations from Taylor et al.
