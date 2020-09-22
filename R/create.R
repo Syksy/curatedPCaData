@@ -1,6 +1,8 @@
 #' Create multi-assay experiment object. 
 #' 
 #' @param study_name study identifier.
+#' @param verb print output as MAE is being created 
+#' @param ... additional arguments 
 #' @return A MultiAssayExperiment object containing clinical and multi-'omics data
 #' 
 #' @importFrom rlang .data
