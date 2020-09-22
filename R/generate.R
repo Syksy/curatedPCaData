@@ -13,7 +13,7 @@ generate_gex_geo <- function(
                "GSE25136" # Sun et al.
                ), 
   cleanup = TRUE, 
-  collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}
+  collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
@@ -46,7 +46,8 @@ generate_gex_geo <- function(
 								    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
 	# Collapse probes
-	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
+	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, 
+	                           FUN = collapse_fun))
 	
     # Sun et al does not use Hugo names so the below code makes the names for sun 
 	  # et al comparable with those in tcga/taylor
@@ -80,15 +81,19 @@ generate_gex_geo <- function(
 	# Obtain gene and sample information
 	featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
 	# GSM######-type names from GEO
-	nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[1]])) 
+	nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
+	                      FUN = function(z) z[[1]])) 
 	# Two naming conventions if the files; picking the PCA###-style 
-	nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[3]])) 
-	nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"), FUN=function(z) z[[4]])))
+	nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
+	                      FUN = function(z) z[[3]])) 
+	nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"),
+	                                          FUN = function(z) z[[4]])))
 	# Some samples were suffixed with HuEx, while others had Exonl prefix
 	nam <- paste(nam0, "_", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
 
 	# Extract gene names
-	genenames <- unlist(lapply(fData(RMAs)[,"geneassignment"], FUN=function(z) { strsplit(z, " // ")[[1]][2] }))
+	genenames <- unlist(lapply(fData(RMAs)[,"geneassignment"], 
+	                           FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
 
 	# Transform into a matrix and remove empty gene names
 	gex <- as.matrix(Biobase::exprs(RMAs))
@@ -161,18 +166,19 @@ generate_cna_geo <- function(
   # Hieronymus et al.
   ##
   if(geo_code %in% c("GSE21035", "GSE54691")){
-  	# For now, the package 'rCGH' has to be available in the workspace, otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
+  	# For now, the package 'rCGH' has to be available in the workspace,
+    # otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
   	library("rCGH")
   	# Read in Agilent 2-color data
-  	cna <- lapply(list.files(geo_code), FUN=function(z) { 
+  	cna <- lapply(list.files(geo_code), FUN = function(z) { 
   		try({
   			cat("\n\nProcessing: ",z,"\n\n") 
   			# Taylor et al.
   			if(geo_code == "GSE21035"){
-  				rCGH::readAgilent(z, genome="hg38", sampleName=gsub(".txt.gz", "", z)) 
+  				rCGH::readAgilent(z, genome = "hg38", sampleName = gsub(".txt.gz", "", z)) 
   			# Hieronymus et al.
   			}else if(geo_code == "GSE54691"){
-  				rCGH::readAgilent(z, genome="hg19", sampleName=gsub(".txt.gz", "", z)) 
+  				rCGH::readAgilent(z, genome = "hg19", sampleName = gsub(".txt.gz", "", z)) 
   			}
   		})
   	})
@@ -181,55 +187,55 @@ generate_cna_geo <- function(
 	# Some files appear broken in Taylor et al; missing columns?
 	
 	# Omit data that could not be succcessfully read
-	cna <- cna[-which(lapply(cna, FUN=class)=="try-error")]
+	cna <- cna[-which(lapply(cna, FUN = class) == "try-error")]
 	
 	# Signal adjustments
-	cna <- lapply(cna, FUN=function(z){
+	cna <- lapply(cna, FUN = function(z){
 		try({
 			rCGH::adjustSignal(z) 
 		})
 	})
 	# Segmentation
-	cna <- lapply(cna, FUN=function(z){
+	cna <- lapply(cna, FUN = function(z){
 		try({
 			rCGH::segmentCGH(z) 
 		})
 	})
 	# EM-algorithm normalization
-	cna <- lapply(cna, FUN=function(z){
+	cna <- lapply(cna, FUN = function(z){
 		try({
 			rCGH::EMnormalize(z) 
 		})
 	})
 	# Remove additional suffixes from sample names
-	cna <- lapply(cna, FUN=function(z){ 
+	cna <- lapply(cna, FUN = function(z){ 
 		try({
 			if(!"rCGH-Agilent" %in% class(z)){
 				stop("This function is intended for Agilent aCGH analyzed with rCGH R Package (class \'rCGH-Agilent\')")		
 			}
 			# e.g. transform "GSM525575.txt|.gz" -> "GSM525575"
-			z@info["sampleName"] <- gsub(pattern=".gz|.txt", replacement="", z@info["fileName"])
+			z@info["sampleName"] <- gsub(pattern = ".gz|.txt", replacement = "", z@info["fileName"])
 			z
 		}) 
 	})
 	# Save sample names separately (of 'length(cna)')
-	samplenames <- unlist(lapply(cna, FUN=function(z) { z@info["sampleName"] }))
+	samplenames <- unlist(lapply(cna, FUN = function(z) { z@info["sampleName"] }))
 	# Get segmentation table
-	cna <- lapply(cna, FUN=function(z){
+	cna <- lapply(cna, FUN = function(z){
 		try({
 			rCGH::getSegTable(z)
 		})
 	})
 	# Get per-gene table
-	cna <- lapply(cna, FUN=function(z){
+	cna <- lapply(cna, FUN = function(z){
 		try({
 			rCGH::byGeneTable(z)
 		})
 	})
 	# Extract all unique gene symbols present over all samples
-	genenames <- unique(unlist(lapply(cna, FUN=function(z) { z$symbol })))
+	genenames <- unique(unlist(lapply(cna, FUN = function(z) { z$symbol })))
 	# Bind genes to rows, name samples afterwards
-	cna <- do.call("cbind", lapply(cna, FUN=function(z){
+	cna <- do.call("cbind", lapply(cna, FUN = function(z){
 		# Return CNAs as Log2Ratios
 		z[match(genenames, z$symbol), "Log2Ratio"]
 	}))
@@ -299,17 +305,19 @@ generate_cbioportal <- function(
   # Establisigh connection to cBioPortal
   mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
   # Split gene name vector into suitable lengths
-  genesplit <- rep(1:ceiling(length(genes)/splitsize), each=splitsize)[1:length(genes)]
-  splitgenes <- split(genes, f=genesplit)
+  genesplit <- rep(1:ceiling(length(genes)/splitsize), 
+                   each = splitsize)[1:length(genes)]
+  splitgenes <- split(genes, f = genesplit)
   # Fetch split gene name lists as separate calls
   pb <- progress::progress_bar$new(total = length(splitgenes))
   # Bind the API calls as per columns
-  gex <- as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN=function(z){
+  gex <- as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN = function(z){
       if(verb == TRUE) pb$tick()
       # Sleep if necessary to avoid API call overflow
       Sys.sleep(delay)
       # Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
-      cgdsr::getProfileData(mycgds, genes=splitgenes[[z]], geneticProfiles=geneticProfiles, caseList=caseList)
+      cgdsr::getProfileData(mycgds, genes = splitgenes[[z]], 
+                            geneticProfiles = geneticProfiles, caseList = caseList)
     })))  
   
   gex <- t(gex)
