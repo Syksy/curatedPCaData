@@ -79,7 +79,7 @@ generate_gex_geo <- function(
 	RMAs <- oligo::rma(CELs)
 	
 	# Obtain gene and sample information
-	featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
+	Biobase::featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
 	# GSM######-type names from GEO
 	nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
 	                      FUN = function(z) z[[1]])) 
@@ -92,7 +92,7 @@ generate_gex_geo <- function(
 	nam <- paste(nam0, "_", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
 
 	# Extract gene names
-	genenames <- unlist(lapply(fData(RMAs)[,"geneassignment"], 
+	genenames <- unlist(lapply(Biobase::fData(RMAs)[,"geneassignment"], 
 	                           FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
 
 	# Transform into a matrix and remove empty gene names
@@ -168,7 +168,6 @@ generate_cna_geo <- function(
   if(geo_code %in% c("GSE21035", "GSE54691")){
   	# For now, the package 'rCGH' has to be available in the workspace,
     # otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
-  	library("rCGH")
   	# Read in Agilent 2-color data
   	cna <- lapply(list.files(geo_code), FUN = function(z) { 
   		try({
