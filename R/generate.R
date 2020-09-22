@@ -3,7 +3,7 @@
 #' GEO data
 #' @param geo_code character string indicating name of GEO dataset
 #' @param cleanup logical value to remove intermediate files 
-#' @param collapseFun function to collapse probe(s) or select a probe, 
+#' @param collapse_fun function to collapse probe(s) or select a probe, 
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
 #' 
@@ -13,8 +13,7 @@ generate_gex_geo <- function(
                "GSE25136" # Sun et al.
                ), 
   cleanup = TRUE, 
-  collapseFUN = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}, 
-  cleanFUN = janitor::remove_empty,
+  collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)}
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
@@ -278,7 +277,7 @@ generate_cna_geo <- function(
 #' @param ... any additional arguments
 #' 
 generate_cbioportal <- function(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), 
+  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), 
   geneticProfiles = c("prad_tcga_pub_rna_seq_v2_mrna", #TCGA GEX 
                       "prad_tcga_pub_gistic", # TCGA CNA (GISTIC)
                       "prad_tcga_pub_linear_CNA", # TCGA CNA (Capped relative linear copy-number values)
