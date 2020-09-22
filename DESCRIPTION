@@ -26,7 +26,6 @@ Imports:
     rlang,
     janitor,
     limma,
-    rlang,
     rCGH
 License: GPL-3
 Encoding: UTF-8
