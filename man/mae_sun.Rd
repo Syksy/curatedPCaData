@@ -3,38 +3,20 @@
 \docType{data}
 \name{mae_sun}
 \alias{mae_sun}
-<<<<<<< HEAD
 \title{Sun et al. MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 1.
+An MAE object spanning 79 men 
+\describe{
+  \item{gex}{matrix with 12057 rows and 79 columns}
+}
 }
 \source{
-\url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
+\url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21035}
 }
-=======
-\title{MAE object for Sun et al.
-
-TODO}
-\format{
-An object of class \code{MultiAssayExperiment} of length 1.
-}
->>>>>>> db064e9bd1d04bd273fcbab8e201097e6c6a8d3f
 \usage{
 mae_sun
 }
 \description{
-<<<<<<< HEAD
 MultiAssayExperiment object containing GEX and CNA from Sun et al.
-}
-\details{
-#' @format An MAE object spanning 79 men 
-\describe{
-  \item{GEX}{matrix with 12057 rows and 79 columns}
-}
-=======
-MAE object for Sun et al.
-
-TODO
->>>>>>> db064e9bd1d04bd273fcbab8e201097e6c6a8d3f
 }
 \keyword{datasets}

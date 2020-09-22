@@ -3,18 +3,17 @@
 \docType{data}
 \name{mae_taylor}
 \alias{mae_taylor}
-\title{MAE object for Taylor et al.
-
-TODO}
+\title{Taylor et al. MAE-object}
 \format{
 An object of class \code{MultiAssayExperiment} of length 4.
+}
+\source{
+\url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
 }
 \usage{
 mae_taylor
 }
 \description{
-MAE object for Taylor et al.
-
-TODO
+MultiAssayExperiment object containing GEX and CNA from Taylor
 }
 \keyword{datasets}
