@@ -6,6 +6,7 @@
 #' @return A MultiAssayExperiment object containing clinical and multi-'omics data
 #' 
 #' @importFrom rlang .data
+#' 
 create_mae <- function(
   # Valid study_name-parameters: tcga, taylor, sun, hieronymus
   study_name = "TCGA",
@@ -61,7 +62,8 @@ create_mae <- function(
   }
   
   map <- map %>% 
-    dplyr::left_join(pheno_object %>% dplyr::select(primary = patient_id, sample_name), 
+    dplyr::left_join(pheno_object %>% dplyr::select(primary = .data$patient_id,
+                                                    .data$sample_name), 
                      by = c("colname" = "sample_name")) 
   
   # Generate a MAE-object, generalization to various data compositions done above
