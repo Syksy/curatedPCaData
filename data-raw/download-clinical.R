@@ -247,6 +247,41 @@ clinical_taylor <- curated
 
 save(clinical_taylor, file = "data-raw/clinical_taylor.RData")
 
+###############################################################################
+# ___  ___  ___  _______   ________  ________  ________       ___    ___ _____ ______   ___  ___  ________      
+# |\  \|\  \|\  \|\  ___ \ |\   __  \|\   __  \|\   ___  \    |\  \  /  /|\   _ \  _   \|\  \|\  \|\   ____\     
+# \ \  \\\  \ \  \ \   __/|\ \  \|\  \ \  \|\  \ \  \\ \  \   \ \  \/  / | \  \\\__\ \  \ \  \\\  \ \  \___|_    
+#  \ \   __  \ \  \ \  \_|/_\ \   _  _\ \  \\\  \ \  \\ \  \   \ \    / / \ \  \\|__| \  \ \  \\\  \ \_____  \   
+#   \ \  \ \  \ \  \ \  \_|\ \ \  \\  \\ \  \\\  \ \  \\ \  \   \/  /  /   \ \  \    \ \  \ \  \\\  \|____|\  \  
+#    \ \__\ \__\ \__\ \_______\ \__\\ _\\ \_______\ \__\\ \__\__/  / /      \ \__\    \ \__\ \_______\____\_\  \ 
+#     \|__|\|__|\|__|\|_______|\|__|\|__|\|_______|\|__| \|__|\___/ /        \|__|     \|__|\|_______|\_________\
+#                                                           \|___|/                                 \|_________|
+#   
+###############################################################################  
 
+gse <- GEOquery::getGEO("GSE54691", GSEMatrix = TRUE)
 
+uncurated <- Biobase::pData(gse[[1]])
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Hieronymus, et al.") %>% 
+  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(overall_survival_status = dplyr::case_when(
+    is.na(`survivalevent:ch1`) ~ 0,
+    TRUE ~ 1
+  )) %>%
+  dplyr::mutate(days_to_overall_survival = 
+                  as.numeric(`survival_or_followup_time_months:ch1`)*30.5) %>% 
+  dplyr::mutate(age_at_initial_diagnosis = 
+                  as.numeric(`dxage:ch1`)) %>% 
+  dplur::mutate()
+  
+clinical_hieronymus <- curated
+
+save(clinical_hieronymus, file = "data-raw/clinical_hieronymus.RData")
 
