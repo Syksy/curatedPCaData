@@ -9,7 +9,7 @@
 #' 
 create_mae <- function(
   # Valid study_name-parameters: tcga, taylor, sun, hieronymus
-  study_name = "TCGA",
+  study_name = c("TCGA", "Taylor", "Sun"),
   # Level of verbosity
   verb = TRUE,
   ...
@@ -43,11 +43,11 @@ create_mae <- function(
   
   pheno_name <- load(grep("data-raw/clinical_.*.RData", data_sets, value=TRUE))
   pheno_object <- get(pheno_name) 
-  if(verb == TRUE) print("Clinical information found")
+  # if(verb == TRUE) print("Clinical information found") - dont think we need this
 
   # suggest we also pull the sample_name - MAE object doesnt want it here anyways 
   clinical_object <- pheno_object %>%
-    dplyr::distinct(.data$patient_id)
+    dplyr::distinct(.data$patient_id, .keep_all = TRUE)
 
   # this line defeats the whole purpose of the MAE
   # rownames(pheno_object) <- make.unique(pheno_object$patient_id)
@@ -66,11 +66,16 @@ create_mae <- function(
                                                     .data$sample_name), 
                      by = c("colname" = "sample_name")) 
   
+  clinical_object <- clinical_object %>% 
+    dplyr::filter(patient_id %in% map$primary)
+  
+  row.names(clinical_object) <- clinical_object$patient_id
+  
   # Generate a MAE-object, generalization to various data compositions done above
   if(verb == TRUE) print("Final reformatting")  
   mae_object <- MultiAssayExperiment::MultiAssayExperiment(
     experiments = omics,
-    colData = pheno_object,
+    colData = clinical_object,
     sampleMap = map
   )
 
