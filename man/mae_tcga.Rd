@@ -3,18 +3,21 @@
 \docType{data}
 \name{mae_tcga}
 \alias{mae_tcga}
-\title{MAE object for TCGA
-
-TODO}
+\title{TCGA MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 2.
+An MAE object spanning 333 men with prostate cancer
+\describe{
+  \item{gex}{matrix with 19985 rows and 333 columns}
+  \item{cna}{matrix with 21761 rows and 333 columns}
+}
+}
+\source{
+\url{https://www.cbioportal.org/study/summary?id=prad_tcga_pub}
 }
 \usage{
 mae_tcga
 }
 \description{
-MAE object for TCGA
-
-TODO
+MultiAssayExperiment object containing GEX and CNA from TCGA
 }
 \keyword{datasets}

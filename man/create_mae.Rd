@@ -4,10 +4,14 @@
 \alias{create_mae}
 \title{Create multi-assay experiment object.}
 \usage{
-create_mae(study_name = "TCGA", verb = 1, ...)
+create_mae(study_name = "TCGA", verb = TRUE, ...)
 }
 \arguments{
 \item{study_name}{study identifier.}
+
+\item{verb}{print output as MAE is being created}
+
+\item{...}{additional arguments}
 }
 \value{
 A MultiAssayExperiment object containing clinical and multi-'omics data

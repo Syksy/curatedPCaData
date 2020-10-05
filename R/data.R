@@ -1,30 +1,33 @@
-#' @title Genes used when fetching data for the curatedPCaData-package
-#' @description Genes, e.g. Hugo symbols, used when constructing the curatedPCaData package. This data frame is essential for example when calling the genes in cBioPortal-wrapper. This data.frame contains excess information, e.g. one may wish to limit to using unique/sorted hugo symbols (field 'hgnc_symbol').
-#' @format A data frame with 268931 rows and 8 variables:
-#' \describe{
-#'   \item{\code{ensembl_gene_id}}{character EMSEMBL gene ids}
-#'   \item{\code{ensembl_transcript_id}}{character ENSEMBL transcript ids}
-#'   \item{\code{hgnc_symbol}}{character Hugo symbols}
-#'   \item{\code{refseq_mrna}}{character Refseq NM_##### ids}
-#'   \item{\code{chromosome_name}}{character Chromosome location}
-#'   \item{\code{start_position}}{integer Starting bp location}
-#'   \item{\code{end_position}}{integer Ending bp location}
-#'   \item{\code{description}}{character Character string description for the gene.} 
-#'}
-#' @details This data.frame contains information for the package's internal use, e.g. when calling cBioPortal's wrapper with Hugo symbols. Further, attr-field 'date' shows the exact date of retrieving this data.frame using biomaRt.
-"curatedPCaData_genes"
-
-#' @title MAE object for TCGA
+#' TCGA MAE-object
 #'
-#' TODO
+#' MultiAssayExperiment object containing GEX and CNA from TCGA 
+#' 
+#' @format An MAE object spanning 333 men with prostate cancer
+#' \describe{
+#'   \item{gex}{matrix with 19985 rows and 333 columns}
+#'   \item{cna}{matrix with 21761 rows and 333 columns}
+#' }
+#' 
+#' @source \url{https://www.cbioportal.org/study/summary?id=prad_tcga_pub}
+#'
 "mae_tcga"
 
-#' @title MAE object for Sun et al.
+#' Sun et al. MAE-object
 #'
-#' TODO
+#' MultiAssayExperiment object containing GEX and CNA from Sun et al.
+#' 
+#' @format An MAE object spanning 79 men 
+#' \describe{
+#'   \item{gex}{matrix with 12057 rows and 79 columns}
+#' }
+#' 
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21035}
 "mae_sun"
 
-#' @title MAE object for Taylor et al.
+#' Taylor et al. MAE-object
+#' 
+#' MultiAssayExperiment object containing GEX and CNA from Taylor
 #'
-#' TODO
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
+#'
 "mae_taylor"
