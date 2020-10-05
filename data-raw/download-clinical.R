@@ -194,7 +194,7 @@ curated <- initial_curated_df(
 curated <- curated %>% 
   dplyr::mutate(study_name = "Taylor, et al.") %>% 
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
-  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = uncurated$`sample id:ch1`) %>%
   dplyr::mutate(sample_type = tolower(uncurated$`tumor type:ch1`)) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
     sample_type == "primary tumor" ~ "primary",
@@ -202,33 +202,6 @@ curated <- curated %>%
     TRUE ~ sample_type
   )) %>% 
   dplyr::mutate(gleason_grade = as.numeric(uncurated$`biopsy_gleason_grade:ch1`)) %>%
-  # dplyr::mutate(gleason_major = uncurated$GLEASON_SCORE_1) %>% 
-  # dplyr::mutate(gleason_minor = uncurated$GLEASON_SCORE_2) %>% 
-  # dplyr::mutate(grade_group = dplyr::case_when(
-  #   gleason_grade == 6 ~ "<=6",
-  #   gleason_grade %in% 8:10 ~ ">=8",
-  #   gleason_major == 3 & gleason_minor == 4 ~ "3+4",
-  #   gleason_major == 4 & gleason_minor == 3 ~ "4+3",
-  # )) %>% 
-  # dplyr::mutate(ERG_fusion_GEX = uncurated$ERG_FUSION_GEX) %>% 
-  # dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
-  #   ERG_fusion_GEX == "Negative" ~ 0,
-  #   ERG_fusion_GEX == "Positive" ~ 1,
-  #   TRUE ~ NA_real_
-  # )) %>% 
-  # dplyr::mutate(ERG_fusion_CNA = uncurated$ERG_FUSION_ACGH) %>% 
-  # dplyr::mutate(ERG_fusion_CNA =  dplyr::case_when(
-  #   ERG_fusion_CNA == "Positive" ~ 1,
-  #   ERG_fusion_CNA %in% c("Negative", "Flat") ~ 0,
-  #   TRUE ~ NA_real_
-  # )) %>% 
-  # dplyr::mutate(disease_specific_recurrence_status = uncurated$DFS_STATUS) %>% 
-  # dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
-  #   disease_specific_recurrence_status == "Recurred" ~ 1,
-  #   disease_specific_recurrence_status == "DiseaseFree" ~ 0,
-  #   TRUE ~ NA_real_
-  # )) %>% 
-  # dplyr::mutate(days_to_disease_specific_recurrence == uncurated$DFS_MONTHS) %>%
   dplyr::mutate(T_clinical = stringr::str_sub(uncurated$`clint_stage:ch1`,2,2)) %>%
   dplyr::mutate(T_clinical = as.numeric(T_clinical)) %>% 
   dplyr::mutate(T_substage_clinical = tolower(stringr::str_sub(uncurated$`clint_stage:ch1`,3,3))) %>% 
