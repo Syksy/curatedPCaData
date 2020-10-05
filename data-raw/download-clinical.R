@@ -276,9 +276,9 @@ curated <- curated %>%
     TRUE ~ 1
   )) %>%
   dplyr::mutate(days_to_overall_survival = 
-                  as.numeric(`survival_or_followup_time_months:ch1`)*30.5) %>% 
+                  as.numeric(uncurated$`survival_or_followup_time_months:ch1`)*30.5) %>% 
   dplyr::mutate(age_at_initial_diagnosis = 
-                  as.numeric(`dxage:ch1`)) %>% 
+                  as.numeric(uncurated$`dxage:ch1`)) %>% 
   dplyr::mutate(gleason_grade = as.numeric(uncurated$`pathggs:ch1`)) %>%
   dplyr::mutate(gleason_minor = as.numeric(uncurated$`pathgg2:ch1`)) %>%
   dplyr::mutate(gleason_major = as.numeric(uncurated$`pathgg1:ch1`)) %>%
@@ -296,20 +296,20 @@ curated <- curated %>%
   dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`clint_stage:ch1`,
                                                            "[a-c]+")) %>%
   dplyr::mutate(metastasis_occurrence_status = dplyr::case_when(
-    `metsevent:ch1` == "no" ~ 0,
-    `metsevent:ch1` == "yes" ~ 1
+    uncurated$`metsevent:ch1` == "no" ~ 0,
+    uncurated$`metsevent:ch1` == "yes" ~ 1
   )) %>%
   dplyr::mutate(days_to_metastatic_occurrence = as.numeric(
     uncurated$`metsfreetime_months:ch1`
     )*30.5) %>%
   dplyr::mutate(psa = as.numeric(uncurated$`pretxpsa:ch1`)) %>%
   dplyr::mutate(extraprostatic_extension = dplyr::case_when(
-    `ece_binary:ch1` == "No" ~ 0,
-    `ece_binary:ch1` == "Yes" ~ 1
+    uncurated$`ece_binary:ch1` == "No" ~ 0,
+    uncurated$`ece_binary:ch1` == "Yes" ~ 1
   )) %>% 
   dplyr::mutate(seminal_vesicle_invasion= case_when(
-    `svi:ch1` == "Negative" ~ 0,
-    `svi:ch1` == "Positive" ~ 1
+    uncurated$`svi:ch1` == "Negative" ~ 0,
+    uncurated$`svi:ch1` == "Positive" ~ 1
   )) 
   
   
