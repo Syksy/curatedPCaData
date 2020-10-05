@@ -272,14 +272,46 @@ curated <- curated %>%
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
-    is.na(`survivalevent:ch1`) ~ 0,
+    is.na(uncurated$`survivalevent:ch1`) ~ 0,
     TRUE ~ 1
   )) %>%
   dplyr::mutate(days_to_overall_survival = 
                   as.numeric(`survival_or_followup_time_months:ch1`)*30.5) %>% 
   dplyr::mutate(age_at_initial_diagnosis = 
                   as.numeric(`dxage:ch1`)) %>% 
-  dplur::mutate()
+  dplyr::mutate(gleason_grade = as.numeric(uncurated$`pathggs:ch1`)) %>%
+  dplyr::mutate(gleason_minor = as.numeric(uncurated$`pathgg2:ch1`)) %>%
+  dplyr::mutate(gleason_major = as.numeric(uncurated$`pathgg1:ch1`)) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+    gleason_grade == 6 ~ "<=6",
+    gleason_grade > 8 ~ ">=8",
+    gleason_grade == 7 & gleason_major == "3" ~ "3+4",
+    gleason_grade == 7 & gleason_major == "4" ~ "4+3",
+  )) %>% 
+  dplyr::mutate(source_of_gleason = "prostatectomy") %>% 
+  dplyr::mutate(T_pathological = readr::parse_number(uncurated$`pathstage:ch1`)) %>%
+  dplyr::mutate(T_substage_pathological = stringr::str_extract(uncurated$`pathstage:ch1`,
+                                                                "[a-c]+")) %>% 
+  dplyr::mutate(T_clinical = readr::parse_number(uncurated$`clint_stage:ch1`)) %>% 
+  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`clint_stage:ch1`,
+                                                           "[a-c]+")) %>%
+  dplyr::mutate(metastasis_occurrence_status = dplyr::case_when(
+    `metsevent:ch1` == "no" ~ 0,
+    `metsevent:ch1` == "yes" ~ 1
+  )) %>%
+  dplyr::mutate(days_to_metastatic_occurrence = as.numeric(
+    uncurated$`metsfreetime_months:ch1`
+    )*30.5) %>%
+  dplyr::mutate(psa = as.numeric(uncurated$`pretxpsa:ch1`)) %>%
+  dplyr::mutate(extraprostatic_extension = dplyr::case_when(
+    `ece_binary:ch1` == "No" ~ 0,
+    `ece_binary:ch1` == "Yes" ~ 1
+  )) %>% 
+  dplyr::mutate(seminal_vesicle_invasion= case_when(
+    `svi:ch1` == "Negative" ~ 0,
+    `svi:ch1` == "Positive" ~ 1
+  )) 
+  
   
 clinical_hieronymus <- curated
 
