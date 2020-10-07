@@ -54,10 +54,12 @@ usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
 
 #hieronymus et al data -----
 # CNA
-cna_hieronymus <- curatedPCaData:::generate_gex_geo(
+cna_hieronymus <- curatedPCaData:::generate_cna_geo(
   geo_code = "GSE54691"
 )
 save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")
 
 # Create MAE object
+mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
+usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 
