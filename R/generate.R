@@ -219,6 +219,11 @@ generate_cna_geo <- function(
 	})
 	# Save sample names separately (of 'length(cna)')
 	samplenames <- unlist(lapply(cna, FUN = function(z) { z@info["sampleName"] }))
+	# Reformat samplenames in Hieronymus
+	if(geo_code == "GSE54691"){
+		# Pick GSM-part in GSM###_PCA###
+		samplenames <- unlist(lapply(samplenames, FUN=function(z) { strsplit(z, "_")[[1]][[1]]}))
+	}	
 	# Get segmentation table
 	cna <- lapply(cna, FUN = function(z){
 		try({
