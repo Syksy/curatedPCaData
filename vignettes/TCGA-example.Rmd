@@ -51,6 +51,17 @@ A `MAE` for each study is provided to the users under the `data/` folder.
 ```{r importing}
 library(curatedPCaData)
 mae_tcga
+
+mae_tcga[["gex"]][1:5,1:5]
+
+# MAE-objects are 3-dimensional arrays:
+# 1st: Variables (e.g. genes)
+# 2nd: Sample IDs
+# 3rd: Platforms (e.g. 'omics)
+# For example:
+
+wideFormat(curatedPCaData::mae_tcga[c("TP53", "BRCA1", "BRCA2"), c("TCGA.EJ.5502", "TCGA.YJ.A8SW"), c("gex", "cna")])
+
 ```
 
 All functions and individual elements for creating the final `MAE` were created using internal functions (accessible with `:::`) and saved in the `data-raw/` folder in the github and is not compiled with the package.
