@@ -175,46 +175,68 @@ save(clinical_sun, file = "data-raw/clinical_sun.RData")
 gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
 uncurated <- Biobase::pData(gse[[2]])
 
-# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-# uncurated <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+uncurated_cbio <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
 
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
 
-# uncurated_edited <- uncurated %>% 
-#   mutate(sample_type = case_when(
-#     stringr::str_starts(characteristics_ch1.3, "tumor type: ") ~ 
-#       stringr::str_remove(characteristics_ch1.3, "tumor type: "),
-#     stringr::str_starts(characteristics_ch1.4, "tumor type: ") ~ 
-#       stringr::str_remove(characteristics_ch1.4, "tumor type: "),
-#     TRUE ~ "Unknown"
-#   )) 
-
-curated <- curated %>% 
-  dplyr::mutate(study_name = "Taylor, et al.") %>% 
-  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+curated <- curated %>%
+  dplyr::mutate(study_name = "Taylor, et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>%
   dplyr::mutate(patient_id = uncurated$`sample id:ch1`) %>%
   dplyr::mutate(sample_type = tolower(uncurated$`tumor type:ch1`)) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
     sample_type == "primary tumor" ~ "primary",
     sample_type == "cell line" ~ "cell.line",
     TRUE ~ sample_type
-  )) %>% 
+  )) %>%
   dplyr::mutate(gleason_grade = as.numeric(uncurated$`biopsy_gleason_grade:ch1`)) %>%
   dplyr::mutate(T_clinical = stringr::str_sub(uncurated$`clint_stage:ch1`,2,2)) %>%
-  dplyr::mutate(T_clinical = as.numeric(T_clinical)) %>% 
-  dplyr::mutate(T_substage_clinical = tolower(stringr::str_sub(uncurated$`clint_stage:ch1`,3,3))) %>% 
+  dplyr::mutate(T_clinical = as.numeric(T_clinical)) %>%
+  dplyr::mutate(T_substage_clinical = tolower(stringr::str_sub(uncurated$`clint_stage:ch1`,3,3))) %>%
   dplyr::mutate(T_substage_clinical = dplyr::case_when(
     T_substage_clinical == "" ~ NA_character_,
     TRUE ~ T_substage_clinical
-  )) %>% 
-  dplyr::mutate(T_pathological = as.numeric(stringr::str_sub(uncurated$`pathological_stage:ch1`,2,2))) %>% 
-  dplyr::mutate(T_substage_pathological = tolower(stringr::str_sub(uncurated$`pathological_stage:ch1`,3,3))) %>% 
+  )) %>%
+  dplyr::mutate(T_pathological = as.numeric(stringr::str_sub(uncurated$`pathological_stage:ch1`,2,2))) %>%
+  dplyr::mutate(T_substage_pathological = tolower(stringr::str_sub(uncurated$`pathological_stage:ch1`,3,3))) %>%
   dplyr::mutate(T_substage_pathological = dplyr::case_when(
     T_substage_pathological == "" ~ NA_character_,
     TRUE ~ T_substage_pathological
-  )) 
+  ))
+
+uncurated_cbio <- uncurated_cbio[match(curated$patient_id, row.names(uncurated_cbio)),]
+
+curated <- curated %>%
+  dplyr::mutate(gleason_major = uncurated_cbio$GLEASON_SCORE_1) %>% 
+  dplyr::mutate(gleason_minor = uncurated_cbio$GLEASON_SCORE_2) %>% 
+  dplyr::mutate(grade_group = dplyr::case_when(
+    gleason_grade == 6 ~ "<=6",
+    gleason_grade %in% 8:10 ~ ">=8",
+    gleason_major == 3 & gleason_minor == 4 ~ "3+4",
+    gleason_major == 4 & gleason_minor == 3 ~ "4+3",
+  )) %>% 
+  dplyr::mutate(ERG_fusion_GEX = uncurated_cbio$ERG_FUSION_GEX) %>% 
+  dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
+    ERG_fusion_GEX == "Negative" ~ 0,
+    ERG_fusion_GEX == "Positive" ~ 1,
+    TRUE ~ NA_real_
+  )) %>% 
+  dplyr::mutate(ERG_fusion_CNA = uncurated_cbio$ERG_FUSION_ACGH) %>% 
+  dplyr::mutate(ERG_fusion_CNA =  dplyr::case_when(
+    ERG_fusion_CNA == "Positive" ~ 1,
+    ERG_fusion_CNA %in% c("Negative", "Flat") ~ 0,
+    TRUE ~ NA_real_
+  )) %>% 
+  dplyr::mutate(disease_specific_recurrence_status = uncurated_cbio$DFS_STATUS) %>% 
+  dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
+    disease_specific_recurrence_status == "Recurred" ~ 1,
+    disease_specific_recurrence_status == "DiseaseFree" ~ 0,
+    TRUE ~ NA_real_
+  )) %>% 
+  dplyr::mutate(days_to_disease_specific_recurrence == uncurated_cbio$DFS_MONTHS) 
 
 clinical_taylor <- curated
 
