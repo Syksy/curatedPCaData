@@ -4,7 +4,11 @@
 \alias{create_mae}
 \title{Create multi-assay experiment object.}
 \usage{
-create_mae(study_name = "TCGA", verb = TRUE, ...)
+create_mae(
+  study_name = c("TCGA", "Taylor", "Sun", "Hieronymus"),
+  verb = TRUE,
+  ...
+)
 }
 \arguments{
 \item{study_name}{study identifier.}
