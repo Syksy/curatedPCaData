@@ -63,3 +63,4 @@ save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")
 mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
 usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 
+## TODO: usethis::use_data will automatically use ".rda" not ".RData" (latter preferred; now manually adjusted)

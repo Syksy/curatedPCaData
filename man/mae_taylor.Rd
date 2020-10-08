@@ -14,6 +14,6 @@ An object of class \code{MultiAssayExperiment} of length 4.
 mae_taylor
 }
 \description{
-MultiAssayExperiment object containing GEX and CNA from Taylor
+MultiAssayExperiment object containing GEX and CNA from Taylor et al.
 }
 \keyword{datasets}
