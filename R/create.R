@@ -66,6 +66,14 @@ create_mae <- function(
                                                     .data$sample_name), 
                      by = c("colname" = "sample_name")) 
   
+  if(study_name=="Taylor"){
+    map <- map %>% 
+      dplyr::mutate(primary = dplyr::case_when(
+        !is.na(primary) ~ primary,
+        is.na(primary) ~ gsub(".*_", "", colname)
+      ))
+  }
+  
   clinical_object <- clinical_object %>% 
     dplyr::filter(patient_id %in% map$primary)
   
