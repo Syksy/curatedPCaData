@@ -174,6 +174,7 @@ save(clinical_sun, file = "data-raw/clinical_sun.RData")
 # GEOquery for GSE21032 is BUSTED 
 gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
 uncurated <- Biobase::pData(gse[[2]])
+## TDL: Above seems to only pull the GSMs for aCGH (CNA) data
 
 mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 uncurated_cbio <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
@@ -182,9 +183,21 @@ curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
 
-curated <- curated %>%
-  dplyr::mutate(study_name = "Taylor, et al.") %>%
-  dplyr::mutate(sample_name = row.names(uncurated)) %>%
+# uncurated_edited <- uncurated %>% 
+#   mutate(sample_type = case_when(
+#     stringr::str_starts(characteristics_ch1.3, "tumor type: ") ~ 
+#       stringr::str_remove(characteristics_ch1.3, "tumor type: "),
+#     stringr::str_starts(characteristics_ch1.4, "tumor type: ") ~ 
+#       stringr::str_remove(characteristics_ch1.4, "tumor type: "),
+#     TRUE ~ "Unknown"
+#   )) 
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Taylor, et al.") %>% 
+  ## TDL: Trying to use the GSM-derived mapping of multi-platform GSM### to unique PCA### sample ids in the sampleMap instead of sample_name
+  #dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+  dplyr::mutate(sample_name = uncurated$`sample id:ch1`) %>%
+  ## End of changes
   dplyr::mutate(patient_id = uncurated$`sample id:ch1`) %>%
   dplyr::mutate(sample_type = tolower(uncurated$`tumor type:ch1`)) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
