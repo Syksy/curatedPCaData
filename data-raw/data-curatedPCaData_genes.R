@@ -38,21 +38,3 @@ attr(curatedPCaData_genes, 'date') <- Sys.time()
 # Save the data frame of various gene annotations for package's internal use
 usethis::use_data(curatedPCaData_genes, internal = TRUE, overwrite = TRUE)
 
-# Using hgnc gene symbols 
-#genenames <- unique(genes$hgnc_symbol)
-  
-# Alternative approach using 'GenomicFeatures'
-# need to have RMariaDB installed but no loaded to work because ¯\_(ツ)_/¯
-# also we currently never use anything other than genes from biomart as 
-# the function is currently written 
-#hg38_genes <- GenomicFeatures::makeTxDbFromUCSC(genome="hg38", table="refGene")
-# Current makeTxDbFromUCSC would require to retain connection to UCSC database
-#refseq_genes <- GenomicFeatures::genes(hg38_genes)
-
-# Return 
-#gene_names <- list(hgnc = genenames, hg38_genes = hg38_genes, refseq_genes = refseq_genes)
-#gene_names <- list(hgnc = genenames, refseq_genes = refseq_genes)
-
-# save data for internal use 
-#usethis::use_data(gene_names, internal = TRUE)
-
