@@ -39,13 +39,10 @@ devtools::install_github("Syksy/curatedPCaData")
 library(curatedPCaData)
 
 curatedPCaData::mae_tcga
+curatedPCaData::mae_taylor
+curatedPCaData::mae_sun
 
 curatedPCaData::mae_tcga[["gex"]][1:4,1:4]
 curatedPCaData::mae_tcga[["cna"]][1:4,1:4]
-MultiAssayExperiment::colData(curatedPCaData::mae_tcga)[1:3,1:5]
-
-curatedPCaData::mae_taylor
-
-curatedPCaData::mae_sun
 
 ```
