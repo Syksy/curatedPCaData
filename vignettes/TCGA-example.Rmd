@@ -59,7 +59,6 @@ mae_tcga[["gex"]][1:5,1:5]
 # 2nd: Sample IDs
 # 3rd: Platforms (e.g. 'omics)
 # For example:
-
 wideFormat(curatedPCaData::mae_tcga[c("TP53", "BRCA1", "BRCA2"), c("TCGA.EJ.5502", "TCGA.YJ.A8SW"), c("gex", "cna")])
 
 ```

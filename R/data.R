@@ -27,7 +27,7 @@
 
 #' Taylor et al. MAE-object
 #' 
-#' MultiAssayExperiment object containing GEX and CNA from Taylor et al.
+#' MultiAssayExperiment object containing GEX (exon and transcript) and CNA from Taylor et al.
 #'
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
 #'
