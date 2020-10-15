@@ -9,7 +9,7 @@
 #' 
 generate_gex_geo <- function(
   file_directory, 
-  geo_code = c("GSE21032", # Taylor et al.
+  geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
                "GSE25136" # Sun et al.
                ), 
   cleanup = TRUE, 
@@ -70,7 +70,7 @@ generate_gex_geo <- function(
 
   # Taylor et al.-----
   
-  else if (geo_code == "GSE21032") {
+  else if (geo_code == "GSE21032") { # TODO: Alternative more specific accession code "GSE21034"
 	
 	# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
 	CELs <- oligo::read.celfiles(affy::list.celfiles())	
@@ -83,7 +83,7 @@ generate_gex_geo <- function(
 	# GSM######-type names from GEO
 	nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
 	                      FUN = function(z) z[[1]])) 
-	# Two naming conventions if the files; picking the PCA###-style 
+	# Two naming conventions for the files; picking the PCA###-style 
 	nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
 	                      FUN = function(z) z[[3]])) 
 	nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"),
@@ -102,7 +102,9 @@ generate_gex_geo <- function(
 	# Map the coventionally used Taylor sample names instead of GEO codes 
 	# Compatible with e.g. cBioPortal sample names
 	# Give unique names with GSM#####.{PCA,PAN}##### combination for uniqueness
-	colnames(gex) <- nam
+	##colnames(gex) <- nam
+	# Use the unique GSM###-names
+	colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
 	
 	# Sort genes to alphabetic order for consistency
 	gex <- gex[order(rownames(gex)),]
@@ -219,6 +221,11 @@ generate_cna_geo <- function(
 	})
 	# Save sample names separately (of 'length(cna)')
 	samplenames <- unlist(lapply(cna, FUN = function(z) { z@info["sampleName"] }))
+	# Reformat samplenames in Hieronymus
+	if(geo_code == "GSE54691"){
+		# Pick GSM-part in GSM###_PCA###
+		samplenames <- unlist(lapply(samplenames, FUN=function(z) { strsplit(z, "_")[[1]][[1]]}))
+	}	
 	# Get segmentation table
 	cna <- lapply(cna, FUN = function(z){
 		try({

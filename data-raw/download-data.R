@@ -16,9 +16,6 @@ cna_tcga <- generate_cbioportal(
 save(cna_tcga, file="data-raw/cna_tcga.RData")
 
 # Create MAE object
-# mae_tcga <- curatedPCaData:::create_mae(study_name = "tcga")
-# usethis::use_data(mae_tcga, internal = FALSE, overwrite = TRUE)
-
 mae_tcga <- create_mae(study_name = "TCGA")
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
@@ -30,9 +27,6 @@ gex_sun <- generate_gex_geo(
 save(gex_sun, file="data-raw/gex_sun.RData")
 
 # Create MAE object
-# mae_sun <- curatedPCaData:::create_mae(study_name = "sun")
-# usethis::use_data(mae_sun, internal = FALSE, overwrite = TRUE)
-
 mae_sun <- create_mae(study_name = "Sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
 
@@ -54,10 +48,12 @@ usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
 
 #hieronymus et al data -----
 # CNA
-cna_hieronymus <- curatedPCaData:::generate_gex_geo(
+cna_hieronymus <- curatedPCaData:::generate_cna_geo(
   geo_code = "GSE54691"
 )
 save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")
 
 # Create MAE object
+mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
+usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 

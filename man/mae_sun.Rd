@@ -17,6 +17,6 @@ An MAE object spanning 79 men
 mae_sun
 }
 \description{
-MultiAssayExperiment object containing GEX and CNA from Sun et al.
+MultiAssayExperiment object containing GEX from Sun et al.
 }
 \keyword{datasets}
