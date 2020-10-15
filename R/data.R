@@ -14,7 +14,7 @@
 
 #' Sun et al. MAE-object
 #'
-#' MultiAssayExperiment object containing GEX and CNA from Sun et al.
+#' MultiAssayExperiment object containing GEX from Sun et al.
 #' 
 #' @format An MAE object spanning 79 men 
 #' \describe{
@@ -22,12 +22,21 @@
 #' }
 #' 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21035}
+#'
 "mae_sun"
 
 #' Taylor et al. MAE-object
 #' 
-#' MultiAssayExperiment object containing GEX and CNA from Taylor
+#' MultiAssayExperiment object containing GEX (exon and transcript) and CNA from Taylor et al.
 #'
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
 #'
 "mae_taylor"
+
+#' Hieronymus et al. MAE-object
+#' 
+#' MultiAssayExperiment object containing CNA from Hieronymus et al.
+#'
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE54691}
+#'
+"mae_hieronymus"

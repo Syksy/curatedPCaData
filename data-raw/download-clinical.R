@@ -172,20 +172,56 @@ save(clinical_sun, file = "data-raw/clinical_sun.RData")
 ############################################################################### 
 
 # GEOquery for GSE21032 is BUSTED 
-gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
-uncurated <- Biobase::pData(gse[[2]])
+# gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
+# uncurated <- Biobase::pData(gse[[2]])
+## TDL: Above seems to only pull the GSMs for aCGH (CNA) data
+gse_gex <- GEOquery::getGEO("GSE21034", GSEMatrix = TRUE)
+uncurated_gex_exon <- Biobase::pData(gse_gex[[2]])
+uncurated_gex_transcript <- Biobase::pData(gse_gex[[1]])
+
+gse_cna <- GEOquery::getGEO("GSE21035", GSEMatrix = TRUE)
+uncurated_cna <- Biobase::pData(gse_cna[[1]])
+
+gse_mrna <- GEOquery::getGEO("GSE21036", GSEMatrix = TRUE)
+uncurated_mrna <- Biobase::pData(gse_mrna[[1]])
 
 mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 uncurated_cbio <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
+
+uncurated <- uncurated_cna %>% 
+  dplyr::select(title, cna = geo_accession, dplyr::everything()) %>% 
+  dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+  dplyr::mutate(title = stringr::str_remove(title, " \\(aCGH\\)")) %>% 
+  dplyr::left_join(uncurated_gex_exon %>% 
+                     dplyr::select(title, gex_exon = geo_accession) %>%
+                     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+                     dplyr::mutate(title = stringr::str_remove(title, " exon")),
+                   by = "title") %>% 
+  dplyr::left_join(uncurated_gex_transcript %>% 
+                     dplyr::select(title, gex_transcript = geo_accession) %>%
+                     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+                     dplyr::mutate(title = stringr::str_remove(title, " transcript")),
+                   by = "title") %>% 
+  dplyr::left_join(uncurated_mrna %>% 
+                     dplyr::select(title, mrna = geo_accession) %>%
+                     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+                     dplyr::mutate(title = stringr::str_remove(title, " miRNA")), 
+                   by = "title") %>%
+  dplyr::mutate(geo_accession = paste(paste0("cna: ", cna),
+                                      paste0("gex_exon: ", gex_exon), 
+                                      paste0("gex_transcript: ", gex_transcript), 
+                                      paste0("mrna: ", mrna), sep = "|"))
+
+rownames(uncurated) <- uncurated$title
 
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
 
-curated <- curated %>%
-  dplyr::mutate(study_name = "Taylor, et al.") %>%
-  dplyr::mutate(sample_name = row.names(uncurated)) %>%
-  dplyr::mutate(patient_id = uncurated$`sample id:ch1`) %>%
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Taylor, et al.") %>% 
+  dplyr::mutate(sample_name = uncurated$geo_accession) %>% 
+  dplyr::mutate(patient_id = row.names(uncurated)) %>%
   dplyr::mutate(sample_type = tolower(uncurated$`tumor type:ch1`)) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
     sample_type == "primary tumor" ~ "primary",
@@ -237,6 +273,9 @@ curated <- curated %>%
     TRUE ~ NA_real_
   )) %>% 
   dplyr::mutate(days_to_disease_specific_recurrence == uncurated_cbio$DFS_MONTHS) 
+
+curated <- curated %>%
+  dplyr::filter(sample_type %in% c("metastasis", "primary"))
 
 clinical_taylor <- curated
 

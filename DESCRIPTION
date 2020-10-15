@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.2
-Date: 2020-09-09
+Version: 0.2.3
+Date: 2020-10-13
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -9,7 +9,7 @@ Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c
            )
 Description: A selection of annotated prostate cancer datasets including TCGA, 
     Taylor et al., Sun et al., and others. 
-Depends: R (>= 3.5.0), S4Vectors (>= 0.23.18)
+Depends: R (>= 3.5.0), S4Vectors (>= 0.23.18), MultiAssayExperiment
 Imports: 
     progress,
     cgdsr,
@@ -28,8 +28,7 @@ Imports:
     limma,
     rCGH,
     oligo,
-    Biobase,
-    MultiAssayExperiment
+    Biobase
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
