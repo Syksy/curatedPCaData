@@ -5,7 +5,7 @@
 \alias{mae_taylor}
 \title{Taylor et al. MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 4.
+An object of class \code{MultiAssayExperiment} of length 2.
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
@@ -14,6 +14,6 @@ An object of class \code{MultiAssayExperiment} of length 4.
 mae_taylor
 }
 \description{
-MultiAssayExperiment object containing GEX and CNA from Taylor et al.
+MultiAssayExperiment object containing GEX (exon and transcript) and CNA from Taylor et al.
 }
 \keyword{datasets}
