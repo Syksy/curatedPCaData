@@ -174,21 +174,30 @@ generate_cna_geo <- function(
   	cna <- lapply(list.files(geo_code), FUN = function(z) { 
   		try({
   			cat("\n\nProcessing: ",z,"\n\n") 
-  			# Taylor et al.
-  			if(geo_code == "GSE21035"){
-  				rCGH::readAgilent(z, genome = "hg38", sampleName = gsub(".txt.gz", "", z)) 
-  			# Hieronymus et al.
-  			}else if(geo_code == "GSE54691"){
-  				rCGH::readAgilent(z, genome = "hg19", sampleName = gsub(".txt.gz", "", z)) 
-  			}
+  			# Taylor et al. (and & Hieronymus et al.)
+  			#if(geo_code %in% c("GSE21035", "GSE54691")){
+			rCGH::readAgilent(z, genome = "hg38", sampleName = gsub(".txt.gz", "", z)) 
+  			# Hieronymus et al. - any reason to use hg19 since the locations are known?
+  			#}else if(geo_code == "GSE54691"){
+  			#	rCGH::readAgilent(z, genome = "hg19", sampleName = gsub(".txt.gz", "", z)) 
+  			#}
   		})
   	})
 	#> list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")]
 	#[1] "GSM525755.txt" "GSM525763.txt"
 	# Some files appear broken in Taylor et al; missing columns?
 	
-	# Omit data that could not be succcessfully read
-	cna <- cna[-which(lapply(cna, FUN = class) == "try-error")]
+	# Not all files can always be successfully processed
+	tryerr <- which(lapply(cna, FUN = class) == "try-error")
+	if(length(tryerr)>0){
+		# Warn of try-errors
+		warning(paste("Error while processing files: ", 
+			# Collapse file names
+			paste(list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")], collapse=", ")
+		))
+		# Omit data that could not be succcessfully read
+		cna <- cna[-tryerr]
+	}
 	
 	# Signal adjustments
 	cna <- lapply(cna, FUN = function(z){
