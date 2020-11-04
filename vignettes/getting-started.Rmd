@@ -1,9 +1,9 @@
 ---
-title: "TCGA-example"
+title: "Getting started with curatedPCaData"
 output: 
   rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{TCGA-example}
+  %\VignetteIndexEntry{getting-started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
