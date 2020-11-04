@@ -1,0 +1,120 @@
+---
+title: "Getting started with curatedPCaData"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{getting-started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+
+```
+
+This vignette introduces `curatedPCaData` and provides an overview of the  package using data from TCGA as an example. 
+
+***
+
+3 different data types are currently available: 
+    + `gex_*.RData` contains gene expression values
+    + `cna_*.RData` contains copy number values
+    + `clincial_*.RData` contains clinical/phenotype information
+    
+These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune scores. 
+Not all datasets will contain each of these elements but at  minimum will contain `clinical_*.rda` and `gex_*.rda`.
+
+These individual elements are combined into a `MultiAssayExperiment object` (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda`. 
+
+
+## Introduction 
+
+The `curatedPCaData` package contains a collection of manually curated datasets concerning patients diagnosed with prostate cancer. The datasets within this package have followed uniform processing and naming conventions to allow users to more easily reproduce similar analyses between datasets and spend less time concerned with harmonzing data from different resources. 
+
+In this vignette, we will : 
+
+1. Provide an introduction to `curatedPCaData`. 
+2. Show how to run a simple analysis using the data  
+
+## Importing data
+
+The individual elements are housed within the `data-raw/` folder of the package [github repo](https://github.com/Syksy/curatedPCaData) and follows a simple naming convention of `data type` and `first author` separated by a `_` (see dataset types above). 
+Each indivdual element for creating the final `MAE` were created using internal functions (accessible with `:::`).
+A `MAE` for each study is provided to the users. 
+
+To get a full list of available datasets use the `data` function:
+```{r importing}
+library(curatedPCaData)
+data(package="curatedPCaData")
+```
+
+Individual datasets can also be imported by using the `data` function
+
+```{r data-import}
+data("mae_tcga")
+mae_tcga
+```
+
+For more information on working with `mae`s please see the BioConductor `MutliAssayExperiment` package [documentation](https://bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/QuickStartMultiAssay.html). 
+
+## Example analysis
+
+Daniel will put some text here about doing a simple analysis and perform an analysis here: 
+  + survival analysis usinng alternative outcomes (BCR or mets)
+  + use multiple datasets
+  + example: http://www.bioconductor.org/packages/release/data/experiment/vignettes/curatedOvarianData/inst/doc/curatedOvarianData_vignette.pdf
+
+```{r subset_data}
+
+wide_tcga <- MultiAssayExperiment::wideFormat(mae_tcga["PTEN", , ],
+    colDataCols=c("overall_survival_status", "days_to_overall_survival", "gleason_grade"))
+
+summary(glm(days_to_overall_survival ~ GEX_PTEN + gleason_grade, data = wide_tcga))
+
+
+```
+
+## Immune deconvolution
+
+Immune deconvolution details here - quick summary of the methods and an example using one of the datasets. 
+
+```{r immune-dconv, eval=FALSE}
+
+```
+
+## Clinical characteristics 
+
+```{r clinical-heatmap}
+
+x <- data(package="curatedPCaData")
+
+data("mae_tcga")
+col_names <- colnames(mae_tcga@colData)
+
+
+```
+
+## Data for non-R users
+
+All data is stored as individual `.RData` files on the github page, however these files can be imported and converted into `csv`s for use in other programing languages using the following script. 
+
+```{r non-r-script}
+
+data(package="curatedPCaData")
+
+```
+
+## Session Info
+
+```{r session-info}
+
+sessionInfo()
+
+```
