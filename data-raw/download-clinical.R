@@ -112,8 +112,7 @@ curated <- curated %>%
     race == "ASIAN" ~ "asian",
     race == "BLACK OR AFRICAN AMERICAN" ~ "african_american",
     TRUE ~ "NA"
-  )) %>% 
-  dplyr::mutate(tumor_purity_pathology = uncurated$TUMOR_CONTENT)
+  )) 
 
 clinical_tcga <- curated
 
