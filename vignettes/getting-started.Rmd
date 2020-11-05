@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
+library(tidyverse)
+library(viridis)
+
 ```
 
 This vignette introduces `curatedPCaData` and provides an overview of the  package using data from TCGA as an example. 
@@ -98,6 +101,23 @@ x <- data(package="curatedPCaData")
 data("mae_tcga")
 col_names <- colnames(mae_tcga@colData)
 
+present_tcga <- sapply(mae_tcga@colData, function(x)all(is.na(x)))
+present_taylor <- sapply(mae_taylor@colData, function(x)all(is.na(x)))
+present_sun <- sapply(mae_sun@colData, function(x)all(is.na(x)))
+present_hieronymus <- sapply(mae_hieronymus@colData, function(x)all(is.na(x)))
+
+heat_data <- data.frame(measure = col_names,
+                        tcga = present_tcga,
+                        taylor = present_taylor,
+                        sun = present_sun,
+                        hieronymous = present_hieronymus)
+
+heat_data <- heat_data %>% 
+  pivot_longer(!measure, names_to = "study", values_to = "present") 
+
+ggplot(heat_data, aes(study, measure, fill= present)) + 
+  geom_tile() + 
+  scale_fill_viridis(discrete = TRUE) 
 
 ```
 
