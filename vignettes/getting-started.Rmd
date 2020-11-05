@@ -113,11 +113,17 @@ heat_data <- data.frame(measure = col_names,
                         hieronymous = present_hieronymus)
 
 heat_data <- heat_data %>% 
-  pivot_longer(!measure, names_to = "study", values_to = "present") 
+  pivot_longer(!measure, names_to = "study", values_to = "present") %>% 
+  mutate(present = case_when(
+    present == "TRUE" ~ "Not available",
+    present == "FALSE" ~ "Available",
+    TRUE ~ NA_character_
+  ))
 
 ggplot(heat_data, aes(study, measure, fill= present)) + 
   geom_tile() + 
-  scale_fill_viridis(discrete = TRUE) 
+  scale_fill_viridis(discrete = TRUE, name = "Variable availability") + 
+  labs(x = "", y = "")
 
 ```
 
