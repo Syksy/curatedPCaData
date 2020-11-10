@@ -18,7 +18,7 @@ create_mae(
 \item{...}{additional arguments}
 }
 \value{
-A MultiAssayExperiment object containing clinical and multi-'omics data
+An MAE object containing clinical and multi-'omics data
 }
 \description{
 Create multi-assay experiment object.
