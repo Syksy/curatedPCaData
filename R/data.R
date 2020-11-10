@@ -1,6 +1,7 @@
 #' TCGA MAE-object
 #'
-#' MultiAssayExperiment object containing GEX and CNA from TCGA 
+#' MultiAssayExperiment object containing gene expression (gex) and copy 
+#' number alteration (cna) from TCGA.
 #' 
 #' @format An MAE object spanning 333 men with prostate cancer
 #' \describe{
