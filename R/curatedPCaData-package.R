@@ -1,5 +1,6 @@
 #' @keywords internal
 #' @import S4Vectors
+#' @import MultiAssayExperiment
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage
