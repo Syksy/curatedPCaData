@@ -3,7 +3,7 @@
 #' @param study_name study identifier.
 #' @param verb print output as MAE is being created 
 #' @param ... additional arguments 
-#' @return A MultiAssayExperiment object containing clinical and multi-'omics data
+#' @return An MAE object containing clinical and multi-'omics data
 #' 
 #' @importFrom rlang .data
 #' 
@@ -70,7 +70,7 @@ create_mae <- function(
                                         ~ gsub(".*: ", "", .)) %>% 
                        dplyr::mutate_at(sample_num_names, 
                                         ~dplyr::na_if(., "NA")) %>%
-                       tidyr::pivot_longer(!primary, names_to = "omic",
+                       tidyr::pivot_longer(!.data$primary, names_to = "omic",
                                            values_to = "sample_name") %>% 
                        dplyr::select(-omic), 
                      by = c("colname" = "sample_name")) 
@@ -80,14 +80,14 @@ create_mae <- function(
     dplyr::distinct(.data$patient_id, .keep_all = TRUE)
   
   clinical_object <- clinical_object %>% 
-    dplyr::filter(patient_id %in% map$primary)
+    dplyr::filter(.data$patient_id %in% map$primary)
   
   row.names(clinical_object) <- clinical_object$patient_id
   
   # Generate a MAE-object, generalization to various data compositions done above
   if(verb == TRUE) print("Final reformatting")  
   mae_object <- MultiAssayExperiment::MultiAssayExperiment(
-    experiments = ExperimentList(omics),
+    experiments = MultiAssayExperiment::ExperimentList(omics),
     colData = as.data.frame(clinical_object),
     sampleMap = as.data.frame(map)
   )
