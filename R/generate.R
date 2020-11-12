@@ -133,6 +133,7 @@ generate_gex_geo <- function(
 
 
 #' Download copy number variant data from GEO using study specific id and process it
+#' 
 #' @param file_directory character string indicating path for downloading raw 
 #' GEO data
 #' @param geo_code character string indicating name of GEO dataset. Default is "GSE21035"
