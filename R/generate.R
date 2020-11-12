@@ -296,7 +296,6 @@ generate_cna_geo <- function(
 #' @param delay numberic value for delay time between querying gene sets
 #' @param splitsize number of genes in each query
 #' @param verb logical value for displaying progress bar 
-#' @param ... any additional arguments
 #' 
 generate_cbioportal <- function(
   genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), 
@@ -311,8 +310,7 @@ generate_cbioportal <- function(
                ), # for cgdsr calls, platform and dataset specific string
   delay = 0.05, 
   splitsize = 100, 
-  verb = TRUE,
-  ...
+  verb = TRUE
 ){
   # If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
   if(class(genes)=="list"){
@@ -341,3 +339,96 @@ generate_cbioportal <- function(
   gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
   
 }
+
+#' Download and generate omics from the ICGC
+#'
+#' ICGC Publication Policy for embargoes etc: http://www.icgc.org/icgc/goals-structure-policies-guidelines/e3-publication-policy
+#' ICGC Publication guidelines: http://docs.icgc.org/portal/publication/#current-moratorium-status-for-icgc-projects . 
+#' (e.g. 'All data shall become free of a publication moratorium when either the data is published by the ICGC member project or 
+#'  one year after a specified quantity of data (e.g. genome dataset from 100 tumours per project) has been released via the ICGC 
+#'  database or other public databases. In all cases data shall be free of a publication moratorium two years after its initial release.')
+#' "PRAD-CA: No Embargo. Data available without limitations"
+#' "PRAD-UK: No Embargo. Data available without limitations"
+#' "PRAD-FR: No Embargo. Data available without limitations"
+#' "PRAD-CN: Publication limitations in place until 2020-04-30" (expired) (Only simple mutations, excluded)
+#' "EOPC-DE: No Embargo. Data available without limitations" (Need to verify biological applicability) 
+#'
+#' NOTE: Sometimes the downloads seem to fail randomly; perhaps a fixed amount of retries ought to be allowed?
+#*
+generate_icgc <- function(
+	file_directory, # Temporary download location
+	icgc_id = "PRAD_CA", # Study which ought to be downloaded; Canadian Prostate Adenocarcima study as default; note ICGC uses format 'PRAD-CA' but '_' is used for R-friendliness
+	omic = "gex" # Which omic to try to extract from the data; 
+){
+	# Currently the studies from Canada, UK and France have enough samples & omics to fit to the package
+	if(!icgc_id %in% c("PRAD_CA", "PRAD_FR", "PRAD_UK")){
+		stop("The queried ICGC study ought to be one of: 'PRAD_CA', 'PRAD_UK', or 'PRAD_FR'")		
+	}
+	# If provided, set to a custom temporary download directory
+	if(!missing(file_directory)) here::set_here(file_directory)
+	# At the time of writing, the latest public release is 28
+	# The downloadable files depend on study and fixed URLs are listed here-in
+	icgc_sets <- list(
+		# Canada (Release 28 fixed)
+		"PRAD_CA" = c(
+			# Note! The copy number somatic is only available in Release 28
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/copy_number_somatic_mutation.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/donor.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/donor_exposure.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/donor_family.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/donor_therapy.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/exp_array.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/meth_array.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/sample.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/simple_somatic_mutation.open.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/specimen.PRAD-CA.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/structural_somatic_mutation.PRAD-CA.tsv.gz"			
+		),
+		# France (Release 28 fixed)
+		"PRAD_FR" = c(
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/copy_number_somatic_mutation.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/donor.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/donor_family.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/donor_surgery.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/exp_array.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/exp_seq.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/sample.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/simple_somatic_mutation.open.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/specimen.PRAD-FR.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/structural_somatic_mutation.PRAD-FR.tsv.gz"
+		),
+		# United Kingdom (Release 28 fixed)
+		"PRAD_UK" = c(
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/copy_number_somatic_mutation.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/donor.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/donor_exposure.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/donor_family.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/donor_therapy.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/meth_array.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/sample.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/simple_somatic_mutation.open.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/specimen.PRAD-UK.tsv.gz",
+			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/structural_somatic_mutation.PRAD-UK.tsv.gz"
+		)
+		# Possibly? (Early Onset Prostate Cancer, Germany)
+		# https://dcc.icgc.org/releases/release_28/Projects/EOPC-DE
+	)
+	# Small internal function to assist with the downloads
+	.icgcDownload <- function(url){
+		# Pick the filename from the end of the URL
+		filename <- strsplit(url, "/")
+		filename <- filename[[1]][[length(filename[[1]])]]
+		# Download file into parsed *.tsv.gz 
+		utils::download.file(url=url, destfile=filename)
+		# gunzip the files open
+		GEOquery::gunzip(filename, overwrite=TRUE)
+	}
+	# Loop over the list of urls, download and gunzip them
+	lapply(icgc_sets[[icgc_id]], FUN=.icgcDownload)	
+	
+	# Processing TODO
+	# Pick an 'omics based on the requested 'omic'
+	
+}
+
+		
