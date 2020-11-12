@@ -1,17 +1,17 @@
 #' Download gene expression from GEO using study specific id and process it
+#' @param geo_code character string indicating name of GEO dataset
 #' @param file_directory character string indicating path for downloading raw 
 #' GEO data
-#' @param geo_code character string indicating name of GEO dataset
 #' @param cleanup logical value to remove intermediate files 
 #' @param collapse_fun function to collapse probe(s) or select a probe, 
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
 #' 
 generate_gex_geo <- function(
-  file_directory, 
   geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
                "GSE25136" # Sun et al.
                ), 
+  file_directory, 
   cleanup = TRUE, 
   collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
   ...
@@ -134,18 +134,18 @@ generate_gex_geo <- function(
 
 #' Download copy number variant data from GEO using study specific id and process it
 #' 
-#' @param file_directory character string indicating path for downloading raw 
-#' GEO data
 #' @param geo_code character string indicating name of GEO dataset. Default is "GSE21035"
 #' (Taylor et al)
+#' @param file_directory character string indicating path for downloading raw 
+#' GEO data
 #' @param cleanup logical value to remove intermediate files 
 #' @param ... additional arguments
 #' 
 generate_cna_geo <- function(
-  file_directory, 
   geo_code = c("GSE21035", # Taylor et al.
                "GSE54691" # Hieronymus et al.
                ),
+  file_directory, 
   cleanup = TRUE, 
   ...
 ){
@@ -342,6 +342,10 @@ generate_cbioportal <- function(
 
 #' Download and generate omics from the ICGC
 #'
+#' @param icgc_id character string indicating name of ICGC dataset
+#' @param file_directory character string indicating path for downloading the ICGC files
+#' @param omic character string indicating which omic to download and generate for the specified icgc_id
+#'
 #' ICGC Publication Policy for embargoes etc: http://www.icgc.org/icgc/goals-structure-policies-guidelines/e3-publication-policy
 #' ICGC Publication guidelines: http://docs.icgc.org/portal/publication/#current-moratorium-status-for-icgc-projects . 
 #' (e.g. 'All data shall become free of a publication moratorium when either the data is published by the ICGC member project or 
@@ -356,8 +360,8 @@ generate_cbioportal <- function(
 #' NOTE: Sometimes the downloads seem to fail randomly; perhaps a fixed amount of retries ought to be allowed?
 #*
 generate_icgc <- function(
-	file_directory, # Temporary download location
 	icgc_id = "PRAD_CA", # Study which ought to be downloaded; Canadian Prostate Adenocarcima study as default; note ICGC uses format 'PRAD-CA' but '_' is used for R-friendliness
+	file_directory, # Temporary download location
 	omic = "gex" # Which omic to try to extract from the data; 
 ){
 	# Currently the studies from Canada, UK and France have enough samples & omics to fit to the package
