@@ -361,8 +361,9 @@ generate_cbioportal <- function(
 #*
 generate_icgc <- function(
 	icgc_id = "PRAD_CA", # Study which ought to be downloaded; Canadian Prostate Adenocarcima study as default; note ICGC uses format 'PRAD-CA' but '_' is used for R-friendliness
+	set = "gex", # Which dataset (patient or sample data / omics platform) to try to extract from the data; valid values: 'clinical', 'gex', 'cna', ...
 	file_directory, # Temporary download location
-	omic = "gex" # Which omic to try to extract from the data; 
+	verb = 0 # Level of verbosity; 0 = minimal, 1 = informative, 2 = debugging
 ){
 	# Currently the studies from Canada, UK and France have enough samples & omics to fit to the package
 	if(!icgc_id %in% c("PRAD_CA", "PRAD_FR", "PRAD_UK")){
@@ -373,9 +374,8 @@ generate_icgc <- function(
 	# At the time of writing, the latest public release is 28
 	# The downloadable files depend on study and fixed URLs are listed here-in
 	icgc_sets <- list(
-		# Canada (Release 28 fixed)
+		# Canada (Release 28 fixed reference, instead of 'current', for reproducibility)
 		"PRAD_CA" = c(
-			# Note! The copy number somatic is only available in Release 28
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/copy_number_somatic_mutation.PRAD-CA.tsv.gz",
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/donor.PRAD-CA.tsv.gz",
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/donor_exposure.PRAD-CA.tsv.gz",
@@ -388,7 +388,7 @@ generate_icgc <- function(
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/specimen.PRAD-CA.tsv.gz",
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-CA/structural_somatic_mutation.PRAD-CA.tsv.gz"			
 		),
-		# France (Release 28 fixed)
+		# France (Release 28 fixed reference, instead of 'current', for reproducibility)
 		"PRAD_FR" = c(
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/copy_number_somatic_mutation.PRAD-FR.tsv.gz",
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/donor.PRAD-FR.tsv.gz",
@@ -401,7 +401,7 @@ generate_icgc <- function(
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/specimen.PRAD-FR.tsv.gz",
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-FR/structural_somatic_mutation.PRAD-FR.tsv.gz"
 		),
-		# United Kingdom (Release 28 fixed)
+		# United Kingdom (Release 28 fixed, instead of 'current', for reproducibility)
 		"PRAD_UK" = c(
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/copy_number_somatic_mutation.PRAD-UK.tsv.gz",
 			"https://dcc.icgc.org/api/v1/download?fn=/release_28/Projects/PRAD-UK/donor.PRAD-UK.tsv.gz",
@@ -426,13 +426,63 @@ generate_icgc <- function(
 		utils::download.file(url=url, destfile=filename)
 		# gunzip the files open
 		GEOquery::gunzip(filename, overwrite=TRUE)
+		filename
 	}
 	# Loop over the list of urls, download and gunzip them
-	lapply(icgc_sets[[icgc_id]], FUN=.icgcDownload)	
-	
-	# Processing TODO
-	# Pick an 'omics based on the requested 'omic'
-	
+	files <- icgc_sets[[icgc_id]]
+	# Select subset of files to download
+	if(set == "clinical"){ # Clinical data
+		files <- grep("sample|donor|specimen", files, value=TRUE)
+	}else if(set == "gex"){ # Gene expression (array or sequencing)
+		files <- grep("exp_array|exp_seq", files, value=TRUE)
+	}else if(set == "cna"){ # Copy number alterations
+		files <- grep("copy_number_somatic_mutation", files, value=TRUE)
+	}else if(set == "mut"){ # Point mutations
+		files <- grep("simple_somatic_mutation", files, value=TRUE)
+	}else if(set == "met"){ # Methylation
+		files <- grep("meth_array", files, value=TRUE)
+	}else if(set == "str"){ # Larger structural aberrations
+		files <- grep("structural_somatic_mutation", files, value=TRUE)
+	}else{
+		stop("Invalid parameter 'set'; should be one of: 'clinical, 'gex', 'cna', 'mut', 'met', or 'str'")
+	}
+	# list apply the .icgcDownload-function to all eligible files
+	files <- unlist(lapply(files, FUN=.icgcDownload)	)
+	# Verbosity
+	if(verb>=1) print(paste("Files downloaded & extracted:", paste(files, collapse=", ")))
+	# Gunzip has extracted the compressed files, removing the suffix accordingly
+	files <- gsub(".gz", "", files)
+	# Pick an 'omics based on the requested 'omic' and process into a suitable data.frame or matrix
+	if(set == "clinical"){ # Clinical data
+		# Main id file, should contain only simple file with prefix 'sample.*'
+		ret <- read.table(grep("sample", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)
+		# Other files to append:
+		# donor.* contains multiple useful clinical features
+		# donor_family.* possibly interesting family history related to cancer
+		# Append useful donor.* -file contained information to the clinical data
+		don <- read.table(grep("donor.", files, value=TRUE, fixed=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)
+		ret <- cbind(ret, don[match(ret$icgc_donor_id, don$icgc_donor_id),])
+	}else if(set == "gex"){ # Gene expression (array or sequencing)
+		# In RNA-seq, use raw read counts and normalize them
+		if(any(grepl("exp_seq", files))){
+			ret <- read.table(grep("exp_seq", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id", "gene_id", "raw_read_count")]
+		# In microarrays, need to use the prenormalized expression values
+		}else if(any(grepl("exp_array", files))){
+			ret <- read.table(grep("exp_array", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id", "gene_id", "normalized_expression_value")]
+		}else{
+			stop("Unknown gene expression file type")
+		}
+	}else if(set == "cna"){ # Copy number alterations	
+		ret <- read.table(grep("copy_number_somatic", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id", "gene_affected", "mutation_type", "copy_number", "chromosome", "chromosome_start", "chromosome_end", "assembly_version")]
+	}else if(set == "mut"){ # Point mutations
+		ret <- read.table(grep("simple_somatic_mutation", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id", "gene_affected", "mutation_type", "chromosome", "chromosome_start", "chromosome_end", "assembly_version", "chromosome_strand", "reference_genome_allele", "mutated_from_allele", "mutated_to_allele", "quality_score", "consequence_type", "aa_mutation", "cds_mutation", "transcript_affected")]
+	}else if(set == "met"){ # Methylation
+		ret <- read.table(grep("meth_array", files,, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id")]
+	}else if(set == "str"){ # Larger structural aberrations
+		ret <- read.table(grep("structural_somatic_mutation", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id", "variant_type", "sv_id", "placement", "annotation", "interpreted_annotation", "chr_from", "chr_from_strand", "chr_from_range", "chr_from_flanking_seq", "chr_to", "chr_to_bkpt", "chr_to_strand", "chr_to_range", "chr_to_flanking_seq", "assembly_version", "gene_affected_by_bkpt_to", "gene_affected_by_bkpt_to", "transcript_affected_by_bkpt_from", "transcript_affected_by_bkpt_to", "bkpt_from_context", "bkpt_to_context", "gene_build_version", "platform")]
+	}
+	# Return constructed object (TODO: or raw data to be further processed/debugged)
+	ret 
 }
 
 		

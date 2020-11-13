@@ -57,3 +57,11 @@ save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")
 mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
 usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 
+# ICGC datasets
+
+# PRAD-CA
+
+# PRAD-FR
+
+# PRAD-UK
+
