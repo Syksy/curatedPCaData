@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.2.6
-Date: 2020-11-13
+Version: 0.2.4
+Date: 2020-10-27
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -29,8 +29,16 @@ Imports:
     rCGH,
     oligo,
     Biobase,
+    immunedeconv,
+    tidyr,
+    rio,
+    data.table,
     stringr,
-    tidyr
+    tibble,
+    textshape,
+    data.tree,
+    pacman,
+    RCurl
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
@@ -40,6 +48,4 @@ URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
 Suggests: 
     knitr,
-    rmarkdown,
-    viridis,
-    ggplot2
+    rmarkdown
