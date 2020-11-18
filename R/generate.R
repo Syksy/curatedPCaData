@@ -447,7 +447,7 @@ generate_icgc <- function(
 		stop("Invalid parameter 'set'; should be one of: 'clinical, 'gex', 'cna', 'mut', 'met', or 'str'")
 	}
 	# list apply the .icgcDownload-function to all eligible files
-	files <- unlist(lapply(files, FUN=.icgcDownload)	)
+	files <- unlist(lapply(files, FUN=.icgcDownload))
 	# Verbosity
 	if(verb>=1) print(paste("Files downloaded & extracted:", paste(files, collapse=", ")))
 	# Gunzip has extracted the compressed files, removing the suffix accordingly

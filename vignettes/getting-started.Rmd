@@ -32,12 +32,14 @@ This vignette introduces `curatedPCaData` and provides an overview of the  packa
 
   + `gex_*.RData` contains gene expression values
   + `cna_*.RData` contains copy number values
-  + `clincial_*.RData` contains clinical/phenotype information
+  + `clinical_*.RData` contains clinical/phenotype information
     
 These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune scores. 
-Not all datasets will contain each of these elements but at  minimum will contain `clinical_*.rda` and `gex_*.rda`.
+Not all datasets will contain each of these elements but at minimum will contain `clinical_*.RData` and one of the 'omics. Further, these raw data 
+are not exported from the package, thus if direct access to these datasets is required, one has to use the `curatedPCaData:::varName` notation. 
 
-These individual elements are combined into a `MultiAssayExperiment` object (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda`. 
+It is advisable to only use the exported objects, accessible via `curatedPCaData::maeName`. The individual internal elements are combined into a 
+`MultiAssayExperiment` object (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda`. 
 
 
 ## Introduction 
@@ -69,6 +71,20 @@ curatedPCaData::mae_tcga
 ```
 
 For more information on working with `mae`s please see the BioConductor `MutliAssayExperiment` package [documentation](https://bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/QuickStartMultiAssay.html). 
+
+## PCA plot of gene expression
+
+
+
+```{r pca}
+
+gene_intersect <- Reduce(intersect, list(rownames(mae_tcga[["gex"]]), rownames(mae_taylor[["gex"]]), rownames(mae_sun[["gex"]])))
+
+
+
+´´´
+
+
 
 ## Example analysis
 
