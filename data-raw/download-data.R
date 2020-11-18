@@ -69,10 +69,5 @@ dropped_results1 <- curatedPCaData:::keep_only_PRAD(PRAD_osf)
 osf <- curatedPCaData:::format(dropped_results1)
 usethis::use_data(osf,internal = TRUE, overwrite = TRUE)
 
-osf_quantiseq <- immunedeconv::deconvolute(osf1,"quantiseq")
-osf_epic <- immunedeconv::deconvolute(osf,"epic")
-osf_xcell <- immunedeconv::deconvolute(osf,"xcell")
-osf_mcp <- immunedeconv::deconvolute(osf,"mcp_counter")
-
 
 
