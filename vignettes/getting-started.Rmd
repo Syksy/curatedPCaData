@@ -130,11 +130,19 @@ ggplot(heat_data, aes(study, measure, fill= present)) +
 
 ## Data for non-R users
 
-All data is stored as individual `.RData` files on the github page, however these files can be imported and converted into `csv`s for use in other programing languages using the following script. 
+All data is stored as individual `.RData` files on the github page, however these files can be imported and converted into `csv`s for use in other programming languages using the following script. 
 
-```{r non-r-script}
+*Warning:* the following code does not work - runs out of memory
 
-data(package="curatedPCaData")
+```{r non-r-script, eval=FALSE}
+
+library(xlsx)
+write.xlsx(curatedPCaData::mae_tcga[["gex"]],
+           file="data-raw/example-tcga.xlsx", sheetName="gex",
+           row.names=FALSE)
+write.xlsx(curatedPCaData::mae_tcga[["cna"]],
+           file="data-raw/example-tcga.xlsx", sheetName="cna",
+           append=TRUE, row.names=FALSE)
 
 ```
 
