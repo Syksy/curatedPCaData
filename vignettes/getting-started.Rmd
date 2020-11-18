@@ -121,11 +121,6 @@ package$V1 <- gsub("\\.","-",package$V1)
 # Remove "-01"s from package data
 package$V1 <- gsub("*-01","",package$V1)
 
-osf_data_2 <- curatedPCaData:::seperate_osf(osf_data)
-osf_data_t <- curatedPCaData:::rearrange(osf_data_2)
-dropped_results1 <- curatedPCaData:::keep_only_PRAD(PRAD_osf)
-osf <- curatedPCaData:::format(dropped_results1)
-
 
 osf <- osf[rowSums(is.na(osf)) != ncol(osf), ]
 osf <- osf[,colSums(is.na(osf))!= nrow(osf)]
