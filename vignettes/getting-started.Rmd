@@ -51,6 +51,10 @@ In this vignette, we will :
 1. Provide an introduction to `curatedPCaData`. 
 2. Show how to run a simple analysis using the data  
 
+## Available datasets, end-points, and 'omics
+
+
+
 ## Importing data
 
 The individual elements are housed within the `data-raw/` folder of the package [github repo](https://github.com/Syksy/curatedPCaData) and follows a simple naming convention of `data type` and `first author` separated by a `_` (see dataset types above). 
@@ -130,29 +134,70 @@ Most likely the main source of variation is the inherently different platforms a
 
 ## Example for a Cox Proportional Hazards Model
 
+Function `colData` from `MultiAssayExperiment` allows accessing a precurated list of clinical covariates and endpoints. 
+Cox proportional hazards model (`coxph`) is a standard method of comparing clinical end-points with right-censoring, i.e. survival or disease free time until end of follow-up or until an event occurs.
+By inspecting the clinical variables, we notice that TCGA dataset has an interesting set of recurrence end-points:
 
-
-
-Daniel will put some text here about doing a simple analysis and perform an analysis here: 
-  + survival analysis usinng alternative outcomes (BCR or mets)
-  + use multiple datasets
-  + example: http://www.bioconductor.org/packages/release/data/experiment/vignettes/curatedOvarianData/inst/doc/curatedOvarianData_vignette.pdf
-
-```{r subset_data}
+```{r endpoints}
 
 library(MultiAssayExperiment)
 
-colData(mae_tcga)[1:5,c("overall_survival_status", "days_to_overall_survival")]
+colData(mae_tcga)[1:5,c("disease_specific_recurrence_status", "days_to_disease_specific_recurrence")]
 
+table(colData(mae_tcga)$disease_specific_recurrence_status)
 
-
-wide_tcga <- MultiAssayExperiment::wideFormat(mae_tcga["PTEN", , ],
-    colDataCols=c("overall_survival_status", "days_to_overall_survival", "gleason_grade"))
-
-summary(glm(days_to_overall_survival ~ gex_PTEN + gleason_grade, data = wide_tcga))
-
+quantile(colData(mae_tcga)$days_to_disease_specific_recurrence, na.rm = TRUE)
 
 ```
+
+In order to model PCa recurrence, one must construct a survival response object using the survival-package's function Surv. 
+Conventional model fitting can be done using function coxph, or for example glmnet-package offers embedded feature selection for a 
+larger feature candidate set. We will construct a simple example recurrence predictor of known predictive genes (X, Y, and Z). For this
+purpose, the data has to be extracted in the so-called long format, which is typically required by e.g. regression modelling functions.
+
+
+```{r coxph}
+
+# Extract long data
+wide_tcga <- MultiAssayExperiment::wideFormat(mae_tcga[c("FGFR3", "PTEN"), ],
+    colDataCols=c("disease_specific_recurrence_status", "days_to_disease_specific_recurrence", 
+    "gleason_grade")
+)
+
+# Construct the survival response y as a function of follow-up time and censoring/events
+wide_tcga <- cbind(
+	recurrence = survival::Surv(
+		event = wide_tcga$disease_specific_recurrence_status, 
+		time = wide_tcga$days_to_disease_specific_recurrence), 
+	as.data.frame(wide_tcga)
+)
+
+# Inspect constructed wide format data, and omit row-entries with missing information
+head(wide_tcga)
+wide_tcga <- as.data.frame(janitor::remove_empty(wide_tcga, which="rows"))
+
+# Construct a cox proportional hazards model object, with gene expression 
+# and copy number alterations of FGFR3 & PTEN coupled with patients' gleason grades
+coxfit <- survival::coxph(recurrence ~ 
+	gex_FGFR3 + cna_FGFR3 + 
+	gex_PTEN + cna_PTEN + 
+	gleason_grade, data = as.data.frame(wide_tcga))
+summary(coxfit)
+
+```
+
+CNA for FGFR3 and PTEN appear to be borderline statistically significant predictors, while Gleason Grade predicts recurrence well.
+A Kaplan-Meier plot is typically useful for visualizing time-censored responses in respect to an interesting covariate:
+
+```{r KM, fig.width=7, fig.height=7, out.width = "100%"}
+
+survminer::ggsurvplot(survival::survfit(recurrence ~ gleason_grade, data = wide_tcga),
+	xlab = "Follow-up days", ylab = "Recurrence free proportion",
+	pval = TRUE, risk.table = TRUE)
+
+```
+
+As can be clearly seen from the KM-curves, higher Gleason correlates with a worse prognosis for recurrence.
 
 ## Immune deconvolution
 
