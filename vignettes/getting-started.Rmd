@@ -128,9 +128,10 @@ We notice that the first and second principal components clearly distinguishes t
 Batch effect correction is a difficult concept, but it is clear that the studies cannot be combined as-is. 
 Most likely the main source of variation is the inherently different platforms and required study-specific batch corrections, if data is to be modelled together.
 
+## Example for a Cox Proportional Hazards Model
 
 
-## Example analysis
+
 
 Daniel will put some text here about doing a simple analysis and perform an analysis here: 
   + survival analysis usinng alternative outcomes (BCR or mets)
@@ -140,6 +141,10 @@ Daniel will put some text here about doing a simple analysis and perform an anal
 ```{r subset_data}
 
 library(MultiAssayExperiment)
+
+colData(mae_tcga)[1:5,c("overall_survival_status", "days_to_overall_survival")]
+
+
 
 wide_tcga <- MultiAssayExperiment::wideFormat(mae_tcga["PTEN", , ],
     colDataCols=c("overall_survival_status", "days_to_overall_survival", "gleason_grade"))

@@ -79,17 +79,29 @@ curated <- curated %>%
   )) %>%
   dplyr::mutate(year_diagnosis = uncurated$INITIAL_PATHOLOGIC_DX_YEAR) %>%
   dplyr::mutate(overall_survival_status = uncurated$OS_STATUS) %>%
+  ## TDL: Below cases might've changed in cBio as they were no longer correct (prefixed with {"0:","1:"})
+  #dplyr::mutate(overall_survival_status = dplyr::case_when(
+  #  is.na(overall_survival_status) ~ NA_real_,
+  #  overall_survival_status == "DECEASED" ~ 1,
+  #  overall_survival_status != "DECEASED" ~ 0
+  #)) %>% 
   dplyr::mutate(overall_survival_status = dplyr::case_when(
     is.na(overall_survival_status) ~ NA_real_,
-    overall_survival_status == "DECEASED" ~ 1,
-    overall_survival_status != "DECEASED" ~ 0
+    overall_survival_status == "1:DECEASED" ~ 1,
+    overall_survival_status == "0:LIVING" ~ 0
   )) %>% 
   dplyr::mutate(days_to_overall_survival = as.numeric(uncurated$OS_MONTHS) * 30.5) %>%
   dplyr::mutate(disease_specific_recurrence_status = uncurated$DFS_STATUS) %>% 
+  ## TDL: Below cases might've changed in cBio as they were no longer correct (prefixed with {"0:","1:"})
+  #dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
+  #  disease_specific_recurrence_status == "[Not Available]" ~ NA_real_,
+  #  disease_specific_recurrence_status == "Recurred/Progressed" ~ 1,
+  #  disease_specific_recurrence_status == "DiseaseFree" ~ 0
+  #)) %>% 
   dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
-    disease_specific_recurrence_status == "[Not Available]" ~ NA_real_,
-    disease_specific_recurrence_status == "Recurred/Progressed" ~ 1,
-    disease_specific_recurrence_status == "DiseaseFree" ~ 0
+    disease_specific_recurrence_status == "" ~ NA_real_,
+    disease_specific_recurrence_status == "1:Recurred/Progressed" ~ 1,
+    disease_specific_recurrence_status == "0:DiseaseFree" ~ 0
   )) %>% 
   dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated$DFS_MONTHS) * 30.5) %>% 
   dplyr::mutate(psa = uncurated$PSA_MOST_RECENT_RESULTS) %>% 
