@@ -1,11 +1,6 @@
 ---
 title: "Getting started with curatedPCaData"
-output: 
-  rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{getting-started}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+
 ---
 
 ```{r, include = FALSE}
