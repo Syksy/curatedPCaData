@@ -24,7 +24,7 @@ library(viridis)
 
 ```
 
-This vignette introduces `curatedPCaData` and provides an overview of the  package using data from TCGA as an example. 
+This vignette introduces `curatedPCaData` and provides an overview of the package using data from TCGA and other key datasets as examples. 
 
 ***
 
@@ -74,15 +74,59 @@ For more information on working with `mae`s please see the BioConductor `MutliAs
 
 ## PCA plot of gene expression
 
+As is typical for 'omics analyses, an important first task is to establish a good grasp on the data; identify sources of variation, potential overlap, missingness, batch effects, et cetra.
+In this we'll examine the unsupervised PCA-method to visualize overlapping gene expression from three studies, to see if the expressions overlap.
+Typically the premise is, that studies with different protocols, differing patient populations, and potentially other stratifying factors will clearly distiguish on the first or second principal axes in PCA.
 
+```{r pca, fig.width=7, fig.height=7, out.width = "100%"}
 
-```{r pca}
+# Extract hugo gene symbols that are common to TCGA, Taylor et al. and Sun et al. and intersect
+gene_intersect <- Reduce(intersect, 
+	list(
+		rownames(mae_tcga[["gex"]]), 
+		rownames(mae_taylor[["gex"]]), 
+		rownames(mae_sun[["gex"]])
+	)
+)
 
-gene_intersect <- Reduce(intersect, list(rownames(mae_tcga[["gex"]]), rownames(mae_taylor[["gex"]]), rownames(mae_sun[["gex"]])))
+# Combine a data matrix with these genes from the TCGA, Taylor and Sun studies via column binding
+# We will perform z-score transformation within each dataset individually to try alleviate batch effects
+example <- cbind(
+	scale(mae_tcga[["gex"]][gene_intersect,]), 
+	scale(mae_taylor[["gex"]][gene_intersect,]), 
+	scale(mae_sun[["gex"]][gene_intersect,])
+)
 
+# The number of columns is the sum of sample count in all 3 studies (333 + 300 + 79 = 712), 
+# while the number of rows is amount of overlapping genes (9930)
+dim(mae_tcga[["gex"]]); dim(mae_taylor[["gex"]]); dim(mae_sun[["gex"]]); dim(example)
 
+# Examine Principle Component Analysis plot to reveal potential batch-like effects 
+# between samples rising from the three studies. We compute PCA using base R prcomp; 
+# note that this base function assumes that samples are rows, so the example data is first transposed.
+pca <- stats::prcomp(t(example), scale=TRUE, center=TRUE)
 
-´´´
+# The principal axes can be extracted from the $x slot in the S3 class object
+head(pca$x[,1:2])
+
+# Plot the two first principal components while colouring each study individually
+plot(pca$x[,1:2], pch=16, 
+	col=c(
+		rep("red", times=ncol(mae_tcga[["gex"]])), 
+		rep("green", times=ncol(mae_taylor[["gex"]])), 
+		rep("blue", times=ncol(mae_sun[["gex"]]))
+	)
+)
+legend("bottom", pch=16, 
+	col=c("red", "green", "blue"), 
+	legend=c("TCGA", "Taylor et al.", "Sun et al.")
+)
+
+```
+
+We notice that the first and second principal components clearly distinguishes the TCGA, Taylor and Sun studies based on gene expression.
+Batch effect correction is a difficult concept, but it is clear that the studies cannot be combined as-is. 
+Most likely the main source of variation is the inherently different platforms and required study-specific batch corrections, if data is to be modelled together.
 
 
 
