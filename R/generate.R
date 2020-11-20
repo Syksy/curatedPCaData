@@ -1,4 +1,5 @@
 #' Download gene expression from GEO using study specific id and process it
+#'
 #' @param geo_code character string indicating name of GEO dataset
 #' @param file_directory character string indicating path for downloading raw 
 #' GEO data
@@ -6,7 +7,6 @@
 #' @param collapse_fun function to collapse probe(s) or select a probe, 
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
-#' 
 generate_gex_geo <- function(
   geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
                "GSE25136" # Sun et al.
@@ -140,7 +140,6 @@ generate_gex_geo <- function(
 #' GEO data
 #' @param cleanup logical value to remove intermediate files 
 #' @param ... additional arguments
-#' 
 generate_cna_geo <- function(
   geo_code = c("GSE21035", # Taylor et al.
                "GSE54691" # Hieronymus et al.
@@ -296,7 +295,6 @@ generate_cna_geo <- function(
 #' @param delay numberic value for delay time between querying gene sets
 #' @param splitsize number of genes in each query
 #' @param verb logical value for displaying progress bar 
-#' 
 generate_cbioportal <- function(
   genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), 
   geneticProfiles = c("prad_tcga_pub_rna_seq_v2_mrna", #TCGA GEX 
@@ -358,7 +356,6 @@ generate_cbioportal <- function(
 #' "EOPC-DE: No Embargo. Data available without limitations" (Need to verify biological applicability) 
 #'
 #' NOTE: Sometimes the downloads seem to fail randomly; perhaps a fixed amount of retries ought to be allowed?
-#*
 generate_icgc <- function(
 	icgc_id = "PRAD_CA", # Study which ought to be downloaded; Canadian Prostate Adenocarcima study as default; note ICGC uses format 'PRAD-CA' but '_' is used for R-friendliness
 	set = "gex", # Which dataset (patient or sample data / omics platform) to try to extract from the data; valid values: 'clinical', 'gex', 'cna', ...

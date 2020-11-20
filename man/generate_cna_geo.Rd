@@ -5,18 +5,18 @@
 \title{Download copy number variant data from GEO using study specific id and process it}
 \usage{
 generate_cna_geo(
-  file_directory,
   geo_code = c("GSE21035", "GSE54691"),
+  file_directory,
   cleanup = TRUE,
   ...
 )
 }
 \arguments{
-\item{file_directory}{character string indicating path for downloading raw 
-GEO data}
-
 \item{geo_code}{character string indicating name of GEO dataset. Default is "GSE21035"
 (Taylor et al)}
+
+\item{file_directory}{character string indicating path for downloading raw 
+GEO data}
 
 \item{cleanup}{logical value to remove intermediate files}
 

@@ -5,18 +5,18 @@
 \title{Download gene expression from GEO using study specific id and process it}
 \usage{
 generate_gex_geo(
-  file_directory,
   geo_code = c("GSE21032", "GSE25136"),
+  file_directory,
   cleanup = TRUE,
   collapse_fun = function(z) {     apply(z, MARGIN = 2, FUN = stats::median) },
   ...
 )
 }
 \arguments{
+\item{geo_code}{character string indicating name of GEO dataset}
+
 \item{file_directory}{character string indicating path for downloading raw 
 GEO data}
-
-\item{geo_code}{character string indicating name of GEO dataset}
 
 \item{cleanup}{logical value to remove intermediate files}
 

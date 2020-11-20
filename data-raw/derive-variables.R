@@ -5,6 +5,8 @@
 ##
 #####
 
+library(immunedeconv)
+
 #####
 ##
 ## xCell - immmune cell decomposition (rank-base approach; rather universal)

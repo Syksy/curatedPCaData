@@ -11,8 +11,7 @@ generate_cbioportal(
   caseList = c("prad_tcga_pub_sequenced", "prad_mskcc_sequenced"),
   delay = 0.05,
   splitsize = 100,
-  verb = TRUE,
-  ...
+  verb = TRUE
 )
 }
 \arguments{
@@ -27,8 +26,6 @@ generate_cbioportal(
 \item{splitsize}{number of genes in each query}
 
 \item{verb}{logical value for displaying progress bar}
-
-\item{...}{any additional arguments}
 }
 \description{
 Download generic 'omics data from cBioPortal using dataset specific query
