@@ -459,6 +459,9 @@ generate_icgc <- function(
 		# Append useful donor.* -file contained information to the clinical data
 		don <- read.table(grep("donor.", files, value=TRUE, fixed=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)
 		ret <- cbind(ret, don[match(ret$icgc_donor_id, don$icgc_donor_id),])
+		# Append useful specimen.* -file containing information e.g. for gleason grade
+		spe <- read.table(grep("specimen.", files, value=TRUE, fixed=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)
+		ret <- cbind(ret, spe[match(ret$icgc_donor_id, spe$icgc_donor_id),])
 	}else if(set == "gex"){ # Gene expression (array or sequencing)
 		# In RNA-seq, use raw read counts and normalize them
 		if(any(grepl("exp_seq", files))){
