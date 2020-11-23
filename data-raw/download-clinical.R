@@ -387,15 +387,17 @@ save(clinical_hieronymus, file = "data-raw/clinical_hieronymus.RData")
 #
 ###############################################################################
 
-# CA (Canadian) dataset
+###
+## CA (Canadian) ICGC dataset
+###
+
+# Generation script from generate.R, same function as is used for downloading and transforming the omics
+uncurated <- curatedPCaData:::generate_icgc("PRAD_CA", "clinical")
 
 # Format empty data frames according to the prad template
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
-
-# Generation script from generate.R, same function as is used for downloading and transforming the omics
-uncurated <- curatedPCaData:::generate_icgc("PRAD_CA", "clinical")
 
 # Mimic previous curation piping
 curated <- curated %>% 
@@ -403,47 +405,151 @@ curated <- curated %>%
   dplyr::mutate(sample_name = uncurated$icgc_sample_id) %>% 
   dplyr::mutate(patient_id = uncurated$icgc_donor_id) %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
-    is.na(uncurated$`survivalevent:ch1`) ~ 0,
-    TRUE ~ 1
+    uncurated$donor_vital_status == "alive" ~ 0,
+    uncurated$donor_vital_status == "dead" ~ 1,
+    uncurated$donor_vital_status == "" ~ NA_real_,
+    is.na(uncurated$donor_vital_status) ~ NA_real_
   )) %>%
-  dplyr::mutate(days_to_overall_survival = 
-                  as.numeric(uncurated$`survival_or_followup_time_months:ch1`)*30.5) %>% 
-  dplyr::mutate(age_at_initial_diagnosis = 
-                  as.numeric(uncurated$`dxage:ch1`)) %>% 
-  dplyr::mutate(gleason_grade = as.numeric(uncurated$`pathggs:ch1`)) %>%
-  dplyr::mutate(gleason_minor = as.numeric(uncurated$`pathgg2:ch1`)) %>%
-  dplyr::mutate(gleason_major = as.numeric(uncurated$`pathgg1:ch1`)) %>%
+  dplyr::mutate(age_at_initial_diagnosis = uncurated$donor_age_at_diagnosis) %>%
+  dplyr::mutate(days_to_overall_survival = (uncurated$donor_age_at_last_followup - uncurated$donor_age_at_diagnosis)*365) %>%
+  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$tumour_grade,1,1))) %>%
+  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$tumour_grade,3,3))) %>%
   dplyr::mutate(grade_group = dplyr::case_when(
-    gleason_grade == 6 ~ "<=6",
-    gleason_grade > 8 ~ ">=8",
-    gleason_grade == 7 & gleason_major == "3" ~ "3+4",
-    gleason_grade == 7 & gleason_major == "4" ~ "4+3",
-  )) %>% 
-  dplyr::mutate(source_of_gleason = "prostatectomy") %>% 
-  dplyr::mutate(T_pathological = readr::parse_number(uncurated$`pathstage:ch1`)) %>%
-  dplyr::mutate(T_substage_pathological = stringr::str_extract(uncurated$`pathstage:ch1`,
-                                                                "[a-c]+")) %>% 
-  dplyr::mutate(T_clinical = readr::parse_number(uncurated$`clint_stage:ch1`)) %>% 
-  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`clint_stage:ch1`,
-                                                           "[a-c]+")) %>%
-  dplyr::mutate(metastasis_occurrence_status = dplyr::case_when(
-    uncurated$`metsevent:ch1` == "no" ~ 0,
-    uncurated$`metsevent:ch1` == "yes" ~ 1
+      stringr::str_sub(uncurated$tumour_grade,1,3) == "3+3" ~ "<=6",
+      stringr::str_sub(uncurated$tumour_grade,1,3) == "3+4" ~ "3+4",
+      stringr::str_sub(uncurated$tumour_grade,1,3) == "4+3" ~ "4+3",
+      stringr::str_sub(uncurated$tumour_grade,1,3) %in% c("4+4", "4+5") ~ ">=8"
   )) %>%
-  dplyr::mutate(days_to_metastatic_occurrence = as.numeric(
-    uncurated$`metsfreetime_months:ch1`
-    )*30.5) %>%
-  dplyr::mutate(psa = as.numeric(uncurated$`pretxpsa:ch1`)) %>%
-  dplyr::mutate(extraprostatic_extension = dplyr::case_when(
-    uncurated$`ece_binary:ch1` == "No" ~ 0,
-    uncurated$`ece_binary:ch1` == "Yes" ~ 1
-  )) %>% 
-  dplyr::mutate(seminal_vesicle_invasion= case_when(
-    uncurated$`svi:ch1` == "Negative" ~ 0,
-    uncurated$`svi:ch1` == "Positive" ~ 1
-  )) 
+  dplyr::mutate(gleason_grade = gleason_minor + gleason_major) %>%  
+  ## TODO: Double-check: clinical or pathological?
+  dplyr::mutate(T_clinical = readr::parse_number(uncurated$tumour_stage)) %>%   
+  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$tumour_stage, "[a-c]+")) 
   
-  
-clinical_hieronymus <- curated
+clinical_icgcca <- curated
 
-save(clinical_hieronymus, file = "data-raw/clinical_hieronymus.RData")
+save(clinical_icgcca, file = "data-raw/clinical_icgcca.RData")
+
+###
+## FR (French) ICGC dataset
+###
+
+# Generation script from generate.R, same function as is used for downloading and transforming the omics
+uncurated <- curatedPCaData:::generate_icgc("PRAD_UK", "clinical")
+
+# Format empty data frames according to the prad template
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+# Mimic previous curation piping
+curated <- curated %>% 
+  dplyr::mutate(study_name = "ICGC_UK") %>% 
+  dplyr::mutate(sample_name = uncurated$icgc_sample_id) %>% 
+  dplyr::mutate(patient_id = uncurated$icgc_donor_id) %>%
+  #dplyr::mutate(overall_survival_status = dplyr::case_when(
+  #  is.na(uncurated$`survivalevent:ch1`) ~ 0,
+  #  TRUE ~ 1
+  #)) %>%
+  #dplyr::mutate(days_to_overall_survival = 
+  #                as.numeric(uncurated$`survival_or_followup_time_months:ch1`)*30.5) %>% 
+  #dplyr::mutate(age_at_initial_diagnosis = 
+  #                as.numeric(uncurated$`dxage:ch1`)) %>% 
+  #dplyr::mutate(gleason_grade = as.numeric(uncurated$`pathggs:ch1`)) %>%
+  #dplyr::mutate(gleason_minor = as.numeric(uncurated$`pathgg2:ch1`)) %>%
+  #dplyr::mutate(gleason_major = as.numeric(uncurated$`pathgg1:ch1`)) %>%
+  #dplyr::mutate(grade_group = dplyr::case_when(
+  #  gleason_grade == 6 ~ "<=6",
+  #  gleason_grade > 8 ~ ">=8",
+  #  gleason_grade == 7 & gleason_major == "3" ~ "3+4",
+  #  gleason_grade == 7 & gleason_major == "4" ~ "4+3",
+  #)) %>% 
+  #dplyr::mutate(source_of_gleason = "prostatectomy") %>% 
+  #dplyr::mutate(T_pathological = readr::parse_number(uncurated$`pathstage:ch1`)) %>%
+  #dplyr::mutate(T_substage_pathological = stringr::str_extract(uncurated$`pathstage:ch1`,
+  #                                                              "[a-c]+")) %>% 
+  #dplyr::mutate(T_clinical = readr::parse_number(uncurated$`clint_stage:ch1`)) %>% 
+  #dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`clint_stage:ch1`,
+  #                                                         "[a-c]+")) %>%
+  #dplyr::mutate(metastasis_occurrence_status = dplyr::case_when(
+  #  uncurated$`metsevent:ch1` == "no" ~ 0,
+  #  uncurated$`metsevent:ch1` == "yes" ~ 1
+  #)) %>%
+  #dplyr::mutate(days_to_metastatic_occurrence = as.numeric(
+  #  uncurated$`metsfreetime_months:ch1`
+  #  )*30.5) %>%
+  #dplyr::mutate(psa = as.numeric(uncurated$`pretxpsa:ch1`)) %>%
+  #dplyr::mutate(extraprostatic_extension = dplyr::case_when(
+  #  uncurated$`ece_binary:ch1` == "No" ~ 0,
+  #  uncurated$`ece_binary:ch1` == "Yes" ~ 1
+  #)) %>% 
+  #dplyr::mutate(seminal_vesicle_invasion= case_when(
+  #  uncurated$`svi:ch1` == "Negative" ~ 0,
+  #  uncurated$`svi:ch1` == "Positive" ~ 1
+  #)) 
+    
+clinical_icgcfr <- curated
+
+save(clinical_icgcfr, file = "data-raw/clinical_icgcfr.RData")
+
+###
+## UK (United Kingdom) ICGC dataset
+###
+
+# Generation script from generate.R, same function as is used for downloading and transforming the omics
+uncurated <- curatedPCaData:::generate_icgc("PRAD_UK", "clinical")
+
+# Format empty data frames according to the prad template
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+# Mimic previous curation piping
+curated <- curated %>% 
+  dplyr::mutate(study_name = "ICGC_UK") %>% 
+  dplyr::mutate(sample_name = uncurated$icgc_sample_id) %>% 
+  dplyr::mutate(patient_id = uncurated$icgc_donor_id) %>%
+  #dplyr::mutate(overall_survival_status = dplyr::case_when(
+  #  is.na(uncurated$`survivalevent:ch1`) ~ 0,
+  #  TRUE ~ 1
+  #)) %>%
+  #dplyr::mutate(days_to_overall_survival = 
+  #                as.numeric(uncurated$`survival_or_followup_time_months:ch1`)*30.5) %>% 
+  #dplyr::mutate(age_at_initial_diagnosis = 
+  #                as.numeric(uncurated$`dxage:ch1`)) %>% 
+  #dplyr::mutate(gleason_grade = as.numeric(uncurated$`pathggs:ch1`)) %>%
+  #dplyr::mutate(gleason_minor = as.numeric(uncurated$`pathgg2:ch1`)) %>%
+  #dplyr::mutate(gleason_major = as.numeric(uncurated$`pathgg1:ch1`)) %>%
+  #dplyr::mutate(grade_group = dplyr::case_when(
+  #  gleason_grade == 6 ~ "<=6",
+  #  gleason_grade > 8 ~ ">=8",
+  #  gleason_grade == 7 & gleason_major == "3" ~ "3+4",
+  #  gleason_grade == 7 & gleason_major == "4" ~ "4+3",
+  #)) %>% 
+  #dplyr::mutate(source_of_gleason = "prostatectomy") %>% 
+  #dplyr::mutate(T_pathological = readr::parse_number(uncurated$`pathstage:ch1`)) %>%
+  #dplyr::mutate(T_substage_pathological = stringr::str_extract(uncurated$`pathstage:ch1`,
+  #                                                              "[a-c]+")) %>% 
+  #dplyr::mutate(T_clinical = readr::parse_number(uncurated$`clint_stage:ch1`)) %>% 
+  #dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`clint_stage:ch1`,
+  #                                                         "[a-c]+")) %>%
+  #dplyr::mutate(metastasis_occurrence_status = dplyr::case_when(
+  #  uncurated$`metsevent:ch1` == "no" ~ 0,
+  #  uncurated$`metsevent:ch1` == "yes" ~ 1
+  #)) %>%
+  #dplyr::mutate(days_to_metastatic_occurrence = as.numeric(
+  #  uncurated$`metsfreetime_months:ch1`
+  #  )*30.5) %>%
+  #dplyr::mutate(psa = as.numeric(uncurated$`pretxpsa:ch1`)) %>%
+  #dplyr::mutate(extraprostatic_extension = dplyr::case_when(
+  #  uncurated$`ece_binary:ch1` == "No" ~ 0,
+  #  uncurated$`ece_binary:ch1` == "Yes" ~ 1
+  #)) %>% 
+  #dplyr::mutate(seminal_vesicle_invasion= case_when(
+  #  uncurated$`svi:ch1` == "Negative" ~ 0,
+  #  uncurated$`svi:ch1` == "Positive" ~ 1
+  #))   
+  
+clinical_icgcuk <- curated
+
+save(clinical_icgcuk, file = "data-raw/clinical_icgcuk.RData")
+
