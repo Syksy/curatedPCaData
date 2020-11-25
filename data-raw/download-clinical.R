@@ -477,46 +477,51 @@ curated <- curated %>%
   dplyr::mutate(study_name = "ICGC_UK") %>% 
   dplyr::mutate(sample_name = uncurated$icgc_sample_id) %>% 
   dplyr::mutate(patient_id = uncurated$icgc_donor_id) %>%
-  #dplyr::mutate(overall_survival_status = dplyr::case_when(
-  #  is.na(uncurated$`survivalevent:ch1`) ~ 0,
-  #  TRUE ~ 1
-  #)) %>%
-  #dplyr::mutate(days_to_overall_survival = 
-  #                as.numeric(uncurated$`survival_or_followup_time_months:ch1`)*30.5) %>% 
-  #dplyr::mutate(age_at_initial_diagnosis = 
-  #                as.numeric(uncurated$`dxage:ch1`)) %>% 
-  #dplyr::mutate(gleason_grade = as.numeric(uncurated$`pathggs:ch1`)) %>%
-  #dplyr::mutate(gleason_minor = as.numeric(uncurated$`pathgg2:ch1`)) %>%
-  #dplyr::mutate(gleason_major = as.numeric(uncurated$`pathgg1:ch1`)) %>%
-  #dplyr::mutate(grade_group = dplyr::case_when(
-  #  gleason_grade == 6 ~ "<=6",
-  #  gleason_grade > 8 ~ ">=8",
-  #  gleason_grade == 7 & gleason_major == "3" ~ "3+4",
-  #  gleason_grade == 7 & gleason_major == "4" ~ "4+3",
-  #)) %>% 
-  #dplyr::mutate(source_of_gleason = "prostatectomy") %>% 
-  #dplyr::mutate(T_pathological = readr::parse_number(uncurated$`pathstage:ch1`)) %>%
-  #dplyr::mutate(T_substage_pathological = stringr::str_extract(uncurated$`pathstage:ch1`,
-  #                                                              "[a-c]+")) %>% 
-  #dplyr::mutate(T_clinical = readr::parse_number(uncurated$`clint_stage:ch1`)) %>% 
-  #dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`clint_stage:ch1`,
-  #                                                         "[a-c]+")) %>%
-  #dplyr::mutate(metastasis_occurrence_status = dplyr::case_when(
-  #  uncurated$`metsevent:ch1` == "no" ~ 0,
-  #  uncurated$`metsevent:ch1` == "yes" ~ 1
-  #)) %>%
-  #dplyr::mutate(days_to_metastatic_occurrence = as.numeric(
-  #  uncurated$`metsfreetime_months:ch1`
-  #  )*30.5) %>%
-  #dplyr::mutate(psa = as.numeric(uncurated$`pretxpsa:ch1`)) %>%
-  #dplyr::mutate(extraprostatic_extension = dplyr::case_when(
-  #  uncurated$`ece_binary:ch1` == "No" ~ 0,
-  #  uncurated$`ece_binary:ch1` == "Yes" ~ 1
-  #)) %>% 
-  #dplyr::mutate(seminal_vesicle_invasion= case_when(
-  #  uncurated$`svi:ch1` == "Negative" ~ 0,
-  #  uncurated$`svi:ch1` == "Positive" ~ 1
-  #))   
+  dplyr::mutate(age_at_initial_diagnosis = uncurated$donor_age_at_diagnosis) %>%
+  dplyr::mutate(days_to_overall_survival = uncurated$donor_survival_time) %>%
+  dplyr::mutate(overall_survival_status = dplyr::case_when(
+    uncurated$donor_vital_status == "alive" ~ 0,
+    uncurated$donor_vital_status == "deceased" ~ 1,
+    uncurated$donor_vital_status == "" ~ NA_real_
+    is.na(uncurated$donor_vital_status) ~ NA_real_
+  )) %>%
+  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$tumour_grade,1,1))) %>%
+  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$tumour_grade,3,3))) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+      stringr::str_sub(uncurated$tumour_grade,1,3) == "3+3" ~ "<=6",
+      stringr::str_sub(uncurated$tumour_grade,1,3) == "3+4" ~ "3+4",
+      stringr::str_sub(uncurated$tumour_grade,1,3) == "4+3" ~ "4+3",
+      stringr::str_sub(uncurated$tumour_grade,1,3) %in% c("4+4", "4+5") ~ ">=8"
+  )) %>%
+  dplyr::mutate(gleason_grade = gleason_minor + gleason_major) %>%  
+  dplyr::mutate(metastasis_occurrence_status = dplyr::case_when(
+    stringr::str_sub(uncurated$tumour_stage,6,7) == "M1" ~ 1,
+    stringr::str_sub(uncurated$tumour_stage,6,7) == "M0" ~ 0,
+    stringr::str_sub(uncurated$tumour_stage,6,7) %in% c("Mx", "") ~ NA_real_
+  )) %>%
+  dplyr::mutate(M_stage = stringr::str_sub(uncurated$tumour_stage,6,7))
+  # clinical -> uncurated$donor_tumour_stage_at_diagnosis
+  # pathology -> uncurated$tumour_stage
+  ## contains a lot of information for the TNM
+  #> table(uncurated$donor_tumour_stage_at_diagnosis)
+  #
+  #         pT2c pN0  pT3 pN0 pT3b pN1  pT4 pN1  T1bN0Mx  T1cN0M0  T1cN0Mx 
+  #       5        5       10        6        4        2        4       18 
+  # T1cNxM1  T1cNxMx    T2 Nx  T2aN0Mx  T2aNxMx  T2b pN1  T2bN0M0  T2bN0Mx 
+  #       2      164        3       45       20        6        2       14 
+  # T2bNxMx  T2cN0M0  T2cN0M1  T2cN0Mx  T2cN1Mx  T2cNxM0  T2cNxMx   T2N0Mx 
+  #       8        8        2       50        2        2        8        2 
+  #  T2NxMx    T3 Nx  T3aN0M0  T3aN0Mx  T3aNxMx  T3bN0Mx  T3bNxMx   T3N0Mx 
+  #       6        5        2       20       23        2        6        2 
+  #  T3NxM0    T4 Nx   TxNxMx 
+  #       2       17       32 
+  #> table(uncurated$tumour_stage)
+  #
+  #        T2aNxMx T2cN0M0 T2cN0M1 T2cN0Mx T2cNxMx T3aN0M0 T3aN0Mx T3aN1Mx T3aNxMx 
+  #    273       6       8       2      20      44       6      65       2      37 
+  #T3bN0Mx T3bN1M0 T3bN1Mx T3bNxMx T4xNxMx TxxNxMx 
+  #   12       2      12       4       2      14
+  #
   
 clinical_icgcuk <- curated
 
