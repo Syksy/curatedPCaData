@@ -360,8 +360,11 @@ generate_icgc <- function(
 	icgc_id = "PRAD_CA", # Study which ought to be downloaded; Canadian Prostate Adenocarcima study as default; note ICGC uses format 'PRAD-CA' but '_' is used for R-friendliness
 	set = "gex", # Which dataset (patient or sample data / omics platform) to try to extract from the data; valid values: 'clinical', 'gex', 'cna', ...
 	file_directory, # Temporary download location
+	collapseFUN = mean, # Function to use to average/median etc over multiple genes/probes mapped to same hugo symbol
 	verb = 0 # Level of verbosity; 0 = minimal, 1 = informative, 2 = debugging
 ){
+	# Use upper case similar to ICGC's naming conventions, also map '-' into '_' as it is not a mathematical operator and is safer
+	icgc_id <- base::gsub('-', '_', base::toupper(icgc_id))
 	# Currently the studies from Canada, UK and France have enough samples & omics to fit to the package
 	if(!icgc_id %in% c("PRAD_CA", "PRAD_FR", "PRAD_UK")){
 		stop("The queried ICGC study ought to be one of: 'PRAD_CA', 'PRAD_UK', or 'PRAD_FR'")		
@@ -471,6 +474,30 @@ generate_icgc <- function(
 			ret <- read.table(grep("exp_array", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id", "gene_id", "normalized_expression_value")]
 		}else{
 			stop("Unknown gene expression file type")
+		}
+		# Mapping of genes to hugo symbols is dependent on the dataset
+		if(icgc_id == "PRAD_CA"){
+			# Normalized expression values based on refseq gene ids, add hugo symbols
+			ret$hgnc_symbol <- curatedPCaData:::curatedPCaData_genes[match(ret$gene_id, curatedPCaData:::curatedPCaData_genes$refseq_mrna),"hgnc_symbol"]
+			# Remove entries for which gene_id or hgnc_symbol is missing
+			ret <- ret[-which(is.na(ret$gene_id) | is.na(ret$hgnc_symbol)),]
+			# Create a gex matrix of samples as columns and genes as rows
+			genes <- sort(unique(ret$hgnc_symbol))
+			genes <- genes[-which(genes=="")]
+			samples <- unique(ret$icgc_sample_id)
+			# Loop over samples, inner loop for mapping genes and then collapsing if multiple measurements exist for same hgnc symbol
+			ret <- do.call("cbind", by(ret, 
+				INDICES=ret$icgc_sample_id, 
+				FUN=function(x) { 
+					unlist(lapply(genes, FUN=function(z){
+						collapseFUN(x[match(z, x$hgnc_symbol),"normalized_expression_value"])
+					}))
+				}
+			))
+			rownames(ret) <- genes
+		}else if(icgc_id == "PRAD_FR"){
+			# Normalizing raw counts
+			
 		}
 	}else if(set == "cna"){ # Copy number alterations	
 		ret <- read.table(grep("copy_number_somatic", files, value=TRUE), sep="\t", header=TRUE, stringsAsFactors=FALSE)[,c("icgc_sample_id", "gene_affected", "mutation_type", "copy_number", "chromosome", "chromosome_start", "chromosome_end", "assembly_version")]
