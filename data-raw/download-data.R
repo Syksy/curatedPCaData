@@ -57,11 +57,27 @@ save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")
 mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
 usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 
+
+##
+#
 # ICGC datasets
+#
+##
 
 # PRAD-CA
+gex_icgcca <- curatedPCaData:::generate_icgc("PRAD_CA", "gex")
+save(gex_icgcca, file="data-raw/gex_icgcca.RData")
+
+# Create MAE object
+mae_icgcca <- curatedPCaData:::create_mae(study_name = "icgcca")
+usethis::use_data(mae_icgcca, internal = FALSE, overwrite = TRUE)
 
 # PRAD-FR
+gex_icgcfr <- curatedPCaData::generate_icgc("PRAD_FR", "gex")
+save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
+# TODO: At this point the data contains raw read counts, and is not yet usable as a 2-dim gex matrix
+
+# TODO: MAE
 
 # PRAD-UK
 

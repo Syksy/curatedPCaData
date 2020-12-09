@@ -406,7 +406,7 @@ curated <- curated %>%
   dplyr::mutate(patient_id = uncurated$icgc_donor_id) %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
     uncurated$donor_vital_status == "alive" ~ 0,
-    uncurated$donor_vital_status == "dead" ~ 1,
+    uncurated$donor_vital_status == "deceased" ~ 1,
     uncurated$donor_vital_status == "" ~ NA_real_,
     is.na(uncurated$donor_vital_status) ~ NA_real_
   )) %>%
