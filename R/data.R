@@ -41,3 +41,11 @@
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE54691}
 #'
 "mae_hieronymus"
+
+#' ICGC CA MAE-object
+#'
+#' MultiAssayExperiment object containing GEX from the Canadian ICGC cohort.
+#'
+#' @source \url{https://dcc.icgc.org/projects/PRAD-CA}
+#'
+"mae_icgcca"
