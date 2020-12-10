@@ -482,7 +482,7 @@ curated <- curated %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
     uncurated$donor_vital_status == "alive" ~ 0,
     uncurated$donor_vital_status == "deceased" ~ 1,
-    uncurated$donor_vital_status == "" ~ NA_real_
+    uncurated$donor_vital_status == "" ~ NA_real_,
     is.na(uncurated$donor_vital_status) ~ NA_real_
   )) %>%
   dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$tumour_grade,1,1))) %>%
