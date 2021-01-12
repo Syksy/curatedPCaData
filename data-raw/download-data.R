@@ -81,3 +81,25 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 
 # PRAD-UK
 
+#Download OSF data
+osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
+R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
+osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
+
+#Download the mapping file 
+osf <- curatedPCaData:::format_osf_data(osf_data)
+osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
+
+# Re-format the OSF data
+osf_t <- t(osf)
+osf_t <- as.data.frame(osf_t)
+colnames(osf_t) <- osf_t[1,]
+osf <- osf_t[-1,]
+
+colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
+colnames(osf) <- paste(colnames(osf), '01', sep='.')
+usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
+save(osf, file="data-raw/osfgex_tcga.RData")
+
+
+
