@@ -49,3 +49,33 @@
 #' @source \url{https://dcc.icgc.org/projects/PRAD-CA}
 #'
 "mae_icgcca"
+
+#' Barbieri MAE-object
+#'
+#' MultiAssayExperiment object containing gene expression (gex) and copy 
+#' number alteration (cna).
+#' 
+#' @format An MAE object spanning 112 men with prostate cancer
+#' \describe{
+#'   \item{gex}{matrix with 18193 rows and 20 columns}
+#'   \item{cna}{matrix with 21723 rows and 109 columns}
+#' }
+#' 
+#' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad}
+#'
+"mae_barbieri"
+
+#' Ren 2017 MAE-object
+#'
+#' MultiAssayExperiment object containing gene expression (gex) and copy 
+#' number alteration (cna).
+#' 
+#' @format An MAE object spanning 112 men with prostate cancer
+#' \describe{
+#'   \item{gex}{matrix with 21589 rows and 65 columns}
+#'   \item{cna}{matrix with 20873 rows and 65 columns}
+#' }
+#' 
+#' @source \url{https://www.cbioportal.org/study/summary?id=prad_eururol_2017}
+#'
+"mae_ren"
