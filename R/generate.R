@@ -301,10 +301,16 @@ generate_cbioportal <- function(
                       "prad_tcga_pub_gistic", # TCGA CNA (GISTIC)
                       "prad_tcga_pub_linear_CNA", # TCGA CNA (Capped relative linear copy-number values)
                       "prad_mskcc_mrna_median_Zscores", # Taylor et al. GEX (z-score normalized)
-                      "prad_mskcc_cna" # Taylor et al. CNA
+                      "prad_mskcc_cna", # Taylor et al. CNA
+                      "prad_broad_mrna", # PRAD Broad GEX
+                      "prad_broad_cna", # PRAD Broad CNA
+                      "prad_eururol_2017_rna_seq_mrna", # PRAD Eururol GEX
+                      "prad_eururol_2017_cna" # PRAD Eururol CNA
                       ), # for cgdsr calls, platform and dataset specific string
   caseList = c("prad_tcga_pub_sequenced", # TCGA
-               "prad_mskcc_sequenced" # Taylor et al. 
+               "prad_mskcc_sequenced", # Taylor et al.
+               "prad_broad_sequenced", # PRAD Broad
+               "prad_eururol_2017_sequenced" # PRAD Eururol
                ), # for cgdsr calls, platform and dataset specific string
   delay = 0.05, 
   splitsize = 100, 
