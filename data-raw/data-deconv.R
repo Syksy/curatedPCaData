@@ -3,6 +3,9 @@ load("data-raw/osfgex_tcga.RData")
 
 load("data-raw/gex_taylor.RData")
 load("data-raw/gex_sun.RData")
+load("data-raw/gex_barbieri.RData")
+load("data-raw/gex_ren.RData")
+
 
 osf_num <- as.matrix(osf)
 mode(osf_num) <- "numeric"
@@ -17,6 +20,38 @@ osf_quantiseq <- immunedeconv::deconvolute(osf_num,"quantiseq")
 osf_epic <- immunedeconv::deconvolute(osf_num,"epic")
 osf_xcell <- immunedeconv::deconvolute(osf_num,"xcell")
 osf_mcp <- immunedeconv::deconvolute(osf_num,"mcp_counter")
+
+# files have to be converted to txt to upload in the cibersort website
+gex_tcga <- as.data.frame(gex_tcga)
+gex_taylor <- as.data.frame(gex_taylor)
+gex_sun <- as.data.frame(gex_sun)
+
+data.table::setDT(gex_tcga,keep.rownames = "V1")
+write.table(gex_tcga,"data-raw/tcga_gex.txt", sep="\t", row.names = F, col.names = T)
+
+data.table::setDT(gex_taylor,keep.rownames = "V1")
+write.table(gex_taylor,"data-raw/taylor_gex.txt", sep="\t", row.names = F, col.names = T)
+
+data.table::setDT(gex_sun,keep.rownames = "V1")
+write.table(gex_sun,"data-raw/sun_gex.txt", sep="\t", row.names = F, col.names = T)
+
+# cibersortx results downloaded in csv format from "https://cibersortx.stanford.edu/" on 01/13/2021 at 12 pm EST using the gex matrices converted to txt files as shown above
+osf_cibersortx <- rio::import("data-raw/CIBERSORTx_osf_Results.csv")
+tcga_cibersortx <- rio::import("data-raw/CIBERSORTx_tcga_Results.csv")
+taylor_cibersortx <- rio::import("data-raw/CIBERSORTx_taylor_Results.csv")
+
+
+osf_cibersortx$Mixture <- gsub(osf_cibersortx$Mixture, pattern = "-", replacement = ".")
+osf_cibersortx$Mixture <- paste(osf_cibersortx$Mixture, '01', sep='.')
+osf_cibersortx_t <- t(osf_cibersortx)
+colnames(osf_cibersortx_t) <- osf_cibersortx_t[1,]
+osf_cibersortx_t <- osf_cibersortx_t[-1,]
+save(osf_cibersortx_t,file="data-raw/osf_cibersortx_tcga.RData")
+
+tcga_cibersortx_t <- t(tcga_cibersortx)
+colnames(tcga_cibersortx_t) <- tcga_cibersortx_t[1,]
+tcga_cibersortx_t <- tcga_cibersortx_t[-1,]
+save(tcga_cibersortx_t,file="data-raw/cibersortx_tcga.RData")
 
 tcga_package_quantiseq <- data.frame(tcga_package_quantiseq)
 rownames(tcga_package_quantiseq) <- tcga_package_quantiseq[,1]
@@ -75,6 +110,11 @@ taylor_package_quantiseq <- immunedeconv::deconvolute(gex_taylor,"quantiseq")
 taylor_package_epic <- immunedeconv::deconvolute(gex_taylor,"epic")
 taylor_package_xcell <- immunedeconv::deconvolute(gex_taylor,"xcell")
 taylor_package_mcp <- immunedeconv::deconvolute(gex_taylor,"mcp_counter")
+
+taylor_cibersortx_t <- t(taylor_cibersortx)
+colnames(taylor_cibersortx_t) <- taylor_cibersortx_t[1,]
+taylor_cibersortx_t <- taylor_cibersortx_t[-1,]
+save(taylor_cibersortx_t,file="data-raw/cibersortx_taylor.RData")
 
 taylor_package_quantiseq <- data.frame(taylor_package_quantiseq)
 rownames(taylor_package_quantiseq) <- taylor_package_quantiseq[,1]
@@ -137,6 +177,73 @@ save(sun_package_mcp,file="data-raw/mcp_sun.RData")
 mae_sun <- create_mae(study_name = "Sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
 
+# Barbieri Broad/Cornell data
+
+Barbieri_package_quantiseq <- immunedeconv::deconvolute(gex_Barbieri,"quantiseq")
+Barbieri_package_epic <- immunedeconv::deconvolute(gex_Barbieri,"epic")
+Barbieri_package_xcell <- immunedeconv::deconvolute(gex_Barbieri,"xcell")
+Barbieri_package_mcp <- immunedeconv::deconvolute(gex_Barbieri,"mcp_counter")
+
+Barbieri_package_quantiseq <- data.frame(Barbieri_package_quantiseq)
+rownames(Barbieri_package_quantiseq) <- Barbieri_package_quantiseq[,1]
+Barbieri_package_quantiseq <- Barbieri_package_quantiseq[,-1]
+Barbieri_package_quantiseq <- as.matrix(Barbieri_package_quantiseq)
+save(Barbieri_package_quantiseq,file="data-raw/quantiseq_barbieri.RData")
+
+Barbieri_package_epic <- data.frame(Barbieri_package_epic)
+rownames(Barbieri_package_epic) <- Barbieri_package_epic[,1]
+Barbieri_package_epic <- Barbieri_package_epic[,-1]
+Barbieri_package_epic <- as.matrix(Barbieri_package_epic)
+save(Barbieri_package_epic,file="data-raw/epic_barbieri.RData")
+
+Barbieri_package_xcell <- data.frame(Barbieri_package_xcell)
+rownames(Barbieri_package_xcell) <- Barbieri_package_xcell[,1]
+Barbieri_package_xcell <- Barbieri_package_xcell[,-1]
+Barbieri_package_xcell <- as.matrix(Barbieri_package_xcell)
+save(Barbieri_package_xcell,file="data-raw/xcell_barbieri.RData")
+
+Barbieri_package_mcp <- data.frame(Barbieri_package_mcp)
+rownames(Barbieri_package_mcp) <- Barbieri_package_mcp[,1]
+Barbieri_package_mcp <- Barbieri_package_mcp[,-1]
+Barbieri_package_mcp <- as.matrix(Barbieri_package_mcp)
+save(Barbieri_package_mcp,file="data-raw/mcp_barbieri.RData")
+
+mae_barbieri <- create_mae(study_name = "Barbieri")
+usethis::use_data(mae_barbieri, overwrite = TRUE)
+
+# Ren Eururol
+
+Ren_package_quantiseq <- immunedeconv::deconvolute(gex_Ren,"quantiseq")
+Ren_package_epic <- immunedeconv::deconvolute(gex_Ren,"epic")
+Ren_package_xcell <- immunedeconv::deconvolute(gex_Ren,"xcell")
+Ren_package_mcp <- immunedeconv::deconvolute(gex_Ren,"mcp_counter")
+
+Ren_package_quantiseq <- data.frame(Ren_package_quantiseq)
+rownames(Ren_package_quantiseq) <- Ren_package_quantiseq[,1]
+Ren_package_quantiseq <- Ren_package_quantiseq[,-1]
+Ren_package_quantiseq <- as.matrix(Ren_package_quantiseq)
+save(Ren_package_quantiseq,file="data-raw/quantiseq_ren.RData")
+
+Ren_package_epic <- data.frame(Ren_package_epic)
+rownames(Ren_package_epic) <- Ren_package_epic[,1]
+Ren_package_epic <- Ren_package_epic[,-1]
+Ren_package_epic <- as.matrix(Ren_package_epic)
+save(Ren_package_epic,file="data-raw/epic_ren.RData")
+
+Ren_package_xcell <- data.frame(Ren_package_xcell)
+rownames(Ren_package_xcell) <- Ren_package_xcell[,1]
+Ren_package_xcell <- Ren_package_xcell[,-1]
+Ren_package_xcell <- as.matrix(Ren_package_xcell)
+save(Ren_package_xcell,file="data-raw/xcell_ren.RData")
+
+Ren_package_mcp <- data.frame(Ren_package_mcp)
+rownames(Ren_package_mcp) <- Ren_package_mcp[,1]
+Ren_package_mcp <- Ren_package_mcp[,-1]
+Ren_package_mcp <- as.matrix(Ren_package_mcp)
+save(Ren_package_mcp,file="data-raw/mcp_ren.RData")
+
+mae_ren <- create_mae(study_name = "Ren")
+usethis::use_data(mae_ren, overwrite = TRUE)
 
 
 
