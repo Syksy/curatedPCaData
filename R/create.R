@@ -9,7 +9,7 @@
 #' 
 create_mae <- function(
   # Valid study_name-parameters: tcga, taylor, sun, hieronymus
-  study_name = c("TCGA", "Taylor", "Sun", "Hieronymus"),
+  study_name = c("TCGA", "Taylor", "Sun", "Hieronymus", "Barbieri", "Ren"),
   # Level of verbosity
   verb = TRUE,
   ...
