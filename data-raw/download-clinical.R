@@ -527,3 +527,93 @@ clinical_icgcuk <- curated
 
 save(clinical_icgcuk, file = "data-raw/clinical_icgcuk.RData")
 
+######################################################################
+#cBioportal Barbieri Broad/Cornell Data
+#####################################################################
+
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_sequenced")
+#mycancerstudy = cgdsr::getCancerStudies(mycgds)
+#mycaselist = cgdsr::getCaseLists(mycgds,"prad_broad")
+
+# create the curated object
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Barbieri") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(gleason_grade = uncurated$GLEASON_SCORE) %>%
+  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,1,1))) %>%
+  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "4+3" ~ "4+3",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8"
+  )) %>%
+  dplyr::mutate(psa = uncurated$SERUM_PSA) %>% 
+  dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
+  dplyr::mutate(T_clinical = readr::parse_number(uncurated$TUMOR_STAGE)) %>% 
+  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$TUMOR_STAGE, "[a-c]+")) %>%
+  dplyr::mutate(TMPRSS2_ERG_FUSION_STATUS=uncurated$TMPRSS2_ERG_FUSION_STATUS) %>%
+  dplyr::mutate(GLEASON_SCORE_PERCENT_4_AND_5=uncurated$GLEASON_SCORE_PERCENT_4_AND_5)
+
+clinical_barbieri <- curated
+save(clinical_barbieri, file = "data-raw/clinical_barbieri.RData")
+
+#####################################################################################
+#cBioportal Ren eururol 2017 Data
+#####################################################################################
+
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_eururol_2017_sequenced")
+#mycancerstudy = cgdsr::getCancerStudies(mycgds)
+#mycaselist = cgdsr::getCaseLists(mycgds,"prad_eururol_2017")
+
+# create the curated object
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Ren") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(psa = uncurated$PSA) %>%
+  dplyr::mutate(gleason_grade = uncurated$GLEASON_SCORE) %>%
+  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,1,1))) %>%
+  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "4+3" ~ "4+3",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8"
+  )) %>%
+  dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
+  dplyr::mutate(T_clinical = readr::parse_number(uncurated$TNMSTAGE)) %>% 
+  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$TNMSTAGE, "[a-c]+")) %>%
+  dplyr::mutate(FPSA_PSA = uncurated$FPSA_PSA) %>%
+  dplyr::mutate(Tumor_Purity = uncurated$TUMOR_PURITY) %>%
+  dplyr::mutate(BLADDER_NECK_INVASION = uncurated$BLADDER_NECK_INVASION) %>%
+  dplyr::mutate(SEMINAL_VESICLE_INVASION = uncurated$SEMINAL_VESICLE_INVASION) %>%
+  dplyr::mutate(Fraction_genome_altered=uncurated$FRACTION_GENOME_ALTERED) %>%
+  dplyr::mutate(LYMPH_NODE_METASTASIS=uncurated$LYMPH_NODE_METASTASIS) %>%
+  dplyr::mutate(MUTATION_COUNT=uncurated$MUTATION_COUNT)
+
+
+clinical_ren <- curated
+save(clinical_ren, file = "data-raw/clinical_ren.RData")
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
