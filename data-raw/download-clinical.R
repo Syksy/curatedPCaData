@@ -608,7 +608,43 @@ clinical_ren <- curated
 save(clinical_ren, file = "data-raw/clinical_ren.RData")
 
 
+#######################################################################
+#Kim et al
+######################################################################
+
+gse <- GEOquery::getGEO("GSE119616", GSEMatrix = TRUE)
+
+uncurated <- Biobase::pData(gse[[1]])
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Kim et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+  dplyr::mutate(patient_id = stringr::str_remove(uncurated$title,
+                                                      "prostate_cancer_biopsy_sample_pid_")) %>%
+  dplyr::mutate(tissue_source = stringr::str_remove(uncurated$characteristics_ch1.10,"tissue:")) %>%
+  dplyr::mutate(age_at_initial_diagnosis = stringr::str_remove(uncurated$characteristics_ch1.2,
+                                                 "age:")) %>%
+  dplyr::mutate(psa = stringr::str_remove(uncurated$characteristics_ch1.6,
+                                                               "psa:")) %>%
+  dplyr::mutate(gleason_major = stringr::str_remove(uncurated$characteristics_ch1.8,"primary gleason grade:")) %>%
+  dplyr::mutate(gleason_minor = stringr::str_remove(uncurated$characteristics_ch1.9,"secondary gleason grade:")) %>%
+  dplyr::mutate(gleason_grade = gsub(" ", "", paste(gleason_major,"+",gleason_minor))) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+    gleason_grade == "3+3" ~ "<=6",
+    gleason_grade == "3+4" ~ "3+4",
+    gleason_grade == "4+3" ~ "4+3",
+    gleason_grade %in% c("4+4", "4+5") ~ ">=8"
+  )) %>%
+  dplyr::mutate(T_clinical = readr::parse_number(uncurated$`tumor stage:ch1`)) %>% 
+  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`tumor stage:ch1`, "[a-c]+"))
   
+clinical_kim <- curated
+
+save(clinical_kim, file = "data-raw/clinical_kim.RData")
   
   
   
