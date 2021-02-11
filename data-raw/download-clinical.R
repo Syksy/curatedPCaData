@@ -527,3 +527,38 @@ clinical_icgcuk <- curated
 
 save(clinical_icgcuk, file = "data-raw/clinical_icgcuk.RData")
 
+
+
+#############################################################################
+#
+#
+# Friedrich et at German samples.  This code downloads both gene expression 
+# and clinical data -- just the curation of the clinical data is
+# provided here (also, I cannot even begin how to do the same facy
+# lettering we see for the other datasets above!)
+#
+#
+##############################################################################
+
+gset <- GEOquery::getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
+
+uncurated <- Biobase::pData(gset[[1]]) 
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="./template_prad.csv")
+
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Friedrich et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(alt_sample_name = unlist(lapply(stringr::str_split(uncurated$title, '_'), function(x) x[3]))) %>%
+  dplyr::mutate(gleason_grade = dplyr::case_when(uncurated$'gleason score:ch1' == 'None' ~ NA_character_, TRUE ~ uncurated$'gleason score:ch1')) %>%
+  dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>% 
+  dplyr::mutate(race = 'caucasian') 
+
+clinical_friedrich <- curated
+
+save(clinical_friedrich, file = "/users/calbolif/Clinical/clinical_friedrich.RData")
+
+
