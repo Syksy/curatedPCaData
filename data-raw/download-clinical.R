@@ -559,6 +559,6 @@ curated <- curated %>%
 
 clinical_friedrich <- curated
 
-save(clinical_friedrich, file = "/users/calbolif/Clinical/clinical_friedrich.RData")
+save(clinical_friedrich, file = "./clinical_friedrich.RData")
 
 
