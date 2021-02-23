@@ -117,7 +117,9 @@ gex_friedrich = gex_friedrich[, -c(1)]
 
 save(gex_friedrich, file = "data-raw/gex_friedrich.RData")
 
-# TODO mae
+mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
+
+
 
 
 
