@@ -57,6 +57,19 @@ mae_sun <- c(curatedPCaData::mae_sun, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_sun, overwrite = TRUE)
 
+##
+# Friedrich et al.
+##
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex"]], method="xcell"))
+
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+
+mae_friedrich <- c(mae_friedrich, xcell = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 ##
 # -- Recompile and re-install package, so expanded mae-objects are up to date --
@@ -114,7 +127,19 @@ mae_sun <- c(curatedPCaData::mae_sun, mcp_counter = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_sun, overwrite = TRUE)
 
+##
+# Friedrich et al.
+##
 
+# Transform from tibble to more universal formats such as a data.frame or a matrix
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex"]], method="mcp_counter"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_friedrich <- c(curatedPCaData::mae_friedrich, mcp_counter = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 
 
