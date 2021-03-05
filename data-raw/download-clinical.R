@@ -534,8 +534,7 @@ save(clinical_icgcuk, file = "data-raw/clinical_icgcuk.RData")
 #
 # Friedrich et at German samples.  This code downloads both gene expression 
 # and clinical data -- just the curation of the clinical data is
-# provided here (also, I cannot even begin how to do the same facy
-# lettering we see for the other datasets above!)
+# provided here 
 #
 #
 ##############################################################################
@@ -573,6 +572,8 @@ curated <- curated %>%
                                                uncurated$'risk group:ch1' == 'H-df' ~ 'adjacentnormal'
                                                )) %>%
   dplyr::mutate(days_to_overall_survival = ceiling(as.numeric(uncurated$'follow-up time in months:ch1')*30.5)) %>%
+  dplyr::mutate(frozen_ffpe = 'frozen') %>%
+  dplyr::mutate(microdissected = 1) %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
                                                            uncurated$'risk group:ch1' == 'C' ~ 0, 
                                                            uncurated$'risk group:ch1' == 'V' ~ 0,
