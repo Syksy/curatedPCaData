@@ -596,4 +596,109 @@ clinical_friedrich <- curated
 
 save(clinical_friedrich, file = "./clinical_friedrich.RData")
 
+##################################################################
+##################################################################
+#
+#
+# Wallace et al. samples: This code downloads both gene expression
+# BOTH clinical and GPL, but just the clinical data is used
+#
+#
+##################################################################
+##################################################################
+
+library(GEOquery)
+#library(limma)
+#library(umap)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
+
+
+# clinical
+
+library(magrittr)
+library(dplyr)
+
+
+uncurated <- Biobase::pData(gset[[1]])
+
+unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430')
+
+uncurated = uncurated[!is.element(uncurated$geo_accession, unmatched_healty_tissue), ]
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="./template_prad.csv")
+
+curated <- curated %>%
+  dplyr::mutate(study_name = "Wallace et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = stringr::str_extract(uncurated$title, 'patient \\d+')) %>%
+  dplyr::mutate(alt_sample_name = stringr::str_extract(uncurated$title, 'patient \\d+')) %>%
+  dplyr::mutate(gleason_grade = dplyr::case_when(
+                                                 uncurated$'gleason sum:ch1' == 'NA' ~ NA_character_,
+                                                 TRUE ~ uncurated$'gleason sum:ch1')) %>%
+  dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>%
+  dplyr::mutate(race = dplyr::case_when(
+                                        uncurated$"race:ch1" == 'African American' ~ 'african_american',
+                                        uncurated$"race:ch1" == 'Caucasian' ~ 'caucasian',
+                                        uncurated$"race:ch1" == 'NA' ~ NA_character_
+                                        )) %>%
+  dplyr::mutate(smoking_status = as.numeric(dplyr::case_when(
+                                                 uncurated$"smoking status:ch1" == 'Current' ~ '1',
+                                                 uncurated$"smoking status:ch1" == 'Past' ~ '1',
+                                                 uncurated$"smoking status:ch1" == 'Never' ~ '0',
+                                                 uncurated$"smoking status:ch1" == 'Unknown' ~ NA_character_,
+                                                 uncurated$"smoking status:ch1" == 'NA' ~ NA_character_
+                                                 ))) %>%
+  dplyr::mutate(angiolymphatic_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(seminal_vesicle_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(perineural_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"perineural invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"perineural invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"perineural invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(extraprostatic_extension = as.numeric(dplyr::case_when(
+                                                           uncurated$"extraprostatic extension:ch1" == 'Focal' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'Multifocal' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'Established' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'None' ~ '0',
+                                                           uncurated$"perineural invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(tumor_margins_positive = as.numeric(dplyr::case_when(
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor focal at margin' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor widespread a surgical margins' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor widespread at margin' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'All surgical margins are free of tumor' ~ '0',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Unknown' ~ NA_character_,
+                                                           uncurated$"are surgical margins involved:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(sample_type = dplyr::case_when(
+                                               uncurated$source_name_ch1 == "Adenocarcinoma (NOS) of the prostate" ~ 'primary',
+                                               uncurated$source_name_ch1 == "Normal prostate" ~ 'adjacentnormal'
+                                               ))  %>%
+  dplyr::mutate(frozen_ffpe = 'frozen') %>%
+  dplyr::mutate(microdissected = 0) %>%
+  dplyr::mutate(therapy_radiation_initial = 0) %>%
+  dplyr::mutate(therapy_radiation_salvage = 0) %>%
+  dplyr::mutate(therapy_surgery_initial = 0) %>%
+  dplyr::mutate(therapy_hormonal_initial = 0)
+
+
+
+
+clinical_wallace <- curated
+
+save(clinical_wallace, file = "./clinical_wallace.RData")
+
 
