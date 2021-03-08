@@ -49,3 +49,19 @@
 #' @source \url{https://dcc.icgc.org/projects/PRAD-CA}
 #'
 "mae_icgcca"
+
+#' Wallace et al. MAE-object
+#'
+#' MultiAssayExperiment object containing GEX from Wallace et al.
+#'
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6956}
+#'
+"mae_wallace"
+
+#' Friedrich et al. MAE-object
+#'
+#' MultiAssayExperiment object containing GEX from Friedrich et al.
+#'
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE134160}
+#'
+"mae_friedrich"
