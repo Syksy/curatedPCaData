@@ -534,8 +534,7 @@ save(clinical_icgcuk, file = "data-raw/clinical_icgcuk.RData")
 #
 # Friedrich et at German samples.  This code downloads both gene expression 
 # and clinical data -- just the curation of the clinical data is
-# provided here (also, I cannot even begin how to do the same facy
-# lettering we see for the other datasets above!)
+# provided here 
 #
 #
 ##############################################################################
@@ -547,15 +546,51 @@ curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="./template_prad.csv")
 
-
 curated <- curated %>% 
   dplyr::mutate(study_name = "Friedrich et al.") %>%
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
   dplyr::mutate(alt_sample_name = unlist(lapply(stringr::str_split(uncurated$title, '_'), function(x) x[3]))) %>%
-  dplyr::mutate(gleason_grade = dplyr::case_when(uncurated$'gleason score:ch1' == 'None' ~ NA_character_, TRUE ~ uncurated$'gleason score:ch1')) %>%
+  dplyr::mutate(gleason_grade = dplyr::case_when(uncurated$'gleason score:ch1' == 'None' ~ NA_character_, 
+                                                 TRUE ~ uncurated$'gleason score:ch1')) %>%
   dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>% 
-  dplyr::mutate(race = 'caucasian') 
+  dplyr::mutate(race = 'caucasian') %>% 
+  dplyr::mutate(tissue_source = 'prostatectomy') %>%
+  dplyr::mutate(sample_type = dplyr::case_when(
+                                               uncurated$'risk group:ch1' == 'C' ~ 'BPH', 
+                                               uncurated$'risk group:ch1' == 'V' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'Ms' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'Md' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'L' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H+st' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H+dt' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H-st' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H-dt' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H+sf' ~ 'adjacentnormal',
+                                               uncurated$'risk group:ch1' == 'H+df' ~ 'adjacentnormal',
+                                               uncurated$'risk group:ch1' == 'H-sf' ~ 'adjacentnormal',
+                                               uncurated$'risk group:ch1' == 'H-df' ~ 'adjacentnormal'
+                                               )) %>%
+  dplyr::mutate(days_to_overall_survival = ceiling(as.numeric(uncurated$'follow-up time in months:ch1')*30.5)) %>%
+  dplyr::mutate(frozen_ffpe = 'frozen') %>%
+  dplyr::mutate(microdissected = 1) %>%
+  dplyr::mutate(overall_survival_status = dplyr::case_when(
+                                                           uncurated$'risk group:ch1' == 'C' ~ 0, 
+                                                           uncurated$'risk group:ch1' == 'V' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'Ms' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'Md' ~ 1,
+                                                           uncurated$'risk group:ch1' == 'L' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H+st' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H+dt' ~ 1,
+                                                           uncurated$'risk group:ch1' == 'H-st' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H-dt' ~ 1,
+                                                           uncurated$'risk group:ch1' == 'H+sf' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H+df' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H-sf' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H-df' ~ 0
+                                                           )) 
+
+
 
 clinical_friedrich <- curated
 
