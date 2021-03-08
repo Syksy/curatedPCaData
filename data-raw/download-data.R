@@ -75,9 +75,54 @@ usethis::use_data(mae_icgcca, internal = FALSE, overwrite = TRUE)
 # PRAD-FR
 gex_icgcfr <- curatedPCaData::generate_icgc("PRAD_FR", "gex")
 save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
+
 # TODO: At this point the data contains raw read counts, and is not yet usable as a 2-dim gex matrix
 
 # TODO: MAE
 
 # PRAD-UK
+
+###################################################
+# Friedrich 2020 FOR NOW BASED ON PROCESSED DATA!!!
+###################################################
+
+library(GEOquery)
+library(Biobase)
+
+# load series and platform data from GEO
+
+fr_gset <- getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
+
+labels = Biobase::fData(fr_gset[[1]])
+gtab = curatedPCaData:::curatedPCaData_genes
+
+if (length(fr_gset) > 1) idx <- grep("GPL26898", attr(gset, "names")) else idx <- 1
+fr_ex <- exprs(fr_gset[[idx]])
+
+# replacing row names with gene ids
+##############################################
+labels$ensb = substr(labels$SPOT_ID, 1, 15)
+rownames(fr_ex) = labels$ensb
+fr_ex = fr_ex[rownames(fr_ex) != 'NoEntry', ]
+fr_ex = fr_ex[substr(rownames(fr_ex), 1, 4) != 'XLOC', ]
+fr_ex = fr_ex[is.element(rownames(fr_ex), gtab[,1]), ]
+gtab2 = gtab[match(rownames(fr_ex), gtab[,1]), ]
+
+gtab2[which(gtab2[,3] == ''), 3] = gtab2[which(gtab2[,3] == ''), 1]
+
+rownames(fr_ex) = gtab2[,3]
+gex_friedrich = aggregate(fr_ex, by = list(rownames(ex)), mean)
+rownames(gex_friedrich) = gex_friedrich[,1]
+gex_friedrich = gex_friedrich[, -c(1)]
+
+save(gex_friedrich, file = "data-raw/gex_friedrich.RData")
+
+mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
+
+
+
+
+
+
+
 
