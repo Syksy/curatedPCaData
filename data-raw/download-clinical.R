@@ -597,3 +597,31 @@ clinical_friedrich <- curated
 save(clinical_friedrich, file = "./clinical_friedrich.RData")
 
 
+###
+#
+# Chandran et al., BMC Cancer 2007
+# Yu et al. J Clin Oncol 2004
+#
+# https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6919
+# 
+# Includes normal samples, tumor samples, as well as metastatic samples
+#
+###
+
+gse <- GEOquery::getGEO("GSE6919", GSEMatrix = TRUE)
+
+uncurated1 <- Biobase::pData(gse[[1]]) # Batch 1
+uncurated2 <- Biobase::pData(gse[[2]]) # Batch 2
+uncurated3 <- Biobase::pData(gse[[3]]) # Batch 3
+# Bind metadata over the 3 GPLs
+uncurated <- rbind(uncurated1, uncurated2, uncurated3)
+
+# Base curation metadat
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="./template_prad.csv")
+
+# Pipe through the available fields
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Chandran et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
