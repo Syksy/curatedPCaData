@@ -623,5 +623,46 @@ curated <- initial_curated_df(
 
 # Pipe through the available fields
 curated <- curated %>% 
-  dplyr::mutate(study_name = "Chandran et al.") %>%
-  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+	dplyr::mutate(study_name = "Chandran et al.") %>%
+	dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+	dplyr::mutate(age_at_initial_diagnosis = uncurated$'Age:ch1') %>%
+	dplyr::mutate(race = dplyr::case_when(
+		uncurated$'Race:ch1' == 'Caucasian' ~ 'caucasian', 
+		uncurated$'Race:ch1' == 'African American' ~ 'african_american'
+	)) %>%
+	dplyr::mutate(gleason_grade = uncurated$'Gleason Grade:ch1') %>%
+	# TODO: Double-check if the T were determined at diagnosis or post-surgery
+	# T_pathological & T_substage_pathological OR T_clinical & T_substage_clinical
+	dplyr::mutate(T_pathological = dplyr::case_when(
+		uncurated$'Tumor stage:ch1' %in% c('T2a','T2b') ~ 2, 
+		uncurated$'Tumor stage:ch1' %in% c('T3a','T3b') ~ 3,
+		uncurated$'Tumor stage:ch1' %in% c('T4', 'T4a') ~ 4,
+		is.na(uncurated$'Tumor stage:ch1') ~ NA_real_,
+	)) %>%
+	dplyr::mutate(T_substage_pathological = dplyr::case_when(
+		uncurated$'Tumor stage:ch1' %in% c('T2a','T3a', 'T4a') ~ 'a', 
+		uncurated$'Tumor stage:ch1' %in% c('T2b','T3b') ~ 'b',
+		uncurated$'Tumor stage:ch1' == "T4" ~ NA_character_,
+		is.na(uncurated$'Tumor stage:ch1') ~ NA_character_,
+	)) %>%
+	dplyr::mutate(sample_type = dplyr::case_when(
+		uncurated$'Tissue:ch1' %in% c('primary prostate tumor') ~ 'primary', 
+		uncurated$'Tissue:ch1' %in% c('normal prostate tissue adjacent to tumor') ~ 'adjacentnormal', 
+		uncurated$'Tissue:ch1' %in% c('normal prostate tissue free of any pathological alteration from brain-dead organ donor') ~ 'healthy', 
+		uncurated$'Tissue:ch1' %in% c('metastases recurrent in prostate','prostate tumor metastases in adrenal gland','prostate tumor metastases in kidney','prostate tumor metastases in left inguinal lymph node','prostate tumor metastases in liver','prostate tumor metastases in lung','prostate tumor metastases in para aortic lymph node','prostate tumor metastases in para tracheal lymph node','prostate tumor metastases in paratracheal lymph node','prostate tumor metastases in retroperitoneal lymph node') ~ 'metastatic', 
+		is.na(uncurated$'Tissue:ch1') ~ NA_character_,
+	)) %>%
+	dplyr::mutate(metastatic_site = dplyr::case_when(
+		uncurated$'Tissue:ch1' %in% c('metastases recurrent in prostate') ~ 'prostate', 
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in adrenal gland') ~ 'adrenal_gland',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in kidney') ~ 'kidney',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in liver') ~ 'liver',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in lung') ~ 'lung',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in left inguinal lymph node','prostate tumor metastases in para aortic lymph node','prostate tumor metastases in para tracheal lymph node','prostate tumor metastases in paratracheal lymph node','prostate tumor metastases in retroperitoneal lymph node') ~ 'lymph_node',
+		uncurated$'Tissue:ch1' %in% c('primary prostate tumor','normal prostate tissue adjacent to tumor','normal prostate tissue free of any pathological alteration from brain-dead organ donor') ~ NA_character_, 
+		is.na(uncurated$'Tissue:ch1') ~ NA_character_,
+	))
+
+clinical_chandran <- curated
+
+save(clinical_chandran, file = "./clinical_chandran.RData")
