@@ -49,3 +49,11 @@
 #' @source \url{https://dcc.icgc.org/projects/PRAD-CA}
 #'
 "mae_icgcca"
+
+#' Chandran et al., Yu et al. MAE-object
+#'
+#' MultiAssayExperiment object containing GEX from Chandran et al., Yu et al. in GSE6919
+#'
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6919}
+#'
+"mae_chandran"

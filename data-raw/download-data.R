@@ -119,7 +119,19 @@ save(gex_friedrich, file = "data-raw/gex_friedrich.RData")
 
 mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
 
+##
+#
+# Chandran et al.
+#
+##
 
+# Create and save GEX of Chandran et al., Yu et al.
+gex_chandran <- curatedPCaData::generate_gex_geo("GSE6919")
+save(gex_chandran, file="data-raw/gex_chandran.RData")
+
+# Create and save MAE object
+mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
+usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 
 
 
