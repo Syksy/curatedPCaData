@@ -8,9 +8,8 @@
 #' @importFrom rlang .data
 #' 
 create_mae <- function(
-  # Valid study_name-parameters: tcga, taylor, sun, hieronymus
+  # Valid study_name-parameters: tcga, taylor, sun, hieronymus, friedrich, barbieri, ren, chandran
   study_name,                    
-  #study_name = c("TCGA", "Taylor", "Sun", "Hieronymus, Friedrich"),
   # Level of verbosity
   verb = TRUE,
   ...
