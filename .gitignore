@@ -3,6 +3,9 @@
 _notes
 .DS_Store
 .Rhistory
+.RData
+.Rproj.user/
+curatedPCaData.Rproj
 
 #temporary script
 *-Ex.R
