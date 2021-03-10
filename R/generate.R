@@ -9,7 +9,8 @@
 #' @param ... additional arguments
 generate_gex_geo <- function(
   geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
-               "GSE25136" # Sun et al.
+               "GSE25136", # Sun et al.
+               "GSE6919",  # Chandran et al., Yu et al. from three platforms combined
                ), 
   file_directory, 
   cleanup = TRUE, 
@@ -110,6 +111,83 @@ generate_gex_geo <- function(
 	gex <- gex[order(rownames(gex)),]
   }
 
+  # Chandran et al.-----
+  
+  else if(geo_code == "GSE6919"){
+	# Three different platforms were used; need to read them separately with ReadAffy
+
+	gse <- GEOquery::getGEO("GSE6919", GSEMatrix = TRUE)
+	# ...
+	# GSM152839 - GSM152855 : U95C
+	# GSM152856 - GSM152880 : U95Av2
+	# GSM152881 - GSM152905 : U95B
+	# GSM152906 - GSM152930 : U95C
+	# GSM152931 - GSM152991 : U95Av2
+	# GSM152992 - GSM153053 : U95B
+	# GSM153054 - GSM153114	: U95C
+	# ...
+	
+	# Read Affymetrix MA
+
+	# U95Av2
+	GPL_Av2 <- rownames(Biobase::pData(gse[[1]]))
+	Chandran_Av2 <- affy::ReadAffy(filenames=paste0(GPL_Av2, ".CEL.gz"))
+
+	# In U95B non-valid files, i.e.
+	# Error: the following are not valid files:
+    	#   GSM152822.CEL.gz
+
+	# U95B
+	broken <- c("GSM152822")
+	GPL_U95B <- rownames(Biobase::pData(gse[[2]]))
+	GPL_U95B <- GPL_U95B[-which(GPL_U95B %in% broken)]
+	Chandran_U95B <- affy::ReadAffy(filenames=paste0(GPL_U95B, ".CEL.gz"))
+
+	# U95C
+	Chandran_U95C <- affy::ReadAffy(filenames=paste0(GPL_U95C, ".CEL.gz"))
+	GPL_U95C <- rownames(Biobase::pData(gse[[3]]))
+
+	# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
+	gex_Av2 <- affy::rma(Chandran_Av2)
+	gex_U95B <- affy::rma(Chandran_U95B)
+	gex_U95C <- affy::rma(Chandran_U95C)
+	
+	# Annotation dbs mapping manufacturer ids to gene symbols
+	map_Av2 <- as.list(hgu95av2.db::hgu95av2SYMBOL[AnnotationDbi::mappedkeys(hgu95av2.db::hgu95av2SYMBOL)])
+	map_U95B <- as.list(hgu95b.db::hgu95bSYMBOL[AnnotationDbi::mappedkeys(hgu95b.db::hgu95bSYMBOL)])
+	map_U95C <- as.list(hgu95c.db::hgu95cSYMBOL[AnnotationDbi::mappedkeys(hgu95c.db::hgu95cSYMBOL)])
+	# Extract mapped gene symbols per row (not all have a gene annotation)
+  	mapped_Av2 <- c(map_Av2[match(rownames(gex_Av2), names(map_Av2))])
+  	mapped_Av2 <- unlist(lapply(mapped_Av2, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
+  	mapped_U95B <- c(map_U95B[match(rownames(gex_U95B), names(map_U95B))])
+  	mapped_U95B <- unlist(lapply(mapped_U95B, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
+  	mapped_U95C <- c(map_U95C[match(rownames(gex_U95C), names(map_U95C))])
+  	mapped_U95C <- unlist(lapply(mapped_U95C, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
+
+	# Collapse per gene symbols over probes	
+	gex_Av2_mapped <- do.call("rbind", (by(as.matrix(gex_Av2), INDICES=mapped_Av2, FUN=function(x){
+		apply(x, MARGIN=2, FUN=collapse_fun)
+	})))
+	gex_U95B_mapped <- do.call("rbind", (by(as.matrix(gex_U95B), INDICES=mapped_U95B, FUN=function(x){
+		apply(x, MARGIN=2, FUN=collapse_fun)
+	})))
+	gex_U95C_mapped <- do.call("rbind", (by(as.matrix(gex_U95C), INDICES=mapped_U95C, FUN=function(x){
+		apply(x, MARGIN=2, FUN=collapse_fun)
+	})))
+	
+	# Merge according to common gene symbols
+	tmp <- merge(gex_Av2_mapped, gex_U95B_mapped, by="row.names", all.x=TRUE, all.y=TRUE)
+	rownames(tmp) <- tmp[,1]
+	tmp <- tmp[,-1]
+	tmp <- merge(tmp, gex_U95C_mapped, by="row.names", all.x=TRUE, all.y=TRUE)
+	rownames(tmp) <- tmp[,1]
+	tmp <- tmp[,-1]
+	colnames(tmp) <- gsub(".CEL.gz", "", colnames(tmp))
+	tmp <- tmp[order(rownames(tmp)),]
+
+	gex <- tmp
+  }
+  
   # Unknown GEO id (throw an error) -----
 
   else{
@@ -128,7 +206,7 @@ generate_gex_geo <- function(
 
   gex <- as.matrix(gex)
   gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
-  
+  gex
 }
 
 
@@ -275,8 +353,7 @@ generate_cna_geo <- function(
   if(cleanup){
     # First GEO download
     file.remove(rownames(supfiles))
-    # Tarballs
-    # TODO: Neither CNA pipeline produces .gz-files
+    # TODO: Tarballs
     #file.remove(gz_files)
     # Remove empty folder
     file.remove(paste0(here::here(), "/", geo_code))
@@ -284,6 +361,7 @@ generate_cna_geo <- function(
   # Return numeric matrix
   cna <- as.matrix(cna)
   cna <- cna %>% janitor::remove_empty(which = c("rows", "cols"))
+  cna
 }
 
 

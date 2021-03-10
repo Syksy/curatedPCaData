@@ -624,7 +624,9 @@ curated <- initial_curated_df(
 # Pipe through the available fields
 curated <- curated %>% 
 	dplyr::mutate(study_name = "Chandran et al.") %>%
+	dplyr::mutate(patient_id = uncurated$'title') %>%
 	dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+	#dplyr::mutate(alt_sample_name = uncurated$'title') %>%
 	dplyr::mutate(age_at_initial_diagnosis = uncurated$'Age:ch1') %>%
 	dplyr::mutate(race = dplyr::case_when(
 		uncurated$'Race:ch1' == 'Caucasian' ~ 'caucasian', 
@@ -663,6 +665,7 @@ curated <- curated %>%
 		is.na(uncurated$'Tissue:ch1') ~ NA_character_,
 	))
 
+rownames(curated) <- curated$sample_name
 clinical_chandran <- curated
 
 save(clinical_chandran, file = "./clinical_chandran.RData")
