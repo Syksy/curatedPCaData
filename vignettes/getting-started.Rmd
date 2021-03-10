@@ -1,45 +1,40 @@
 ---
-title: "Getting started with curatedPCaData"
+title: "getting-started"
 output: 
   rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting started with curatedPCaData}
+  %\VignetteIndexEntry{getting-started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
-
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   warning = FALSE,
-  message = FALSE
+  message = FALSE,
+  cache = TRUE
 )
-
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+library(tidyverse)
 library(viridis)
-
 ```
 
-This vignette introduces `curatedPCaData` and provides an overview of the package using data from TCGA and other key datasets as examples. 
+
+This vignette introduces `curatedPCaData` and provides an overview of the  package using data from TCGA as an example. 
 
 ***
 
 3 different data types are currently available: 
 
-  + `gex_*.RData` contains gene expression values
-  + `cna_*.RData` contains copy number values
-  + `clinical_*.RData` contains clinical/phenotype information
+1. `gex_*.RData` contains gene expression values
+2. `cna_*.RData` contains copy number values
+3. `clincial_*.RData` contains clinical/phenotype information
     
 These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune scores. 
-Not all datasets will contain each of these elements but at minimum will contain `clinical_*.RData` and one of the 'omics. Further, these raw data 
-are not exported from the package, thus if direct access to these datasets is required, one has to use the `curatedPCaData:::varName` notation. 
+Not all datasets will contain each of these elements but at  minimum will contain `clinical_*.rda` and `gex_*.rda`.
 
-It is advisable to only use the exported objects, accessible via `curatedPCaData::maeName`. The individual internal elements are combined into a 
-`MultiAssayExperiment` object (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda`. 
+These individual elements are combined into a `MultiAssayExperiment object` (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda`. 
 
 
 ## Introduction 
@@ -49,11 +44,7 @@ The `curatedPCaData` package contains a collection of manually curated datasets 
 In this vignette, we will : 
 
 1. Provide an introduction to `curatedPCaData`. 
-2. Show how to run a simple analysis using the data  
-
-## Available datasets, end-points, and 'omics
-
-
+2. Show how to run a simple analysis using the data 
 
 ## Importing data
 
@@ -70,196 +61,201 @@ data(package="curatedPCaData")
 Individual datasets can also be imported by using the `data` function
 
 ```{r data-import}
-#data("mae_tcga")
-curatedPCaData::mae_tcga
+data("mae_tcga")
+mae_tcga
 ```
-
 For more information on working with `mae`s please see the BioConductor `MutliAssayExperiment` package [documentation](https://bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/QuickStartMultiAssay.html). 
 
-## PCA plot of gene expression
+## Example analysis
 
-As is typical for 'omics analyses, an important first task is to establish a good grasp on the data; identify sources of variation, potential overlap, missingness, batch effects, et cetra.
-In this we'll examine the unsupervised PCA-method to visualize overlapping gene expression from three studies, to see if the expressions overlap.
-Typically the premise is, that studies with different protocols, differing patient populations, and potentially other stratifying factors will clearly distiguish on the first or second principal axes in PCA.
+Daniel will put some text here about doing a simple analysis and perform an analysis here: 
+  + survival analysis usinng alternative outcomes (BCR or mets)
+  + use multiple datasets
+  + example: http://www.bioconductor.org/packages/release/data/experiment/vignettes/curatedOvarianData/inst/doc/curatedOvarianData_vignette.pdf
 
-```{r pca, fig.width=7, fig.height=7, out.width = "100%"}
-
-# Extract hugo gene symbols that are common to TCGA, Taylor et al. and Sun et al. and intersect
-gene_intersect <- Reduce(intersect, 
-	list(
-		rownames(mae_tcga[["gex"]]), 
-		rownames(mae_taylor[["gex"]]), 
-		rownames(mae_sun[["gex"]])
-	)
-)
-
-# Combine a data matrix with these genes from the TCGA, Taylor and Sun studies via column binding
-# We will perform z-score transformation within each dataset individually to try alleviate batch effects
-example <- cbind(
-	scale(mae_tcga[["gex"]][gene_intersect,]), 
-	scale(mae_taylor[["gex"]][gene_intersect,]), 
-	scale(mae_sun[["gex"]][gene_intersect,])
-)
-
-# The number of columns is the sum of sample count in all 3 studies (333 + 300 + 79 = 712), 
-# while the number of rows is amount of overlapping genes (9930)
-dim(mae_tcga[["gex"]]); dim(mae_taylor[["gex"]]); dim(mae_sun[["gex"]]); dim(example)
-
-# Examine Principle Component Analysis plot to reveal potential batch-like effects 
-# between samples rising from the three studies. We compute PCA using base R prcomp; 
-# note that this base function assumes that samples are rows, so the example data is first transposed.
-pca <- stats::prcomp(t(example), scale=TRUE, center=TRUE)
-
-# The principal axes can be extracted from the $x slot in the S3 class object
-head(pca$x[,1:2])
-
-# Plot the two first principal components while colouring each study individually
-plot(pca$x[,1:2], pch=16, 
-	col=c(
-		rep("red", times=ncol(mae_tcga[["gex"]])), 
-		rep("green", times=ncol(mae_taylor[["gex"]])), 
-		rep("blue", times=ncol(mae_sun[["gex"]]))
-	)
-)
-legend("bottom", pch=16, 
-	col=c("red", "green", "blue"), 
-	legend=c("TCGA", "Taylor et al.", "Sun et al.")
-)
-
+```{r subset_data,eval=FALSE}
+wide_tcga <- MultiAssayExperiment::wideFormat(mae_tcga["PTEN", , ],
+    colDataCols=c("overall_survival_status", "days_to_overall_survival", "gleason_grade"))
+summary(glm(days_to_overall_survival ~ GEX_PTEN + gleason_grade, data = wide_tcga))
 ```
-
-We notice that the first and second principal components clearly distinguishes the TCGA, Taylor and Sun studies based on gene expression.
-Batch effect correction is a difficult concept, but it is clear that the studies cannot be combined as-is. 
-Most likely the main source of variation is the inherently different platforms and required study-specific batch corrections, if data is to be modelled together.
-
-## Example for a Cox Proportional Hazards Model
-
-Function `colData` from `MultiAssayExperiment` allows accessing a precurated list of clinical covariates and endpoints. 
-Cox proportional hazards model (`coxph`) is a standard method of comparing clinical end-points with right-censoring, i.e. survival or disease free time until end of follow-up or until an event occurs.
-By inspecting the clinical variables, we notice that TCGA dataset has an interesting set of recurrence end-points:
-
-```{r endpoints}
-
-library(MultiAssayExperiment)
-
-colData(mae_tcga)[1:5,c("disease_specific_recurrence_status", "days_to_disease_specific_recurrence")]
-
-table(colData(mae_tcga)$disease_specific_recurrence_status)
-
-quantile(colData(mae_tcga)$days_to_disease_specific_recurrence, na.rm = TRUE)
-
-```
-
-In order to model PCa recurrence, one must construct a survival response object using the survival-package's function Surv. 
-Conventional model fitting can be done using function coxph, or for example glmnet-package offers embedded feature selection for a 
-larger feature candidate set. We will construct a simple example recurrence predictor of known predictive genes (X, Y, and Z). For this
-purpose, the data has to be extracted in the so-called long format, which is typically required by e.g. regression modelling functions.
-
-
-```{r coxph}
-
-# Extract long data
-wide_tcga <- MultiAssayExperiment::wideFormat(mae_tcga[c("FGFR3", "PTEN"), ],
-    colDataCols=c("disease_specific_recurrence_status", "days_to_disease_specific_recurrence", 
-    "gleason_grade")
-)
-
-# Construct the survival response y as a function of follow-up time and censoring/events
-wide_tcga <- cbind(
-	recurrence = survival::Surv(
-		event = wide_tcga$disease_specific_recurrence_status, 
-		time = wide_tcga$days_to_disease_specific_recurrence), 
-	as.data.frame(wide_tcga)
-)
-
-# Inspect constructed wide format data, and omit row-entries with missing information
-head(wide_tcga)
-wide_tcga <- as.data.frame(janitor::remove_empty(wide_tcga, which="rows"))
-
-# Construct a cox proportional hazards model object, with gene expression 
-# and copy number alterations of FGFR3 & PTEN coupled with patients' gleason grades
-coxfit <- survival::coxph(recurrence ~ 
-	gex_FGFR3 + cna_FGFR3 + 
-	gex_PTEN + cna_PTEN + 
-	gleason_grade, data = as.data.frame(wide_tcga))
-summary(coxfit)
-
-```
-
-CNA for FGFR3 and PTEN appear to be borderline statistically significant predictors, while Gleason Grade predicts recurrence well.
-A Kaplan-Meier plot is typically useful for visualizing time-censored responses in respect to an interesting covariate:
-
-```{r KM, fig.width=7, fig.height=7, out.width = "100%"}
-
-survminer::ggsurvplot(survival::survfit(recurrence ~ gleason_grade, data = wide_tcga),
-	xlab = "Follow-up days", ylab = "Recurrence free proportion",
-	pval = TRUE, risk.table = TRUE)
-
-```
-
-As can be clearly seen from the KM-curves, higher Gleason correlates with a worse prognosis for recurrence.
 
 ## Immune deconvolution
 
-Immune deconvolution details here - quick summary of the methods and an example using one of the datasets. 
+Tumor progression depends on the immune cell composition in the tumor microenvironment. The '[immunedeconv](https://github.com/icbi-lab/immunedeconv)' package consists of different computational methods to computationally estimate immune cell content using gene expression data.
 
-## Clinical characteristics 
+The deconvolution methods we use here are:
 
-```{r clinical-heatmap, fig.align='center', fig.width=6, fig.height=10}
+1. quantiseq
+2. xcell
+3. epic
+4. mcp_counter
 
-x <- data(package="curatedPCaData")
+To run any deconvolution method with the default parameters, the following command can be used
 
-#data("mae_tcga")
-col_names <- colnames(mae_tcga@colData)
+```{r,eval=FALSE}
+immunedeconv::deconvolute(gene_expression_matrix, method)
+```
 
-present_tcga <- sapply(mae_tcga@colData, function(x)all(is.na(x)))
-present_taylor <- sapply(mae_taylor@colData, function(x)all(is.na(x)))
-present_sun <- sapply(mae_sun@colData, function(x)all(is.na(x)))
-present_hieronymus <- sapply(mae_hieronymus@colData, function(x)all(is.na(x)))
+The rows of the gene expression matrix are HGNC gene symbols and the columns are the sample. Method can be one of them listed above.
 
-heat_data <- data.frame(measure = col_names,
-                        tcga = present_tcga,
-                        taylor = present_taylor,
-                        sun = present_sun,
-                        hieronymous = present_hieronymus)
+For example, the following command can be used to run quantiseq over the TCGA GEX matrix in the package
 
-heat_data <- heat_data %>% 
-  pivot_longer(!measure, names_to = "study", values_to = "present") %>% 
-  mutate(present = case_when(
-    present == "TRUE" ~ "Not available",
-    present == "FALSE" ~ "Available",
-    TRUE ~ NA_character_
-  ))
+```{r quantiseq}
+library(immunedeconv)
+gex_tcga <- curatedPCaData::mae_tcga[["gex"]]
+immunedeconv::deconvolute(gex_tcga,"quantiseq")
+```
 
-ggplot(heat_data, aes(study, measure, fill= present)) + 
-  geom_tile() + 
-  scale_fill_viridis(discrete = TRUE, name = "Variable availability") + 
-  labs(x = "", y = "")
+Since the TCGA data in the package is median centered, we also provided a TPM normalized dataset for TCGA prostate cancer samples as a part of the TCGA MAE object. This is solely because the deconvolution methods ideally would require a TPM normalized input. We obtained the TPM normalized GEX data from the a consortium called the '[Open Science Framework (OSF)](https://osf.io/). 
+
+For benchmarking, we compare the deconvolution results results between the data from the OSF repository with the median centred TCGA GEX data from cBioportal, by generating correlation plots.
+The plots below show the comparison of immune cell propotions between TPM normalized data and the median centred TCGA data for every immune cell type generated by Quantiseq as an example. We observe a positive correlation between the results in most cell types.
+
+
+```{r immunedeconv-plots, echo=FALSE}
+tcga_gex <- curatedPCaData::mae_tcga[["gex"]]
+tcga_gex <- tcga_gex[rowSums(is.na(tcga_gex)) != ncol(tcga_gex), ]
+
+package_data <- t(tcga_gex)
+
+package <- data.frame(package_data)
+data.table::setDT(package, keep.rownames = "V1")
+## OSF 
+# Replace the "." with "-" in package data sample names
+package$V1 <- gsub("\\.","-",package$V1)
+# Remove "-01"s from package data
+package$V1 <- gsub("*-01","",package$V1)
+
+#source(here::here('R', 'seperate_osf.R'))
+#source(here::here('R', 'rearrange.R'))
+#source(here::here('R', 'keep_only_PRAD.R'))
+#source(here::here('R', 'format_final.R'))
+#osf_data_2 <- seperate_osf(osf)
+#osf_data_t <- rearrange(osf_data_2)
+#dropped_results1 <- keep_only_PRAD(osf_data_t)
+#osf_f <- format_final(dropped_results1)
+source(here::here('R', 'format_osf_data.R'))
+
+osf_f <- format_osf_data(osf)
+
+
+## merge package and osf data
+merged_package_osf <- merge(osf_f,package,by.x='AliquotBarcode',by.y="V1")
+
+osf_final <- merged_package_osf %>% dplyr::select(1:58685) 
+package_final <- merged_package_osf %>% dplyr::select(1,58686:78643)
+
+osf_final1 <- t(osf_final)
+#rownames(osf_final) = osf_final[,1]
+
+osf_final2 <- data.frame(osf_final1)
+colnames(osf_final2) = osf_final2[1, ]
+osf_final2 <- osf_final2[-1, ]
+
+
+data.table::setDT(osf_final2, keep.rownames = "V1")
+osf_final2$V1 <-gsub("\\.x*","",osf_final2$V1)
+
+  
+osf_final3 <- as.matrix(osf_final2)
+rownames(osf_final3) = osf_final3[,1]
+osf_final3 <- osf_final3[,-1]
+
+mode(osf_final3) <- "numeric"
+
+
+quantiseq_osf <- immunedeconv::deconvolute(osf_final3,"quantiseq")
+epic_osf <- immunedeconv::deconvolute(osf_final3,"epic")
+xcell_osf <- immunedeconv::deconvolute(osf_final3,"xcell")
+mcp_osf <- immunedeconv::deconvolute(osf_final3,"mcp_counter")
+
+package_final <- t(package_final)
+package_final2 <- as.data.frame(package_final)
+colnames(package_final2) = package_final2[1, ]
+package_final2 <- package_final2[-1, ]
+data.table::setDT(package_final2, keep.rownames = "V1")
+package_final2$V1 <-gsub("\\.y*","",package_final2$V1)
+ 
+package_final3 <- as.matrix(package_final2)
+rownames(package_final3) = package_final3[,1]
+package_final3 <- package_final3[,-1]
+mode(package_final3) <- "numeric"
+quantiseq_package <- immunedeconv::deconvolute(package_final3,"quantiseq")
+epic_package <- immunedeconv::deconvolute(package_final3,"epic")
+xcell_package <- immunedeconv::deconvolute(package_final3,"xcell")
+mcp_package <- immunedeconv::deconvolute(package_final3,"mcp_counter")
+
+
+xcell_osf_t <- t(xcell_osf)
+colnames(xcell_osf_t) = xcell_osf_t[1, ]
+xcell_osf_t <- xcell_osf_t[-1, ]
+xcell_osf_t <- data.frame(xcell_osf_t)
+data.table::setDT(xcell_osf_t, keep.rownames = "V1")
+xcell_package_t <- t(xcell_package)
+colnames(xcell_package_t) = xcell_package_t[1, ]
+xcell_package_t <- xcell_package_t[-1, ]
+xcell_package_t <- data.frame(xcell_package_t)
+data.table::setDT(xcell_package_t, keep.rownames = "V1")
+
+epic_osf_t <- t(epic_osf)
+colnames(epic_osf_t) = epic_osf_t[1, ]
+epic_osf_t <- epic_osf_t[-1, ]
+epic_osf_t <- data.frame(epic_osf_t)
+data.table::setDT(epic_osf_t, keep.rownames = "V1")
+epic_package_t <- t(epic_package)
+colnames(epic_package_t) = epic_package_t[1, ]
+epic_package_t <- epic_package_t[-1, ]
+epic_package_t <- data.frame(epic_package_t)
+data.table::setDT(epic_package_t, keep.rownames = "V1")
+
+mcp_osf_t <- t(mcp_osf)
+colnames(mcp_osf_t) = mcp_osf_t[1, ]
+mcp_osf_t <- mcp_osf_t[-1, ]
+mcp_osf_t <- data.frame(mcp_osf_t)
+data.table::setDT(mcp_osf_t, keep.rownames = "V1")
+mcp_package_t <- t(mcp_package)
+colnames(mcp_package_t) = mcp_package_t[1, ]
+mcp_package_t <- mcp_package_t[-1, ]
+mcp_package_t <- data.frame(mcp_package_t)
+data.table::setDT(mcp_package_t, keep.rownames = "V1")
+
+quantiseq_osf_t <- t(quantiseq_osf)
+colnames(quantiseq_osf_t) = quantiseq_osf_t[1, ]
+quantiseq_osf_t <- quantiseq_osf_t[-1, ]
+quantiseq_osf_t <- data.frame(quantiseq_osf_t)
+data.table::setDT(quantiseq_osf_t, keep.rownames = "V1")
+quantiseq_package_t <- t(quantiseq_package)
+colnames(quantiseq_package_t) = quantiseq_package_t[1, ]
+quantiseq_package_t <- quantiseq_package_t[-1, ]
+quantiseq_package_t <- data.frame(quantiseq_package_t)
+data.table::setDT(quantiseq_package_t, keep.rownames = "V1")
 
 ```
 
-## Data for non-R users
-
-All data is stored as individual `.RData` files on the github page, however these files can be imported and converted into `csv`s for use in other programming languages using the following script. 
-
-*Warning:* the following code does not work - runs out of memory
-
-```{r non-r-script, eval=FALSE}
-
-library(xlsx)
-write.xlsx(curatedPCaData::mae_tcga[["gex"]],
-           file="data-raw/example-tcga.xlsx", sheetName="gex",
-           row.names=FALSE)
-write.xlsx(curatedPCaData::mae_tcga[["cna"]],
-           file="data-raw/example-tcga.xlsx", sheetName="cna",
-           append=TRUE, row.names=FALSE)
-
+## Quantiseq
+```{r,echo=FALSE}
+plot(quantiseq_osf_t$B.cell,quantiseq_package_t$B.cell,xlab="osf_Bcells",ylab="package_Bcells")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$Macrophage.M1,quantiseq_package_t$Macrophage.M1,xlab="osf_Macrophage_M1",ylab="package_macrophage_M1")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$Macrophage.M2,quantiseq_package_t$Macrophage.M2,xlab="osf_Macrophage_M2",ylab="package_macrophage_M2")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$Monocyte,quantiseq_package_t$Monocyte,xlab="osf_monocyte",ylab="package_monocyte")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$Neutrophil,quantiseq_package_t$Neutrophil,xlab="osf_neutrophil",ylab="package_neutrophil")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$NK.cell,quantiseq_package_t$NK.cell,xlab="osf_NK_cell",ylab="package_NK_cell")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$T.cell.CD4...non.regulatory.,quantiseq_package_t$T.cell.CD4...non.regulatory.,xlab="osf_CD4",ylab="Package_CD4")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$T.cell.CD8.,quantiseq_package_t$T.cell.CD8.,xlab="osf_CD8",ylab="Package_CD8")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$T.cell.regulatory..Tregs.,quantiseq_package_t$T.cell.regulatory..Tregs.,xlab="osf_Tregs",ylab="package_Tregs")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$Myeloid.dendritic.cell,quantiseq_package_t$Myeloid.dendritic.cell,xlab="osf_Myeloid.dendritic.cell",ylab="package_Myeloid.dendritic.cell")
+segments(0,0,1,1,col="grey")
+plot(quantiseq_osf_t$uncharacterized.cell,quantiseq_package_t$uncharacterized.cell,xlab="osf_uncharacterized.cell",ylab="package_uncharacterized.cell")
+segments(0,0,1,1,col="grey")
 ```
 
-## Session Info
 
-```{r session-info}
-
-sessionInfo()
-
-```

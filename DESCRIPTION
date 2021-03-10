@@ -33,9 +33,18 @@ Imports:
     rCGH,
     oligo,
     Biobase,
-    stringr,
+    immunedeconv,
     tidyr,
-    survival,
+    rio,
+    data.table,
+    stringr,
+    tibble,
+    textshape,
+    data.tree,
+    pacman,
+    RCurl,
+    osfr,
+    R.utils,
     survminer
 License: GPL-3
 Encoding: UTF-8
@@ -46,8 +55,4 @@ URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
 Suggests: 
     knitr,
-    rmarkdown,
-    viridis,
-    ggplot2,
-    immunedeconv
-    
+    rmarkdown

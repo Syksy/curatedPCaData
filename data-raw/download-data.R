@@ -82,6 +82,7 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 
 # PRAD-UK
 
+<<<<<<< HEAD
 ###################################################
 # Friedrich 2020 BASED ON GPL DATA
 ###################################################
@@ -119,7 +120,6 @@ save(gex_friedrich, file = "data-raw/gex_friedrich.RData")
 
 mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
 
-<<<<<<< HEAD
 ##
 #
 # Chandran et al.
@@ -133,7 +133,7 @@ save(gex_chandran, file="data-raw/gex_chandran.RData")
 # Create and save MAE object
 mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
 usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
-=======
+
 ######################################################################
 #Wallace et a. BASED ON RAW AFFY DATA
 ######################################################################
@@ -175,9 +175,70 @@ if(cleanup){
 gex_wallace = gex_wallace[, !is.element(colnames(gex_wallace), unmatched_healty_tissue)]
 
 save(gex_wallace,  file = "./gex_wallace.RData")
->>>>>>> master
 
 
+#Download OSF data
+osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
+R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
+osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
+
+#Download the mapping file 
+osf <- curatedPCaData:::format_osf_data(osf_data)
+osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
+
+# Re-format the OSF data
+osf_t <- t(osf)
+osf_t <- as.data.frame(osf_t)
+colnames(osf_t) <- osf_t[1,]
+osf <- osf_t[-1,]
+
+colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
+colnames(osf) <- paste(colnames(osf), '01', sep='.')
+usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
+save(osf, file="data-raw/osfgex_tcga.RData")
+
+# PRAD Barbieri ------
+# GEX
+gex_barbieri <- generate_cbioportal(
+  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+  geneticProfiles = "prad_broad_mrna", # Omics profile
+  caseList = "prad_broad_sequenced" # Case list
+)
+save(gex_barbieri, file="data-raw/gex_barbieri.RData")
+
+# CNA
+cna_barbieri <- generate_cbioportal(
+  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_broad_cna", 
+  caseList="prad_broad_sequenced"
+)
+save(cna_barbieri, file="data-raw/cna_barbieri.RData")
+
+# Create MAE object
+mae_barbieri <- create_mae(study_name = "Barbieri")
+usethis::use_data(mae_barbieri, overwrite = TRUE)
+
+# PRAD Ren ------
+
+# GEX
+gex_ren <- generate_cbioportal(
+  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+  geneticProfiles = "prad_eururol_2017_rna_seq_mrna", # Omics profile
+  caseList = "prad_eururol_2017_sequenced" # Case list
+)
+save(gex_ren, file="data-raw/gex_ren.RData")
+
+# CNA
+cna_ren <- generate_cbioportal(
+  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_eururol_2017_cna", 
+  caseList="prad_eururol_2017_sequenced"
+)
+save(cna_ren, file="data-raw/cna_ren.RData")
+
+# Create MAE object
+mae_ren <- create_mae(study_name = "Ren")
+usethis::use_data(mae_ren, overwrite = TRUE)
 
 
 
