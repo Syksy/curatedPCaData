@@ -39,7 +39,7 @@ sample_type,character,non-unique,optional,primary|metastatic|adjacentnormal|heal
 genomic_alterations,string,non-unique,optional,*,captures the list of reported alterations in the sample, in the format, gene:event, separated by a bar (eg. TP53:mutation|ETV1:fusion|PTEN:deletion)
 tumor_margins_positive,integer,non-unique,optional,1|0,Histologically altered cells in any surgical margins
 tissue_source,character,non-unique,optional,biopsy|TURP|prostatectomy|prostatectomy_and_TURP|autopsy|cystoprostatectomy,the source of the sample
-metastatic_site,character,non-unique,optional,liver|lung|bone|brain|lymph_node|soft_tissue,site where the metastatic sample was taken from
+metastatic_site,character,non-unique,optional,prostate|liver|lung|bone|brain|lymph_node|soft_tissue|adrenal_gland,site where the metastatic sample was taken from
 microdissected,integer,non-unique,optional,1|0,microdissected or not
 frozen_ffpe,character,non-unique,optional,frozen|FFPE,frozen or FFPE
 other_feature,character,non-unique,optional,CRPC|cribriform|neuroendocrine,other descriptions of the sample
