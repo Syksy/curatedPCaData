@@ -893,3 +893,38 @@ clinical_kim <- curated
 
 save(clinical_kim, file = "data-raw/clinical_kim.RData")
   
+
+####
+#
+# Barwick et al.
+#
+####
+
+gse <- GEOquery::getGEO("GSE18655", GSEMatrix = TRUE)
+
+uncurated <- Biobase::pData(gse[[1]])
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Barwick et al.") %>%
+  dplyr::mutate(patient_id = paste0("X", uncurated$'title')) %>%
+  dplyr::mutate(age_at_initial_diagnosis = as.numeric(uncurated$'age:ch1')) %>%
+  dplyr::mutate(psa = as.numeric(uncurated$'psa:ch1')) %>%
+  dplyr::mutate(gleason_grade = as.numeric(uncurated$'gleason score:ch1')) %>%
+  dplyr::mutate(days_to_disease_specific_recurrence = round(30.5*as.numeric(uncurated$'follow-up (months):ch1'),0)) %>%
+  dplyr::mutate(disease_specific_recurrence_status = as.numeric(uncurated$'recurrence:ch1' == "Rec")) %>%
+  dplyr::mutate(tumor_margins_positive = as.numeric(uncurated$'positive surgical margin:ch1' == "Positive Margin")) %>%
+  dplyr::mutate(tissue_source = "prostatectomy") %>% 
+  # Based on the publication text, ERG-fusion status was determined using over-expression of ERG-transcripts in gene expression and then experimentally validated
+  dplyr::mutate(ERG_fusion_GEX = as.numeric(uncurated$'tmprss2:ch1' == "ERG Fusion: Fusion")) %>%
+  # It appears the T staging was based on pathology
+  dplyr::mutate(T_pathological = as.numeric(uncurated$'grade:ch1'))
+  
+clinical_barwick <- curated
+
+save(clinical_barwick, file = "./data-raw/clinical_barwick.RData")
+
+# Clinical mapping of Barwick replicates? The raw GEX file of Barwick contains 180 samples, but is still not equal to the 139 samples after 7 presumed replicated samples

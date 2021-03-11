@@ -19,11 +19,11 @@ T_substage_clinical,character,non-unique,optional,a|b|c,clinical T substage  (at
 ERG_fusion_CNA,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by copy number alteration analysis
 ERG_fusion_IHC,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by immunohistochemistry
 ERG_fusion_GEX,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by gene expression
-disease_specific_recurrence_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents an recurrence and 0 represents no reported recurrence"
+disease_specific_recurrence_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents a recurrence and 0 represents no reported recurrence"
 days_to_disease_specific_recurrence,numeric,non-unique,optional,[1-10000],time to recurrence or last follow-up in days
 metastasis_occurrence_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents a metastatic occurrence and 0 represents no reported metastatic occurrence"
 days_to_metastatic_occurrence,numeric,non-unique,optional,[1-10000],time to metastatic occurrence or last follow-up in days
-psa,numeric,non-unique,optional,[1-10000],prostate specific angigen level at diagnosis
+psa,numeric,non-unique,optional,[1-10000],prostate specific antigen level at diagnosis
 race,character,non-unique,optional,caucasian|african_american|asian|other,race
 smoking_status,integer,non-unique,optional,1|0,smoker (past or current) or non-smoker 
 extraprostatic_extension,integer,non-unique,optional,1|0,"spread of prostate cancer out of the prostate gland.  Denotes a later stage of prostate cancer (NOTE: We do not currently distinguish between focal, established and multifocal, which are all currently translated into this template as y)."
