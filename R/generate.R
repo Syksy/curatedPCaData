@@ -11,6 +11,7 @@ generate_gex_geo <- function(
   geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
                "GSE25136", # Sun et al.
                "GSE6919",  # Chandran et al., Yu et al. from three platforms combined
+               "GSE18655", # Barwick et al.
                ), 
   file_directory, 
   cleanup = TRUE, 
@@ -21,12 +22,13 @@ generate_gex_geo <- function(
   # Supplementary files include the raw CEL files
   supfiles <- GEOquery::getGEOSuppFiles(geo_code)
 
-  # Open the tarball(s)
-  utils::untar(tarfile = rownames(supfiles))
   
   # Sun et al. -----
   
   if(geo_code == "GSE25136"){
+	  # Open the tarball(s)
+	  utils::untar(tarfile = rownames(supfiles))
+
 	# Make sure to function in a working directory where the are no other tarballs present
 	gz_files <- list.files()
 	gz_files <- gz_files[grep(".gz", gz_files)]
@@ -72,6 +74,8 @@ generate_gex_geo <- function(
   # Taylor et al.-----
   
   else if (geo_code == "GSE21032") { # TODO: Alternative more specific accession code "GSE21034"
+	  # Open the tarball(s)
+	  utils::untar(tarfile = rownames(supfiles))
 	
 	# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
 	CELs <- oligo::read.celfiles(affy::list.celfiles())	
@@ -114,6 +118,9 @@ generate_gex_geo <- function(
   # Chandran et al.-----
   
   else if(geo_code == "GSE6919"){
+	  # Open the tarball(s)
+	  utils::untar(tarfile = rownames(supfiles))
+
 	# Three different platforms were used; need to read them separately with ReadAffy
 
 	gse <- GEOquery::getGEO("GSE6919", GSEMatrix = TRUE)
@@ -187,6 +194,43 @@ generate_gex_geo <- function(
 
 	gex <- tmp
   }
+
+  # Barwick et al.-----  
+  
+  else if(geo_code == "GSE18655"){
+	# Custom DASL
+	# .gz
+	GEOquery::gunzip(rownames(supfiles), overwrite=TRUE)
+	tmp <- read.table("./GSE18655/GSE18655_HCP_Toronto_raw.txt", header=TRUE, row.names=1, skip=4)
+	# Contains
+	#                 X1_rep1  X1_rep2      X10 X100_rep1 X100_rep2
+	#GI_10092618-S-3 30329.56 28241.03 28005.69  30165.83  28913.85
+	#GI_10092618-S-1 25222.37 22141.40 25871.17  26419.28  23814.04
+	#GI_10092618-S-2 30202.68 30705.60 32448.47  30405.46  29000.44
+	
+	# Download GPL annotations for the custom platform
+	gpl <- GEOquery::getGEO("GSE18655", GSEMatrix = FALSE, getGPL = TRUE)
+	map_barwick <- gpl@gpls[[1]]@dataTable@table
+	# Contains
+	#	     ID SequenceSource      GB_ACC
+	#1 GI_10092618-S         RefSeq NM_020529.1
+	#2 GI_10337586-S         RefSeq NM_020996.1
+	#3 GI_10834981-S         RefSeq NM_000599.1
+	
+	# Drop the third '-' split suffix from tmp rownames
+	map_tmp <- unlist(lapply(rownames(tmp), FUN=function(x) { paste(strsplit(x, "-")[[1]][1:2], collapse="-") } ))
+	# Collapse over multiple hits to same RefSeq within a sample
+	gex <- do.call("rbind", by(tmp, INDICES=map_barwick[match(map_tmp, map_barwick$ID),"GB_ACC"], FUN=collapse_fun))
+	# Omit RefSeq versions from mapping to gene symbols
+	rownames(gex) <- unlist(lapply(rownames(gex), FUN=function(x) { strsplit(x, ".", fixed=TRUE)[[1]][1] }))
+	
+	# Hugo symbols
+	symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes[,"refseq_mrna"]),"hgnc_symbol"]
+	gex <- gex[!is.na(symbols),]
+	symbols <- symbols[!is.na(symbols)]
+	rownames(gex) <- symbols
+	gex <- gex[order(rownames(gex)),]	
+  }
   
   # Unknown GEO id (throw an error) -----
 
@@ -194,12 +238,13 @@ generate_gex_geo <- function(
   	stop("Unknown GEO id, see allowed parameter values for geo_code")
   }
 
+  ## TODO: Move cleanup inside each GEO as file types and custom files are very cohort specific
   # Remove downloaded files
   if(cleanup){
     # First GEO download
     file.remove(rownames(supfiles))
     # Tarballs
-    file.remove(gz_files)
+    #file.remove(gz_files)
     # Remove empty folder
     file.remove(paste0(here::here(), "/", geo_code))
   }

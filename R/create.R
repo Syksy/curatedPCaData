@@ -6,7 +6,7 @@
 #' @return An MAE object containing clinical and multi-'omics data
 #' 
 #' @importFrom rlang .data
-#' 
+#'
 create_mae <- function(
   # Valid study_name-parameters: tcga, taylor, sun, hieronymus, friedrich, barbieri, ren, chandran
   study_name,                    
