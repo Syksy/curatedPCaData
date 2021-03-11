@@ -242,4 +242,8 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 
 
 
+# Barwick et al.
+gex_barwick <- generate_gex_geo("GSE18655")
+save(gex_barwick, file="data-raw/gex_barwick.RData")
+
 
