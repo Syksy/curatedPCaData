@@ -1,11 +1,12 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.2.4
-Date: 2020-10-27
+Version: 0.3.7
+Date: 2021-03-11
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
-             person("Varsha", "Sreekanth", email = "varsha.sreekanth@cuanschutz.edu", role = "ctb") 
+             person("Varsha", "Sreekanth", email = "varsha.sreekanth@cuanschutz.edu", role = "ctb"), 
+             person("Federico", "Calboli", email = "federico.calboli@utu.fi", role = "ctb") 
            )
 Description: A selection of annotated prostate cancer datasets including TCGA, 
     Taylor et al., Sun et al., and others. 
@@ -21,6 +22,9 @@ Imports:
     affy,
     AnnotationDbi,
     hgu133a.db,
+    hgu95av2cdf, hgu95av2.db,
+    hgu95bcdf, hgu95b.db,
+    hgu95ccdf, hgu95c.db,
     magrittr,
     dplyr,
     rlang,

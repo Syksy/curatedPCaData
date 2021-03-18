@@ -527,6 +527,253 @@ clinical_icgcuk <- curated
 
 save(clinical_icgcuk, file = "data-raw/clinical_icgcuk.RData")
 
+
+#############################################################################
+#
+#
+# Friedrich et at German samples.  This code downloads both gene expression 
+# and clinical data -- just the curation of the clinical data is
+# provided here 
+#
+#
+##############################################################################
+
+gset <- GEOquery::getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
+
+uncurated <- Biobase::pData(gset[[1]]) 
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="./template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Friedrich et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(alt_sample_name = unlist(lapply(stringr::str_split(uncurated$title, '_'), function(x) x[3]))) %>%
+  dplyr::mutate(gleason_grade = dplyr::case_when(uncurated$'gleason score:ch1' == 'None' ~ NA_character_, 
+                                                 TRUE ~ uncurated$'gleason score:ch1')) %>%
+  dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>% 
+  dplyr::mutate(race = 'caucasian') %>% 
+  dplyr::mutate(tissue_source = 'prostatectomy') %>%
+  dplyr::mutate(sample_type = dplyr::case_when(
+                                               uncurated$'risk group:ch1' == 'C' ~ 'BPH', 
+                                               uncurated$'risk group:ch1' == 'V' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'Ms' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'Md' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'L' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H+st' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H+dt' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H-st' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H-dt' ~ 'primary',
+                                               uncurated$'risk group:ch1' == 'H+sf' ~ 'adjacentnormal',
+                                               uncurated$'risk group:ch1' == 'H+df' ~ 'adjacentnormal',
+                                               uncurated$'risk group:ch1' == 'H-sf' ~ 'adjacentnormal',
+                                               uncurated$'risk group:ch1' == 'H-df' ~ 'adjacentnormal'
+                                               )) %>%
+  dplyr::mutate(days_to_overall_survival = ceiling(as.numeric(uncurated$'follow-up time in months:ch1')*30.5)) %>%
+  dplyr::mutate(frozen_ffpe = 'frozen') %>%
+  dplyr::mutate(microdissected = 1) %>%
+  dplyr::mutate(overall_survival_status = dplyr::case_when(
+                                                           uncurated$'risk group:ch1' == 'C' ~ 0, 
+                                                           uncurated$'risk group:ch1' == 'V' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'Ms' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'Md' ~ 1,
+                                                           uncurated$'risk group:ch1' == 'L' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H+st' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H+dt' ~ 1,
+                                                           uncurated$'risk group:ch1' == 'H-st' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H-dt' ~ 1,
+                                                           uncurated$'risk group:ch1' == 'H+sf' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H+df' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H-sf' ~ 0,
+                                                           uncurated$'risk group:ch1' == 'H-df' ~ 0
+                                                           )) 
+
+
+
+clinical_friedrich <- curated
+
+save(clinical_friedrich, file = "./clinical_friedrich.RData")
+
+##################################################################
+##################################################################
+#
+#
+# Wallace et al. samples: This code downloads both gene expression
+# BOTH clinical and GPL, but just the clinical data is used
+#
+#
+##################################################################
+##################################################################
+
+library(GEOquery)
+#library(limma)
+#library(umap)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
+
+
+# clinical
+
+library(magrittr)
+library(dplyr)
+
+
+uncurated <- Biobase::pData(gset[[1]])
+
+unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430')
+
+uncurated = uncurated[!is.element(uncurated$geo_accession, unmatched_healty_tissue), ]
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="./template_prad.csv")
+
+curated <- curated %>%
+  dplyr::mutate(study_name = "Wallace et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = stringr::str_extract(uncurated$title, 'patient \\d+')) %>%
+  dplyr::mutate(alt_sample_name = stringr::str_extract(uncurated$title, 'patient \\d+')) %>%
+  dplyr::mutate(gleason_grade = dplyr::case_when(
+                                                 uncurated$'gleason sum:ch1' == 'NA' ~ NA_character_,
+                                                 TRUE ~ uncurated$'gleason sum:ch1')) %>%
+  dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>%
+  dplyr::mutate(race = dplyr::case_when(
+                                        uncurated$"race:ch1" == 'African American' ~ 'african_american',
+                                        uncurated$"race:ch1" == 'Caucasian' ~ 'caucasian',
+                                        uncurated$"race:ch1" == 'NA' ~ NA_character_
+                                        )) %>%
+  dplyr::mutate(smoking_status = as.numeric(dplyr::case_when(
+                                                 uncurated$"smoking status:ch1" == 'Current' ~ '1',
+                                                 uncurated$"smoking status:ch1" == 'Past' ~ '1',
+                                                 uncurated$"smoking status:ch1" == 'Never' ~ '0',
+                                                 uncurated$"smoking status:ch1" == 'Unknown' ~ NA_character_,
+                                                 uncurated$"smoking status:ch1" == 'NA' ~ NA_character_
+                                                 ))) %>%
+  dplyr::mutate(angiolymphatic_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(seminal_vesicle_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(perineural_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"perineural invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"perineural invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"perineural invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(extraprostatic_extension = as.numeric(dplyr::case_when(
+                                                           uncurated$"extraprostatic extension:ch1" == 'Focal' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'Multifocal' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'Established' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'None' ~ '0',
+                                                           uncurated$"perineural invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(tumor_margins_positive = as.numeric(dplyr::case_when(
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor focal at margin' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor widespread a surgical margins' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor widespread at margin' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'All surgical margins are free of tumor' ~ '0',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Unknown' ~ NA_character_,
+                                                           uncurated$"are surgical margins involved:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(sample_type = dplyr::case_when(
+                                               uncurated$source_name_ch1 == "Adenocarcinoma (NOS) of the prostate" ~ 'primary',
+                                               uncurated$source_name_ch1 == "Normal prostate" ~ 'adjacentnormal'
+                                               ))  %>%
+  dplyr::mutate(frozen_ffpe = 'frozen') %>%
+  dplyr::mutate(microdissected = 0) %>%
+  dplyr::mutate(therapy_radiation_initial = 0) %>%
+  dplyr::mutate(therapy_radiation_salvage = 0) %>%
+  dplyr::mutate(therapy_surgery_initial = 0) %>%
+  dplyr::mutate(therapy_hormonal_initial = 0)
+
+
+
+
+clinical_wallace <- curated
+
+save(clinical_wallace, file = "./clinical_wallace.RData")
+
+
+###
+#
+# Chandran et al., BMC Cancer 2007
+# Yu et al. J Clin Oncol 2004
+#
+# https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6919
+# 
+# Includes normal samples, tumor samples, as well as metastatic samples
+#
+###
+
+gse <- GEOquery::getGEO("GSE6919", GSEMatrix = TRUE)
+
+uncurated1 <- Biobase::pData(gse[[1]]) # Batch 1
+uncurated2 <- Biobase::pData(gse[[2]]) # Batch 2
+uncurated3 <- Biobase::pData(gse[[3]]) # Batch 3
+# Bind metadata over the 3 GPLs
+uncurated <- rbind(uncurated1, uncurated2, uncurated3)
+
+# Base curation metadat
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="./template_prad.csv")
+
+# Pipe through the available fields
+curated <- curated %>% 
+	dplyr::mutate(study_name = "Chandran et al.") %>%
+	dplyr::mutate(patient_id = uncurated$'title') %>%
+	dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+	#dplyr::mutate(alt_sample_name = uncurated$'title') %>%
+	dplyr::mutate(age_at_initial_diagnosis = uncurated$'Age:ch1') %>%
+	dplyr::mutate(race = dplyr::case_when(
+		uncurated$'Race:ch1' == 'Caucasian' ~ 'caucasian', 
+		uncurated$'Race:ch1' == 'African American' ~ 'african_american'
+	)) %>%
+	dplyr::mutate(gleason_grade = uncurated$'Gleason Grade:ch1') %>%
+	# TODO: Double-check if the T were determined at diagnosis or post-surgery
+	# T_pathological & T_substage_pathological OR T_clinical & T_substage_clinical
+	dplyr::mutate(T_pathological = dplyr::case_when(
+		uncurated$'Tumor stage:ch1' %in% c('T2a','T2b') ~ 2, 
+		uncurated$'Tumor stage:ch1' %in% c('T3a','T3b') ~ 3,
+		uncurated$'Tumor stage:ch1' %in% c('T4', 'T4a') ~ 4,
+		is.na(uncurated$'Tumor stage:ch1') ~ NA_real_,
+	)) %>%
+	dplyr::mutate(T_substage_pathological = dplyr::case_when(
+		uncurated$'Tumor stage:ch1' %in% c('T2a','T3a', 'T4a') ~ 'a', 
+		uncurated$'Tumor stage:ch1' %in% c('T2b','T3b') ~ 'b',
+		uncurated$'Tumor stage:ch1' == "T4" ~ NA_character_,
+		is.na(uncurated$'Tumor stage:ch1') ~ NA_character_,
+	)) %>%
+	dplyr::mutate(sample_type = dplyr::case_when(
+		uncurated$'Tissue:ch1' %in% c('primary prostate tumor') ~ 'primary', 
+		uncurated$'Tissue:ch1' %in% c('normal prostate tissue adjacent to tumor') ~ 'adjacentnormal', 
+		uncurated$'Tissue:ch1' %in% c('normal prostate tissue free of any pathological alteration from brain-dead organ donor') ~ 'healthy', 
+		uncurated$'Tissue:ch1' %in% c('metastases recurrent in prostate','prostate tumor metastases in adrenal gland','prostate tumor metastases in kidney','prostate tumor metastases in left inguinal lymph node','prostate tumor metastases in liver','prostate tumor metastases in lung','prostate tumor metastases in para aortic lymph node','prostate tumor metastases in para tracheal lymph node','prostate tumor metastases in paratracheal lymph node','prostate tumor metastases in retroperitoneal lymph node') ~ 'metastatic', 
+		is.na(uncurated$'Tissue:ch1') ~ NA_character_,
+	)) %>%
+	dplyr::mutate(metastatic_site = dplyr::case_when(
+		uncurated$'Tissue:ch1' %in% c('metastases recurrent in prostate') ~ 'prostate', 
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in adrenal gland') ~ 'adrenal_gland',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in kidney') ~ 'kidney',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in liver') ~ 'liver',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in lung') ~ 'lung',
+		uncurated$'Tissue:ch1' %in% c('prostate tumor metastases in left inguinal lymph node','prostate tumor metastases in para aortic lymph node','prostate tumor metastases in para tracheal lymph node','prostate tumor metastases in paratracheal lymph node','prostate tumor metastases in retroperitoneal lymph node') ~ 'lymph_node',
+		uncurated$'Tissue:ch1' %in% c('primary prostate tumor','normal prostate tissue adjacent to tumor','normal prostate tissue free of any pathological alteration from brain-dead organ donor') ~ NA_character_, 
+		is.na(uncurated$'Tissue:ch1') ~ NA_character_,
+	))
+
+rownames(curated) <- curated$sample_name
+clinical_chandran <- curated
+
+save(clinical_chandran, file = "./clinical_chandran.RData")
+
 ######################################################################
 #cBioportal Barbieri Broad/Cornell Data
 #####################################################################
@@ -645,6 +892,7 @@ clinical_kim <- curated
 
 save(clinical_kim, file = "data-raw/clinical_kim.RData")
   
+
 ########################################################################
 #Abida et al. 2019
 #######################################################################
@@ -654,8 +902,6 @@ uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_su2c_2019_cnaseq")
 #mycaselist = cgdsr::getCaseLists(mycgds,"prad_su2c_2019")
 gp = cgdsr::getGeneticProfiles(mycgds,"prad_su2c_2019")
 
-
-# create the curated object
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
@@ -677,13 +923,46 @@ curated <- curated %>%
   dplyr::mutate(TMPRSS2_ERG_FUSION_STATUS = dplyr::case_when(
     uncurated$ETS_FUSION_DETAILS == "TMPRSS2-ERG" ~ 1,
     uncurated$ETS_FUSION_DETAILS != "TMPRSS2-ERG" ~ 0))
-  
+
 clinical_abida <- curated
 save(clinical_abida, file = "data-raw/clinical_abida.RData")
 
+
+
+# create the curated object
+
+
+####
+#
+# Barwick et al.
+#
+####
+
+gse <- GEOquery::getGEO("GSE18655", GSEMatrix = TRUE)
+
+uncurated <- Biobase::pData(gse[[1]])
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+  dplyr::mutate(study_name = "Barwick et al.") %>%
+  dplyr::mutate(patient_id = paste0("X", uncurated$'title')) %>%
+  dplyr::mutate(age_at_initial_diagnosis = as.numeric(uncurated$'age:ch1')) %>%
+  dplyr::mutate(psa = as.numeric(uncurated$'psa:ch1')) %>%
+  dplyr::mutate(gleason_grade = as.numeric(uncurated$'gleason score:ch1')) %>%
+  dplyr::mutate(days_to_disease_specific_recurrence = round(30.5*as.numeric(uncurated$'follow-up (months):ch1'),0)) %>%
+  dplyr::mutate(disease_specific_recurrence_status = as.numeric(uncurated$'recurrence:ch1' == "Rec")) %>%
+  dplyr::mutate(tumor_margins_positive = as.numeric(uncurated$'positive surgical margin:ch1' == "Positive Margin")) %>%
+  dplyr::mutate(tissue_source = "prostatectomy") %>% 
+  # Based on the publication text, ERG-fusion status was determined using over-expression of ERG-transcripts in gene expression and then experimentally validated
+  dplyr::mutate(ERG_fusion_GEX = as.numeric(uncurated$'tmprss2:ch1' == "ERG Fusion: Fusion")) %>%
+  # It appears the T staging was based on pathology
+  dplyr::mutate(T_pathological = as.numeric(uncurated$'grade:ch1'))
   
-  
-  
-  
-  
-  
+clinical_barwick <- curated
+
+save(clinical_barwick, file = "./data-raw/clinical_barwick.RData")
+
+# Clinical mapping of Barwick replicates? The raw GEX file of Barwick contains 180 samples, but is still not equal to the 139 samples after 7 presumed replicated samples
+
