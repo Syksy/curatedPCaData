@@ -246,4 +246,19 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 gex_barwick <- generate_gex_geo("GSE18655")
 save(gex_barwick, file="data-raw/gex_barwick.RData")
 
+# Kunderfranco
+
+g_kunder <- getGEO("GSE14206", GSEMatrix =TRUE, getGPL=TRUE)
+kunder_labels = Biobase::fData(g_kunder[[1]])
+kunder_ex <- exprs(g_kunder[[1]])
+rownames(kex) = kunder_labels$GENE_SYMBOL
+kunder_ex = kunder_ex[-which(rownames(kunder_ex) == ''), ]
+
+gex_kunderfranco = aggregate(kunder_ex, by = list(rownames(ex)), mean)
+
+rownames(gex_kunderfranco) = gex_kunderfranco[, 1]
+gex_kunderfranco = gex_kunderfranco[, -1]
+
+save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")
+
 

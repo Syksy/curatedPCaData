@@ -5,7 +5,9 @@ load("data-raw/gex_taylor.RData")
 load("data-raw/gex_sun.RData")
 load("data-raw/gex_barbieri.RData")
 load("data-raw/gex_ren.RData")
-
+load("data-raw/gex_kunderfranco.RData")
+load("data-raw/gex_friedrich.RData")
+load("data-raw/gex_wallace.RData")
 
 osf_num <- as.matrix(osf)
 mode(osf_num) <- "numeric"
@@ -244,6 +246,113 @@ save(Ren_package_mcp,file="data-raw/mcp_ren.RData")
 
 mae_ren <- create_mae(study_name = "Ren")
 usethis::use_data(mae_ren, overwrite = TRUE)
+
+
+# Kunderfranco
+
+kunderfranco_package_quantiseq <- immunedeconv::deconvolute(gex_kunderfranco,"quantiseq")
+kunderfranco_package_epic <- immunedeconv::deconvolute(gex_kunderfranco,"epic")
+kunderfranco_package_xcell <- immunedeconv::deconvolute(gex_kunderfranco,"xcell")
+kunderfranco_package_mcp <- immunedeconv::deconvolute(gex_kunderfranco,"mcp_counter")
+
+kunderfranco_package_quantiseq <- data.frame(kunderfranco_package_quantiseq)
+rownames(kunderfranco_package_quantiseq) <- kunderfranco_package_quantiseq[,1]
+kunderfranco_package_quantiseq <- kunderfranco_package_quantiseq[,-1]
+kunderfranco_package_quantiseq <- as.matrix(kunderfranco_package_quantiseq)
+save(kunderfranco_package_quantiseq,file="data-raw/quantiseq_kunderfranco.RData")
+
+kunderfranco_package_epic <- data.frame(kunderfranco_package_epic)
+rownames(kunderfranco_package_epic) <- kunderfranco_package_epic[,1]
+kunderfranco_package_epic <- kunderfranco_package_epic[,-1]
+kunderfranco_package_epic <- as.matrix(kunderfranco_package_epic)
+save(kunderfranco_package_epic,file="data-raw/epic_kunderfranco.RData")
+
+kunderfranco_package_xcell <- data.frame(kunderfranco_package_xcell)
+rownames(kunderfranco_package_xcell) <- kunderfranco_package_xcell[,1]
+kunderfranco_package_xcell <- kunderfranco_package_xcell[,-1]
+kunderfranco_package_xcell <- as.matrix(kunderfranco_package_xcell)
+save(kunderfranco_package_xcell,file="data-raw/xcell_kunderfranco.RData")
+
+kunderfranco_package_mcp <- data.frame(kunderfranco_package_mcp)
+rownames(kunderfranco_package_mcp) <- kunderfranco_package_mcp[,1]
+kunderfranco_package_mcp <- kunderfranco_package_mcp[,-1]
+kunderfranco_package_mcp <- as.matrix(kunderfranco_package_mcp)
+save(kunderfranco_package_mcp,file="data-raw/mcp_kunderfranco.RData")
+
+mae_kunderfranco <- create_mae(study_name = "Kunderfranco")
+usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+
+
+
+# Friderich
+
+friedrich_package_quantiseq <- immunedeconv::deconvolute(gex_friedrich,"quantiseq")
+friedrich_package_epic <- immunedeconv::deconvolute(gex_friedrich,"epic")
+friedrich_package_xcell <- immunedeconv::deconvolute(gex_friedrich,"xcell")
+friedrich_package_mcp <- immunedeconv::deconvolute(gex_friedrich,"mcp_counter")
+
+friedrich_package_quantiseq <- data.frame(friedrich_package_quantiseq)
+rownames(friedrich_package_quantiseq) <- friedrich_package_quantiseq[,1]
+friedrich_package_quantiseq <- friedrich_package_quantiseq[,-1]
+friedrich_package_quantiseq <- as.matrix(friedrich_package_quantiseq)
+save(friedrich_package_quantiseq,file="data-raw/quantiseq_friedrich.RData")
+
+friedrich_package_epic <- data.frame(friedrich_package_epic)
+rownames(friedrich_package_epic) <- friedrich_package_epic[,1]
+friedrich_package_epic <- friedrich_package_epic[,-1]
+friedrich_package_epic <- as.matrix(friedrich_package_epic)
+save(friedrich_package_epic,file="data-raw/epic_friedrich.RData")
+
+friedrich_package_xcell <- data.frame(friedrich_package_xcell)
+rownames(friedrich_package_xcell) <- friedrich_package_xcell[,1]
+friedrich_package_xcell <- friedrich_package_xcell[,-1]
+friedrich_package_xcell <- as.matrix(friedrich_package_xcell)
+save(friedrich_package_xcell,file="data-raw/xcell_friedrich.RData")
+
+friedrich_package_mcp <- data.frame(friedrich_package_mcp)
+rownames(friedrich_package_mcp) <- friedrich_package_mcp[,1]
+friedrich_package_mcp <- friedrich_package_mcp[,-1]
+friedrich_package_mcp <- as.matrix(friedrich_package_mcp)
+save(friedrich_package_mcp,file="data-raw/mcp_friedrich.RData")
+
+mae_friedrich <- create_mae(study_name = "Friedrich")
+usethis::use_data(mae_friedrich, overwrite = TRUE)
+
+
+# Wallace
+
+wallace_package_quantiseq <- immunedeconv::deconvolute(gex_wallace,"quantiseq")
+wallace_package_epic <- immunedeconv::deconvolute(gex_wallace,"epic")
+wallace_package_xcell <- immunedeconv::deconvolute(gex_wallace,"xcell")
+wallace_package_mcp <- immunedeconv::deconvolute(gex_wallace,"mcp_counter")
+
+wallace_package_quantiseq <- data.frame(wallace_package_quantiseq)
+rownames(wallace_package_quantiseq) <- wallace_package_quantiseq[,1]
+wallace_package_quantiseq <- wallace_package_quantiseq[,-1]
+wallace_package_quantiseq <- as.matrix(wallace_package_quantiseq)
+save(wallace_package_quantiseq,file="data-raw/quantiseq_wallace.RData")
+
+wallace_package_epic <- data.frame(wallace_package_epic)
+rownames(wallace_package_epic) <- wallace_package_epic[,1]
+wallace_package_epic <- wallace_package_epic[,-1]
+wallace_package_epic <- as.matrix(wallace_package_epic)
+save(wallace_package_epic,file="data-raw/epic_wallace.RData")
+
+wallace_package_xcell <- data.frame(wallace_package_xcell)
+rownames(wallace_package_xcell) <- wallace_package_xcell[,1]
+wallace_package_xcell <- wallace_package_xcell[,-1]
+wallace_package_xcell <- as.matrix(wallace_package_xcell)
+save(wallace_package_xcell,file="data-raw/xcell_wallace.RData")
+
+wallace_package_mcp <- data.frame(wallace_package_mcp)
+rownames(wallace_package_mcp) <- wallace_package_mcp[,1]
+wallace_package_mcp <- wallace_package_mcp[,-1]
+wallace_package_mcp <- as.matrix(wallace_package_mcp)
+save(wallace_package_mcp,file="data-raw/mcp_wallace.RData")
+
+mae_wallace <- create_mae(study_name = "Wallace")
+usethis::use_data(mae_wallace, overwrite = TRUE)
+
 
 
 
