@@ -22,4 +22,8 @@ R/packages.R
 R/pipelines.R 
 R/upstream_funcs.R 
 
+# Temporary Excel data listings
+data-raw/prostate_experiment_summaries_JC_ST.xlsx
+data-raw/prostate_experiment_summaries_JC_ST_TDL.xlsx
+
 R-4.0.0.pkg
