@@ -55,4 +55,5 @@ URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    osfr, textshape, pacman
