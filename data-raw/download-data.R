@@ -82,7 +82,7 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 
 # PRAD-UK
 
-<<<<<<< HEAD
+
 ###################################################
 # Friedrich 2020 BASED ON GPL DATA
 ###################################################
@@ -183,7 +183,7 @@ R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
 osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
 
 #Download the mapping file 
-osf <- curatedPCaData:::format_osf_data(osf_data)
+osf <- format_osf_data(osf_data)
 osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
 
 # Re-format the OSF data
@@ -237,7 +237,7 @@ cna_ren <- generate_cbioportal(
 save(cna_ren, file="data-raw/cna_ren.RData")
 
 # Create MAE object
-mae_ren <- create_mae(study_name = "Ren")
+mae_ren <- create_mae(study_name = "ren")
 usethis::use_data(mae_ren, overwrite = TRUE)
 
 #Kim et al data -----
@@ -300,5 +300,9 @@ save(cna_wang, file="data-raw/cna_wang.RData")
 # Barwick et al.
 gex_barwick <- generate_gex_geo("GSE18655")
 save(gex_barwick, file="data-raw/gex_barwick.RData")
+
+#OSF
+osf_f <- format_osf_data(osf)
+
 
 
