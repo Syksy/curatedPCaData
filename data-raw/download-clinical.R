@@ -966,3 +966,58 @@ save(clinical_barwick, file = "./data-raw/clinical_barwick.RData")
 
 # Clinical mapping of Barwick replicates? The raw GEX file of Barwick contains 180 samples, but is still not equal to the 139 samples after 7 presumed replicated samples
 
+##########################################################
+#
+# Kunderfranco et al. Italian data
+#
+#########################################################
+
+library(GEOquery)
+gset <- getGEO("GSE14206", GSEMatrix =TRUE, getGPL=TRUE)
+labels = Biobase::fData(gset[[1]])
+
+
+# clinical
+uncurated <- Biobase::pData(gset[[1]]) 
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Kunderfranco et al.") %>%
+  dplyr::mutate(sample_name = uncurated$geo_accession) %>% 
+  dplyr::mutate(patient_id = stringr::str_sub(uncurated$description.1, 22, 30)) %>%
+  dplyr::mutate(alt_sample_name = uncurated$title) %>%
+  dplyr::mutate(gleason_major = as.numeric(stringr::str_sub(uncurated$"gleason grade:ch1", 1, 1))) %>%
+  dplyr::mutate(gleason_minor = as.numeric(stringr::str_sub(uncurated$"gleason grade:ch1", 3, 3))) %>%
+  dplyr::mutate(gleason_grade = gleason_major + gleason_minor) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+    gleason_grade  %in%  4:6 ~ "<=6",
+    gleason_major == 3 & gleason_minor == 4 ~ "3+4",
+    gleason_major == 4 & gleason_minor == 3 ~ "4+3",
+    gleason_grade %in% 8:10 ~ ">=8",
+    TRUE ~ "NA"
+  )) %>%
+  dplyr::mutate(age_at_initial_diagnosis = uncurated$"age:ch1") %>%
+  dplyr::mutate(sample_type = dplyr::case_when(
+                                               uncurated$source_name_ch1 == "prostate cancer" ~ 'primary',
+                                               uncurated$source_name_ch1 == "normal prostate" ~ 'BPH')) %>%
+  dplyr::mutate(frozen_ffpe = 'FFPE') %>%
+  dplyr::mutate(source_of_gleason = dplyr::case_when(
+                                                     uncurated$source_name_ch1 == "prostate cancer" ~ 'prostatectomy',
+                                                     uncurated$source_name_ch1 == "normal prostate" ~ 'biopsy')) %>%
+  dplyr::mutate(microdissected = 0) %>%
+  dplyr::mutate(tissue_source = dplyr::case_when(
+                                               uncurated$source_name_ch1 == "prostate cancer" ~ 'prostatectomy',
+                                               uncurated$source_name_ch1 == "normal prostate" ~ 'biopsy'))
+ 
+
+ 
+
+clinical_kunderfranco <- curated
+
+save(clinical_kunderfranco, file = "./data-raw/clinical_kunderfranco.RData")
+
+############################################################################
+
