@@ -19,11 +19,11 @@ generate_gex_geo <- function(
   collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
   ...
 ){
-  if(!missing(file_directory)) here::set_here(file_directory){
+  if(!missing(file_directory)) here::set_here(file_directory)
   # Supplementary files include the raw CEL files
-  supfiles <- GEOquery::getGEOSuppFiles(geo_code)}
-  # Sun et al. -----
-  
+  supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+
+  # Sun et al. -----  
   if(geo_code == "GSE25136"){
 	  # Open the tarball(s)
 	 utils::untar(tarfile = rownames(supfiles))
@@ -70,9 +70,8 @@ generate_gex_geo <- function(
 	gex <- gex[order(rownames(gex)),]
   }
 
-  #Wang et al.
-  
-  if(geo_code == "GSE8218"){
+  #Wang et al.  
+  else if(geo_code == "GSE8218"){
     # Make sure to function in a working directory where the are no other tarballs present
   gz_files <- list.files()
   gz_files <- gz_files[grep(".gz", gz_files)]
@@ -112,12 +111,13 @@ generate_gex_geo <- function(
     row.names(gex) <- compare_names$new_names
     
     # Sort genes to alphabetic order for consistency
-    gex <- gex[order(rownames(gex)),]}
+    gex <- gex[order(rownames(gex)),]
+  }
   
   # Taylor , Kim et al.-----
-  if(geo_code == "GSE21032"){ # TODO: Alternative more specific accession code "GSE21034"
+  else if(geo_code == "GSE21032"){ # TODO: Alternative more specific accession code "GSE21034"
 	  # Open the tarball(s)
-    utils::untar(tarfile = rownames(supfiles)
+    	utils::untar(tarfile = rownames(supfiles))
 	# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
 	 CELs <- oligo::read.celfiles(affy::list.celfiles())	
 	
@@ -153,11 +153,11 @@ generate_gex_geo <- function(
   	colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
   	
   	# Sort genes to alphabetic order for consistency
-  	gex <- gex[order(rownames(gex)),]}
+  	gex <- gex[order(rownames(gex)),]
+  }
 	
 
-  # Chandran et al.-----
-  
+  # Chandran et al.-----  
   else if(geo_code == "GSE6919"){
 	  # Open the tarball(s)
 	  utils::untar(tarfile = rownames(supfiles))
@@ -293,7 +293,6 @@ generate_gex_geo <- function(
   gex <- as.matrix(gex)
   gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
   gex
-}
 }
 
 #' Download copy number variant data from GEO using study specific id and process it
