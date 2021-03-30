@@ -29,7 +29,7 @@ This vignette introduces `curatedPCaData` and provides an overview of the  packa
 
 1. `gex_*.RData` contains gene expression values
 2. `cna_*.RData` contains copy number values
-3. `clincial_*.RData` contains clinical/phenotype information
+3. `clinical_*.RData` contains clinical/phenotype information
     
 These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune scores. 
 Not all datasets will contain each of these elements but at  minimum will contain `clinical_*.rda` and `gex_*.rda`.
