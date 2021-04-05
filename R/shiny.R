@@ -38,8 +38,8 @@ ui <- shiny::navbarPage(
 	),
 	shiny::tabPanel("Inspect",
 		shiny::sidebarLayout(
-			shiny::sidebarPanel(
-				"foo"
+			shiny::sidebarPanel(				
+				shiny::uiOutput("slots")
 			),
 			shiny::mainPanel(
 				"bar"
@@ -71,7 +71,13 @@ server <- function(input, output, session){
 	output$maes <- shiny::renderUI({
 		shiny::selectInput("dat", "Select MAE-object",
 			choices = as.list(utils::data(package="curatedPCaData")$results[,"Item"])
-			#choices = list("mae_tcga", "mae_tcga", "mae_sun" = "mae_sun")
 		)
+	})
+	# Data slots available in currently selected data
+	output$slots <- shiny::renderUI({
+		slots <- eval(parse(text=paste0("names(MultiAssayExperiment::experiments(curatedPCaData::", input$dat,"))")))
+		shiny::selectInput("slot", "Select experiment within MAE",
+			choices = as.list(slots)
+		)		
 	})
 }
