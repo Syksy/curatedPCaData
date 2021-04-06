@@ -261,4 +261,50 @@ gex_kunderfranco = gex_kunderfranco[, -1]
 
 save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")
 
+# True 
+# as mentioned in the clinical section this data has been split in two datasest, one of 31 samples and one of just 1 sample
+
+gset <- getGEO("GSE5132", GSEMatrix =TRUE, getGPL=TRUE)
+labels1 = Biobase::fData(gset[[1]])
+labels2 = Biobase::fData(gset[[2]])
+
+ex1 <- exprs(gset[[1]])
+rownames(ex1) = labels1$"Related Gene Symbol"
+ex1 = ex1[-which(rownames(ex1) == ''), ]
+
+gex_true1 = aggregate(ex1, by = list(rownames(ex1)), mean, na.rm = T)
+
+rownames(gex_true1) = gex_true1[, 1]
+gex_true1 = gex_true1[, -1]
+
+
+ex2 <- exprs(gset[[2]])
+rownames(ex2) = labels2$Hugo
+ex2 = ex2[-which(rownames(ex2) == ''), , drop = F]
+ex2 = cbind(ex2, 1)
+
+
+gex_true2 = aggregate(ex2, by = list(rownames(ex2)), mean, na.rm = T)
+
+rownames(gex_true2) = gex_true2[, 1]
+gex_true2 = gex_true2[, -1]
+gex_true2 = gex_true2 [, -2, drop = F]
+
+# not the same number of genes!
+common_genes = intersect(rownames(gex_true1), rownames(gex_true2))
+
+
+gex_true1 = gex_true1[is.element(rownames(gex_true1), common_genes), ,drop = F]
+gex_true2 = gex_true2[is.element(rownames(gex_true2), common_genes), ,drop = F]
+
+# the two datasets are merged respecting the order of the GEO sample IDs
+if(identical(rownames(gex_true1), rownames(gex_true2))) gex_true = cbind(gex_true1[,1:10], gex_true2[,1], gex_true1[,11:31])
+# the appropriate name is used for the new column
+colnames(gex_true)[11] = colnames(gex_true2)
+
+
+save(gex_true, file = "data-raw/gex_true.RData")
+
+
+
 
