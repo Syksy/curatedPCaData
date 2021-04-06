@@ -10,31 +10,30 @@
 generate_gex_geo <- function(
   geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
                "GSE25136", # Sun et al.
+               "GSE8218",
                "GSE6919",  # Chandran et al., Yu et al. from three platforms combined
-               "GSE18655", # Barwick et al.
+               "GSE18655" # Barwick et al.
                ), 
   file_directory, 
   cleanup = TRUE, 
   collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
   ...
 ){
-  if(!missing(file_directory)) here::set_here(file_directory)
+  if(!missing(file_directory)) here::set_here(file_directory){
   # Supplementary files include the raw CEL files
-  supfiles <- GEOquery::getGEOSuppFiles(geo_code)
-
-  
+  supfiles <- GEOquery::getGEOSuppFiles(geo_code)}
   # Sun et al. -----
   
   if(geo_code == "GSE25136"){
 	  # Open the tarball(s)
-	  utils::untar(tarfile = rownames(supfiles))
+	 utils::untar(tarfile = rownames(supfiles))
 
 	# Make sure to function in a working directory where the are no other tarballs present
 	gz_files <- list.files()
 	gz_files <- gz_files[grep(".gz", gz_files)]
-
+	
 	# Read Affymetrix MA
-	Sun <- affy::ReadAffy()
+	
 	colnames(affy::exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
 
 	# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
@@ -71,49 +70,91 @@ generate_gex_geo <- function(
 	gex <- gex[order(rownames(gex)),]
   }
 
-  # Taylor et al.-----
+  #Wang et al.
   
-  else if (geo_code == "GSE21032") { # TODO: Alternative more specific accession code "GSE21034"
+  if(geo_code == "GSE8218"){
+    # Make sure to function in a working directory where the are no other tarballs present
+  gz_files <- list.files()
+  gz_files <- gz_files[grep(".gz", gz_files)]
+  
+    # Read Affymetrix MA
+    wang <- affy::ReadAffy()
+    colnames(affy::exprs(wang)) <- gsub(".gz|.CEL", "", colnames(wang))
+    
+    # Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
+    gex <- affy::rma(wang)
+    
+    # Extracting .CEL and packaging names from the GEO-compatible sample names
+    colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
+    
+    # Find gene annotations
+    keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
+    nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
+                                                                    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
+    nam[is.na(nam)] <- "NA"
+    # Collapse probes
+    gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, 
+                               FUN = collapse_fun))
+    
+    # Sun et al does not use Hugo names so the below code makes the names for sun 
+    # et al comparable with those in tcga/taylor
+    compare_names <- data.frame(original = row.names(gex),
+                                current = limma::alias2SymbolTable(row.names(gex),
+                                                                   species="Hs"))
+    duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
+    
+    compare_names <- compare_names %>%
+      dplyr::mutate(new_names = dplyr::case_when(
+        current %in% duplicated_hugo_symbols ~ original,
+        TRUE ~ current
+      ))
+    
+    row.names(gex) <- compare_names$new_names
+    
+    # Sort genes to alphabetic order for consistency
+    gex <- gex[order(rownames(gex)),]}
+  
+  # Taylor , Kim et al.-----
+  if(geo_code == "GSE21032"){ # TODO: Alternative more specific accession code "GSE21034"
 	  # Open the tarball(s)
-	  utils::untar(tarfile = rownames(supfiles))
-	
+    utils::untar(tarfile = rownames(supfiles)
 	# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
-	CELs <- oligo::read.celfiles(affy::list.celfiles())	
+	 CELs <- oligo::read.celfiles(affy::list.celfiles())	
 	
 	# Perform RMA normalization
-	RMAs <- oligo::rma(CELs)
+	  RMAs <- oligo::rma(CELs)
 	
 	# Obtain gene and sample information
-	Biobase::featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
+	  Biobase::featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
 	# GSM######-type names from GEO
-	nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
-	                      FUN = function(z) z[[1]])) 
+	  nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
+	                        FUN = function(z) z[[1]])) 
 	# Two naming conventions for the files; picking the PCA###-style 
-	nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
+	  nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
 	                      FUN = function(z) z[[3]])) 
-	nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"),
+	  nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"),
 	                                          FUN = function(z) z[[4]])))
 	# Some samples were suffixed with HuEx, while others had Exonl prefix
-	nam <- paste(nam0, "_", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
+	  nam <- paste(nam0, "_", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
 
 	# Extract gene names
-	genenames <- unlist(lapply(Biobase::fData(RMAs)[,"geneassignment"], 
+	  genenames <- unlist(lapply(Biobase::fData(RMAs)[,"geneassignment"], 
 	                           FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
 
 	# Transform into a matrix and remove empty gene names
-	gex <- as.matrix(Biobase::exprs(RMAs))
-	gex <- gex[-which(is.na(genenames)),]
-	rownames(gex) <- genenames[-which(is.na(genenames))]
-	# Map the coventionally used Taylor sample names instead of GEO codes 
-	# Compatible with e.g. cBioPortal sample names
-	# Give unique names with GSM#####.{PCA,PAN}##### combination for uniqueness
-	##colnames(gex) <- nam
-	# Use the unique GSM###-names
-	colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
+  	gex <- as.matrix(Biobase::exprs(RMAs))
+  	gex <- gex[-which(is.na(genenames)),]
+  	rownames(gex) <- genenames[-which(is.na(genenames))]
+  	# Map the coventionally used Taylor sample names instead of GEO codes 
+  	# Compatible with e.g. cBioPortal sample names
+  	# Give unique names with GSM#####.{PCA,PAN}##### combination for uniqueness
+  	##colnames(gex) <- nam
+  	# Use the unique GSM###-names
+  	colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
+  	
+  	# Sort genes to alphabetic order for consistency
+  	gex <- gex[order(rownames(gex)),]}
 	
-	# Sort genes to alphabetic order for consistency
-	gex <- gex[order(rownames(gex)),]
-  }
 
   # Chandran et al.-----
   
@@ -253,7 +294,7 @@ generate_gex_geo <- function(
   gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
   gex
 }
-
+}
 
 #' Download copy number variant data from GEO using study specific id and process it
 #' 
@@ -265,15 +306,18 @@ generate_gex_geo <- function(
 #' @param ... additional arguments
 generate_cna_geo <- function(
   geo_code = c("GSE21035", # Taylor et al.
-               "GSE54691" # Hieronymus et al.
-               ),
+               "GSE54691", # Hieronymus et al.
+               "GSE119616",
+               "GSE8218"),
   file_directory, 
   cleanup = TRUE, 
   ...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
   # Supplementary files include the raw CEL files
+  #supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex='tar')
   supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+  
 
   # Hieronymus et al. requires going to a subfolder
   # you should NEVER use setwd() in a package - causes massive downstream problems 
@@ -283,6 +327,7 @@ generate_cna_geo <- function(
   # }
   
   # Open the tarball(s)
+  #rownames(supfiles) <- shQuote(rownames(supfiles))
   utils::untar(tarfile = rownames(supfiles))
   
   ##
@@ -354,7 +399,7 @@ generate_cna_geo <- function(
 	# Save sample names separately (of 'length(cna)')
 	samplenames <- unlist(lapply(cna, FUN = function(z) { z@info["sampleName"] }))
 	# Reformat samplenames in Hieronymus
-	if(geo_code == "GSE54691"){
+	if(geo_code =="GSE54691"){
 		# Pick GSM-part in GSM###_PCA###
 		samplenames <- unlist(lapply(samplenames, FUN=function(z) { strsplit(z, "_")[[1]][[1]]}))
 	}	
@@ -383,7 +428,7 @@ generate_cna_geo <- function(
 	# CNA matrix is ready
 	cna <- as.matrix(cna)
   }
-  # Other (placeholder) - should probably place this in the begining so it 
+  # Other (placeholder) - should probably place this in the beginning so it 
   # doesnt try to run through all the beginning steps 
   else if(geo_code == ""){
     stop("Must supply a GEO id")
@@ -428,12 +473,16 @@ generate_cbioportal <- function(
                       "prad_broad_mrna", # PRAD Broad GEX
                       "prad_broad_cna", # PRAD Broad CNA
                       "prad_eururol_2017_rna_seq_mrna", # PRAD Eururol GEX
-                      "prad_eururol_2017_cna" # PRAD Eururol CNA
+                      "prad_eururol_2017_cna", # PRAD Eururol CNA
+                      "prad_su2c_2019_mrna_seq_fpkm_capture_all_sample_Zscores", # Abida et al. FPKM values capture assay
+                      "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", # Abida et al. FPKM values PolyA
+                      "prad_su2c_2019_gistic" #Abida et al. CNA
                       ), # for cgdsr calls, platform and dataset specific string
   caseList = c("prad_tcga_pub_sequenced", # TCGA
                "prad_mskcc_sequenced", # Taylor et al.
                "prad_broad_sequenced", # PRAD Broad
-               "prad_eururol_2017_sequenced" # PRAD Eururol
+               "prad_eururol_2017_sequenced", # PRAD Eururol
+               "prad_su2c_2019_sequenced" #Abida et al.
                ), # for cgdsr calls, platform and dataset specific string
   delay = 0.05, 
   splitsize = 100, 
