@@ -4,7 +4,7 @@
 #'
 
 format_osf_data <- function(osf_data){
-  osf_data <- rio::import("../data-raw/TCGA_PRAD_tpm.tsv")
+  osf_data <- rio::import("./data-raw/TCGA_PRAD_tpm.tsv")
   
   osf_data_2 <- osf_data %>% tidyr::separate(V1,into =c("a","B","C","D","E","F","G","H","i","j","k","l","m","n","o","p"),sep="[|]")
   
@@ -24,7 +24,7 @@ format_osf_data <- function(osf_data){
   
   osf_data_t <- tibble::rownames_to_column(osf_data_t, "Samples")
   
-  tcga_map <- rio::import("../data-raw/TCGA_ID_MAP.csv")
+  tcga_map <- rio::import("./data-raw/TCGA_ID_MAP.csv")
   tcga_map <- tcga_map %>% dplyr::filter(Disease == "PRAD")
   
   PRAD_osf <-merge(osf_data_t,tcga_map,by.x = 'Samples',by.y = 'CGHubAnalysisID')
