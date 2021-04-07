@@ -113,149 +113,39 @@ The plots below show the comparison of immune cell propotions between TPM normal
 
 
 ```{r immunedeconv-plots, echo=FALSE}
-tcga_gex <- curatedPCaData::mae_tcga[["gex"]]
-tcga_gex <- tcga_gex[rowSums(is.na(tcga_gex)) != ncol(tcga_gex), ]
-
-package_data <- t(tcga_gex)
-
-package <- data.frame(package_data)
-data.table::setDT(package, keep.rownames = "V1")
-## OSF 
-# Replace the "." with "-" in package data sample names
-package$V1 <- gsub("\\.","-",package$V1)
-# Remove "-01"s from package data
-package$V1 <- gsub("*-01","",package$V1)
-
-#source(here::here('R', 'seperate_osf.R'))
-#source(here::here('R', 'rearrange.R'))
-#source(here::here('R', 'keep_only_PRAD.R'))
-#source(here::here('R', 'format_final.R'))
-#osf_data_2 <- seperate_osf(osf)
-#osf_data_t <- rearrange(osf_data_2)
-#dropped_results1 <- keep_only_PRAD(osf_data_t)
-#osf_f <- format_final(dropped_results1)
-source(here::here('R', 'format_osf_data.R'))
-
-osf_f <- format_osf_data(osf)
+knitr::include_graphics("vignette_plots/quantiseq_bcells.png")
+knitr::include_graphics("vignette_plots/quantiseq_cd8.png")
+knitr::include_graphics("vignette_plots/quantiseq_cd4.png")
+knitr::include_graphics("vignette_plots/quantiseq_dendritic.png")
+knitr::include_graphics("vignette_plots/quantiseq_macrom1.png")
+knitr::include_graphics("vignette_plots/quantiseq_macrom2.png")
+knitr::include_graphics("vignette_plots/quantiseq_monocyte.png")
+knitr::include_graphics("vignette_plots/quantiseq_neutrophils.png")
+knitr::include_graphics("vignette_plots/quantiseq_nkcells.png")
+knitr::include_graphics("vignette_plots/quantiseq_tregs.png")
+knitr::include_graphics("vignette_plots/quantiseq_uncharacterized.png")
 
 
-## merge package and osf data
-merged_package_osf <- merge(osf_f,package,by.x='AliquotBarcode',by.y="V1")
-
-osf_final <- merged_package_osf %>% dplyr::select(1:58685) 
-package_final <- merged_package_osf %>% dplyr::select(1,58686:78643)
-
-osf_final1 <- t(osf_final)
-#rownames(osf_final) = osf_final[,1]
-
-osf_final2 <- data.frame(osf_final1)
-colnames(osf_final2) = osf_final2[1, ]
-osf_final2 <- osf_final2[-1, ]
-
-
-data.table::setDT(osf_final2, keep.rownames = "V1")
-osf_final2$V1 <-gsub("\\.x*","",osf_final2$V1)
-
-  
-osf_final3 <- as.matrix(osf_final2)
-rownames(osf_final3) = osf_final3[,1]
-osf_final3 <- osf_final3[,-1]
-
-mode(osf_final3) <- "numeric"
-
-
-quantiseq_osf <- immunedeconv::deconvolute(osf_final3,"quantiseq")
-epic_osf <- immunedeconv::deconvolute(osf_final3,"epic")
-xcell_osf <- immunedeconv::deconvolute(osf_final3,"xcell")
-mcp_osf <- immunedeconv::deconvolute(osf_final3,"mcp_counter")
-
-package_final <- t(package_final)
-package_final2 <- as.data.frame(package_final)
-colnames(package_final2) = package_final2[1, ]
-package_final2 <- package_final2[-1, ]
-data.table::setDT(package_final2, keep.rownames = "V1")
-package_final2$V1 <-gsub("\\.y*","",package_final2$V1)
- 
-package_final3 <- as.matrix(package_final2)
-rownames(package_final3) = package_final3[,1]
-package_final3 <- package_final3[,-1]
-mode(package_final3) <- "numeric"
-quantiseq_package <- immunedeconv::deconvolute(package_final3,"quantiseq")
-epic_package <- immunedeconv::deconvolute(package_final3,"epic")
-xcell_package <- immunedeconv::deconvolute(package_final3,"xcell")
-mcp_package <- immunedeconv::deconvolute(package_final3,"mcp_counter")
-
-
-xcell_osf_t <- t(xcell_osf)
-colnames(xcell_osf_t) = xcell_osf_t[1, ]
-xcell_osf_t <- xcell_osf_t[-1, ]
-xcell_osf_t <- data.frame(xcell_osf_t)
-data.table::setDT(xcell_osf_t, keep.rownames = "V1")
-xcell_package_t <- t(xcell_package)
-colnames(xcell_package_t) = xcell_package_t[1, ]
-xcell_package_t <- xcell_package_t[-1, ]
-xcell_package_t <- data.frame(xcell_package_t)
-data.table::setDT(xcell_package_t, keep.rownames = "V1")
-
-epic_osf_t <- t(epic_osf)
-colnames(epic_osf_t) = epic_osf_t[1, ]
-epic_osf_t <- epic_osf_t[-1, ]
-epic_osf_t <- data.frame(epic_osf_t)
-data.table::setDT(epic_osf_t, keep.rownames = "V1")
-epic_package_t <- t(epic_package)
-colnames(epic_package_t) = epic_package_t[1, ]
-epic_package_t <- epic_package_t[-1, ]
-epic_package_t <- data.frame(epic_package_t)
-data.table::setDT(epic_package_t, keep.rownames = "V1")
-
-mcp_osf_t <- t(mcp_osf)
-colnames(mcp_osf_t) = mcp_osf_t[1, ]
-mcp_osf_t <- mcp_osf_t[-1, ]
-mcp_osf_t <- data.frame(mcp_osf_t)
-data.table::setDT(mcp_osf_t, keep.rownames = "V1")
-mcp_package_t <- t(mcp_package)
-colnames(mcp_package_t) = mcp_package_t[1, ]
-mcp_package_t <- mcp_package_t[-1, ]
-mcp_package_t <- data.frame(mcp_package_t)
-data.table::setDT(mcp_package_t, keep.rownames = "V1")
-
-quantiseq_osf_t <- t(quantiseq_osf)
-colnames(quantiseq_osf_t) = quantiseq_osf_t[1, ]
-quantiseq_osf_t <- quantiseq_osf_t[-1, ]
-quantiseq_osf_t <- data.frame(quantiseq_osf_t)
-data.table::setDT(quantiseq_osf_t, keep.rownames = "V1")
-quantiseq_package_t <- t(quantiseq_package)
-colnames(quantiseq_package_t) = quantiseq_package_t[1, ]
-quantiseq_package_t <- quantiseq_package_t[-1, ]
-quantiseq_package_t <- data.frame(quantiseq_package_t)
-data.table::setDT(quantiseq_package_t, keep.rownames = "V1")
 
 ```
 
-## Quantiseq
-```{r,echo=FALSE}
-plot(quantiseq_osf_t$B.cell,quantiseq_package_t$B.cell,xlab="osf_Bcells",ylab="package_Bcells")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$Macrophage.M1,quantiseq_package_t$Macrophage.M1,xlab="osf_Macrophage_M1",ylab="package_macrophage_M1")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$Macrophage.M2,quantiseq_package_t$Macrophage.M2,xlab="osf_Macrophage_M2",ylab="package_macrophage_M2")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$Monocyte,quantiseq_package_t$Monocyte,xlab="osf_monocyte",ylab="package_monocyte")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$Neutrophil,quantiseq_package_t$Neutrophil,xlab="osf_neutrophil",ylab="package_neutrophil")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$NK.cell,quantiseq_package_t$NK.cell,xlab="osf_NK_cell",ylab="package_NK_cell")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$T.cell.CD4...non.regulatory.,quantiseq_package_t$T.cell.CD4...non.regulatory.,xlab="osf_CD4",ylab="Package_CD4")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$T.cell.CD8.,quantiseq_package_t$T.cell.CD8.,xlab="osf_CD8",ylab="Package_CD8")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$T.cell.regulatory..Tregs.,quantiseq_package_t$T.cell.regulatory..Tregs.,xlab="osf_Tregs",ylab="package_Tregs")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$Myeloid.dendritic.cell,quantiseq_package_t$Myeloid.dendritic.cell,xlab="osf_Myeloid.dendritic.cell",ylab="package_Myeloid.dendritic.cell")
-segments(0,0,1,1,col="grey")
-plot(quantiseq_osf_t$uncharacterized.cell,quantiseq_package_t$uncharacterized.cell,xlab="osf_uncharacterized.cell",ylab="package_uncharacterized.cell")
-segments(0,0,1,1,col="grey")
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
