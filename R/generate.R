@@ -119,7 +119,7 @@ generate_gex_geo <- function(
 	  # Open the tarball(s)
     	utils::untar(tarfile = rownames(supfiles))
 	# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
-	 CELs <- oligo::read.celfiles(affy::list.celfiles())	
+	 CELs <- oligo::read.celfiles(affy::list.celfiles())
 	
 	# Perform RMA normalization
 	  RMAs <- oligo::rma(CELs)
@@ -274,7 +274,6 @@ generate_gex_geo <- function(
   }
   
   # Unknown GEO id (throw an error) -----
-
   else{
   	stop("Unknown GEO id, see allowed parameter values for geo_code")
   }
