@@ -10,6 +10,13 @@ Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c
            )
 Description: A selection of annotated prostate cancer datasets including TCGA, 
     Taylor et al., Sun et al., and others. 
+License: GPL-3
+Encoding: UTF-8
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+LazyData: true
+URL: https://github.com/Syksy/curatedPCaData
+BugReports: https://github.com/Syksy/curatedPCaData/issues
 Depends: R (>= 3.5.0), S4Vectors (>= 0.23.18), MultiAssayExperiment
 Imports: 
     progress,
@@ -21,10 +28,6 @@ Imports:
     utils,
     affy,
     AnnotationDbi,
-    hgu133a.db,
-    hgu95av2cdf, hgu95av2.db,
-    hgu95bcdf, hgu95b.db,
-    hgu95ccdf, hgu95c.db,
     magrittr,
     dplyr,
     rlang,
@@ -43,4 +46,12 @@ Imports:
     RCurl,
     R.utils,
     survminer,
-    shiny
+    shiny, DT
+Suggests: 
+    knitr,
+    rmarkdown,
+    osfr, textshape, pacman
+    hgu133a.db,
+    hgu95av2cdf, hgu95av2.db,
+    hgu95bcdf, hgu95b.db,
+    hgu95ccdf, hgu95c.db,
