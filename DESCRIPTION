@@ -50,7 +50,7 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown,
-    osfr, textshape, pacman
+    osfr, textshape, pacman,
     hgu133a.db,
     hgu95av2cdf, hgu95av2.db,
     hgu95bcdf, hgu95b.db,
