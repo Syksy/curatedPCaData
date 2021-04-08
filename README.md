@@ -35,6 +35,7 @@ devtools::install_github("Syksy/curatedPCaData")
 
 ## Usage
 
+Simple example use of curated datasets and 'omics there-in:
 
 ```{r example_one, warning = FALSE, message = FALSE}
 
@@ -53,3 +54,12 @@ curatedPCaData::mae_sun
 
 ```
 
+## R Shiny
+
+A web interface built with R Shiny for `curatedPCaData` can be launched via:
+
+```{r example_one, warning = FALSE, message = FALSE}
+
+curatedPCaData::shiny()
+
+```
