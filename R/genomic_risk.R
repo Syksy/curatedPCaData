@@ -1,3 +1,9 @@
+#' Genomic risk scores
+#'
+#' Prolaris, Oncotype DX, Decipher genomic panels for prostate cancer risk
+#'
+#' @details https://bjui-journals.onlinelibrary.wiley.com/doi/10.1111/bju.14452 https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-14-690 https://www.nature.com/articles/s41391-019-0167-9
+#'
 genomic_risk <- function(mae, 
                          object = "gex",
                          test = c("Prolaris", "Oncotype DX", "Decipher")){
