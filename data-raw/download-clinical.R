@@ -589,7 +589,9 @@ curated <- curated %>%
                                                            uncurated$'risk group:ch1' == 'H-df' ~ 0
                                                            )) 
 
-
+extra_cl = read.table('./GSE134051_Pheno_Data_ControlType.txt', h = T) # extra clinical from Friedrich et al. 
+curated[extra_cl$Control_status == 'BLADDER_CANCER', 'tissue_source'] = 'cystoprostatectomy'
+curated[extra_cl$Control_status == 'OTHER', 'tissue_source'] = 'TURP'
 
 clinical_friedrich <- curated
 
