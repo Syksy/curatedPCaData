@@ -355,4 +355,39 @@ usethis::use_data(mae_wallace, overwrite = TRUE)
 
 
 
+# Weiner
+
+weiner_package_quantiseq <- immunedeconv::deconvolute(gex_weiner,"quantiseq")
+weiner_package_epic <- immunedeconv::deconvolute(gex_weiner,"epic")
+weiner_package_xcell <- immunedeconv::deconvolute(gex_weiner,"xcell")
+weiner_package_mcp <- immunedeconv::deconvolute(gex_weiner,"mcp_counter")
+
+weiner_package_quantiseq <- data.frame(weiner_package_quantiseq)
+rownames(weiner_package_quantiseq) <- weiner_package_quantiseq[,1]
+weiner_package_quantiseq <- weiner_package_quantiseq[,-1]
+weiner_package_quantiseq <- as.matrix(weiner_package_quantiseq)
+save(weiner_package_quantiseq,file="data-raw/quantiseq_weiner.RData")
+
+weiner_package_epic <- data.frame(weiner_package_epic)
+rownames(weiner_package_epic) <- weiner_package_epic[,1]
+weiner_package_epic <- weiner_package_epic[,-1]
+weiner_package_epic <- as.matrix(weiner_package_epic)
+save(weiner_package_epic,file="data-raw/epic_weiner.RData")
+
+weiner_package_xcell <- data.frame(weiner_package_xcell)
+rownames(weiner_package_xcell) <- weiner_package_xcell[,1]
+weiner_package_xcell <- weiner_package_xcell[,-1]
+weiner_package_xcell <- as.matrix(weiner_package_xcell)
+save(weiner_package_xcell,file="data-raw/xcell_weiner.RData")
+
+weiner_package_mcp <- data.frame(weiner_package_mcp)
+rownames(weiner_package_mcp) <- weiner_package_mcp[,1]
+weiner_package_mcp <- weiner_package_mcp[,-1]
+weiner_package_mcp <- as.matrix(weiner_package_mcp)
+save(weiner_package_mcp,file="data-raw/mcp_weiner.RData")
+
+mae_weiner <- create_mae(study_name = "Weiner")
+usethis::use_data(mae_weiner, overwrite = TRUE)
+
+
 

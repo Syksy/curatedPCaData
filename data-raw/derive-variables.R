@@ -83,7 +83,21 @@ tmp <- as.matrix(tmp[,-1])
 
 mae_wallace <- c(mae_wallace, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_wallce, overwrite = TRUE)
+usethis::use_data(mae_wallace, overwrite = TRUE)
+
+###
+## Weiner et al.
+###
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex"]], method="xcell"))
+
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+
+mae_weiner <- c(mae_weiner, xcell = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_weiner, overwrite = TRUE)
 
 
 
@@ -173,6 +187,22 @@ tmp <- as.matrix(tmp[,-1])
 mae_wallce <- c(curatedPCaData::mae_wallace, mcp_counter = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_wallace, overwrite = TRUE)
+
+
+##
+# Weiner et al.
+##
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex"]], method="mcp_counter"))
+
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+
+mae_weiner <- c(mae_weiner, mcp_counter = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_weiner, overwrite = TRUE)
+
 
 
 
