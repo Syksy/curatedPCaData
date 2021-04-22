@@ -83,7 +83,10 @@ tmp <- as.matrix(tmp[,-1])
 
 mae_wallace <- c(mae_wallace, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_wallce, overwrite = TRUE)
+## !!
+## !! TDL: NOTE! There was a typo below (wallce instead of wallace) !!
+## !!
+usethis::use_data(mae_wallace, overwrite = TRUE)
 
 
 
@@ -170,7 +173,10 @@ rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
-mae_wallce <- c(curatedPCaData::mae_wallace, mcp_counter = tmp)
+# !!
+# !! TDL: NOTE! There was a typo below (wallce instead of wallace) !!
+# !!
+mae_wallace <- c(curatedPCaData::mae_wallace, mcp_counter = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_wallace, overwrite = TRUE)
 
@@ -179,4 +185,17 @@ usethis::use_data(mae_wallace, overwrite = TRUE)
 
 
 
+
+#####
+##
+## Genomic risk scores: Prolaris, OncotypeDX & Decipher
+##
+#####
+
+
+rbind(
+	Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Prolaris"),
+	OncotypeDX = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Oncotype DX"),
+	Decipher = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Decipher")
+)
 
