@@ -123,3 +123,40 @@ genomic_risk <- function(mae,
   	stop(paste("Invalid genomic risk score name:", test))
   }
 }
+
+
+#' Various genomic scores
+#'
+#' AR score by Hieronymus et al 2006
+genomic_score <- function(mae,
+			object = "gex",
+			test = "Hieronymus"
+){
+	# TCGA methodology for AR output score analysis: (Section 6 in supplementary of https://www.cell.com/cms/10.1016/j.cell.2015.10.025/attachment/70a60372-cdaf-4c72-aa6d-ded4b33ce5a0/mmc1.pdf )
+	# "The AR output score is derived from the mRNA expression of genes that are experimentally
+	# validated AR transcriptional targets (Hieronymus et al., 2006). Precisely, a list of 20 genes
+	# upregulated in LNCaP cells stimulated with the synthetic androgen R1881 was used as a gene
+	# signature of androgen-induced genes. An AR output score was defined by the quantification of
+	# the composite expression of this 20-gene signature in each sample. Here, we measured
+	# differential AR activity between genomic subtypes (ERG, ETV1/4/FLI1, SPOP, FOXA1, other,
+	# normal prostate). To this aim, we computed a Z-score for the expression of each gene in each
+	# sample by subtracting the pooled mean from the RNA-seq expression values and dividing by
+	# the pooled standard deviation."
+	
+
+	# https://www.sciencedirect.com/science/article/pii/S1535610806002820
+	# Fig 1B
+	# " A gene expression signature of androgen stimulation was defined from gene expression profiles of LNCaP cells stimulated with the synthetic androgen R1881 for 12 hr and 24 hr, 
+	# as compared to androgen-deprived LNCaP cells. The 27 gene signature contains both androgen-induced and androgen-repressed genes, shown here by row-normalized heat map."
+	hieronymus_genes_up <- c("PSA", "TMPRSS2", "NKX3-1", "KLK2", "GNMT", "TMEPAI",
+		"MPHOS9", "ZBTB10", "EAF2", "BM039", "SARG", "ACSL3", "PTGER4", "ABCC4",
+		"NNMT", "ADAM7", "FKBP5", "ELL2", "MED28", "HERC3", "MAF")
+	# Based on Fib 1C ELL2 might fit better into down than up
+	hieronymus_genes_dn <- c("TNK1", "GLRA2", "MAPRE2", "PIP5K2B", "MAN1A1", "CD200")
+	
+		
+
+
+
+
+}
