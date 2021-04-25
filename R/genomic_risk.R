@@ -127,7 +127,7 @@ genomic_risk <- function(mae,
 
 #' Various genomic scores
 #'
-#' AR score by Hieronymus et al 2006
+#' AR score by Hieronymus et al 2006 as used by TCGA 2015
 genomic_score <- function(mae,
 			object = "gex",
 			test = "Hieronymus"
@@ -148,15 +148,51 @@ genomic_score <- function(mae,
 	# Fig 1B
 	# " A gene expression signature of androgen stimulation was defined from gene expression profiles of LNCaP cells stimulated with the synthetic androgen R1881 for 12 hr and 24 hr, 
 	# as compared to androgen-deprived LNCaP cells. The 27 gene signature contains both androgen-induced and androgen-repressed genes, shown here by row-normalized heat map."
-	hieronymus_genes_up <- c("PSA", "TMPRSS2", "NKX3-1", "KLK2", "GNMT", "TMEPAI",
-		"MPHOS9", "ZBTB10", "EAF2", "BM039", "SARG", "ACSL3", "PTGER4", "ABCC4",
-		"NNMT", "ADAM7", "FKBP5", "ELL2", "MED28", "HERC3", "MAF")
-	# Based on Fib 1C ELL2 might fit better into down than up
-	hieronymus_genes_dn <- c("TNK1", "GLRA2", "MAPRE2", "PIP5K2B", "MAN1A1", "CD200")
+	#
+	## Genes as they were in Hieronymus et al 2006
+	if(FALSE){
+		hieronymus_genes_up <- c(
+			"KLK3", #"PSA", # PSA -> KLK3 gene
+			"TMPRSS2", "NKX3.1", # "NKX3-1", # Aliases
+			"KLK2", "GNMT", "PMEPA1", # "TMEPAI", # Updated annotation; TMEPAI -> PMEPA1
+			"MPHOSHP9", #"MPHOS9", # MPHOS9 -> MPHOSPH9
+			"ZBTB10", "EAF2", 
+			"CENPN", # "BM039", # BM039 -> CENPN
+			#"SARG", # SARG not found; could be C1orf116
+			"ACSL3", "PTGER4", "ABCC4",
+			"NNMT", "ADAM7", "FKBP5", "ELL2", "MED28", "HERC3", "MAF")
+		# Based on Fib 1C ELL2 might fit better into down than up
+		hieronymus_genes_dn <- c("TNK1", "GLRA2", "MAPRE2", "PIP5K2B", "MAN1A1", "CD200")
+	}
+	# TCGA version of Hieronymus AR-genes (panel A rows): https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4695400/figure/F4/ 
+	if(TRUE){
+		hieronymus_genes_up <- c(
+			"KLK3", "KLK2", "PMEPA1",
+			"ABCC4", 
+			"NKX3-1", "NKX3.1", # Two naming conventions, '-' replaced with '.'
+			"C1orf116", # Not conventionally found from GEX
+			"FKBP5", "ACSL3", "ZBTB10", "HERC3", 
+			"PTGER4", "MPHOSPH9", "EAF2", "MED28", "NNMT", "MAF",
+			"GNMT", "CENPN", "ELL2", "TMPRSS2"
+		)	
+	}
 	
+	
+	if(test == "Hieronymus"){	
+		overlap <- intersect(hieronymus_genes_up, rownames(mae[[object]]))
+		# Compute pooled shifts and scales
+		gex <- mae[[object]]
+
+		# Pooled normalization - pooling within sample over genes
+		gez <- t(apply(gex, MARGIN=1, FUN=function(z) { 
+			scale(z, center=TRUE, scale=TRUE)
+		}))
+		rownames(gez) <- rownames(gex)
+		colnames(gez) <- colnames(gez)
 		
-
-
-
-
+		# TCGA computed AR scores based on just up regulated genes; sum of z-scores from pooled normalization
+		res <- unlist(apply(gez[overlap,], MARGIN=2, FUN=sum))
+		names(res) <- colnames(gex)
+		res		
+	}
 }

@@ -233,3 +233,9 @@ rbind(
 	Decipher = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Decipher")
 )
 
+#####
+##
+## AR scores as used by TCGA, originally presented in Hieronymus et al. 2006
+##
+#####
+
