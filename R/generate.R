@@ -125,13 +125,44 @@ generate_gex_geo <- function(
     # Use editcelfile package to convert decipher annotations
     gz_files <- list.files()
     gz_files <- gz_files[grep(".gz", gz_files)]
-    #celfiledir <- "/Users/varsha/Downloads/curatedPCaData"
-    #celfiles_gz <- list.files(celfiledir, pattern="*.CEL.gz", full.names=TRUE)
     for (x in gz_files){GEOquery::gunzip(x)}
     celfiles <- list.files()
     celfiles <- celfiles[grep(".CEL", celfiles)]
-    #celfiles <- list.files(celfiledir, pattern="*.CEL", full.names=TRUE)
-    sapply(celfiles, editcelfile::celfileHeaderToHuex, verbose=TRUE)
+
+    # Include custom function that was originally small part of editcelfile (private package available upon request only), to avoid unnecessary non-publicly available dependencies
+    # Original code by Jonathan Lehrer & Seagle Liu (R package presented without license, modified code credited here)
+    celfileHeaderToHuex <- function(celFilePath, header="HuEx-1_0-st-v2", verbose=TRUE){
+	  # NEVER change this.
+	  writeBytePos=430
+	  overwriteBytes=28 # 2 x 14 characters in "HuEx-1_0-st-v2"
+
+	  if (verbose) {
+	    print("ORIGINAL:")
+	    print(affyio::read.celfile.header(celFilePath)[1])
+	  }
+
+	  f <- base::file(celFilePath, "r+b")
+
+	  base::seek(f, writeBytePos, "start", "write")
+	  replicate(overwriteBytes, base::writeBin(as.raw(0), f, useBytes = T)) #clear the old name (14 characters)
+
+	  base::seek(f, writeBytePos, "start", "write")
+	  encoded <- stringi::stri_enc_toutf32(header)[[1]]
+	  base::writeBin(encoded, f, size=2)
+
+	  base::close(f)
+
+	  cfh <- affyio::read.celfile.header(celFilePath)
+
+	  if (verbose) {
+	    print("REVISED:")
+	    print(cfh[1])
+	  }
+
+	  return(invisible(cfh$cdfName ==  header))
+    }
+
+    sapply(celfiles, celfileHeaderToHuex, verbose=TRUE)
     
     # Read in the CEL files 
     CELs <- oligo::read.celfiles(celfiles)
