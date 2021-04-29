@@ -1,256 +1,256 @@
-Name	prostate_tissue-Group-replicate_Name	File	Group	Homo	sapiens	prostate	male	Gleason	Lstat	OrganConfined	PathoState	Control_status
-RIB0034345	prostate_tissue-C-replicate_RIB0034345	255802910053_201402271110_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034351	prostate_tissue-C-replicate_RIB0034351	255802910053_201402271110_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034387	prostate_tissue-V-replicate_RIB0034387	255802910053_201402271110_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034306	prostate_tissue-Ms-replicate_RIB0034306	255802910053_201402271110_S01_GE1_1105_Oct12_1_1.txt	Ms	Homo	sapiens	prostate	male	6	1	OCD	2	None
-RIB0034810	prostate_tissue-V-replicate_RIB0034810	255802910038_201403191429_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	5	None	OCD	2	None
-RIB0034900	prostate_tissue-L-replicate_RIB0034900	255802910038_201403191429_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034235	prostate_tissue-H+st-replicate_RIB0034235	255802910110_201402181102_S01_GE1_1105_Oct12_1_3.txt	H+st	Homo	sapiens	prostate	male	8	1	OCD	2	None
-RIB0034257	prostate_tissue-H+sf-replicate_RIB0034257	255802910110_201402181102_S01_GE1_1105_Oct12_1_2.txt	H+sf	Homo	sapiens	prostate	male	8	1	OCD	2	None
-RIB0034299	prostate_tissue-V-replicate_RIB0034299	255802910110_201402181102_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034297	prostate_tissue-V-replicate_RIB0034297	255802910110_201402181102_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034226	prostate_tissue-V-replicate_RIB0034226	255802910042_201402251154_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034238	prostate_tissue-C-replicate_RIB0034238	255802910042_201402251154_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034201	prostate_tissue-C-replicate_RIB0034201	255802910042_201402251154_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034207	prostate_tissue-Ms-replicate_RIB0034207	255802910042_201402251154_S01_GE1_1105_Oct12_1_1.txt	Ms	Homo	sapiens	prostate	male	7	1	OCD	2	None
-RIB0034916	prostate_tissue-V-replicate_RIB0034916	255802910094_201403131040_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034971	prostate_tissue-C-replicate_RIB0034971	255802910094_201403131040_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034956	prostate_tissue-L-replicate_RIB0034956	255802910094_201403131040_S01_GE1_1105_Oct12_1_2.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034983	prostate_tissue-Ms-replicate_RIB0034983	255802910094_201403131040_S01_GE1_1105_Oct12_1_4.txt	Ms	Homo	sapiens	prostate	male	7	1	NOCD	4	None
-RIB0034756	prostate_tissue-L-replicate_RIB0034756	255802910075_201403270931_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034742	prostate_tissue-C-replicate_RIB0034742	255802910075_201403270931_S01_GE1_1105_Oct12_1_2.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034798	prostate_tissue-L-replicate_RIB0034798	255802910075_201403270931_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034755	prostate_tissue-C-replicate_RIB0034755	255802910075_201403270931_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034905	prostate_tissue-Ms-replicate_RIB0034905	255802910068_201403121059_S01_GE1_1105_Oct12_1_1.txt	Ms	Homo	sapiens	prostate	male	7	1	NOCD	4	None
-RIB0034951	prostate_tissue-L-replicate_RIB0034951	255802910068_201403121059_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034967	prostate_tissue-C-replicate_RIB0034967	255802910068_201403121059_S01_GE1_1105_Oct12_1_2.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034936	prostate_tissue-L-replicate_RIB0034936	255802910068_201403121059_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034477	prostate_tissue-H-st-replicate_RIB0034477	255802910058_201403061103_S01_GE1_1105_Oct12_1_2.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034493	prostate_tissue-C-replicate_RIB0034493	255802910058_201403061103_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034482	prostate_tissue-H-sf-replicate_RIB0034482	255802910058_201403061103_S01_GE1_1105_Oct12_1_1.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034475	prostate_tissue-V-replicate_RIB0034475	255802910058_201403061103_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034377	prostate_tissue-H+dt-replicate_RIB0034377	255802910050_201402271001_S01_GE1_1105_Oct12_1_4.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034320	prostate_tissue-L-replicate_RIB0034320	255802910050_201402271001_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034390	prostate_tissue-V-replicate_RIB0034390	255802910050_201402271001_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034921	prostate_tissue-H+st-replicate_RIB0034921	255802910095_201403131126_S01_GE1_1105_Oct12_1_3.txt	H+st	Homo	sapiens	prostate	male	9	1	OCD	2	None
-RIB0034991	prostate_tissue-H+sf-replicate_RIB0034991	255802910095_201403131126_S01_GE1_1105_Oct12_1_2.txt	H+sf	Homo	sapiens	prostate	male	9	1	OCD	2	None
-RIB0034938	prostate_tissue-H+dt-replicate_RIB0034938	255802910095_201403131126_S01_GE1_1105_Oct12_1_1.txt	H+dt	Homo	sapiens	prostate	male	9	1	NOCD	4	None
-RIB0034945	prostate_tissue-H+df-replicate_RIB0034945	255802910095_201403131126_S01_GE1_1105_Oct12_1_4.txt	H+df	Homo	sapiens	prostate	male	9	1	NOCD	4	None
-RIB0034992	prostate_tissue-H-sf-replicate_RIB0034992	255802910065_201403121123_S01_GE1_1105_Oct12_1_3.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034923	prostate_tissue-H+df-replicate_RIB0034923	255802910065_201403121123_S01_GE1_1105_Oct12_1_2.txt	H+df	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034913	prostate_tissue-H+dt-replicate_RIB0034913	255802910065_201403121123_S01_GE1_1105_Oct12_1_4.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034966	prostate_tissue-H-st-replicate_RIB0034966	255802910065_201403121123_S01_GE1_1105_Oct12_1_1.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034480	prostate_tissue-Ms-replicate_RIB0034480	255802910063_201403111007_S01_GE1_1105_Oct12_1_4.txt	Ms	Homo	sapiens	prostate	male	7	1	OCD	2	None
-RIB0034449	prostate_tissue-H+sf-replicate_RIB0034449	255802910063_201403111007_S01_GE1_1105_Oct12_1_3.txt	H+sf	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034428	prostate_tissue-L-replicate_RIB0034428	255802910063_201403111007_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034450	prostate_tissue-H+st-replicate_RIB0034450	255802910063_201403111007_S01_GE1_1105_Oct12_1_2.txt	H+st	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034359	prostate_tissue-L-replicate_RIB0034359	255802910049_201402270938_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034356	prostate_tissue-L-replicate_RIB0034356	255802910049_201402270938_S01_GE1_1105_Oct12_1_2.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034385	prostate_tissue-H-dt-replicate_RIB0034385	255802910049_201402270938_S01_GE1_1105_Oct12_1_4.txt	H-dt	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034316	prostate_tissue-H-df-replicate_RIB0034316	255802910049_201402270938_S01_GE1_1105_Oct12_1_1.txt	H-df	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034346	prostate_tissue-C-replicate_RIB0034346	255802910048_201402261050_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034360	prostate_tissue-V-replicate_RIB0034360	255802910048_201402261050_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034341	prostate_tissue-C-replicate_RIB0034341	255802910048_201402261050_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034392	prostate_tissue-V-replicate_RIB0034392	255802910048_201402261050_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034455	prostate_tissue-H-st-replicate_RIB0034455	255802910071_201403071145_S01_GE1_1105_Oct12_1_2.txt	H-st	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034473	prostate_tissue-H-df-replicate_RIB0034473	255802910071_201403071145_S01_GE1_1105_Oct12_1_4.txt	H-df	Homo	sapiens	prostate	male	10	None	NOCD	4	None
-RIB0034469	prostate_tissue-H-dt-replicate_RIB0034469	255802910071_201403071145_S01_GE1_1105_Oct12_1_1.txt	H-dt	Homo	sapiens	prostate	male	10	None	NOCD	4	None
-RIB0034443	prostate_tissue-H-sf-replicate_RIB0034443	255802910071_201403071145_S01_GE1_1105_Oct12_1_3.txt	H-sf	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034388	prostate_tissue-H+st-replicate_RIB0034388	255802910045_201402261159_S01_GE1_1105_Oct12_1_4.txt	H+st	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034312	prostate_tissue-L-replicate_RIB0034312	255802910045_201402261159_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034373	prostate_tissue-L-replicate_RIB0034373	255802910045_201402261159_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034246	prostate_tissue-H+sf-replicate_RIB0034246	255802910045_201402261159_S01_GE1_1105_Oct12_1_2.txt	H+sf	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034224	prostate_tissue-H-st-replicate_RIB0034224	255802910107_201402180953_S01_GE1_1105_Oct12_1_3.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034262	prostate_tissue-H-sf-replicate_RIB0034262	255802910107_201402180953_S01_GE1_1105_Oct12_1_2.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034214	prostate_tissue-Ms-replicate_RIB0034214	255802910107_201402180953_S01_GE1_1105_Oct12_1_4.txt	Ms	Homo	sapiens	prostate	male	6	1	OCD	2	None
-RIB0034267	prostate_tissue-C-replicate_RIB0034267	255802910107_201402180953_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034831	prostate_tissue-H+df-replicate_RIB0034831	255802910036_201403191343_S01_GE1_1105_Oct12_1_4.txt	H+df	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034821	prostate_tissue-V-replicate_RIB0034821	255802910036_201403191343_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034827	prostate_tissue-H+dt-replicate_RIB0034827	255802910036_201403191343_S01_GE1_1105_Oct12_1_2.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034887	prostate_tissue-C-replicate_RIB0034887	255802910036_201403191343_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034212	prostate_tissue-H-sf-replicate_RIB0034212	255802910041_201402251131_S01_GE1_1105_Oct12_1_3.txt	H-sf	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034274	prostate_tissue-L-replicate_RIB0034274	255802910041_201402251131_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034242	prostate_tissue-L-replicate_RIB0034242	255802910041_201402251131_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034289	prostate_tissue-H-st-replicate_RIB0034289	255802910041_201402251131_S01_GE1_1105_Oct12_1_2.txt	H-st	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034244	prostate_tissue-L-replicate_RIB0034244	255802910111_201402181125_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034223	prostate_tissue-V-replicate_RIB0034223	255802910111_201402181125_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034265	prostate_tissue-V-replicate_RIB0034265	255802910111_201402181125_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034294	prostate_tissue-C-replicate_RIB0034294	255802910111_201402181125_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034342	prostate_tissue-H-st-replicate_RIB0034342	255802910052_201402271047_S01_GE1_1105_Oct12_1_3.txt	H-st	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034332	prostate_tissue-H-sf-replicate_RIB0034332	255802910052_201402271047_S01_GE1_1105_Oct12_1_1.txt	H-sf	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034321	prostate_tissue-V-replicate_RIB0034321	255802910052_201402271047_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034271	prostate_tissue-L-replicate_RIB0034271	255802910108_201402181039_S01_GE1_1105_Oct12_1_2.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034204	prostate_tissue-V-replicate_RIB0034204	255802910108_201402181039_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034281	prostate_tissue-C-replicate_RIB0034281	255802910108_201402181039_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034258	prostate_tissue-L-replicate_RIB0034258	255802910108_201402181039_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034944	prostate_tissue-V-replicate_RIB0034944	255802910091_201403131103_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034954	prostate_tissue-L-replicate_RIB0034954	255802910091_201403131103_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034927	prostate_tissue-H+dt-replicate_RIB0034927	255802910091_201403131103_S01_GE1_1105_Oct12_1_2.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034970	prostate_tissue-C-replicate_RIB0034970	255802910091_201403131103_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034729	prostate_tissue-V-replicate_RIB0034729	255802910078_201403271040_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034721	prostate_tissue-H+sf-replicate_RIB0034721	255802910078_201403271040_S01_GE1_1105_Oct12_1_3.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034736	prostate_tissue-H+st-replicate_RIB0034736	255802910078_201403271040_S01_GE1_1105_Oct12_1_1.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034702	prostate_tissue-Ms-replicate_RIB0034702	255802910078_201403271040_S01_GE1_1105_Oct12_1_2.txt	Ms	Homo	sapiens	prostate	male	7	1	OCD	2	None
-RIB0034233	prostate_tissue-H+st-replicate_RIB0034233	255802910040_201402251108_S01_GE1_1105_Oct12_1_4.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	4	None
-RIB0034280	prostate_tissue-H+sf-replicate_RIB0034280	255802910040_201402251108_S01_GE1_1105_Oct12_1_2.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	4	None
-RIB0034269	prostate_tissue-L-replicate_RIB0034269	255802910040_201402251108_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034282	prostate_tissue-V-replicate_RIB0034282	255802910040_201402251108_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034792	prostate_tissue-H+sf-replicate_RIB0034792	255802910033_201403191124_S01_GE1_1105_Oct12_1_3.txt	H+sf	Homo	sapiens	prostate	male	9	1	OCD	2	None
-RIB0034783	prostate_tissue-H+st-replicate_RIB0034783	255802910033_201403191124_S01_GE1_1105_Oct12_1_4.txt	H+st	Homo	sapiens	prostate	male	9	1	OCD	2	None
-RIB0034759	prostate_tissue-Ms-replicate_RIB0034759	255802910033_201403191124_S01_GE1_1105_Oct12_1_2.txt	Ms	Homo	sapiens	prostate	male	6	1	OCD	2	None
-RIB0034772	prostate_tissue-Ms-replicate_RIB0034772	255802910033_201403191124_S01_GE1_1105_Oct12_1_1.txt	Ms	Homo	sapiens	prostate	male	7	1	NOCD	3	None
-RIB0034394	prostate_tissue-H+sf-replicate_RIB0034394	255802910044_201402261136_S01_GE1_1105_Oct12_1_3.txt	H+sf	Homo	sapiens	prostate	male	8	1	OCD	2	None
-RIB0034296	prostate_tissue-H+df-replicate_RIB0034296	255802910044_201402261136_S01_GE1_1105_Oct12_1_2.txt	H+df	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034303	prostate_tissue-H+st-replicate_RIB0034303	255802910044_201402261136_S01_GE1_1105_Oct12_1_1.txt	H+st	Homo	sapiens	prostate	male	8	1	OCD	2	None
-RIB0034370	prostate_tissue-H+dt-replicate_RIB0034370	255802910044_201402261136_S01_GE1_1105_Oct12_1_4.txt	H+dt	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034427	prostate_tissue-H-df-replicate_RIB0034427	255802910062_201403111053_S01_GE1_1105_Oct12_1_1.txt	H-df	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034491	prostate_tissue-H-dt-replicate_RIB0034491	255802910062_201403111053_S01_GE1_1105_Oct12_1_4.txt	H-dt	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034420	prostate_tissue-C-replicate_RIB0034420	255802910062_201403111053_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034408	prostate_tissue-Ms-replicate_RIB0034408	255802910062_201403111053_S01_GE1_1105_Oct12_1_2.txt	Ms	Homo	sapiens	prostate	male	6	1	NOCD	4	None
-RIB0034429	prostate_tissue-H+dt-replicate_RIB0034429	255802910061_201403111030_S01_GE1_1105_Oct12_1_2.txt	H+dt	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034487	prostate_tissue-C-replicate_RIB0034487	255802910061_201403111030_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034471	prostate_tissue-H-st-replicate_RIB0034471	255802910061_201403111030_S01_GE1_1105_Oct12_1_1.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034437	prostate_tissue-H-sf-replicate_RIB0034437	255802910061_201403111030_S01_GE1_1105_Oct12_1_4.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034727	prostate_tissue-H+dt-replicate_RIB0034727	255802910076_201403270954_S01_GE1_1105_Oct12_1_2.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034711	prostate_tissue-V-replicate_RIB0034711	255802910076_201403270954_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034731	prostate_tissue-Md-replicate_RIB0034731	255802910076_201403270954_S01_GE1_1105_Oct12_1_3.txt	Md	Homo	sapiens	prostate	male	7	1	NOCD	4	None
-RIB0034762	prostate_tissue-V-replicate_RIB0034762	255802910076_201403270954_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034939	prostate_tissue-V-replicate_RIB0034939	255802910097_201403140941_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034998	prostate_tissue-V-replicate_RIB0034998	255802910097_201403140941_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034975	prostate_tissue-C-replicate_RIB0034975	255802910097_201403140941_S01_GE1_1105_Oct12_1_2.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034941	prostate_tissue-Ms-replicate_RIB0034941	255802910097_201403140941_S01_GE1_1105_Oct12_1_3.txt	Ms	Homo	sapiens	prostate	male	7	1	OCD	2	None
-RIB0035000	prostate_tissue-C-replicate_RIB0035000	255802910090_201403131149_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034946	prostate_tissue-L-replicate_RIB0034946	255802910090_201403131149_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034985	prostate_tissue-V-replicate_RIB0034985	255802910090_201403131149_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034979	prostate_tissue-V-replicate_RIB0034979	255802910090_201403131149_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034875	prostate_tissue-H-st-replicate_RIB0034875	255802910029_201403191210_S01_GE1_1105_Oct12_1_4.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034862	prostate_tissue-C-replicate_RIB0034862	255802910029_201403191210_S01_GE1_1105_Oct12_1_2.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034812	prostate_tissue-L-replicate_RIB0034812	255802910029_201403191210_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034859	prostate_tissue-H-sf-replicate_RIB0034859	255802910029_201403191210_S01_GE1_1105_Oct12_1_1.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034448	prostate_tissue-Md-replicate_RIB0034448	255802910059_201403111139_S01_GE1_1105_Oct12_1_2.txt	Md	Homo	sapiens	prostate	male	6	1	NOCD	3	None
-RIB0034465	prostate_tissue-C-replicate_RIB0034465	255802910059_201403111139_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034421	prostate_tissue-H-sf-replicate_RIB0034421	255802910059_201403111139_S01_GE1_1105_Oct12_1_4.txt	H-sf	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034423	prostate_tissue-H-st-replicate_RIB0034423	255802910059_201403111139_S01_GE1_1105_Oct12_1_1.txt	H-st	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034486	prostate_tissue-L-replicate_RIB0034486	255802910057_201403060954_S01_GE1_1105_Oct12_1_2.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034422	prostate_tissue-H+dt-replicate_RIB0034422	255802910057_201403060954_S01_GE1_1105_Oct12_1_1.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034500	prostate_tissue-L-replicate_RIB0034500	255802910057_201403060954_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034425	prostate_tissue-Ms-replicate_RIB0034425	255802910057_201403060954_S01_GE1_1105_Oct12_1_4.txt	Ms	Homo	sapiens	prostate	male	7	1	OCD	2	None
-RIB0034478	prostate_tissue-L-replicate_RIB0034478	255802910060_201403111116_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034432	prostate_tissue-H+st-replicate_RIB0034432	255802910060_201403111116_S01_GE1_1105_Oct12_1_2.txt	H+st	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034462	prostate_tissue-L-replicate_RIB0034462	255802910060_201403111116_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034496	prostate_tissue-V-replicate_RIB0034496	255802910070_201403071209_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034489	prostate_tissue-L-replicate_RIB0034489	255802910070_201403071209_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034470	prostate_tissue-V-replicate_RIB0034470	255802910070_201403071209_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034464	prostate_tissue-H-dt-replicate_RIB0034464	255802910070_201403071209_S01_GE1_1105_Oct12_1_1.txt	H-dt	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034208	prostate_tissue-H-st-replicate_RIB0034208	255802910043_201402251218_S01_GE1_1105_Oct12_1_2.txt	H-st	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034256	prostate_tissue-H+df-replicate_RIB0034256	255802910043_201402251218_S01_GE1_1105_Oct12_1_1.txt	H+df	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034237	prostate_tissue-H-sf-replicate_RIB0034237	255802910043_201402251218_S01_GE1_1105_Oct12_1_3.txt	H-sf	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034202	prostate_tissue-H+dt-replicate_RIB0034202	255802910043_201402251218_S01_GE1_1105_Oct12_1_4.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034918	prostate_tissue-H-dt-replicate_RIB0034918	255802910096_201403141050_S01_GE1_1105_Oct12_1_3.txt	H-dt	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034957	prostate_tissue-V-replicate_RIB0034957	255802910096_201403141050_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	5	None	OCD	2	None
-RIB0034903	prostate_tissue-H-df-replicate_RIB0034903	255802910096_201403141050_S01_GE1_1105_Oct12_1_4.txt	H-df	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034928	prostate_tissue-L-replicate_RIB0034928	255802910096_201403141050_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034726	prostate_tissue-H-sf-replicate_RIB0034726	255802910077_201403271017_S01_GE1_1105_Oct12_1_1.txt	H-sf	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034751	prostate_tissue-H-st-replicate_RIB0034751	255802910077_201403271017_S01_GE1_1105_Oct12_1_3.txt	H-st	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034775	prostate_tissue-C-replicate_RIB0034775	255802910077_201403271017_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034747	prostate_tissue-V-replicate_RIB0034747	255802910077_201403271017_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034849	prostate_tissue-Ms-replicate_RIB0034849	255802910086_201403141004_S01_GE1_1105_Oct12_1_4.txt	Ms	Homo	sapiens	prostate	male	7	1	NOCD	4	None
-RIB0034880	prostate_tissue-L-replicate_RIB0034880	255802910086_201403141004_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034935	prostate_tissue-H-sf-replicate_RIB0034935	255802910086_201403141004_S01_GE1_1105_Oct12_1_2.txt	H-sf	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034914	prostate_tissue-H-st-replicate_RIB0034914	255802910086_201403141004_S01_GE1_1105_Oct12_1_1.txt	H-st	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034833	prostate_tissue-L-replicate_RIB0034833	255802910088_201403141027_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034878	prostate_tissue-H+st-replicate_RIB0034878	255802910088_201403141027_S01_GE1_1105_Oct12_1_2.txt	H+st	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034869	prostate_tissue-C-replicate_RIB0034869	255802910088_201403141027_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034838	prostate_tissue-H+sf-replicate_RIB0034838	255802910088_201403141027_S01_GE1_1105_Oct12_1_1.txt	H+sf	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034776	prostate_tissue-H-st-replicate_RIB0034776	255802910032_201403191101_S01_GE1_1105_Oct12_1_4.txt	H-st	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034889	prostate_tissue-H-sf-replicate_RIB0034889	255802910032_201403191101_S01_GE1_1105_Oct12_1_2.txt	H-sf	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034733	prostate_tissue-H+dt-replicate_RIB0034733	255802910032_201403191101_S01_GE1_1105_Oct12_1_3.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034814	prostate_tissue-C-replicate_RIB0034814	255802910032_201403191101_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034822	prostate_tissue-Ms-replicate_RIB0034822	255802910034_201403191257_S01_GE1_1105_Oct12_1_3.txt	Ms	Homo	sapiens	prostate	male	6	1	NOCD	3	None
-RIB0034835	prostate_tissue-H+sf-replicate_RIB0034835	255802910034_201403191257_S01_GE1_1105_Oct12_1_1.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034841	prostate_tissue-H+st-replicate_RIB0034841	255802910034_201403191257_S01_GE1_1105_Oct12_1_2.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034824	prostate_tissue-C-replicate_RIB0034824	255802910034_201403191257_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034402	prostate_tissue-H+sf-replicate_RIB0034402	255802910073_201403071036_S01_GE1_1105_Oct12_1_2.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034434	prostate_tissue-H+st-replicate_RIB0034434	255802910073_201403071036_S01_GE1_1105_Oct12_1_4.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034498	prostate_tissue-H-sf-replicate_RIB0034498	255802910073_201403071036_S01_GE1_1105_Oct12_1_1.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034414	prostate_tissue-H-st-replicate_RIB0034414	255802910073_201403071036_S01_GE1_1105_Oct12_1_3.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034904	prostate_tissue-L-replicate_RIB0034904	255802910066_201403121013_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034989	prostate_tissue-H+st-replicate_RIB0034989	255802910066_201403121013_S01_GE1_1105_Oct12_1_2.txt	H+st	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034958	prostate_tissue-H+sf-replicate_RIB0034958	255802910066_201403121013_S01_GE1_1105_Oct12_1_1.txt	H+sf	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034959	prostate_tissue-V-replicate_RIB0034959	255802910066_201403121013_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034871	prostate_tissue-C-replicate_RIB0034871	255802910087_201403141113_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034858	prostate_tissue-H+dt-replicate_RIB0034858	255802910087_201403141113_S01_GE1_1105_Oct12_1_2.txt	H+dt	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034882	prostate_tissue-H-st-replicate_RIB0034882	255802910087_201403141113_S01_GE1_1105_Oct12_1_1.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034843	prostate_tissue-H-sf-replicate_RIB0034843	255802910087_201403141113_S01_GE1_1105_Oct12_1_3.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034457	prostate_tissue-V-replicate_RIB0034457	255802910054_201403061126_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034459	prostate_tissue-Ms-replicate_RIB0034459	255802910054_201403061126_S01_GE1_1105_Oct12_1_2.txt	Ms	Homo	sapiens	prostate	male	7	1	NOCD	3	None
-RIB0034483	prostate_tissue-V-replicate_RIB0034483	255802910054_201403061126_S01_GE1_1105_Oct12_1_3.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034472	prostate_tissue-C-replicate_RIB0034472	255802910054_201403061126_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034995	prostate_tissue-H-df-replicate_RIB0034995	255802910064_201403121036_S01_GE1_1105_Oct12_1_2.txt	H-df	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034993	prostate_tissue-C-replicate_RIB0034993	255802910064_201403121036_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034942	prostate_tissue-V-replicate_RIB0034942	255802910064_201403121036_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034986	prostate_tissue-H-dt-replicate_RIB0034986	255802910064_201403121036_S01_GE1_1105_Oct12_1_4.txt	H-dt	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034353	prostate_tissue-V-replicate_RIB0034353	255802910047_201402261027_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034378	prostate_tissue-Ms-replicate_RIB0034378	255802910047_201402261027_S01_GE1_1105_Oct12_1_4.txt	Ms	Homo	sapiens	prostate	male	6	1	OCD	2	None
-RIB0034361	prostate_tissue-H-st-replicate_RIB0034361	255802910047_201402261027_S01_GE1_1105_Oct12_1_1.txt	H-st	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034347	prostate_tissue-H-sf-replicate_RIB0034347	255802910047_201402261027_S01_GE1_1105_Oct12_1_3.txt	H-sf	Homo	sapiens	prostate	male	8	None	OCD	2	None
-RIB0034961	prostate_tissue-V-replicate_RIB0034961	255802910067_201403120950_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034917	prostate_tissue-C-replicate_RIB0034917	255802910067_201403120950_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034976	prostate_tissue-V-replicate_RIB0034976	255802910067_201403120950_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034964	prostate_tissue-Ms-replicate_RIB0034964	255802910067_201403120950_S01_GE1_1105_Oct12_1_3.txt	Ms	Homo	sapiens	prostate	male	6	1	NOCD	4	None
-RIB0034484	prostate_tissue-V-replicate_RIB0034484	255802910056_201403061017_S01_GE1_1105_Oct12_1_4.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034458	prostate_tissue-L-replicate_RIB0034458	255802910056_201403061017_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034479	prostate_tissue-H+st-replicate_RIB0034479	255802910056_201403061017_S01_GE1_1105_Oct12_1_2.txt	H+st	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034397	prostate_tissue-H+sf-replicate_RIB0034397	255802910056_201403061017_S01_GE1_1105_Oct12_1_1.txt	H+sf	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034254	prostate_tissue-H+st-replicate_RIB0034254	255802910039_201402251045_S01_GE1_1105_Oct12_1_3.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	4	None
-RIB0034217	prostate_tissue-H+sf-replicate_RIB0034217	255802910039_201402251045_S01_GE1_1105_Oct12_1_4.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	4	None
-RIB0034227	prostate_tissue-V-replicate_RIB0034227	255802910039_201402251045_S01_GE1_1105_Oct12_1_1.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034209	prostate_tissue-C-replicate_RIB0034209	255802910039_201402251045_S01_GE1_1105_Oct12_1_2.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034239	prostate_tissue-H-dt-replicate_RIB0034239	255802910109_201402181016_S01_GE1_1105_Oct12_1_2.txt	H-dt	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034220	prostate_tissue-H+df-replicate_RIB0034220	255802910109_201402181016_S01_GE1_1105_Oct12_1_1.txt	H+df	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034228	prostate_tissue-H-df-replicate_RIB0034228	255802910109_201402181016_S01_GE1_1105_Oct12_1_4.txt	H-df	Homo	sapiens	prostate	male	9	None	NOCD	3	None
-RIB0034276	prostate_tissue-H+dt-replicate_RIB0034276	255802910109_201402181016_S01_GE1_1105_Oct12_1_3.txt	H+dt	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034830	prostate_tissue-H+st-replicate_RIB0034830	255802910037_201403191406_S01_GE1_1105_Oct12_1_1.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034864	prostate_tissue-H-st-replicate_RIB0034864	255802910037_201403191406_S01_GE1_1105_Oct12_1_3.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034815	prostate_tissue-H-sf-replicate_RIB0034815	255802910037_201403191406_S01_GE1_1105_Oct12_1_2.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034844	prostate_tissue-H+sf-replicate_RIB0034844	255802910037_201403191406_S01_GE1_1105_Oct12_1_4.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034977	prostate_tissue-H-sf-replicate_RIB0034977	255802910089_201403131212_S01_GE1_1105_Oct12_1_3.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034984	prostate_tissue-H-st-replicate_RIB0034984	255802910089_201403131212_S01_GE1_1105_Oct12_1_1.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034963	prostate_tissue-H+sf-replicate_RIB0034963	255802910089_201403131212_S01_GE1_1105_Oct12_1_4.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034972	prostate_tissue-H+st-replicate_RIB0034972	255802910089_201403131212_S01_GE1_1105_Oct12_1_2.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034883	prostate_tissue-H+sf-replicate_RIB0034883	255802910030_201403191147_S01_GE1_1105_Oct12_1_3.txt	H+sf	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034794	prostate_tissue-H+st-replicate_RIB0034794	255802910030_201403191147_S01_GE1_1105_Oct12_1_4.txt	H+st	Homo	sapiens	prostate	male	9	1	NOCD	3	None
-RIB0034780	prostate_tissue-V-replicate_RIB0034780	255802910030_201403191147_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034760	prostate_tissue-C-replicate_RIB0034760	255802910030_201403191147_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034779	prostate_tissue-L-replicate_RIB0034779	255802910031_201403191233_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034767	prostate_tissue-H-dt-replicate_RIB0034767	255802910031_201403191233_S01_GE1_1105_Oct12_1_3.txt	H-dt	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034886	prostate_tissue-L-replicate_RIB0034886	255802910031_201403191233_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034777	prostate_tissue-V-replicate_RIB0034777	255802910031_201403191233_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034454	prostate_tissue-C-replicate_RIB0034454	255802910072_201403071122_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034410	prostate_tissue-C-replicate_RIB0034410	255802910072_201403071122_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034415	prostate_tissue-L-replicate_RIB0034415	255802910072_201403071122_S01_GE1_1105_Oct12_1_3.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034404	prostate_tissue-C-replicate_RIB0034404	255802910072_201403071122_S01_GE1_1105_Oct12_1_2.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034364	prostate_tissue-H+sf-replicate_RIB0034364	255802910051_201402271024_S01_GE1_1105_Oct12_1_2.txt	H+sf	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034315	prostate_tissue-H+st-replicate_RIB0034315	255802910051_201402271024_S01_GE1_1105_Oct12_1_4.txt	H+st	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034323	prostate_tissue-H+dt-replicate_RIB0034323	255802910051_201402271024_S01_GE1_1105_Oct12_1_3.txt	H+dt	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034344	prostate_tissue-H+df-replicate_RIB0034344	255802910051_201402271024_S01_GE1_1105_Oct12_1_1.txt	H+df	Homo	sapiens	prostate	male	8	1	NOCD	4	None
-RIB0034340	prostate_tissue-L-replicate_RIB0034340	255802910046_201402261113_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034372	prostate_tissue-Ms-replicate_RIB0034372	255802910046_201402261113_S01_GE1_1105_Oct12_1_3.txt	Ms	Homo	sapiens	prostate	male	7	1	NOCD	3	None
-RIB0034350	prostate_tissue-C-replicate_RIB0034350	255802910046_201402261113_S01_GE1_1105_Oct12_1_2.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034383	prostate_tissue-L-replicate_RIB0034383	255802910046_201402261113_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034664	prostate_tissue-H+sf-replicate_RIB0034664	255802910082_201404080825_S01_GE1_1105_Oct12_1_1.txt	H+sf	Homo	sapiens	prostate	male	8	1	NOCD	3	None
-RIB0034683	prostate_tissue-L-replicate_RIB0034683	255802910082_201404080825_S01_GE1_1105_Oct12_1_2.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034653	prostate_tissue-C-replicate_RIB0034653	255802910082_201404080825_S01_GE1_1105_Oct12_1_4.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034687	prostate_tissue-C-replicate_RIB0034687	255802910082_201404080825_S01_GE1_1105_Oct12_1_3.txt	C	Homo	sapiens	prostate	male	None	None	None	None	OTHER
-RIB0034826	prostate_tissue-L-replicate_RIB0034826	255802910035_201403191320_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034819	prostate_tissue-H-st-replicate_RIB0034819	255802910035_201403191320_S01_GE1_1105_Oct12_1_2.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034829	prostate_tissue-H-sf-replicate_RIB0034829	255802910035_201403191320_S01_GE1_1105_Oct12_1_4.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	3	None
-RIB0034818	prostate_tissue-Ms-replicate_RIB0034818	255802910035_201403191320_S01_GE1_1105_Oct12_1_3.txt	Ms	Homo	sapiens	prostate	male	7	1	NOCD	3	None
-RIB0034494	prostate_tissue-C-replicate_RIB0034494	255802910055_201403061040_S01_GE1_1105_Oct12_1_1.txt	C	Homo	sapiens	prostate	male	None	None	None	None	BLADDER_CANCER
-RIB0034304	prostate_tissue-H-sf-replicate_RIB0034304	255802910055_201403061040_S01_GE1_1105_Oct12_1_2.txt	H-sf	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034326	prostate_tissue-H-st-replicate_RIB0034326	255802910055_201403061040_S01_GE1_1105_Oct12_1_3.txt	H-st	Homo	sapiens	prostate	male	8	None	NOCD	4	None
-RIB0034485	prostate_tissue-Md-replicate_RIB0034485	255802910055_201403061040_S01_GE1_1105_Oct12_1_4.txt	Md	Homo	sapiens	prostate	male	7	1	NOCD	4	None
-RIB0034497	prostate_tissue-Ms-replicate_RIB0034497	255802910074_201403071059_S01_GE1_1105_Oct12_1_3.txt	Ms	Homo	sapiens	prostate	male	6	1	NOCD	4	None
-RIB0034403	prostate_tissue-L-replicate_RIB0034403	255802910074_201403071059_S01_GE1_1105_Oct12_1_1.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
-RIB0034409	prostate_tissue-V-replicate_RIB0034409	255802910074_201403071059_S01_GE1_1105_Oct12_1_2.txt	V	Homo	sapiens	prostate	male	6	None	OCD	2	None
-RIB0034401	prostate_tissue-L-replicate_RIB0034401	255802910074_201403071059_S01_GE1_1105_Oct12_1_4.txt	L	Homo	sapiens	prostate	male	7	None	OCD	2	None
+Name	prostate_tissue-Group-replicate_Name	File	Group	Gleason	Lstat	OrganConfined	PathoState	Control_status
+RIB0034345	prostate_tissue-C-replicate_RIB0034345	255802910053_201402271110_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	OTHER
+RIB0034351	prostate_tissue-C-replicate_RIB0034351	255802910053_201402271110_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	OTHER
+RIB0034387	prostate_tissue-V-replicate_RIB0034387	255802910053_201402271110_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034306	prostate_tissue-Ms-replicate_RIB0034306	255802910053_201402271110_S01_GE1_1105_Oct12_1_1.txt	Ms	6	1	OCD	2	None
+RIB0034810	prostate_tissue-V-replicate_RIB0034810	255802910038_201403191429_S01_GE1_1105_Oct12_1_3.txt	V	5	None	OCD	2	None
+RIB0034900	prostate_tissue-L-replicate_RIB0034900	255802910038_201403191429_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034235	prostate_tissue-H+st-replicate_RIB0034235	255802910110_201402181102_S01_GE1_1105_Oct12_1_3.txt	H+st	8	1	OCD	2	None
+RIB0034257	prostate_tissue-H+sf-replicate_RIB0034257	255802910110_201402181102_S01_GE1_1105_Oct12_1_2.txt	H+sf	8	1	OCD	2	None
+RIB0034299	prostate_tissue-V-replicate_RIB0034299	255802910110_201402181102_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034297	prostate_tissue-V-replicate_RIB0034297	255802910110_201402181102_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034226	prostate_tissue-V-replicate_RIB0034226	255802910042_201402251154_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034238	prostate_tissue-C-replicate_RIB0034238	255802910042_201402251154_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034201	prostate_tissue-C-replicate_RIB0034201	255802910042_201402251154_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034207	prostate_tissue-Ms-replicate_RIB0034207	255802910042_201402251154_S01_GE1_1105_Oct12_1_1.txt	Ms	7	1	OCD	2	None
+RIB0034916	prostate_tissue-V-replicate_RIB0034916	255802910094_201403131040_S01_GE1_1105_Oct12_1_3.txt	V	6	None	OCD	2	None
+RIB0034971	prostate_tissue-C-replicate_RIB0034971	255802910094_201403131040_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034956	prostate_tissue-L-replicate_RIB0034956	255802910094_201403131040_S01_GE1_1105_Oct12_1_2.txt	L	7	None	OCD	2	None
+RIB0034983	prostate_tissue-Ms-replicate_RIB0034983	255802910094_201403131040_S01_GE1_1105_Oct12_1_4.txt	Ms	7	1	NOCD	4	None
+RIB0034756	prostate_tissue-L-replicate_RIB0034756	255802910075_201403270931_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034742	prostate_tissue-C-replicate_RIB0034742	255802910075_201403270931_S01_GE1_1105_Oct12_1_2.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034798	prostate_tissue-L-replicate_RIB0034798	255802910075_201403270931_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034755	prostate_tissue-C-replicate_RIB0034755	255802910075_201403270931_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034905	prostate_tissue-Ms-replicate_RIB0034905	255802910068_201403121059_S01_GE1_1105_Oct12_1_1.txt	Ms	7	1	NOCD	4	None
+RIB0034951	prostate_tissue-L-replicate_RIB0034951	255802910068_201403121059_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034967	prostate_tissue-C-replicate_RIB0034967	255802910068_201403121059_S01_GE1_1105_Oct12_1_2.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034936	prostate_tissue-L-replicate_RIB0034936	255802910068_201403121059_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034477	prostate_tissue-H-st-replicate_RIB0034477	255802910058_201403061103_S01_GE1_1105_Oct12_1_2.txt	H-st	8	None	NOCD	3	None
+RIB0034493	prostate_tissue-C-replicate_RIB0034493	255802910058_201403061103_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	OTHER
+RIB0034482	prostate_tissue-H-sf-replicate_RIB0034482	255802910058_201403061103_S01_GE1_1105_Oct12_1_1.txt	H-sf	8	None	NOCD	3	None
+RIB0034475	prostate_tissue-V-replicate_RIB0034475	255802910058_201403061103_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034377	prostate_tissue-H+dt-replicate_RIB0034377	255802910050_201402271001_S01_GE1_1105_Oct12_1_4.txt	H+dt	8	1	NOCD	4	None
+RIB0034320	prostate_tissue-L-replicate_RIB0034320	255802910050_201402271001_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034390	prostate_tissue-V-replicate_RIB0034390	255802910050_201402271001_S01_GE1_1105_Oct12_1_3.txt	V	6	None	OCD	2	None
+RIB0034921	prostate_tissue-H+st-replicate_RIB0034921	255802910095_201403131126_S01_GE1_1105_Oct12_1_3.txt	H+st	9	1	OCD	2	None
+RIB0034991	prostate_tissue-H+sf-replicate_RIB0034991	255802910095_201403131126_S01_GE1_1105_Oct12_1_2.txt	H+sf	9	1	OCD	2	None
+RIB0034938	prostate_tissue-H+dt-replicate_RIB0034938	255802910095_201403131126_S01_GE1_1105_Oct12_1_1.txt	H+dt	9	1	NOCD	4	None
+RIB0034945	prostate_tissue-H+df-replicate_RIB0034945	255802910095_201403131126_S01_GE1_1105_Oct12_1_4.txt	H+df	9	1	NOCD	4	None
+RIB0034992	prostate_tissue-H-sf-replicate_RIB0034992	255802910065_201403121123_S01_GE1_1105_Oct12_1_3.txt	H-sf	8	None	NOCD	4	None
+RIB0034923	prostate_tissue-H+df-replicate_RIB0034923	255802910065_201403121123_S01_GE1_1105_Oct12_1_2.txt	H+df	8	1	NOCD	3	None
+RIB0034913	prostate_tissue-H+dt-replicate_RIB0034913	255802910065_201403121123_S01_GE1_1105_Oct12_1_4.txt	H+dt	8	1	NOCD	3	None
+RIB0034966	prostate_tissue-H-st-replicate_RIB0034966	255802910065_201403121123_S01_GE1_1105_Oct12_1_1.txt	H-st	8	None	NOCD	4	None
+RIB0034480	prostate_tissue-Ms-replicate_RIB0034480	255802910063_201403111007_S01_GE1_1105_Oct12_1_4.txt	Ms	7	1	OCD	2	None
+RIB0034449	prostate_tissue-H+sf-replicate_RIB0034449	255802910063_201403111007_S01_GE1_1105_Oct12_1_3.txt	H+sf	8	1	NOCD	3	None
+RIB0034428	prostate_tissue-L-replicate_RIB0034428	255802910063_201403111007_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034450	prostate_tissue-H+st-replicate_RIB0034450	255802910063_201403111007_S01_GE1_1105_Oct12_1_2.txt	H+st	8	1	NOCD	3	None
+RIB0034359	prostate_tissue-L-replicate_RIB0034359	255802910049_201402270938_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034356	prostate_tissue-L-replicate_RIB0034356	255802910049_201402270938_S01_GE1_1105_Oct12_1_2.txt	L	7	None	OCD	2	None
+RIB0034385	prostate_tissue-H-dt-replicate_RIB0034385	255802910049_201402270938_S01_GE1_1105_Oct12_1_4.txt	H-dt	8	None	NOCD	4	None
+RIB0034316	prostate_tissue-H-df-replicate_RIB0034316	255802910049_201402270938_S01_GE1_1105_Oct12_1_1.txt	H-df	8	None	NOCD	4	None
+RIB0034346	prostate_tissue-C-replicate_RIB0034346	255802910048_201402261050_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	OTHER
+RIB0034360	prostate_tissue-V-replicate_RIB0034360	255802910048_201402261050_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034341	prostate_tissue-C-replicate_RIB0034341	255802910048_201402261050_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034392	prostate_tissue-V-replicate_RIB0034392	255802910048_201402261050_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034455	prostate_tissue-H-st-replicate_RIB0034455	255802910071_201403071145_S01_GE1_1105_Oct12_1_2.txt	H-st	9	None	NOCD	3	None
+RIB0034473	prostate_tissue-H-df-replicate_RIB0034473	255802910071_201403071145_S01_GE1_1105_Oct12_1_4.txt	H-df	10	None	NOCD	4	None
+RIB0034469	prostate_tissue-H-dt-replicate_RIB0034469	255802910071_201403071145_S01_GE1_1105_Oct12_1_1.txt	H-dt	10	None	NOCD	4	None
+RIB0034443	prostate_tissue-H-sf-replicate_RIB0034443	255802910071_201403071145_S01_GE1_1105_Oct12_1_3.txt	H-sf	9	None	NOCD	3	None
+RIB0034388	prostate_tissue-H+st-replicate_RIB0034388	255802910045_201402261159_S01_GE1_1105_Oct12_1_4.txt	H+st	8	1	NOCD	4	None
+RIB0034312	prostate_tissue-L-replicate_RIB0034312	255802910045_201402261159_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034373	prostate_tissue-L-replicate_RIB0034373	255802910045_201402261159_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034246	prostate_tissue-H+sf-replicate_RIB0034246	255802910045_201402261159_S01_GE1_1105_Oct12_1_2.txt	H+sf	8	1	NOCD	4	None
+RIB0034224	prostate_tissue-H-st-replicate_RIB0034224	255802910107_201402180953_S01_GE1_1105_Oct12_1_3.txt	H-st	8	None	NOCD	3	None
+RIB0034262	prostate_tissue-H-sf-replicate_RIB0034262	255802910107_201402180953_S01_GE1_1105_Oct12_1_2.txt	H-sf	8	None	NOCD	3	None
+RIB0034214	prostate_tissue-Ms-replicate_RIB0034214	255802910107_201402180953_S01_GE1_1105_Oct12_1_4.txt	Ms	6	1	OCD	2	None
+RIB0034267	prostate_tissue-C-replicate_RIB0034267	255802910107_201402180953_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	OTHER
+RIB0034831	prostate_tissue-H+df-replicate_RIB0034831	255802910036_201403191343_S01_GE1_1105_Oct12_1_4.txt	H+df	8	1	NOCD	4	None
+RIB0034821	prostate_tissue-V-replicate_RIB0034821	255802910036_201403191343_S01_GE1_1105_Oct12_1_3.txt	V	6	None	OCD	2	None
+RIB0034827	prostate_tissue-H+dt-replicate_RIB0034827	255802910036_201403191343_S01_GE1_1105_Oct12_1_2.txt	H+dt	8	1	NOCD	4	None
+RIB0034887	prostate_tissue-C-replicate_RIB0034887	255802910036_201403191343_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034212	prostate_tissue-H-sf-replicate_RIB0034212	255802910041_201402251131_S01_GE1_1105_Oct12_1_3.txt	H-sf	9	None	NOCD	3	None
+RIB0034274	prostate_tissue-L-replicate_RIB0034274	255802910041_201402251131_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034242	prostate_tissue-L-replicate_RIB0034242	255802910041_201402251131_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034289	prostate_tissue-H-st-replicate_RIB0034289	255802910041_201402251131_S01_GE1_1105_Oct12_1_2.txt	H-st	9	None	NOCD	3	None
+RIB0034244	prostate_tissue-L-replicate_RIB0034244	255802910111_201402181125_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034223	prostate_tissue-V-replicate_RIB0034223	255802910111_201402181125_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034265	prostate_tissue-V-replicate_RIB0034265	255802910111_201402181125_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034294	prostate_tissue-C-replicate_RIB0034294	255802910111_201402181125_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034342	prostate_tissue-H-st-replicate_RIB0034342	255802910052_201402271047_S01_GE1_1105_Oct12_1_3.txt	H-st	8	None	OCD	2	None
+RIB0034332	prostate_tissue-H-sf-replicate_RIB0034332	255802910052_201402271047_S01_GE1_1105_Oct12_1_1.txt	H-sf	8	None	OCD	2	None
+RIB0034321	prostate_tissue-V-replicate_RIB0034321	255802910052_201402271047_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034271	prostate_tissue-L-replicate_RIB0034271	255802910108_201402181039_S01_GE1_1105_Oct12_1_2.txt	L	7	None	OCD	2	None
+RIB0034204	prostate_tissue-V-replicate_RIB0034204	255802910108_201402181039_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034281	prostate_tissue-C-replicate_RIB0034281	255802910108_201402181039_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	OTHER
+RIB0034258	prostate_tissue-L-replicate_RIB0034258	255802910108_201402181039_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034944	prostate_tissue-V-replicate_RIB0034944	255802910091_201403131103_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034954	prostate_tissue-L-replicate_RIB0034954	255802910091_201403131103_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034927	prostate_tissue-H+dt-replicate_RIB0034927	255802910091_201403131103_S01_GE1_1105_Oct12_1_2.txt	H+dt	8	1	NOCD	3	None
+RIB0034970	prostate_tissue-C-replicate_RIB0034970	255802910091_201403131103_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034729	prostate_tissue-V-replicate_RIB0034729	255802910078_201403271040_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034721	prostate_tissue-H+sf-replicate_RIB0034721	255802910078_201403271040_S01_GE1_1105_Oct12_1_3.txt	H+sf	9	1	NOCD	3	None
+RIB0034736	prostate_tissue-H+st-replicate_RIB0034736	255802910078_201403271040_S01_GE1_1105_Oct12_1_1.txt	H+st	9	1	NOCD	3	None
+RIB0034702	prostate_tissue-Ms-replicate_RIB0034702	255802910078_201403271040_S01_GE1_1105_Oct12_1_2.txt	Ms	7	1	OCD	2	None
+RIB0034233	prostate_tissue-H+st-replicate_RIB0034233	255802910040_201402251108_S01_GE1_1105_Oct12_1_4.txt	H+st	9	1	NOCD	4	None
+RIB0034280	prostate_tissue-H+sf-replicate_RIB0034280	255802910040_201402251108_S01_GE1_1105_Oct12_1_2.txt	H+sf	9	1	NOCD	4	None
+RIB0034269	prostate_tissue-L-replicate_RIB0034269	255802910040_201402251108_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034282	prostate_tissue-V-replicate_RIB0034282	255802910040_201402251108_S01_GE1_1105_Oct12_1_3.txt	V	6	None	OCD	2	None
+RIB0034792	prostate_tissue-H+sf-replicate_RIB0034792	255802910033_201403191124_S01_GE1_1105_Oct12_1_3.txt	H+sf	9	1	OCD	2	None
+RIB0034783	prostate_tissue-H+st-replicate_RIB0034783	255802910033_201403191124_S01_GE1_1105_Oct12_1_4.txt	H+st	9	1	OCD	2	None
+RIB0034759	prostate_tissue-Ms-replicate_RIB0034759	255802910033_201403191124_S01_GE1_1105_Oct12_1_2.txt	Ms	6	1	OCD	2	None
+RIB0034772	prostate_tissue-Ms-replicate_RIB0034772	255802910033_201403191124_S01_GE1_1105_Oct12_1_1.txt	Ms	7	1	NOCD	3	None
+RIB0034394	prostate_tissue-H+sf-replicate_RIB0034394	255802910044_201402261136_S01_GE1_1105_Oct12_1_3.txt	H+sf	8	1	OCD	2	None
+RIB0034296	prostate_tissue-H+df-replicate_RIB0034296	255802910044_201402261136_S01_GE1_1105_Oct12_1_2.txt	H+df	9	1	NOCD	3	None
+RIB0034303	prostate_tissue-H+st-replicate_RIB0034303	255802910044_201402261136_S01_GE1_1105_Oct12_1_1.txt	H+st	8	1	OCD	2	None
+RIB0034370	prostate_tissue-H+dt-replicate_RIB0034370	255802910044_201402261136_S01_GE1_1105_Oct12_1_4.txt	H+dt	9	1	NOCD	3	None
+RIB0034427	prostate_tissue-H-df-replicate_RIB0034427	255802910062_201403111053_S01_GE1_1105_Oct12_1_1.txt	H-df	9	None	NOCD	3	None
+RIB0034491	prostate_tissue-H-dt-replicate_RIB0034491	255802910062_201403111053_S01_GE1_1105_Oct12_1_4.txt	H-dt	9	None	NOCD	3	None
+RIB0034420	prostate_tissue-C-replicate_RIB0034420	255802910062_201403111053_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034408	prostate_tissue-Ms-replicate_RIB0034408	255802910062_201403111053_S01_GE1_1105_Oct12_1_2.txt	Ms	6	1	NOCD	4	None
+RIB0034429	prostate_tissue-H+dt-replicate_RIB0034429	255802910061_201403111030_S01_GE1_1105_Oct12_1_2.txt	H+dt	9	1	NOCD	3	None
+RIB0034487	prostate_tissue-C-replicate_RIB0034487	255802910061_201403111030_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034471	prostate_tissue-H-st-replicate_RIB0034471	255802910061_201403111030_S01_GE1_1105_Oct12_1_1.txt	H-st	8	None	NOCD	3	None
+RIB0034437	prostate_tissue-H-sf-replicate_RIB0034437	255802910061_201403111030_S01_GE1_1105_Oct12_1_4.txt	H-sf	8	None	NOCD	3	None
+RIB0034727	prostate_tissue-H+dt-replicate_RIB0034727	255802910076_201403270954_S01_GE1_1105_Oct12_1_2.txt	H+dt	8	1	NOCD	3	None
+RIB0034711	prostate_tissue-V-replicate_RIB0034711	255802910076_201403270954_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034731	prostate_tissue-Md-replicate_RIB0034731	255802910076_201403270954_S01_GE1_1105_Oct12_1_3.txt	Md	7	1	NOCD	4	None
+RIB0034762	prostate_tissue-V-replicate_RIB0034762	255802910076_201403270954_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034939	prostate_tissue-V-replicate_RIB0034939	255802910097_201403140941_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034998	prostate_tissue-V-replicate_RIB0034998	255802910097_201403140941_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034975	prostate_tissue-C-replicate_RIB0034975	255802910097_201403140941_S01_GE1_1105_Oct12_1_2.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034941	prostate_tissue-Ms-replicate_RIB0034941	255802910097_201403140941_S01_GE1_1105_Oct12_1_3.txt	Ms	7	1	OCD	2	None
+RIB0035000	prostate_tissue-C-replicate_RIB0035000	255802910090_201403131149_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034946	prostate_tissue-L-replicate_RIB0034946	255802910090_201403131149_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034985	prostate_tissue-V-replicate_RIB0034985	255802910090_201403131149_S01_GE1_1105_Oct12_1_3.txt	V	6	None	OCD	2	None
+RIB0034979	prostate_tissue-V-replicate_RIB0034979	255802910090_201403131149_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034875	prostate_tissue-H-st-replicate_RIB0034875	255802910029_201403191210_S01_GE1_1105_Oct12_1_4.txt	H-st	8	None	NOCD	3	None
+RIB0034862	prostate_tissue-C-replicate_RIB0034862	255802910029_201403191210_S01_GE1_1105_Oct12_1_2.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034812	prostate_tissue-L-replicate_RIB0034812	255802910029_201403191210_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034859	prostate_tissue-H-sf-replicate_RIB0034859	255802910029_201403191210_S01_GE1_1105_Oct12_1_1.txt	H-sf	8	None	NOCD	3	None
+RIB0034448	prostate_tissue-Md-replicate_RIB0034448	255802910059_201403111139_S01_GE1_1105_Oct12_1_2.txt	Md	6	1	NOCD	3	None
+RIB0034465	prostate_tissue-C-replicate_RIB0034465	255802910059_201403111139_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034421	prostate_tissue-H-sf-replicate_RIB0034421	255802910059_201403111139_S01_GE1_1105_Oct12_1_4.txt	H-sf	9	None	NOCD	3	None
+RIB0034423	prostate_tissue-H-st-replicate_RIB0034423	255802910059_201403111139_S01_GE1_1105_Oct12_1_1.txt	H-st	9	None	NOCD	3	None
+RIB0034486	prostate_tissue-L-replicate_RIB0034486	255802910057_201403060954_S01_GE1_1105_Oct12_1_2.txt	L	7	None	OCD	2	None
+RIB0034422	prostate_tissue-H+dt-replicate_RIB0034422	255802910057_201403060954_S01_GE1_1105_Oct12_1_1.txt	H+dt	8	1	NOCD	4	None
+RIB0034500	prostate_tissue-L-replicate_RIB0034500	255802910057_201403060954_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034425	prostate_tissue-Ms-replicate_RIB0034425	255802910057_201403060954_S01_GE1_1105_Oct12_1_4.txt	Ms	7	1	OCD	2	None
+RIB0034478	prostate_tissue-L-replicate_RIB0034478	255802910060_201403111116_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034432	prostate_tissue-H+st-replicate_RIB0034432	255802910060_201403111116_S01_GE1_1105_Oct12_1_2.txt	H+st	8	1	NOCD	3	None
+RIB0034462	prostate_tissue-L-replicate_RIB0034462	255802910060_201403111116_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034496	prostate_tissue-V-replicate_RIB0034496	255802910070_201403071209_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034489	prostate_tissue-L-replicate_RIB0034489	255802910070_201403071209_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034470	prostate_tissue-V-replicate_RIB0034470	255802910070_201403071209_S01_GE1_1105_Oct12_1_3.txt	V	6	None	OCD	2	None
+RIB0034464	prostate_tissue-H-dt-replicate_RIB0034464	255802910070_201403071209_S01_GE1_1105_Oct12_1_1.txt	H-dt	9	None	NOCD	3	None
+RIB0034208	prostate_tissue-H-st-replicate_RIB0034208	255802910043_201402251218_S01_GE1_1105_Oct12_1_2.txt	H-st	9	None	NOCD	3	None
+RIB0034256	prostate_tissue-H+df-replicate_RIB0034256	255802910043_201402251218_S01_GE1_1105_Oct12_1_1.txt	H+df	8	1	NOCD	4	None
+RIB0034237	prostate_tissue-H-sf-replicate_RIB0034237	255802910043_201402251218_S01_GE1_1105_Oct12_1_3.txt	H-sf	9	None	NOCD	3	None
+RIB0034202	prostate_tissue-H+dt-replicate_RIB0034202	255802910043_201402251218_S01_GE1_1105_Oct12_1_4.txt	H+dt	8	1	NOCD	4	None
+RIB0034918	prostate_tissue-H-dt-replicate_RIB0034918	255802910096_201403141050_S01_GE1_1105_Oct12_1_3.txt	H-dt	9	None	NOCD	3	None
+RIB0034957	prostate_tissue-V-replicate_RIB0034957	255802910096_201403141050_S01_GE1_1105_Oct12_1_2.txt	V	5	None	OCD	2	None
+RIB0034903	prostate_tissue-H-df-replicate_RIB0034903	255802910096_201403141050_S01_GE1_1105_Oct12_1_4.txt	H-df	9	None	NOCD	3	None
+RIB0034928	prostate_tissue-L-replicate_RIB0034928	255802910096_201403141050_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034726	prostate_tissue-H-sf-replicate_RIB0034726	255802910077_201403271017_S01_GE1_1105_Oct12_1_1.txt	H-sf	8	None	OCD	2	None
+RIB0034751	prostate_tissue-H-st-replicate_RIB0034751	255802910077_201403271017_S01_GE1_1105_Oct12_1_3.txt	H-st	8	None	OCD	2	None
+RIB0034775	prostate_tissue-C-replicate_RIB0034775	255802910077_201403271017_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034747	prostate_tissue-V-replicate_RIB0034747	255802910077_201403271017_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034849	prostate_tissue-Ms-replicate_RIB0034849	255802910086_201403141004_S01_GE1_1105_Oct12_1_4.txt	Ms	7	1	NOCD	4	None
+RIB0034880	prostate_tissue-L-replicate_RIB0034880	255802910086_201403141004_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034935	prostate_tissue-H-sf-replicate_RIB0034935	255802910086_201403141004_S01_GE1_1105_Oct12_1_2.txt	H-sf	8	None	OCD	2	None
+RIB0034914	prostate_tissue-H-st-replicate_RIB0034914	255802910086_201403141004_S01_GE1_1105_Oct12_1_1.txt	H-st	8	None	OCD	2	None
+RIB0034833	prostate_tissue-L-replicate_RIB0034833	255802910088_201403141027_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034878	prostate_tissue-H+st-replicate_RIB0034878	255802910088_201403141027_S01_GE1_1105_Oct12_1_2.txt	H+st	8	1	NOCD	3	None
+RIB0034869	prostate_tissue-C-replicate_RIB0034869	255802910088_201403141027_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034838	prostate_tissue-H+sf-replicate_RIB0034838	255802910088_201403141027_S01_GE1_1105_Oct12_1_1.txt	H+sf	8	1	NOCD	3	None
+RIB0034776	prostate_tissue-H-st-replicate_RIB0034776	255802910032_201403191101_S01_GE1_1105_Oct12_1_4.txt	H-st	8	None	OCD	2	None
+RIB0034889	prostate_tissue-H-sf-replicate_RIB0034889	255802910032_201403191101_S01_GE1_1105_Oct12_1_2.txt	H-sf	8	None	OCD	2	None
+RIB0034733	prostate_tissue-H+dt-replicate_RIB0034733	255802910032_201403191101_S01_GE1_1105_Oct12_1_3.txt	H+dt	8	1	NOCD	3	None
+RIB0034814	prostate_tissue-C-replicate_RIB0034814	255802910032_201403191101_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034822	prostate_tissue-Ms-replicate_RIB0034822	255802910034_201403191257_S01_GE1_1105_Oct12_1_3.txt	Ms	6	1	NOCD	3	None
+RIB0034835	prostate_tissue-H+sf-replicate_RIB0034835	255802910034_201403191257_S01_GE1_1105_Oct12_1_1.txt	H+sf	9	1	NOCD	3	None
+RIB0034841	prostate_tissue-H+st-replicate_RIB0034841	255802910034_201403191257_S01_GE1_1105_Oct12_1_2.txt	H+st	9	1	NOCD	3	None
+RIB0034824	prostate_tissue-C-replicate_RIB0034824	255802910034_201403191257_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034402	prostate_tissue-H+sf-replicate_RIB0034402	255802910073_201403071036_S01_GE1_1105_Oct12_1_2.txt	H+sf	9	1	NOCD	3	None
+RIB0034434	prostate_tissue-H+st-replicate_RIB0034434	255802910073_201403071036_S01_GE1_1105_Oct12_1_4.txt	H+st	9	1	NOCD	3	None
+RIB0034498	prostate_tissue-H-sf-replicate_RIB0034498	255802910073_201403071036_S01_GE1_1105_Oct12_1_1.txt	H-sf	8	None	NOCD	4	None
+RIB0034414	prostate_tissue-H-st-replicate_RIB0034414	255802910073_201403071036_S01_GE1_1105_Oct12_1_3.txt	H-st	8	None	NOCD	4	None
+RIB0034904	prostate_tissue-L-replicate_RIB0034904	255802910066_201403121013_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034989	prostate_tissue-H+st-replicate_RIB0034989	255802910066_201403121013_S01_GE1_1105_Oct12_1_2.txt	H+st	8	1	NOCD	4	None
+RIB0034958	prostate_tissue-H+sf-replicate_RIB0034958	255802910066_201403121013_S01_GE1_1105_Oct12_1_1.txt	H+sf	8	1	NOCD	4	None
+RIB0034959	prostate_tissue-V-replicate_RIB0034959	255802910066_201403121013_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034871	prostate_tissue-C-replicate_RIB0034871	255802910087_201403141113_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034858	prostate_tissue-H+dt-replicate_RIB0034858	255802910087_201403141113_S01_GE1_1105_Oct12_1_2.txt	H+dt	9	1	NOCD	3	None
+RIB0034882	prostate_tissue-H-st-replicate_RIB0034882	255802910087_201403141113_S01_GE1_1105_Oct12_1_1.txt	H-st	8	None	NOCD	4	None
+RIB0034843	prostate_tissue-H-sf-replicate_RIB0034843	255802910087_201403141113_S01_GE1_1105_Oct12_1_3.txt	H-sf	8	None	NOCD	4	None
+RIB0034457	prostate_tissue-V-replicate_RIB0034457	255802910054_201403061126_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034459	prostate_tissue-Ms-replicate_RIB0034459	255802910054_201403061126_S01_GE1_1105_Oct12_1_2.txt	Ms	7	1	NOCD	3	None
+RIB0034483	prostate_tissue-V-replicate_RIB0034483	255802910054_201403061126_S01_GE1_1105_Oct12_1_3.txt	V	6	None	OCD	2	None
+RIB0034472	prostate_tissue-C-replicate_RIB0034472	255802910054_201403061126_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	OTHER
+RIB0034995	prostate_tissue-H-df-replicate_RIB0034995	255802910064_201403121036_S01_GE1_1105_Oct12_1_2.txt	H-df	8	None	NOCD	3	None
+RIB0034993	prostate_tissue-C-replicate_RIB0034993	255802910064_201403121036_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034942	prostate_tissue-V-replicate_RIB0034942	255802910064_201403121036_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034986	prostate_tissue-H-dt-replicate_RIB0034986	255802910064_201403121036_S01_GE1_1105_Oct12_1_4.txt	H-dt	8	None	NOCD	3	None
+RIB0034353	prostate_tissue-V-replicate_RIB0034353	255802910047_201402261027_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034378	prostate_tissue-Ms-replicate_RIB0034378	255802910047_201402261027_S01_GE1_1105_Oct12_1_4.txt	Ms	6	1	OCD	2	None
+RIB0034361	prostate_tissue-H-st-replicate_RIB0034361	255802910047_201402261027_S01_GE1_1105_Oct12_1_1.txt	H-st	8	None	OCD	2	None
+RIB0034347	prostate_tissue-H-sf-replicate_RIB0034347	255802910047_201402261027_S01_GE1_1105_Oct12_1_3.txt	H-sf	8	None	OCD	2	None
+RIB0034961	prostate_tissue-V-replicate_RIB0034961	255802910067_201403120950_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034917	prostate_tissue-C-replicate_RIB0034917	255802910067_201403120950_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034976	prostate_tissue-V-replicate_RIB0034976	255802910067_201403120950_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034964	prostate_tissue-Ms-replicate_RIB0034964	255802910067_201403120950_S01_GE1_1105_Oct12_1_3.txt	Ms	6	1	NOCD	4	None
+RIB0034484	prostate_tissue-V-replicate_RIB0034484	255802910056_201403061017_S01_GE1_1105_Oct12_1_4.txt	V	6	None	OCD	2	None
+RIB0034458	prostate_tissue-L-replicate_RIB0034458	255802910056_201403061017_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034479	prostate_tissue-H+st-replicate_RIB0034479	255802910056_201403061017_S01_GE1_1105_Oct12_1_2.txt	H+st	8	1	NOCD	3	None
+RIB0034397	prostate_tissue-H+sf-replicate_RIB0034397	255802910056_201403061017_S01_GE1_1105_Oct12_1_1.txt	H+sf	8	1	NOCD	3	None
+RIB0034254	prostate_tissue-H+st-replicate_RIB0034254	255802910039_201402251045_S01_GE1_1105_Oct12_1_3.txt	H+st	9	1	NOCD	4	None
+RIB0034217	prostate_tissue-H+sf-replicate_RIB0034217	255802910039_201402251045_S01_GE1_1105_Oct12_1_4.txt	H+sf	9	1	NOCD	4	None
+RIB0034227	prostate_tissue-V-replicate_RIB0034227	255802910039_201402251045_S01_GE1_1105_Oct12_1_1.txt	V	6	None	OCD	2	None
+RIB0034209	prostate_tissue-C-replicate_RIB0034209	255802910039_201402251045_S01_GE1_1105_Oct12_1_2.txt	C	None	None	None	None	OTHER
+RIB0034239	prostate_tissue-H-dt-replicate_RIB0034239	255802910109_201402181016_S01_GE1_1105_Oct12_1_2.txt	H-dt	9	None	NOCD	3	None
+RIB0034220	prostate_tissue-H+df-replicate_RIB0034220	255802910109_201402181016_S01_GE1_1105_Oct12_1_1.txt	H+df	9	1	NOCD	3	None
+RIB0034228	prostate_tissue-H-df-replicate_RIB0034228	255802910109_201402181016_S01_GE1_1105_Oct12_1_4.txt	H-df	9	None	NOCD	3	None
+RIB0034276	prostate_tissue-H+dt-replicate_RIB0034276	255802910109_201402181016_S01_GE1_1105_Oct12_1_3.txt	H+dt	9	1	NOCD	3	None
+RIB0034830	prostate_tissue-H+st-replicate_RIB0034830	255802910037_201403191406_S01_GE1_1105_Oct12_1_1.txt	H+st	9	1	NOCD	3	None
+RIB0034864	prostate_tissue-H-st-replicate_RIB0034864	255802910037_201403191406_S01_GE1_1105_Oct12_1_3.txt	H-st	8	None	NOCD	3	None
+RIB0034815	prostate_tissue-H-sf-replicate_RIB0034815	255802910037_201403191406_S01_GE1_1105_Oct12_1_2.txt	H-sf	8	None	NOCD	3	None
+RIB0034844	prostate_tissue-H+sf-replicate_RIB0034844	255802910037_201403191406_S01_GE1_1105_Oct12_1_4.txt	H+sf	9	1	NOCD	3	None
+RIB0034977	prostate_tissue-H-sf-replicate_RIB0034977	255802910089_201403131212_S01_GE1_1105_Oct12_1_3.txt	H-sf	8	None	NOCD	3	None
+RIB0034984	prostate_tissue-H-st-replicate_RIB0034984	255802910089_201403131212_S01_GE1_1105_Oct12_1_1.txt	H-st	8	None	NOCD	3	None
+RIB0034963	prostate_tissue-H+sf-replicate_RIB0034963	255802910089_201403131212_S01_GE1_1105_Oct12_1_4.txt	H+sf	9	1	NOCD	3	None
+RIB0034972	prostate_tissue-H+st-replicate_RIB0034972	255802910089_201403131212_S01_GE1_1105_Oct12_1_2.txt	H+st	9	1	NOCD	3	None
+RIB0034883	prostate_tissue-H+sf-replicate_RIB0034883	255802910030_201403191147_S01_GE1_1105_Oct12_1_3.txt	H+sf	9	1	NOCD	3	None
+RIB0034794	prostate_tissue-H+st-replicate_RIB0034794	255802910030_201403191147_S01_GE1_1105_Oct12_1_4.txt	H+st	9	1	NOCD	3	None
+RIB0034780	prostate_tissue-V-replicate_RIB0034780	255802910030_201403191147_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034760	prostate_tissue-C-replicate_RIB0034760	255802910030_201403191147_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034779	prostate_tissue-L-replicate_RIB0034779	255802910031_201403191233_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034767	prostate_tissue-H-dt-replicate_RIB0034767	255802910031_201403191233_S01_GE1_1105_Oct12_1_3.txt	H-dt	8	None	NOCD	4	None
+RIB0034886	prostate_tissue-L-replicate_RIB0034886	255802910031_201403191233_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034777	prostate_tissue-V-replicate_RIB0034777	255802910031_201403191233_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034454	prostate_tissue-C-replicate_RIB0034454	255802910072_201403071122_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034410	prostate_tissue-C-replicate_RIB0034410	255802910072_201403071122_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034415	prostate_tissue-L-replicate_RIB0034415	255802910072_201403071122_S01_GE1_1105_Oct12_1_3.txt	L	7	None	OCD	2	None
+RIB0034404	prostate_tissue-C-replicate_RIB0034404	255802910072_201403071122_S01_GE1_1105_Oct12_1_2.txt	C	None	None	None	None	OTHER
+RIB0034364	prostate_tissue-H+sf-replicate_RIB0034364	255802910051_201402271024_S01_GE1_1105_Oct12_1_2.txt	H+sf	8	1	NOCD	3	None
+RIB0034315	prostate_tissue-H+st-replicate_RIB0034315	255802910051_201402271024_S01_GE1_1105_Oct12_1_4.txt	H+st	8	1	NOCD	3	None
+RIB0034323	prostate_tissue-H+dt-replicate_RIB0034323	255802910051_201402271024_S01_GE1_1105_Oct12_1_3.txt	H+dt	8	1	NOCD	4	None
+RIB0034344	prostate_tissue-H+df-replicate_RIB0034344	255802910051_201402271024_S01_GE1_1105_Oct12_1_1.txt	H+df	8	1	NOCD	4	None
+RIB0034340	prostate_tissue-L-replicate_RIB0034340	255802910046_201402261113_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034372	prostate_tissue-Ms-replicate_RIB0034372	255802910046_201402261113_S01_GE1_1105_Oct12_1_3.txt	Ms	7	1	NOCD	3	None
+RIB0034350	prostate_tissue-C-replicate_RIB0034350	255802910046_201402261113_S01_GE1_1105_Oct12_1_2.txt	C	None	None	None	None	OTHER
+RIB0034383	prostate_tissue-L-replicate_RIB0034383	255802910046_201402261113_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
+RIB0034664	prostate_tissue-H+sf-replicate_RIB0034664	255802910082_201404080825_S01_GE1_1105_Oct12_1_1.txt	H+sf	8	1	NOCD	3	None
+RIB0034683	prostate_tissue-L-replicate_RIB0034683	255802910082_201404080825_S01_GE1_1105_Oct12_1_2.txt	L	7	None	OCD	2	None
+RIB0034653	prostate_tissue-C-replicate_RIB0034653	255802910082_201404080825_S01_GE1_1105_Oct12_1_4.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034687	prostate_tissue-C-replicate_RIB0034687	255802910082_201404080825_S01_GE1_1105_Oct12_1_3.txt	C	None	None	None	None	OTHER
+RIB0034826	prostate_tissue-L-replicate_RIB0034826	255802910035_201403191320_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034819	prostate_tissue-H-st-replicate_RIB0034819	255802910035_201403191320_S01_GE1_1105_Oct12_1_2.txt	H-st	8	None	NOCD	3	None
+RIB0034829	prostate_tissue-H-sf-replicate_RIB0034829	255802910035_201403191320_S01_GE1_1105_Oct12_1_4.txt	H-sf	8	None	NOCD	3	None
+RIB0034818	prostate_tissue-Ms-replicate_RIB0034818	255802910035_201403191320_S01_GE1_1105_Oct12_1_3.txt	Ms	7	1	NOCD	3	None
+RIB0034494	prostate_tissue-C-replicate_RIB0034494	255802910055_201403061040_S01_GE1_1105_Oct12_1_1.txt	C	None	None	None	None	BLADDER_CANCER
+RIB0034304	prostate_tissue-H-sf-replicate_RIB0034304	255802910055_201403061040_S01_GE1_1105_Oct12_1_2.txt	H-sf	8	None	NOCD	4	None
+RIB0034326	prostate_tissue-H-st-replicate_RIB0034326	255802910055_201403061040_S01_GE1_1105_Oct12_1_3.txt	H-st	8	None	NOCD	4	None
+RIB0034485	prostate_tissue-Md-replicate_RIB0034485	255802910055_201403061040_S01_GE1_1105_Oct12_1_4.txt	Md	7	1	NOCD	4	None
+RIB0034497	prostate_tissue-Ms-replicate_RIB0034497	255802910074_201403071059_S01_GE1_1105_Oct12_1_3.txt	Ms	6	1	NOCD	4	None
+RIB0034403	prostate_tissue-L-replicate_RIB0034403	255802910074_201403071059_S01_GE1_1105_Oct12_1_1.txt	L	7	None	OCD	2	None
+RIB0034409	prostate_tissue-V-replicate_RIB0034409	255802910074_201403071059_S01_GE1_1105_Oct12_1_2.txt	V	6	None	OCD	2	None
+RIB0034401	prostate_tissue-L-replicate_RIB0034401	255802910074_201403071059_S01_GE1_1105_Oct12_1_4.txt	L	7	None	OCD	2	None
