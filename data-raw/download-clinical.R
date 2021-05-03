@@ -5,7 +5,7 @@ initial_curated_df <- function(
   df_rownames,
   template_name
 ){
-  # import template - hand written by ...? 
+  # import template - drafted by Jim & Svitlana 
   template <- utils::read.csv(template_name, as.is=TRUE)
   output <- matrix(NA,
                    ncol = nrow(template),
@@ -1025,7 +1025,6 @@ clinical_kunderfranco <- curated
 
 save(clinical_kunderfranco, file = "./data-raw/clinical_kunderfranco.RData")
 
-<<<<<<< HEAD
 ###########################################################################################
 #
 #
@@ -1474,7 +1473,6 @@ save(clinical_true, file =  "./data-raw//clinical_true.RData")
 
 
 
-=======
 #######################################################################
 #Wang et al
 ######################################################################
@@ -1503,7 +1501,6 @@ save(clinical_wang, file = "data-raw/clinical_wang.RData")
 #GSE2109
 ######################################################################
 gse <- GEOquery::getGEO("GSE2109", GSEMatrix = TRUE)
->>>>>>> origin/varsha_new
 
 uncurated <- Biobase::pData(gse[[1]])
 uncurated <- uncurated[grep("Prostate", uncurated$title), ]
