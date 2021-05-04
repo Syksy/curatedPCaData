@@ -246,12 +246,6 @@ gex_kim <- generate_gex_geo(
 )
 save(gex_kim, file="data-raw/gex_kim.RData")
 
-# CNA
-cna_kim <- generate_cna_geo(
-  geo_code = "GSE119616"
-)
-save(cna_kim, file="data-raw/cna_kim.RData")
-
 # Create MAE object
 mae_kim <- create_mae(study_name = "kim")
 usethis::use_data(mae_kim, overwrite = TRUE)
@@ -317,5 +311,10 @@ gex_kunderfranco = gex_kunderfranco[, -1]
 
 save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")
 
-
+# IGC - GSE2109
+#GEX
+gex_igc <- generate_gex_geo(
+  geo_code = "GSE2109"
+)
+save(gex_igc, file="data-raw/gex_igc.RData")
 
