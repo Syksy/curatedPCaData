@@ -1,63 +1,64 @@
-col.name,var.class,uniqueness,requiredness,allowedvalues,description
-study_name,character,non-unique,required,*,the study name that will link this information to the study meta-data
-patient_id,character,non-unique,required,*,a unique identifier for the patient. A single patient may have more than one sample taken
-sample_name,character,unique,required,*,primary sample identifier
-alt_sample_name,character,unique,optional,*,"if another identifier is used, for example in supplemental tables or GEO accession ids."
-overall_survival_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents death and 0 represents no reported death"
-days_to_overall_survival,numeric,non-unique,optional,[1-10000],time to death or last follow-up in days
-age_at_initial_diagnosis,integer,non-unique,optional,[1-9][0-9],in years
-year_diagnosis,integer,non-unique,optional,[1900-2010],the year at which the patient was diagnoses with disease
-gleason_grade,integer,non-unique,optional,2|3|4|5|6|7|8|9|10,Gleason grade  (integer): total of two grades added together
-gleason_major,integer,non-unique,optional,2|3|4|5,Gleason grade  (integer) for the major site score
-gleason_minor,integer,non-unique,optional,2|3|4|5,Gleason grade  (integer) for the minor site score
-source_of_gleason,character,non-unique,optional,biopsy|prostatectomy|tissue_block,source of where the pathogist performed Gleason grading
-grade_group,character,non-unique,optional,<=6|3+4|4+3|>=8,separation of the gleason grades into groups that show different prognosis
-T_pathological,integer,non-unique,optional,1|2|3|4,"pathological T stage (assessment made after surgery), based on tumor only" 
-T_substage_pathological,character,non-unique,optional,a|b|c,"pathological T substage (assessment made after surgery), based on tumor only" 
-T_clinical,integer,non-unique,optional,1|2|3|4,clinical T stage (at time of diagnosis) based on tumor only
-T_substage_clinical,character,non-unique,optional,a|b|c,clinical T substage  (at time of diagnosis) based on tumor only
-ERG_fusion_CNA,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by copy number alteration analysis
-ERG_fusion_IHC,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by immunohistochemistry
-ERG_fusion_GEX,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by gene expression
-disease_specific_recurrence_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents a recurrence and 0 represents no reported recurrence"
-days_to_disease_specific_recurrence,numeric,non-unique,optional,[1-10000],time to recurrence or last follow-up in days
-metastasis_occurrence_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents a metastatic occurrence and 0 represents no reported metastatic occurrence"
-days_to_metastatic_occurrence,numeric,non-unique,optional,[1-10000],time to metastatic occurrence or last follow-up in days
-psa,numeric,non-unique,optional,[1-10000],prostate specific antigen level at diagnosis
-race,character,non-unique,optional,caucasian|african_american|asian|other,race
-smoking_status,integer,non-unique,optional,1|0,smoker (past or current) or non-smoker 
-extraprostatic_extension,integer,non-unique,optional,1|0,"spread of prostate cancer out of the prostate gland.  Denotes a later stage of prostate cancer (NOTE: We do not currently distinguish between focal, established and multifocal, which are all currently translated into this template as y)."
-perineural_invasion,integer,non-unique,optional,1|0,cancer spreading to the space surrounding a nerve
-seminal_vesicle_invasion,integer,non-unique,optional,1|0,cancer has spread to the seminal vesicles
-angiolymphatic_invasion,integer,non-unique,optional,1|0,cancer has spread to blood vessels and lymph vessels
-androgen_ablation,integer,non-unique,optional,1|0,medical treatment to suppress or block the production of male sex hormones
-capsule,character,non-unique,optional,extensive|focal|intact,status of the prostate capsule (??)
-M_stage,character,non-unique,optional,X|0|1,"At the time of surgery. X: cannot evaluate distant metastasis, 0: there is no distant metastasis, 1: there is distant metastasis"
-M_substage,character,non-unique,optional,[abc],"M1a: the cancer has spread to lymph nodes beyond the regional ones, M1b: the cancer has spread to_bone, M1c: the cancer has spread to other sites (regardless of bone involvement)"
-other_patient,string,non-unique,optional,*,"a string that captures any additional patient information, features separated by bar (e.g. feature 1|feature 2|feature 3)"
+col.name,var.class,uniqueness,requiredness,allowedvalues,description,,
+study_name,character,non-unique,required,*,the study name that will link this information to the study meta-data,,
+patient_id,character,non-unique,required,*,a unique identifier for the patient. A single patient may have more than one sample taken,,
+sample_name,character,unique,required,*,primary sample identifier,,
+alt_sample_name,character,unique,optional,*,"if another identifier is used, for example in supplemental tables or GEO accession ids.",,
+overall_survival_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents death and 0 represents no reported death",,
+days_to_overall_survival,numeric,non-unique,optional,[1-10000],time to death or last follow-up in days,,
+age_at_initial_diagnosis,integer,non-unique,optional,[1-9][0-9],in years,,
+year_diagnosis,integer,non-unique,optional,[1900-2010],the year at which the patient was diagnoses with disease,,
+gleason_grade,integer,non-unique,optional,2|3|4|5|6|7|8|9|10,Gleason grade  (integer): total of two grades added together,,
+gleason_major,integer,non-unique,optional,2|3|4|5,Gleason grade  (integer) for the major site score,,
+gleason_minor,integer,non-unique,optional,2|3|4|5,Gleason grade  (integer) for the minor site score,,
+source_of_gleason,character,non-unique,optional,biopsy|prostatectomy|tissue_block,source of where the pathogist performed Gleason grading,,
+grade_group,character,non-unique,optional,<=6|3+4|4+3|>=8,separation of the gleason grades into groups that show different prognosis,,
+T_pathological,integer,non-unique,optional,1|2|3|4,"pathological T stage (assessment made after surgery), based on tumor only ",,
+T_substage_pathological,character,non-unique,optional,a|b|c,"pathological T substage (assessment made after surgery), based on tumor only ",,
+T_clinical,integer,non-unique,optional,1|2|3|4,clinical T stage (at time of diagnosis) based on tumor only,,
+T_substage_clinical,character,non-unique,optional,a|b|c,clinical T substage  (at time of diagnosis) based on tumor only,,
+ERG_fusion_CNA,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by copy number alteration analysis,,
+ERG_fusion_IHC,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by immunohistochemistry,,
+ERG_fusion_GEX,integer,non-unique,optional,1|0,presence of TMPRSS2:ERG gene fusion in prostate tumor as determined by gene expression,,
+disease_specific_recurrence_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents a recurrence and 0 represents no reported recurrence",,
+days_to_disease_specific_recurrence,numeric,non-unique,optional,[1-10000],time to recurrence or last follow-up in days,,
+metastasis_occurrence_status,integer,non-unique,optional,1|0,"binarized status of the patient, where 1 represents a metastatic occurrence and 0 represents no reported metastatic occurrence",,
+days_to_metastatic_occurrence,numeric,non-unique,optional,[1-10000],time to metastatic occurrence or last follow-up in days,,
+psa,numeric,non-unique,optional,[1-10000],prostate specific antigen level at diagnosis,,
+race,character,non-unique,optional,caucasian|african_american|asian|other,race,,
+smoking_status,integer,non-unique,optional,1|0,smoker (past or current) or non-smoker ,,
+extraprostatic_extension,integer,non-unique,optional,1|0,"spread of prostate cancer out of the prostate gland.  Denotes a later stage of prostate cancer (NOTE: We do not currently distinguish between focal, established and multifocal, which are all currently translated into this template as y).",,
+perineural_invasion,integer,non-unique,optional,1|0,cancer spreading to the space surrounding a nerve,,
+seminal_vesicle_invasion,integer,non-unique,optional,1|0,cancer has spread to the seminal vesicles,,
+angiolymphatic_invasion,integer,non-unique,optional,1|0,cancer has spread to blood vessels and lymph vessels,,
+androgen_ablation,integer,non-unique,optional,1|0,medical treatment to suppress or block the production of male sex hormones,,
+capsule,character,non-unique,optional,extensive|focal|intact,status of the prostate capsule (??),,
+M_stage,character,non-unique,optional,X|0|1,"At the time of surgery. X: cannot evaluate distant metastasis, 0: there is no distant metastasis, 1: there is distant metastasis",,
+M_substage,character,non-unique,optional,[abc],"M1a: the cancer has spread to lymph nodes beyond the regional ones, M1b: the cancer has spread to_bone, M1c: the cancer has spread to other sites (regardless of bone involvement)",,
+other_patient,string,non-unique,optional,*,"a string that captures any additional patient information, features separated by bar (e.g. feature 1|feature 2|feature 3)",,
 sample_type,character,non-unique,optional,primary|metastatic|adjacentnormal|healthy|BPH|PIN|atrophic.epithelium|normal.stroma|BPH.stroma|healthy.stroma|cell.line|xenograft,type of tissue isolated from the patient and used for further -omic profiling. healthy should be only from individuals without cancer, adjacentnormal from individuals with cancer, metastatic for non-primary tumors
-genomic_alterations,string,non-unique,optional,*,"captures the list of reported alterations in the sample, in the format, gene:event, separated by a bar (eg. TP53:mutation|ETV1:fusion|PTEN:deletion)"
-tumor_margins_positive,integer,non-unique,optional,1|0,Histologically altered cells in any surgical margins
-tissue_source,character,non-unique,optional,biopsy|TURP|prostatectomy|prostatectomy_and_TURP|autopsy|cystoprostatectomy,the source of the sample
-metastatic_site,character,non-unique,optional,prostate|liver|lung|bone|brain|lymph_node|soft_tissue|adrenal_gland,site where the metastatic sample was taken from
-microdissected,integer,non-unique,optional,1|0,microdissected or not
-frozen_ffpe,character,non-unique,optional,frozen|FFPE,frozen or FFPE
-other_feature,character,non-unique,optional,CRPC|cribriform|neuroendocrine,other descriptions of the sample
-batch,character,non-unique,optional,*,An way that describes a batch if a batch effect can be modeled (can be numeric or categorigal)
-other_sample,string,non-unique,optional,*,"a string that captures any additional sample information, features separated by bar (e.g. feature 1|feature 2|feature 3)"
-tumor_purity_pathology,integer,non-unique,optional,[0-100],estimate of the tumor purity according to pathological assessment
-tumor_purity_demix,integer,non-unique,optional,[0-100],estimate of the tumor purity in the sample using the Demix method
-tumor_purity_absolute,integer,non-unique,optional,[0-100],estimate of the tumor purity in the sample using Absolute
-zone_of_origin,character,non-unique,optional,transitional|peripheral|mixed|central,zone of origin assessed through tissue pathology
-zone_of_origin_estimated,character,non-unique,optional,transitional|peripheral,estimate of zone of origin using the method from Sinnott et al.
-immune_infiltration,string,non-unique,optional,[],estimate of immune infiltration using CIBERSORT
-mutational_signatures,string,non-unique,optional,[],estimate of mutational signatures using deconstructSigs
-neoantigen_load,string,non-unique,optional,[],estimate of mutational load using NetMHCPan
-AR_activity,integer,non-unique,optional,[0-100],AR 20-gene signature
-N_stage,character,non-unique,optional,X|0|1|2|3,"regional lymph node status at the time of surgery.  X: cannot be measured, 0: no cancer in nearby lymph nodes, 1,2,3: the number and location of lymph nodes that contain cancer"
-N_substage,character,non-unique,optional,[abc],"1a: the cancer has spread to lymph nodes beyond the regional ones, 1b: the cancer has spread to_bone, M1c: the cancer has spread to other sites (regardless of bone involvement)"
-therapy_radiation_initial,integer,non-unique,optional,1|0,was radiation given as a primary therapy?
-therapy_radiation_salvage,integer,non-unique,optional,1|0,was radiation given after relapse from surgery?
-therapy_surgery_initial,integer,non-unique,optional,1|0,was surgery given as a primary therapy?
-therapy_hormonal_initial,integer,non-unique,optional,1|0,was hormonal therapy given as a primary therapy?
-other_treatment,string,non-unique,optional,"fish_oil|no_neoadjuvant|prednisone|selenium|vitaminE|taxane,any other treatments"
+genomic_alterations,string,non-unique,optional,*,"captures the list of reported alterations in the sample, in the format, gene:event, separated by a bar (eg. TP53:mutation|ETV1:fusion|PTEN:deletion)",,
+tumor_margins_positive,integer,non-unique,optional,1|0,Histologically altered cells in any surgical margins,,
+tissue_source,character,non-unique,optional,biopsy|TURP|prostatectomy|prostatectomy_and_TURP|autopsy|cystoprostatectomy,the source of the sample,,
+metastatic_site,character,non-unique,optional,prostate|liver|lung|bone|brain|lymph_node|soft_tissue|adrenal_gland,site where the metastatic sample was taken from,,
+microdissected,integer,non-unique,optional,1|0,microdissected or not,,
+frozen_ffpe,character,non-unique,optional,frozen|FFPE,frozen or FFPE,,
+other_feature,character,non-unique,optional,CRPC|cribriform|neuroendocrine,other descriptions of the sample,,
+batch,character,non-unique,optional,*,An way that describes a batch if a batch effect can be modeled (can be numeric or categorigal),,
+other_sample,string,non-unique,optional,*,"a string that captures any additional sample information, features separated by bar (e.g. feature 1|feature 2|feature 3)",,
+tumor_purity_pathology,integer,non-unique,optional,[0-100],estimate of the tumor purity according to pathological assessment,,
+tumor_purity_demix,integer,non-unique,optional,[0-100],estimate of the tumor purity in the sample using the Demix method,,
+tumor_purity_absolute,integer,non-unique,optional,[0-100],estimate of the tumor purity in the sample using Absolute,,
+zone_of_origin,character,non-unique,optional,transitional|peripheral|mixed|central,zone of origin assessed through tissue pathology,,
+zone_of_origin_estimated,character,non-unique,optional,transitional|peripheral,estimate of zone of origin using the method from Sinnott et al.,,
+immune_infiltration,string,non-unique,optional,[],estimate of immune infiltration using CIBERSORT,,
+mutational_signatures,string,non-unique,optional,[],estimate of mutational signatures using deconstructSigs,,
+neoantigen_load,string,non-unique,optional,[],estimate of mutational load using NetMHCPan,,
+AR_activity,integer,non-unique,optional,[0-100],AR 20-gene signature,,
+N_stage,character,non-unique,optional,X|0|1|2|3,"regional lymph node status at the time of surgery.  X: cannot be measured, 0: no cancer in nearby lymph nodes, 1,2,3: the number and location of lymph nodes that contain cancer",,
+N_substage,character,non-unique,optional,[abc],"1a: the cancer has spread to lymph nodes beyond the regional ones, 1b: the cancer has spread to_bone, M1c: the cancer has spread to other sites (regardless of bone involvement)",,
+therapy_radiation_initial,integer,non-unique,optional,1|0,was radiation given as a primary therapy?,,
+therapy_radiation_salvage,integer,non-unique,optional,1|0,was radiation given after relapse from surgery?,,
+therapy_surgery_initial,integer,non-unique,optional,1|0,was surgery given as a primary therapy?,,
+therapy_hormonal_initial,integer,non-unique,optional,1|0,was hormonal therapy given as a primary therapy?,,
+other_treatment,string,non-unique,optional,"fish_oil|no_neoadjuvant|prednisone|selenium|vitaminE|taxane,any other treatments",,,
+psa_category,string,non-unique,optional,Normal|Elevated,was psa normal or elevated in the patient?,,
