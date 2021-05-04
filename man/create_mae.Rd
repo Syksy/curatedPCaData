@@ -5,7 +5,8 @@
 \title{Create multi-assay experiment object.}
 \usage{
 create_mae(
-  study_name = c("TCGA", "Taylor", "Sun", "Hieronymus"),
+  study_name = c("TCGA", "Taylor", "Sun", "Hieronymus", "Barbieri", "Ren", "kim",
+    "abida"),
   verb = TRUE,
   ...
 )
