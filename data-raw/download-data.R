@@ -291,6 +291,10 @@ cna_wang <- curatedPCaData:::generate_cna_geo(
 )
 save(cna_wang, file="data-raw/cna_wang.RData")
 
+# Create MAE object
+mae_wang <- create_mae(study_name = "wang")
+usethis::use_data(mae_wang, overwrite = TRUE)
+
 # Barwick et al.
 gex_barwick <- generate_gex_geo("GSE18655")
 save(gex_barwick, file="data-raw/gex_barwick.RData")
@@ -317,4 +321,8 @@ gex_igc <- generate_gex_geo(
   geo_code = "GSE2109"
 )
 save(gex_igc, file="data-raw/gex_igc.RData")
+
+# Create MAE object
+mae_igc <- create_mae(study_name = "igc")
+usethis::use_data(mae_igc, overwrite = TRUE)
 
