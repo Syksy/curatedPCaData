@@ -410,8 +410,8 @@ generate_gex_geo <- function(
 #' @param ... additional arguments
 generate_cna_geo <- function(
   geo_code = c("GSE21035", # Taylor et al.
-               "GSE54691", # Hieronymus et al.
-               "GSE119616"),
+               "GSE54691" # Hieronymus et al.
+               ),
   file_directory, 
   cleanup = TRUE, 
   ...
