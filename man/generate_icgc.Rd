@@ -4,7 +4,13 @@
 \alias{generate_icgc}
 \title{Download and generate omics from the ICGC}
 \usage{
-generate_icgc(icgc_id = "PRAD_CA", set = "gex", file_directory, verb = 0)
+generate_icgc(
+  icgc_id = "PRAD_CA",
+  set = "gex",
+  file_directory,
+  collapseFUN = mean,
+  verb = 0
+)
 }
 \arguments{
 \item{icgc_id}{character string indicating name of ICGC dataset}
