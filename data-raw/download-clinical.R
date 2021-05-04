@@ -1070,7 +1070,8 @@ curated <- curated %>%
   dplyr::mutate(smoking_status = dplyr::case_when(
     description.6 %in% c('Type of Tobacco Use: Cigarettes','Type of Tobacco Use: Cigars') ~ 1,
     TRUE ~ 0)) %>%
-  dplyr::mutate(psa = dplyr::case_when(
+  
+  dplyr::mutate(psa_category = dplyr::case_when(
     uncurated$description.6 %in% 'PSA: Normal' ~ 'Normal',
     uncurated$description.6 %in% 'PSA: Elevated' ~ 'Elevated',
     uncurated$description.7 %in% 'PSA: Normal' ~ 'Normal',
@@ -1159,6 +1160,68 @@ curated <- curated %>%
     uncurated$description.15 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
     uncurated$description.17 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
     uncurated$description.19 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c')) %>%
+  
+  dplyr::mutate(gleason_grade = dplyr::case_when(
+    uncurated$description.14 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.14 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.14 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.14 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.14 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.14 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.15 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.15 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.15 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.15 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.15 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.15 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.16 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.16 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.16 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.16 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.16 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.16 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.17 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.17 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.17 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.17 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.17 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.17 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.18 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.18 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.18 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.18 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.18 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.18 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.19 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.19 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.19 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.19 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.19 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.19 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.20 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.20 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.20 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.20 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.20 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.20 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.21 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.21 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.21 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.21 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.21 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.21 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.22 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.22 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.22 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.22 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.22 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.22 %in% 'Pathological Gleason Score: 5-6' ~ '6',
+    uncurated$description.23 %in% 'Clinical Gleason Score: 7' ~ '7',
+    uncurated$description.23 %in% 'Clinical Gleason Score: 8-10' ~ '8',
+    uncurated$description.23 %in% 'Clinical Gleason Score: 5-6' ~ '6',
+    uncurated$description.23 %in% 'Pathological Gleason Score: 7' ~ '7',
+    uncurated$description.23 %in% 'Pathological Gleason Score: 8-10' ~ '8',
+    uncurated$description.23 %in% 'Pathological Gleason Score: 5-6' ~ '6')) %>%
     
   dplyr::mutate(T_clinical = dplyr::case_when(
     uncurated$description.9 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
@@ -1211,7 +1274,9 @@ curated <- curated %>%
     uncurated$description.14 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
     uncurated$description.15 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
     uncurated$description.16 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c'))
-  
+
+curated <- dplyr::select(curated, -(description.6))
+
 clinical_igc <- curated
 
 save(clinical_igc, file = "data-raw/clinical_igc.RData")   
