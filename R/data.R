@@ -15,7 +15,7 @@
 #'    \item{quantiseq_polyA}{a matrix with 11 rows and 266 columns, of quantiseq based deconvolution for the polyA library}
 #'    \item{mcp_capture}{a matrix with 11 rows and 208 columns, of mcp-counter based deconvolution for the capture library}
 #'    \item{mcp_polyA}{a matrix with 11 rows and 266 columns, of mcp-counter based deconvolution for the polyA library}
-#' @details the clinical data refers to a sample of 444 tunmors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
+#' @details the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
 #' @references Abida, W., Cyrta, J., Heller, G., et al. (2019). Genomic correlates of clinical outcome in advanced prostate cancer. Proceedings of the National Academy of Sciences of the United States of America, 116, 11428 - 11436.
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/31061129/}{PubMed})
 #' @source  \url{https://www.cbioportal.org/study/summary?id=prad_su2c_2019}
@@ -40,6 +40,21 @@
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad}
 "mae_barbieri"
+
+#' Barwick MAE-object
+#' @docType clinical, expression, and deconvolution data
+#'
+#' MultiAssayExperiment object containing gene expression (gex), together with immune deconvolution data. 
+#' 
+#' @format A MAE object spanning prostate cancer samples.
+#' \describe{
+#'   \item{gex}{matrix with 18193 rows and 20 columns, for the gene expression data}
+#' }
+#' @details NA
+#' @references Barwick, B. G., Abramovitz, M., Kodani, M., Moreno, C. S., Nam, R., Tang, W., Bouzyk, M., Seth, A., & Leyland-Jones, B. (2010). Prostate cancer genes associated with TMPRSS2-ERG gene fusion and prognostic of biochemical recurrence in multiple cohorts. British journal of cancer, 102(3), 570–576. https://doi.org/10.1038/sj.bjc.6605519
+#' (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18655}
+"mae_barwick"
 
 #' Chandran et al., Yu et al. MAE-object
 #' @docType clinical, expression, and deconvolution data
