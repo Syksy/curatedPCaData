@@ -5,7 +5,7 @@
 \alias{mae_taylor}
 \title{Taylor et al. MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 3.
+An object of class \code{MultiAssayExperiment} of length 7.
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
