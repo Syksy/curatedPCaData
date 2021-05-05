@@ -185,8 +185,8 @@ save(clinical_sun, file = "data-raw/clinical_sun.RData")
 # GEOquery for GSE21032 is BUSTED 
 
 ## TDL: below script is saved only temporarily as it overlaps with Jordan's solution
+gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
 if(FALSE){
-	gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
 	## TDL: Split fetch into GSE21034 (GEX) and GSE21035 (CNA) for making the map
 	gse_gex <- GEOquery::getGEO("GSE21034", GSEMatrix = TRUE)
 	gse_cna <- GEOquery::getGEO("GSE21035", GSEMatrix = TRUE)
@@ -239,7 +239,9 @@ uncurated <- uncurated_cna %>%
   dplyr::mutate(geo_accession = paste(paste0("cna: ", cna),
                                       paste0("gex_exon: ", gex_exon), 
                                       paste0("gex_transcript: ", gex_transcript), 
-                                      paste0("mrna: ", mrna), sep = "|"))
+                                      paste0("mrna: ", mrna),
+                                      # TDL: Mutation sample names come from cBio rather than GEO, but we don't know which ones will have mutation data
+                                      paste0("mut: ", uncurated$"sample id:ch1"), sep = "|"))
 
 rownames(uncurated) <- uncurated$title
 
@@ -297,11 +299,11 @@ curated <- curated %>%
   )) %>% 
   dplyr::mutate(disease_specific_recurrence_status = uncurated_cbio$DFS_STATUS) %>% 
   dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
-    disease_specific_recurrence_status == "Recurred" ~ 1,
-    disease_specific_recurrence_status == "DiseaseFree" ~ 0,
+    disease_specific_recurrence_status == "1:Recurred" ~ 1,
+    disease_specific_recurrence_status == "0:DiseaseFree" ~ 0,
     TRUE ~ NA_real_
   )) %>% 
-  dplyr::mutate(days_to_disease_specific_recurrence == uncurated_cbio$DFS_MONTHS) 
+  dplyr::mutate(days_to_disease_specific_recurrence = round(uncurated_cbio$DFS_MONTHS*30.5,0)) 
 
 curated <- curated %>%
   dplyr::filter(sample_type %in% c("metastasis", "primary"))
