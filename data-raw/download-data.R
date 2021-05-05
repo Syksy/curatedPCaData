@@ -21,21 +21,23 @@ mut_tcga <- curatedPCaData:::generate_cbioportal(
   geneticProfiles = "prad_tcga_pub_mutations",
   caseList="prad_tcga_pub_sequenced"
 )
+# Save NA values as truly NA instead of "NaN" even if other instances exist on column
+mut_tcga[which(mut_tcga=="NaN")] <- NA
 save(mut_tcga, file="data-raw/mut_tcga.RData")
 
 # Create MAE object
-mae_tcga <- create_mae(study_name = "TCGA")
+mae_tcga <- curatedPCaData:::create_mae(study_name = "TCGA")
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # sun et al data -----
 # GEX
-gex_sun <- generate_gex_geo(
+gex_sun <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE25136"
 )
 save(gex_sun, file="data-raw/gex_sun.RData")
 
 # Create MAE object
-mae_sun <- create_mae(study_name = "Sun")
+mae_sun <- curatedPCaData:::create_mae(study_name = "Sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
 
 #taylor et al data -----
@@ -50,8 +52,20 @@ cna_taylor <- curatedPCaData:::generate_cna_geo(
 )
 save(cna_taylor, file="data-raw/cna_taylor.RData")
 
+# Mutations - notice this is downloaded from cBioPortal rather than processed from GEO
+mut_taylor <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles = "prad_mskcc_mutations",
+  caseList="prad_mskcc_sequenced"
+) 
+# Save NA values as truly NA instead of "NaN" even if other instances exist on column
+mut_taylor[which(mut_taylor=="NaN")] <- NA
+# Grep down to using only patient samples, omitting cell lines etc
+mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
+save(mut_taylor, file="data-raw/mut_taylor.RData")
+
 # Create MAE object
-mae_taylor <- create_mae(study_name = "Taylor")
+mae_taylor <- curatedPCaData:::create_mae(study_name = "Taylor")
 usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
 
 #hieronymus et al data -----
