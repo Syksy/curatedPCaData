@@ -598,10 +598,12 @@ generate_cna_geo <- function(
 #' @param splitsize number of genes in each query
 #' @param verb logical value for displaying progress bar 
 generate_cbioportal <- function(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), 
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), 
   geneticProfiles = c("prad_tcga_pub_rna_seq_v2_mrna", #TCGA GEX 
                       "prad_tcga_pub_gistic", # TCGA CNA (GISTIC)
                       "prad_tcga_pub_linear_CNA", # TCGA CNA (Capped relative linear copy-number values)
+                      "prad_tcga_pub_mutations", # TCGA mutation data
+                      # prad_tcga_pub_fusion, # TCGA fusions
                       "prad_mskcc_mrna_median_Zscores", # Taylor et al. GEX (z-score normalized)
                       "prad_mskcc_cna", # Taylor et al. CNA
                       "prad_broad_mrna", # PRAD Broad GEX
