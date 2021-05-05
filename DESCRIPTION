@@ -1,15 +1,21 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.3.7
-Date: 2021-03-11
+Version: 0.4.2
+Date: 2021-05-03
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
              person("Varsha", "Sreekanth", email = "varsha.sreekanth@cuanschutz.edu", role = "ctb"), 
              person("Federico", "Calboli", email = "federico.calboli@utu.fi", role = "ctb") 
            )
-Description: A selection of annotated prostate cancer datasets including TCGA, 
-    Taylor et al., Sun et al., and others. 
+Description: A selection of annotated prostate cancer datasets featuring multiple omics and derived downstream variables
+License: GPL-3
+Encoding: UTF-8
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+LazyData: true
+URL: https://github.com/Syksy/curatedPCaData
+BugReports: https://github.com/Syksy/curatedPCaData/issues
 Depends: R (>= 3.5.0), S4Vectors (>= 0.23.18), MultiAssayExperiment
 Imports: 
     progress,
@@ -20,11 +26,8 @@ Imports:
     GEOquery,
     utils,
     affy,
+    affyio,
     AnnotationDbi,
-    hgu133a.db,
-    hgu95av2cdf, hgu95av2.db,
-    hgu95bcdf, hgu95b.db,
-    hgu95ccdf, hgu95c.db,
     magrittr,
     dplyr,
     rlang,
@@ -38,22 +41,18 @@ Imports:
     rio,
     data.table,
     stringr,
+    stringi,
     tibble,
-    textshape,
     data.tree,
-    pacman,
     RCurl,
-    osfr,
     R.utils,
-    survminer
-License: GPL-3
-Encoding: UTF-8
-RoxygenNote: 7.1.1
-VignetteBuilder: knitr
-LazyData: true
-URL: https://github.com/Syksy/curatedPCaData
-BugReports: https://github.com/Syksy/curatedPCaData/issues
+    survminer,
+    shiny, DT
 Suggests: 
     knitr,
     rmarkdown,
-    osfr, textshape, pacman
+    osfr, textshape, pacman,
+    hgu133a.db,
+    hgu95av2cdf, hgu95av2.db,
+    hgu95bcdf, hgu95b.db,
+    hgu95ccdf, hgu95c.db,

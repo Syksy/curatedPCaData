@@ -5,7 +5,7 @@ initial_curated_df <- function(
   df_rownames,
   template_name
 ){
-  # import template - hand written by ...? 
+  # import template - drafted by Jim & Svitlana 
   template <- utils::read.csv(template_name, as.is=TRUE)
   output <- matrix(NA,
                    ncol = nrow(template),
@@ -589,7 +589,12 @@ curated <- curated %>%
                                                            uncurated$'risk group:ch1' == 'H-df' ~ 0
                                                            )) 
 
-
+extra_cl = read.table('data-raw/GSE134051_Pheno_Data_ControlType.txt', h = T) # extra clinical from Friedrich et al. 
+extra_cl[extra_cl$PathoState == 'None', 'PathoState'] = NA
+extra_cl$PathoState = as.numeric(extra_cl$PathoState)
+curated[extra_cl$Control_status == 'BLADDER_CANCER', 'tissue_source'] = 'cystoprostatectomy'
+curated[extra_cl$Control_status == 'OTHER', 'tissue_source'] = 'TURP'
+curated[, 'T_pathological'] = extra_cl$PathoState
 
 clinical_friedrich <- curated
 
@@ -1022,6 +1027,612 @@ curated <- curated %>%
 clinical_kunderfranco <- curated
 
 save(clinical_kunderfranco, file = "./data-raw/clinical_kunderfranco.RData")
+
+###########################################################################################
+#
+#
+#  True et al. Proc Natl Acad Sci U S A 2006 Jul 18;103(29):10991-6.
+#
+#  this is an exceedingly old dataset, where the expression data is relative and not absolute
+#  which makes the data not directly comparable with the other dataset
+#  
+#     
+#
+###########################################################################################
+
+library(GEOquery)
+#library(limma)
+#library(umap)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE5132", GSEMatrix =TRUE, getGPL=TRUE)
+library(magrittr)
+library(dplyr)
+
+# for reasons unknown the clinical is split in a set of 31 samples and a set of 1 sample
+uncurated1 <- Biobase::pData(gset[[1]]) 
+uncurated2 <- Biobase::pData(gset[[2]]) 
+
+curated1 <- initial_curated_df(
+  df_rownames = rownames(uncurated1),
+  template_name="data-raw/template_prad.csv")
+
+curated2 <- initial_curated_df(
+  df_rownames = rownames(uncurated2),
+  template_name="data-raw/template_prad.csv")
+
+#  additional issue is that, because the data seems to have been put in at random, most of it will have
+# to be pulled 'manually' rather than algorithmically
+curated1 <- curated1 %>% 
+  dplyr::mutate(study_name = "True et al.") %>%
+  dplyr::mutate(sample_name = uncurated1$geo_accession) %>% 
+  dplyr::mutate(patient_id = unlist(lapply(stringr::str_split(uncurated1$title, '_'), function(x) x[2]))) %>%
+  dplyr::mutate(gleason_major = as.numeric(substr(unlist(lapply(stringr::str_split(uncurated1$description, ' '), function(x) x[9])), 1, 1))) %>%
+  dplyr::mutate(gleason_minor = as.numeric(substr(unlist(lapply(stringr::str_split(uncurated1$description, ' '), function(x) x[9])), 3, 3))) %>%
+  dplyr::mutate(gleason_grade = gleason_major + gleason_minor) %>%
+  dplyr::mutate(microdissected = 1) %>%
+  dplyr::mutate(gleason_group = dplyr::case_when(
+    gleason_grade  %in%  4:6 ~ "<=6",
+    gleason_major == 3 & gleason_minor == 4 ~ "3+4",
+    gleason_major == 4 & gleason_minor == 3 ~ "4+3",
+    gleason_grade %in% 8:10 ~ ">=8",
+    TRUE ~ "NA"
+  ))
+curated1[1,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[1, 'tumor_margins_positive'] = 0
+curated1[1, 'other_treatment'] = substr(unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[8], 11, 20)
+curated1[1, 'therapy_radiation_initial'] = 0
+curated1[1, 'therapy_radiation_salvage'] = 0
+curated1[1, 'therapy_hormonal_initial'] = 0
+curated1[1, 'other_feature'] = paste(
+                                     unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[4],
+                                     unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[6],
+                                     unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[2],
+                                     sep = '|')
+curated[1, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[2,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[2,'Prostate Cancer patient 03-135C Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[2, 'tumor_margins_positive'] = 0
+curated1[2, 'therapy_radiation_initial'] = 0
+curated1[2, 'therapy_radiation_salvage'] = 0
+curated1[2, 'therapy_hormonal_initial'] = 0
+curated1[2, 'other_feature'] = paste(
+                                     unlist(stringr::str_split(uncurated1[2,'Prostate Cancer patient 03-135C Gleason_Score:ch1'], ' '))[4],
+                                     unlist(stringr::str_split(uncurated1[2,'Prostate Cancer patient 03-135C Gleason_Score:ch1'], ' '))[6],
+                                     unlist(stringr::str_split(uncurated1[2,'Prostate Cancer patient 03-135C Gleason_Score:ch1'], ' '))[2],
+                                     sep = '|')
+curated1[2, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[2,'Prostate Cancer patient 03-135C Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[3,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[3,'Prostate Cancer patient 03-158F Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[3, 'tumor_margins_positive'] = 0
+curated1[3, 'therapy_radiation_initial'] = 0
+curated1[3, 'therapy_radiation_salvage'] = 0
+curated1[3, 'therapy_hormonal_initial'] = 0
+curated1[3, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[3,'Prostate Cancer patient 03-158F Gleason_Score:ch2'], ' '))[4],
+                                     unlist(stringr::str_split(uncurated1[3,'Prostate Cancer patient 03-158F Gleason_Score:ch2'], ' '))[6],
+                                     unlist(stringr::str_split(uncurated1[3,'Prostate Cancer patient 03-158F Gleason_Score:ch2'], ' '))[2],
+                                     sep = '|')
+curated1[3, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[3,'Prostate Cancer patient 03-158F Gleason_Score:ch2'], ' '))[3], 17, 17))
+
+
+curated1[4,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[4,' LCM_Gleason_Pattern:ch2'], ' '))[4], 5, 8))
+curated1[4, 'tumor_margins_positive'] = 0
+curated1[4, 'other_treatment'] = paste(substr(unlist(stringr::str_split(uncurated1[4,' LCM_Gleason_Pattern:ch2'], ' '))[7], 11, 20), unlist(stringr::str_split(uncurated1[4,' LCM_Gleason_Pattern:ch2'], ' '))[8], sep = '_')
+curated1[4, 'therapy_radiation_initial'] = 0
+curated1[4, 'therapy_radiation_salvage'] = 0
+curated1[4, 'therapy_hormonal_initial'] = 0
+curated1[4, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[4,' LCM_Gleason_Pattern:ch2'], ' '))[3],
+                                     unlist(stringr::str_split(uncurated1[4,' LCM_Gleason_Pattern:ch2'], ' '))[5],
+                                     unlist(stringr::str_split(uncurated1[4, 'characteristics_ch2.1'], ' '))[2],
+                                     sep = '|')
+curated1[4, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[4,' LCM_Gleason_Pattern:ch2'], ' '))[2], 17, 17))
+
+
+curated1[5,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[5,' LCM_Gleason_Pattern:ch1'], ' '))[4], 5, 8))
+curated1[5, 'tumor_margins_positive'] = 0
+curated1[5, 'therapy_radiation_initial'] = 0
+curated1[5, 'therapy_radiation_salvage'] = 0
+curated1[5, 'therapy_hormonal_initial'] = 0
+curated1[5, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[5,' LCM_Gleason_Pattern:ch1'], ' '))[3],
+                                     unlist(stringr::str_split(uncurated1[5,' LCM_Gleason_Pattern:ch1'], ' '))[5],
+                                     unlist(stringr::str_split(uncurated1[5,'characteristics_ch1.1'], ' '))[2],
+                                     sep = '|')
+curated1[6, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[5,' LCM_Gleason_Pattern:ch1'], ' '))[2], 17,17))
+
+
+curated1[6,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[6,'Prostate Cancer patient 03-060A Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[6, 'tumor_margins_positive'] = 1
+curated1[6, 'therapy_radiation_initial'] = 0
+curated1[6, 'therapy_radiation_salvage'] = 0
+curated1[6, 'therapy_hormonal_initial'] = 0
+curated1[6, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[6,'Prostate Cancer patient 03-060A Gleason_Score:ch1'], ' '))[4], 
+                                     unlist(stringr::str_split(uncurated1[6,'Prostate Cancer patient 03-060A Gleason_Score:ch1'], ' '))[6],
+                                     unlist(stringr::str_split(uncurated1[6,'Prostate Cancer patient 03-060A Gleason_Score:ch1'], ' '))[2],
+                                     sep = '|')
+curated1[6, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[6,'Prostate Cancer patient 03-060A Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[7,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[7,' LCM_Gleason_Pattern:ch2'], ' '))[4], 5, 8))
+curated1[7, 'tumor_margins_positive'] = 1
+curated1[7, 'therapy_radiation_initial'] = 0
+curated1[7, 'therapy_radiation_salvage'] = 0
+curated1[7, 'therapy_hormonal_initial'] = 0
+curated1[7, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[7,' LCM_Gleason_Pattern:ch2'], ' '))[3], 
+                                     unlist(stringr::str_split(uncurated1[7,' LCM_Gleason_Pattern:ch2'], ' '))[5], 
+                                     unlist(stringr::str_split(uncurated1[7,'characteristics_ch2.1'], ' '))[2], 
+                                     sep = '|')
+curated1[7, 'grade_group'] =  as.numeric(substr(unlist(stringr::str_split(uncurated1[7,'characteristics_ch2.1'], ' '))[3], 17, 17))
+
+curated1[8,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[8,'Prostate Cancer patient 03-066C Gleason_Score:ch2'], ' '))[8], 5, 8))
+curated1[8, 'tumor_margins_positive'] = 1
+curated1[8, 'therapy_radiation_initial'] = 0
+curated1[8, 'therapy_radiation_salvage'] = 0
+curated1[8, 'therapy_hormonal_initial'] = 0
+curated1[8, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[8,'Prostate Cancer patient 03-066C Gleason_Score:ch2'], ' '))[7],
+                                     unlist(stringr::str_split(uncurated1[8,'Prostate Cancer patient 03-066C Gleason_Score:ch2'], ' '))[9],
+                                     unlist(stringr::str_split(uncurated1[8,'Prostate Cancer patient 03-066C Gleason_Score:ch2'], ' '))[5],
+                                     sep = '|')
+curated1[8, 'grade_group'] = as.numeric(substr( unlist(stringr::str_split(uncurated1[8,'Prostate Cancer patient 03-066C Gleason_Score:ch2'], ' '))[6], 17, 17))
+
+curated1[9,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[9,'Prostate Cancer patient 03-159 Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[9, 'tumor_margins_positive'] = 1
+curated1[9, 'therapy_radiation_initial'] = 0
+curated1[9, 'therapy_radiation_salvage'] = 0
+curated1[9, 'therapy_hormonal_initial'] = 0
+curated1[9, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[9,'Prostate Cancer patient 03-159 Gleason_Score:ch1'], ' '))[4],
+                                     unlist(stringr::str_split(uncurated1[9,'Prostate Cancer patient 03-159 Gleason_Score:ch1'], ' '))[6], 
+                                     unlist(stringr::str_split(uncurated1[9,'Prostate Cancer patient 03-159 Gleason_Score:ch1'], ' '))[2], 
+                                     sep ='|')
+curated1[9, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[9,'Prostate Cancer patient 03-159 Gleason_Score:ch1'], ' '))[3] , 17, 17))
+
+curated1[10,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[10,'Prostate Cancer patient 03-021F Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[10, 'tumor_margins_positive'] = 1
+curated1[10, 'other_treatment'] = substr(unlist(stringr::str_split(uncurated1[10,'Prostate Cancer patient 03-021F Gleason_Score:ch1'], ' '))[8], 11, 20)
+curated1[10, 'therapy_radiation_initial'] = 0
+curated1[10, 'therapy_radiation_salvage'] = 0
+curated1[10, 'therapy_hormonal_initial'] = 0
+curated1[10, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[10,'Prostate Cancer patient 03-021F Gleason_Score:ch1'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[10,'Prostate Cancer patient 03-021F Gleason_Score:ch1'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[10,'Prostate Cancer patient 03-021F Gleason_Score:ch1'], ' '))[2],
+                                       sep = '|')
+curated1[10, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[10,'Prostate Cancer patient 03-021F Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[11,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[11,'Prostate Cancer patient 02-003E Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[11, 'tumor_margins_positive'] = 0
+curated1[11, 'therapy_radiation_initial'] = 0
+curated1[11, 'therapy_radiation_salvage'] = 0
+curated1[11, 'therapy_hormonal_initial'] = 0
+curated1[11, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[11,'Prostate Cancer patient 02-003E Gleason_Score:ch2'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[11,'Prostate Cancer patient 02-003E Gleason_Score:ch2'], ' '))[6], 
+                                      unlist(stringr::str_split(uncurated1[11,'Prostate Cancer patient 02-003E Gleason_Score:ch2'], ' '))[2], 
+                                      sep = '|')
+curated1[11, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[11,'Prostate Cancer patient 02-003E Gleason_Score:ch2'], ' '))[3], 17, 17))
+
+curated1[12,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[12,'Prostate Cancer patient 03-207C Gleason_Score:ch1'], ' '))[8], 5, 8))
+curated1[12, 'tumor_margins_positive'] = 0
+curated1[12, 'other_treatment'] = paste(substr(unlist(stringr::str_split(uncurated1[12,'Prostate Cancer patient 03-207C Gleason_Score:ch1'], ' '))[11], 11, 15), unlist(stringr::str_split(uncurated1[12,'Prostate Cancer patient 03-207C Gleason_Score:ch1'], ' '))[12], sep = '_')
+curated1[12, 'therapy_radiation_initial'] = 0
+curated1[12, 'therapy_radiation_salvage'] = 0
+curated1[12, 'therapy_hormonal_initial'] = 0
+curated1[12, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[12,'Prostate Cancer patient 03-207C Gleason_Score:ch1'], ' '))[7], 
+                                      unlist(stringr::str_split(uncurated1[12,'Prostate Cancer patient 03-207C Gleason_Score:ch1'], ' '))[9], 
+                                      unlist(stringr::str_split(uncurated1[12,'Prostate Cancer patient 03-207C Gleason_Score:ch1'], ' '))[5], 
+                                      sep = '|')
+curated1[12, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[12,'Prostate Cancer patient 03-207C Gleason_Score:ch1'], ' '))[6], 17, 17)) 
+
+curated1[13,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[13,'LCM_Gleason_Pattern:ch2'], ' '))[4], 5, 8))
+curated1[13, 'tumor_margins_positive'] = 1
+curated1[13, 'therapy_radiation_initial'] = 0
+curated1[13, 'therapy_radiation_salvage'] = 0
+curated1[13, 'therapy_hormonal_initial'] = 0
+curated1[13, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[13,'LCM_Gleason_Pattern:ch2'], ' '))[3],
+                                      unlist(stringr::str_split(uncurated1[13,'LCM_Gleason_Pattern:ch2'], ' '))[5], 
+                                      unlist(stringr::str_split(uncurated1[13,'characteristics_ch2.1'], ' '))[1], 
+                                       sep = '|')
+curated1[13, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[13,'LCM_Gleason_Pattern:ch2'], ' '))[2], 17, 17))
+
+curated1[14,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[14,' LCM_Gleason_Pattern:ch2'], ' '))[4], 5, 8))
+curated1[14, 'tumor_margins_positive'] = 0
+curated1[14, 'therapy_radiation_initial'] = 0
+curated1[14, 'therapy_radiation_salvage'] = 0
+curated1[14, 'therapy_hormonal_initial'] = 0
+curated1[14, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[14,' LCM_Gleason_Pattern:ch2'], ' '))[3], 
+                                      unlist(stringr::str_split(uncurated1[14,' LCM_Gleason_Pattern:ch2'], ' '))[5], 
+                                      unlist(stringr::str_split(uncurated1[14,'characteristics_ch2.1'], ' '))[2], 
+                                      sep = '|')
+curated1[14, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[14,' LCM_Gleason_Pattern:ch2'], ' '))[2], 17, 17))
+
+curated1[15,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[15,' LCM_Gleason_Pattern:ch1'], ' '))[4], 5, 8))
+curated1[15, 'tumor_margins_positive'] = 1
+curated1[15, 'therapy_radiation_initial'] = 0
+curated1[15, 'therapy_radiation_salvage'] = 0
+curated1[15, 'therapy_hormonal_initial'] = 0
+curated1[15, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[15,' LCM_Gleason_Pattern:ch1'], ' '))[3], 
+                                      unlist(stringr::str_split(uncurated1[15,' LCM_Gleason_Pattern:ch1'], ' '))[5],
+                                      unlist(stringr::str_split(uncurated1[15,'characteristics_ch1.1'], ' '))[2],
+                                      sep = '|')
+curated1[15, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[15,' LCM_Gleason_Pattern:ch1'], ' '))[2], 17, 17))
+
+curated1[16,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[16,'Prostate Cancer patient 03-068D Gleason_Score:ch2'], ' '))[8], 5, 8))
+curated1[16, 'tumor_margins_positive'] = 1
+curated1[16, 'therapy_radiation_initial'] = 0
+curated1[16, 'therapy_radiation_salvage'] = 0
+curated1[16, 'therapy_hormonal_initial'] = 0
+curated1[16, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[16,'Prostate Cancer patient 03-068D Gleason_Score:ch2'], ' '))[7],
+                                     unlist(stringr::str_split(uncurated1[16,'Prostate Cancer patient 03-068D Gleason_Score:ch2'], ' '))[9],
+                                     unlist(stringr::str_split(uncurated1[16,'Prostate Cancer patient 03-068D Gleason_Score:ch2'], ' '))[5],
+                                     sep = '|')
+curated1[16, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[16,'Prostate Cancer patient 03-068D Gleason_Score:ch2'], ' '))[6], 17, 17))
+
+curated1[17,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[17,'Prostate Cancer patient 03-141C Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[17, 'tumor_margins_positive'] = 1
+curated1[17, 'therapy_radiation_initial'] = 0
+curated1[17, 'therapy_radiation_salvage'] = 0
+curated1[17, 'therapy_hormonal_initial'] = 0
+curated1[17, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[17,'Prostate Cancer patient 03-141C Gleason_Score:ch2'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[17,'Prostate Cancer patient 03-141C Gleason_Score:ch2'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[17,'Prostate Cancer patient 03-141C Gleason_Score:ch2'], ' '))[2],
+                                      sep = '|')
+curated1[17, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[17,'Prostate Cancer patient 03-141C Gleason_Score:ch2'], ' '))[3], 17, 17))
+
+curated1[18,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[18,'Prostate Cancer patient 02-053C Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[18, 'tumor_margins_positive'] = 0
+curated1[18, 'therapy_radiation_initial'] = 0
+curated1[18, 'therapy_radiation_salvage'] = 0
+curated1[18, 'therapy_hormonal_initial'] = 0
+curated1[18, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[18,'Prostate Cancer patient 02-053C Gleason_Score:ch1'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[18,'Prostate Cancer patient 02-053C Gleason_Score:ch1'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[18,'Prostate Cancer patient 02-053C Gleason_Score:ch1'], ' '))[2],
+                                      sep = '|')
+curated1[18, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[18,'Prostate Cancer patient 02-053C Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[19,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[19,'Prostate Cancer patient 04-030A Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[19, 'tumor_margins_positive'] = 0
+curated1[19, 'therapy_radiation_initial'] = 0
+curated1[19, 'therapy_radiation_salvage'] = 0
+curated1[19, 'therapy_hormonal_initial'] = 0
+curated1[19, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[19,'Prostate Cancer patient 04-030A Gleason_Score:ch2'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[19,'Prostate Cancer patient 04-030A Gleason_Score:ch2'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[19,'Prostate Cancer patient 04-030A Gleason_Score:ch2'], ' '))[2],
+                                      sep = '|')
+curated1[19, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[19,'Prostate Cancer patient 04-030A Gleason_Score:ch2'], ' '))[3], 17, 17))
+
+curated1[20,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[20,' LCM_Gleason_Pattern:ch1'], ' '))[4], 5, 8))
+curated1[20, 'tumor_margins_positive'] = 1
+curated1[20, 'therapy_radiation_initial'] = 0
+curated1[20, 'therapy_radiation_salvage'] = 0
+curated1[20, 'therapy_hormonal_initial'] = 0
+curated1[20, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[20,' LCM_Gleason_Pattern:ch1'], ' '))[3], 
+                                      unlist(stringr::str_split(uncurated1[20,' LCM_Gleason_Pattern:ch1'], ' '))[5], 
+                                      unlist(stringr::str_split(uncurated1[20,'characteristics_ch1.1'], ' '))[2], 
+                                      sep = '|')
+curated1[20, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[20,' LCM_Gleason_Pattern:ch1'], ' '))[2] , 17, 17))
+
+curated1[21,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[21,'LCM_Gleason_Pattern:ch2'], ' '))[4], 5, 8))
+curated1[21, 'tumor_margins_positive'] = 0
+curated1[21, 'other_treatment'] = substr(unlist(stringr::str_split(uncurated1[21,'LCM_Gleason_Pattern:ch2'], ' '))[7], 11, 20)
+curated1[21, 'therapy_radiation_initial'] = 0
+curated1[21, 'therapy_radiation_salvage'] = 0
+curated1[21, 'therapy_hormonal_initial'] = 0
+curated1[21, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[21,'LCM_Gleason_Pattern:ch2'], ' '))[3], 
+                                      unlist(stringr::str_split(uncurated1[21,'LCM_Gleason_Pattern:ch2'], ' '))[5], 
+                                      unlist(stringr::str_split(uncurated1[21,'characteristics_ch2.1'], ' '))[1], 
+                                      sep = '|')
+curated1[21, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[21,'LCM_Gleason_Pattern:ch2'], ' '))[2], 17, 17))
+
+curated1[22,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[22,'Prostate Cancer patient 03-184C Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[22, 'tumor_margins_positive'] = 0
+curated1[22, 'therapy_radiation_initial'] = 0
+curated1[22, 'therapy_radiation_salvage'] = 0
+curated1[22, 'therapy_hormonal_initial'] = 0
+curated1[22, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[22,'Prostate Cancer patient 03-184C Gleason_Score:ch2'], ' '))[4],
+                                      unlist(stringr::str_split(uncurated1[22,'Prostate Cancer patient 03-184C Gleason_Score:ch2'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[22,'Prostate Cancer patient 03-184C Gleason_Score:ch2'], ' '))[2],
+                                      sep = '|')
+curated1[22, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[22,'Prostate Cancer patient 03-184C Gleason_Score:ch2'], ' '))[3], 17, 17))
+
+curated1[23,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[23,'Prostate Cancer patient 03-152A Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[23, 'tumor_margins_positive'] = 1
+curated1[23, 'other_treatment'] = paste(substr(unlist(stringr::str_split(uncurated1[23,'Prostate Cancer patient 03-152A Gleason_Score:ch2'], ' '))[8], 11, 20), unlist(stringr::str_split(uncurated1[23,'Prostate Cancer patient 03-152A Gleason_Score:ch2'], ' '))[9], sep = '_')
+curated1[23, 'therapy_radiation_initial'] = 0
+curated1[23, 'therapy_radiation_salvage'] = 0
+curated1[23, 'therapy_hormonal_initial'] = 0
+curated1[23, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[23,'Prostate Cancer patient 03-152A Gleason_Score:ch2'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[23,'Prostate Cancer patient 03-152A Gleason_Score:ch2'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[23,'Prostate Cancer patient 03-152A Gleason_Score:ch2'], ' '))[2],
+                                      sep = '|')
+curated1[23, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[23,'Prostate Cancer patient 03-152A Gleason_Score:ch2'], ' '))[3], 17, 17))
+
+curated1[24,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[24,'Prostate Cancer patient 03-029B Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[24, 'tumor_margins_positive'] = 0
+curated1[24, 'therapy_radiation_initial'] = 0
+curated1[24, 'therapy_radiation_salvage'] = 0
+curated1[24, 'therapy_hormonal_initial'] = 0
+curated1[24, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[24,'Prostate Cancer patient 03-029B Gleason_Score:ch1'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[24,'Prostate Cancer patient 03-029B Gleason_Score:ch1'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[24,'Prostate Cancer patient 03-029B Gleason_Score:ch1'], ' '))[2],
+                                      sep = '|')
+curated1[24, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[24,'Prostate Cancer patient 03-029B Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[25,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[25,'Prostate Cancer patient 03-015F Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[25, 'tumor_margins_positive'] = 1
+curated1[25, 'therapy_radiation_initial'] = 0
+curated1[25, 'therapy_radiation_salvage'] = 0
+curated1[25, 'therapy_hormonal_initial'] = 0
+curated1[25, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[25,'Prostate Cancer patient 03-015F Gleason_Score:ch2'], ' '))[4],
+                                      unlist(stringr::str_split(uncurated1[25,'Prostate Cancer patient 03-015F Gleason_Score:ch2'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[25,'Prostate Cancer patient 03-015F Gleason_Score:ch2'], ' '))[2],
+                                      sep = '|')
+curated1[25, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[25,'Prostate Cancer patient 03-015F Gleason_Score:ch2'], ' '))[3], 17, 17))
+
+curated1[26,'psa'] = NA
+curated1[26, 'tumor_margins_positive'] = 1
+curated1[26, 'therapy_radiation_initial'] = 0
+curated1[26, 'therapy_radiation_salvage'] = 0
+curated1[26, 'therapy_hormonal_initial'] = 0
+curated1[26, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[26,'Prostate Cancer patient 03-119D Gleason_Score:ch1'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[26,'Prostate Cancer patient 03-119D Gleason_Score:ch1'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[26,'Prostate Cancer patient 03-119D Gleason_Score:ch1'], ' '))[2],
+                                      sep = '|')
+curated1[26, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[26,'Prostate Cancer patient 03-119D Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[27,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[27,'Prostate Cancer patient 03-140B Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[27, 'tumor_margins_positive'] = 0
+curated1[27, 'other_treatment'] = paste(substr(unlist(stringr::str_split(uncurated1[27,'Prostate Cancer patient 03-140B Gleason_Score:ch1'], ' '))[8], 11, 20), unlist(stringr::str_split(uncurated1[27,'Prostate Cancer patient 03-140B Gleason_Score:ch1'], ' '))[9], sep = '_')
+curated1[27, 'therapy_radiation_initial'] = 0
+curated1[27, 'therapy_radiation_salvage'] = 0
+curated1[27, 'therapy_hormonal_initial'] = 0
+curated1[27, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[27,'Prostate Cancer patient 03-140B Gleason_Score:ch1'], ' '))[4],
+                                      unlist(stringr::str_split(uncurated1[27,'Prostate Cancer patient 03-140B Gleason_Score:ch1'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[27,'Prostate Cancer patient 03-140B Gleason_Score:ch1'], ' '))[2],
+                                      sep = '|')
+curated1[27, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[27,'Prostate Cancer patient 03-140B Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+curated1[28,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[28,'LCM_Gleason_Pattern:ch1'], ' '))[4], 5, 8))
+curated1[28, 'tumor_margins_positive'] = 0
+curated1[28, 'therapy_radiation_initial'] = 0
+curated1[28, 'therapy_radiation_salvage'] = 0
+curated1[28, 'therapy_hormonal_initial'] = 0
+curated1[28, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[28,'LCM_Gleason_Pattern:ch1'], ' '))[3],
+                                      unlist(stringr::str_split(uncurated1[28,'LCM_Gleason_Pattern:ch1'], ' '))[5],
+                                      unlist(stringr::str_split(uncurated1[28,'characteristics_ch1.1'], ' '))[1],
+                                      sep = '|')
+curated1[28, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[28,'LCM_Gleason_Pattern:ch1'], ' '))[2], 17, 17))
+
+curated1[29,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[29,' LCM_Gleason_Pattern:ch2'], ' '))[4], 5, 8))
+curated1[29, 'tumor_margins_positive'] = 0
+curated1[29, 'therapy_radiation_initial'] = 0
+curated1[29, 'therapy_radiation_salvage'] = 0
+curated1[29, 'therapy_hormonal_initial'] = 0
+curated1[29, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[29,' LCM_Gleason_Pattern:ch2'], ' '))[3], 
+                                      unlist(stringr::str_split(uncurated1[29,' LCM_Gleason_Pattern:ch2'], ' '))[5],
+                                      unlist(stringr::str_split(uncurated1[29,'characteristics_ch2.1'], ' '))[2],
+                                      sep = '|')
+curated1[29, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[29,' LCM_Gleason_Pattern:ch2'], ' '))[2], 17, 17))
+
+curated1[30,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[30,'Prostate Cancer patient 03-063A Gleason_Score:ch2'], ' '))[5], 5, 8))
+curated1[30, 'tumor_margins_positive'] = 0
+curated1[30, 'therapy_radiation_initial'] = 0
+curated1[30, 'therapy_radiation_salvage'] = 0
+curated1[30, 'therapy_hormonal_initial'] = 0
+curated1[30, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[30,'Prostate Cancer patient 03-063A Gleason_Score:ch2'], ' '))[4], 
+                                      unlist(stringr::str_split(uncurated1[30,'Prostate Cancer patient 03-063A Gleason_Score:ch2'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[30,'Prostate Cancer patient 03-063A Gleason_Score:ch2'], ' '))[2],
+                                      sep = '|')
+curated1[30, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[30,'Prostate Cancer patient 03-063A Gleason_Score:ch2'], ' '))[3],17, 17))
+
+curated1[31,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[31,'Prostate Cancer patient 03-055H Gleason_Score:ch1'], ' '))[5], 5, 8))
+curated1[31, 'tumor_margins_positive'] = 0
+curated1[31, 'other_treatment'] = paste(substr(unlist(stringr::str_split(uncurated1[31,'Prostate Cancer patient 03-055H Gleason_Score:ch1'], ' '))[8], 11, 20), unlist(stringr::str_split(uncurated1[31,'Prostate Cancer patient 03-055H Gleason_Score:ch1'], ' '))[9], sep = '_')
+curated1[31, 'therapy_radiation_initial'] = 0
+curated1[31, 'therapy_radiation_salvage'] = 0
+curated1[31, 'therapy_hormonal_initial'] = 0
+curated1[31, 'other_feature'] = paste(unlist(stringr::str_split(uncurated1[31,'Prostate Cancer patient 03-055H Gleason_Score:ch1'], ' '))[4],
+                                      unlist(stringr::str_split(uncurated1[31,'Prostate Cancer patient 03-055H Gleason_Score:ch1'], ' '))[6],
+                                      unlist(stringr::str_split(uncurated1[31,'Prostate Cancer patient 03-055H Gleason_Score:ch1'], ' '))[2],
+                                      sep = '|')
+curated1[31, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[31,'Prostate Cancer patient 03-055H Gleason_Score:ch1'], ' '))[3], 17, 17))
+
+###########################
+###########################
+
+# being only one line the second dataset does not cause such inconvenients
+
+curated2 <- curated2 %>% 
+  dplyr::mutate(study_name = "True et al.") %>%
+  dplyr::mutate(sample_name = uncurated2$geo_accession) %>% 
+  dplyr::mutate(patient_id = unlist(lapply(stringr::str_split(uncurated2$title, '_'), function(x) x[2]))) %>%
+  dplyr::mutate(gleason_major = as.numeric(substr(unlist(lapply(stringr::str_split(uncurated2$description, ' '), function(x) x[9])), 1, 1))) %>%
+  dplyr::mutate(gleason_minor = as.numeric(substr(unlist(lapply(stringr::str_split(uncurated2$description, ' '), function(x) x[9])), 3, 3))) %>%
+  dplyr::mutate(gleason_grade = gleason_major + gleason_minor) %>%
+  dplyr::mutate(gleason_group = dplyr::case_when(
+    gleason_grade  %in%  4:6 ~ "<=6",
+    gleason_major == 3 & gleason_minor == 4 ~ "3+4",
+    gleason_major == 4 & gleason_minor == 3 ~ "4+3",
+    gleason_grade %in% 8:10 ~ ">=8",
+    TRUE ~ "NA"
+  )) %>%
+  dplyr::mutate(psa = as.numeric(substr(unlist(stringr::str_split(uncurated2$characteristics_ch1, ' '))[13], 5, 8))) %>%
+  dplyr::mutate(tumor_margins_positive = 0) %>%
+  dplyr::mutate(therapy_radiation_initial = 0) %>%
+  dplyr::mutate(therapy_radiation_salvage = 0) %>%
+  dplyr::mutate(therapy_hormonal_initial = 0) %>%
+  dplyr::mutate(microdissected = 1) %>%
+  dplyr::mutate(other_feature = paste(
+                                      unlist(stringr::str_split(uncurated2$characteristics_ch1, ' '))[12],
+                                      unlist(stringr::str_split(uncurated2$characteristics_ch1, ' '))[14],
+                                      unlist(stringr::str_split(uncurated2$characteristics_ch1, ' '))[10],
+                                      paste('tertiary_pattern', stringr::str_split(uncurated2$characteristics_ch1, ' ')[[1]][8], sep = ':'),
+                                      sep = '|' )) 
+
+curated2[1,'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated2[1,"Prostate Cancer patient 02-209C Gleason_Score:ch1"], ' '))[7], 17, 17))
+
+# the datastes are merged in a way that preserves the order of the GEO sample indexes
+
+clinical_true = rbind(curated1[1:10, ], curated2[1, ], curated1[11:31, ])
+
+save(clinical_true, file =  "./data-raw//clinical_true.RData")
+
+
+#############################################################################
+#############################################################################
+
+##  WALLACE ET AL.
+
+#############################################################################
+#############################################################################
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
+
+
+# clinical
+uncurated <- Biobase::pData(gset[[1]]) 
+
+unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430') # as determined by the GSE6956 metadata
+
+uncurated = uncurated[!is.element(uncurated$geo_accession, unmatched_healty_tissue), ] 
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Wallace et al.") %>%
+  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+  dplyr::mutate(patient_id = stringr::str_extract(uncurated$title, 'patient \\d+')) %>%
+  dplyr::mutate(alt_sample_name = stringr::str_extract(uncurated$title, 'patient \\d+')) %>%
+  dplyr::mutate(gleason_grade = dplyr::case_when(
+                                                 uncurated$'gleason sum:ch1' == 'NA' ~ NA_character_, 
+                                                 TRUE ~ uncurated$'gleason sum:ch1')) %>%
+  dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>% 
+  dplyr::mutate(race = dplyr::case_when(
+                                        uncurated$"race:ch1" == 'African American' ~ 'african_american',
+                                        uncurated$"race:ch1" == 'Caucasian' ~ 'caucasian',
+                                        uncurated$"race:ch1" == 'NA' ~ NA_character_
+                                        )) %>%
+  dplyr::mutate(smoking_status = as.numeric(dplyr::case_when(
+                                                 uncurated$"smoking status:ch1" == 'Current' ~ '1',
+                                                 uncurated$"smoking status:ch1" == 'Past' ~ '1',
+                                                 uncurated$"smoking status:ch1" == 'Never' ~ '0',
+                                                 uncurated$"smoking status:ch1" == 'Unknown' ~ NA_character_,
+                                                 uncurated$"smoking status:ch1" == 'NA' ~ NA_character_
+                                                 ))) %>%
+  dplyr::mutate(angiolymphatic_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"angio lymphatic invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(seminal_vesicle_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"seminal vesicle invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(perineural_invasion = as.numeric(dplyr::case_when(
+                                                           uncurated$"perineural invasion:ch1" == 'Yes' ~ '1',
+                                                           uncurated$"perineural invasion:ch1" == 'No' ~ '0',
+                                                           uncurated$"perineural invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(extraprostatic_extension = as.numeric(dplyr::case_when(
+                                                           uncurated$"extraprostatic extension:ch1" == 'Focal' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'Multifocal' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'Established' ~ '1',
+                                                           uncurated$"extraprostatic extension:ch1" == 'None' ~ '0',
+                                                           uncurated$"perineural invasion:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(tumor_margins_positive = as.numeric(dplyr::case_when(
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor focal at margin' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor widespread a surgical margins' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Tumor widespread at margin' ~ '1',
+                                                           uncurated$"are surgical margins involved:ch1" == 'All surgical margins are free of tumor' ~ '0',
+                                                           uncurated$"are surgical margins involved:ch1" == 'Unknown' ~ NA_character_,
+                                                           uncurated$"are surgical margins involved:ch1" == 'NA' ~ NA_character_
+                                                           ))) %>%
+  dplyr::mutate(sample_type = dplyr::case_when(
+                                               uncurated$source_name_ch1 == "Adenocarcinoma (NOS) of the prostate" ~ 'primary',
+                                               uncurated$source_name_ch1 == "Normal prostate" ~ 'adjacentnormal'
+                                               ))  %>%
+  dplyr::mutate(frozen_ffpe = 'frozen') %>%
+  dplyr::mutate(microdissected = 0) %>%
+  dplyr::mutate(therapy_radiation_initial = 0) %>%
+  dplyr::mutate(therapy_radiation_salvage = 0) %>%
+  dplyr::mutate(therapy_surgery_initial = 0) %>%
+  dplyr::mutate(therapy_hormonal_initial = 0)
+
+
+ 
+
+clinical_wallace <- curated
+
+save(clinical_wallace, file = "data-raw/clinical_wallace.RData")
+
+
+########################################################################
+########################################################################
+#
+# Weiner et al.
+#
+########################################################################
+########################################################################
+
+gset <- getGEO("GSE157548", GSEMatrix =TRUE, getGPL=TRUE)
+
+
+uncurated <- Biobase::pData(gset[[1]]) 
+
+
+
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "Weiner et al.") %>%
+  dplyr::mutate(sample_name = uncurated$geo_accession) %>% 
+  dplyr::mutate(patient_id = uncurated$geo_accession) %>%
+  dplyr::mutate(race = dplyr::case_when(
+                                        is.na(uncurated$'race:ch1') ~ NA_character_, 
+                                        uncurated$'race:ch1' == 'Black' ~ 'african_american',
+                                        uncurated$'race:ch1' == 'White' ~ 'caucasian')) %>% 
+  dplyr::mutate(psa = dplyr::case_when(uncurated$"psa:ch1" == "NA" ~ NA_character_,
+                                       TRUE ~ uncurated$"psa:ch1"
+                                       )) %>% 
+  dplyr::mutate(psa = as.numeric(psa)) %>%
+  dplyr::mutate(tissue_source = 'prostatectomy') %>%
+  dplyr::mutate(age_at_initial_diagnosis = dplyr::case_when(
+                                       is.na(uncurated$'age:ch1') ~ NA_character_, 
+                                       TRUE ~ uncurated$'age:ch1')) %>% 
+  dplyr::mutate(age_at_initial_diagnosis = as.numeric(age_at_initial_diagnosis)) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+                                               uncurated$"grade group:ch1" == "1" ~ "<=6",
+                                               uncurated$"grade group:ch1" == "2" ~ "3+4",
+                                               uncurated$"grade group:ch1" == "3" ~ "4+3",
+                                               uncurated$"grade group:ch1" == "4" ~ ">=8",
+                                               uncurated$"grade group:ch1" == "5" ~ ">=8",
+                                               )) %>%
+  dplyr::mutate(frozen_ffpe = 'FFPE') %>%
+  dplyr::mutate(batch = dplyr::case_when(
+                                           is.na(uncurated$"race:ch1") ~ 'Durham Veterans Affairs Hospital',
+                                           uncurated$"race:ch1" == 'Black' ~ 'Johns Hopkins Medical Institute',
+                                           uncurated$"race:ch1" == 'White' ~ 'Johns Hopkins Medical Institute'
+                                           )) %>%
+  dplyr::mutate(therapy_radiation_initial = 0) %>%
+  dplyr::mutate(therapy_radiation_salvage = 0) %>%
+  dplyr::mutate(therapy_surgery_initial = 0) %>%
+  dplyr::mutate(therapy_hormonal_initial = 0) %>%
+  dplyr::mutate(sample_type = 'primary') %>%
+  dplyr::mutate(microdissected = 0) %>%
+  dplyr::mutate(grade_group1 = uncurated$"grade group:ch1") %>%
+  dplyr::mutate(grade_group1 = as.numeric(grade_group1))
+
+
+
+clinical_weiner = curated
+save(clinical_weiner, file = 'data-raw/clinical_weiner.RData')
+
+
 
 #######################################################################
 #Wang et al

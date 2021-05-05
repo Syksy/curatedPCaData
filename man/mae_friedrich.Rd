@@ -5,7 +5,9 @@
 \alias{mae_friedrich}
 \title{Friedrich et al. MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 1.
+
+An object of class \code{MultiAssayExperiment} of length 5.
+
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE134160}
