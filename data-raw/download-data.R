@@ -1,19 +1,27 @@
 # tcga data ------
 # GEX
-gex_tcga <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+gex_tcga <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
   geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # Omics profile
   caseList = "prad_tcga_pub_sequenced" # Case list
 )
 save(gex_tcga, file="data-raw/gex_tcga.RData")
 
 # CNA
-cna_tcga <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
+cna_tcga <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_tcga_pub_linear_CNA", # changed from GISTIC to linear values to be comparable to log2 FCs from other datasets
   caseList="prad_tcga_pub_sequenced"
 )
 save(cna_tcga, file="data-raw/cna_tcga.RData")
+
+# Mutations
+mut_tcga <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles = "prad_tcga_pub_mutations",
+  caseList="prad_tcga_pub_sequenced"
+)
+save(mut_tcga, file="data-raw/mut_tcga.RData")
 
 # Create MAE object
 mae_tcga <- create_mae(study_name = "TCGA")
@@ -199,16 +207,16 @@ save(osf, file="data-raw/osfgex_tcga.RData")
 
 # PRAD Barbieri ------
 # GEX
-gex_barbieri <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+gex_barbieri <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
   geneticProfiles = "prad_broad_mrna", # Omics profile
   caseList = "prad_broad_sequenced" # Case list
 )
 save(gex_barbieri, file="data-raw/gex_barbieri.RData")
 
 # CNA
-cna_barbieri <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
+cna_barbieri <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_broad_cna", 
   caseList="prad_broad_sequenced"
 )
@@ -221,23 +229,23 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 # PRAD Ren ------
 
 # GEX
-gex_ren <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+gex_ren <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
   geneticProfiles = "prad_eururol_2017_rna_seq_mrna", # Omics profile
   caseList = "prad_eururol_2017_sequenced" # Case list
 )
 save(gex_ren, file="data-raw/gex_ren.RData")
 
 # CNA
-cna_ren <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
+cna_ren <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_eururol_2017_cna", 
   caseList="prad_eururol_2017_sequenced"
 )
 save(cna_ren, file="data-raw/cna_ren.RData")
 
 # Create MAE object
-mae_ren <- create_mae(study_name = "ren")
+mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
 usethis::use_data(mae_ren, overwrite = TRUE)
 
 #Kim et al data -----
@@ -247,42 +255,42 @@ gex_kim <- generate_gex_geo(
 save(gex_kim, file="data-raw/gex_kim.RData")
 
 # CNA
-cna_kim <- generate_cna_geo(
+cna_kim <- curatedPCaData:::generate_cna_geo(
   geo_code = "GSE119616"
 )
 save(cna_kim, file="data-raw/cna_kim.RData")
 
 # Create MAE object
-mae_kim <- create_mae(study_name = "kim")
+mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
 usethis::use_data(mae_kim, overwrite = TRUE)
 
 #Abida et al data -----
 # GEX Capture assay (FPKM)
-gex_capture_abida <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+gex_capture_abida <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
   geneticProfiles = "prad_su2c_2019_mrna_seq_fpkm_capture_all_sample_Zscores", # Omics profile
   caseList = "prad_su2c_2019_all" # Case list
 )
 save(gex_capture_abida, file="data-raw/gex_capture_abida.RData")
 
 # GEX PolyA (FPKM)
-gex_polyA_abida <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+gex_polyA_abida <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
   geneticProfiles = "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", # Omics profile
   caseList = "prad_su2c_2019_all" # Case list
 )
 save(gex_polyA_abida, file="data-raw/gex_polyA_abida.RData")
 
 # CNA
-cna_abida <- generate_cbioportal(
-  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
+cna_abida <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_su2c_2019_gistic", 
   caseList="prad_su2c_2019_sequenced"
 )
 save(cna_abida, file="data-raw/cna_abida.RData")
 
 # Create MAE object
-mae_abida <- create_mae(study_name = "abida")
+mae_abida <- curatedPCaData:::create_mae(study_name = "abida")
 usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Wang et al.
@@ -298,7 +306,7 @@ cna_wang <- curatedPCaData:::generate_cna_geo(
 save(cna_wang, file="data-raw/cna_wang.RData")
 
 # Barwick et al.
-gex_barwick <- generate_gex_geo("GSE18655")
+gex_barwick <- curatedPCaData:::generate_gex_geo("GSE18655")
 save(gex_barwick, file="data-raw/gex_barwick.RData")
 
 
