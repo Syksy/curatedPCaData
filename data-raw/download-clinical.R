@@ -1648,6 +1648,7 @@ curated <- initial_curated_df(
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Wang et al.") %>%
+  dplyr::mutate(patient_id = rownames(uncurated)) %>%
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
   dplyr::mutate(Percentage_of_Atrophic_Gland = uncurated$`Percentage of Atrophic Gland:ch1`) %>%
   dplyr::mutate(Percentage_of_BPH = uncurated$`Percentage of BPH:ch1`) %>%
@@ -1675,6 +1676,7 @@ curated <- initial_curated_df(
 curated <- curated %>% 
   dplyr::mutate(study_name = "igc") %>%
   dplyr::mutate(sample_name = rownames(uncurated)) %>% 
+  dplyr::mutate(patient_id = rownames(uncurated)) %>%
   dplyr::mutate(age_at_initial_diagnosis = stringr::str_remove(uncurated$description.1,"Patient Age:")) %>%
   dplyr::mutate(race = stringr::str_remove(uncurated$description.3,"Ethnic Background:")) %>%
   dplyr::mutate(description.6 = uncurated$description.6)%>%
