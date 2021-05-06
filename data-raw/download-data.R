@@ -196,7 +196,7 @@ if(cleanup){
 
 gex_wallace = gex_wallace[, !is.element(colnames(gex_wallace), unmatched_healty_tissue)]
 
-save(gex_wallace,  file = "./gex_wallace.RData")
+save(gex_wallace,  file = "data-raw/gex_wallace.RData")
 
 
 #Download OSF data
@@ -246,7 +246,7 @@ mut_barbieri[which(mut_barbieri=="NaN")] <- NA
 save(mut_barbieri, file="data-raw/mut_barbieri.RData")
 
 # Create MAE object
-mae_barbieri <- create_mae(study_name = "Barbieri")
+mae_barbieri <- curatedPCaData:::create_mae(study_name = "Barbieri")
 usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # PRAD Ren ------
@@ -281,7 +281,7 @@ mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
 usethis::use_data(mae_ren, overwrite = TRUE)
 
 #Kim et al data -----
-gex_kim <- generate_gex_geo(
+gex_kim <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE119616"
 )
 save(gex_kim, file="data-raw/gex_kim.RData")
@@ -332,7 +332,7 @@ cna_wang <- curatedPCaData:::generate_cna_geo(
 save(cna_wang, file="data-raw/cna_wang.RData")
 
 # Create MAE object
-mae_wang <- create_mae(study_name = "wang")
+mae_wang <- curatedPCaData:::create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
 
 # Barwick et al.
@@ -402,7 +402,7 @@ save(gex_true, file = "data-raw/gex_true.RData")
 
 # IGC - GSE2109
 #GEX
-gex_igc <- generate_gex_geo(
+gex_igc <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE2109"
 )
 save(gex_igc, file="data-raw/gex_igc.RData")

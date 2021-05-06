@@ -5,10 +5,14 @@
 \alias{mae_barbieri}
 \title{Barbieri MAE-object}
 \format{
-An MAE object spanning 112 men with prostate cancer
+A MAE object spanning prostate cancer samples.
 \describe{
-  \item{gex}{matrix with 18193 rows and 20 columns}
-  \item{cna}{matrix with 21723 rows and 109 columns}
+  \item{gex}{matrix with 18193 rows and 20 columns, for the gene expression data}
+  \item{cna}{matrix with 21723 rows and 109 columns, for the Copy Number Alteration data}
+  \item{xcell}{matrix with 39 rows and 20 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 20 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 20 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 20 columns, of mcp-counter based deconvolution data}
 }
 }
 \source{
@@ -18,7 +22,13 @@ An MAE object spanning 112 men with prostate cancer
 mae_barbieri
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and copy 
-number alteration (cna).
+Barbieri MAE-object
+}
+\details{
+The data comprises of primary localised prostate tumors from two cohorts, the Weill Cornell Medical College (WCMC; New York, NY), and the Uropath (Perth, Australia), which commercially provides banked urological tissues. None of the samples comes from patients who had received prior treatment for prostate cancer.
+}
+\references{
+Barbieri, C. E., Baca, S. C., Lawrence, M. S., et al. (2012). Exome sequencing identifies recurrent SPOP, FOXA1 and MED12 mutations in prostate cancer. Nature genetics, 44(6), 685–689. https://doi.org/10.1038/ng.2279
+(\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
 }
 \keyword{datasets}
