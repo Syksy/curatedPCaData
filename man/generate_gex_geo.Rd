@@ -5,7 +5,8 @@
 \title{Download gene expression from GEO using study specific id and process it}
 \usage{
 generate_gex_geo(
-  geo_code = c("GSE21032", "GSE25136", "GSE8218", "GSE6919", "GSE18655"),
+  geo_code = c("GSE21032", "GSE25136", "GSE8218", "GSE6919", "GSE18655", "GSE2109",
+    "GSE119616"),
   file_directory,
   cleanup = TRUE,
   collapse_fun = function(z) {     apply(z, MARGIN = 2, FUN = stats::median) },

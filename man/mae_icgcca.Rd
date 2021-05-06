@@ -5,7 +5,14 @@
 \alias{mae_icgcca}
 \title{ICGC CA MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 1.
+An MAE object spanning 112 men with prostate cancer
+\describe{
+  \item{gex}{matrix with 17208 rows and 213 columns, for the gene expression data}
+  \item{xcell}{matrix with 39 rows and 213 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 213 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 213 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 213 columns, of mcp-counter based deconvolution data}
+}
 }
 \source{
 \url{https://dcc.icgc.org/projects/PRAD-CA}
@@ -14,6 +21,13 @@ An object of class \code{MultiAssayExperiment} of length 1.
 mae_icgcca
 }
 \description{
-MultiAssayExperiment object containing GEX from the Canadian ICGC cohort.
+ICGC CA MAE-object
+}
+\details{
+The data refers to samples from the ICGC Canadian Prostate Cancer Genome Network (ICGC-PRAD-CA)
+}
+\references{
+Fraser, M., Sabelnykova, V.Y., Yamaguchi, T.N., et al. (2017). Genomic hallmarks of localized, non-indolent prostate cancer. Nature, 541, 359-364.
+ (\href{https://pubmed.ncbi.nlm.nih.gov/28068672/}{PubMed})
 }
 \keyword{datasets}

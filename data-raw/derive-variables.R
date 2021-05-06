@@ -140,12 +140,12 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 # Wallace et al.
 
 #tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex"]], method="xcell"))
-#rownames(tmp) <- tmp$cell_type
+rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
-#tmp <- as.matrix(tmp[,-1])
-#mae_wallace <- c(mae_wallace, xcell = tmp)
+tmp <- as.matrix(tmp[,-1])
+mae_wallace <- c(mae_wallace, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-#usethis::use_data(mae_wallace, overwrite = TRUE)
+usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # Weiner et al.
 
@@ -585,11 +585,11 @@ usethis::use_data(mae_weiner, overwrite = TRUE)
 #####
 
 
-rbind(
-	Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Prolaris"),
-	OncotypeDX = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Oncotype DX"),
-	Decipher = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Decipher")
-)
+#rbind(
+#	Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Prolaris"),
+#	OncotypeDX = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Oncotype DX"),
+#	Decipher = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Decipher")
+#)
 
 #####
 ##
