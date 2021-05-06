@@ -236,6 +236,15 @@ cna_barbieri <- curatedPCaData:::generate_cbioportal(
 )
 save(cna_barbieri, file="data-raw/cna_barbieri.RData")
 
+# CNA
+mut_barbieri <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_broad_mutations", 
+  caseList="prad_broad_sequenced"
+)
+mut_barbieri[which(mut_barbieri=="NaN")] <- NA
+save(mut_barbieri, file="data-raw/mut_barbieri.RData")
+
 # Create MAE object
 mae_barbieri <- create_mae(study_name = "Barbieri")
 usethis::use_data(mae_barbieri, overwrite = TRUE)
@@ -257,6 +266,15 @@ cna_ren <- curatedPCaData:::generate_cbioportal(
   caseList="prad_eururol_2017_sequenced"
 )
 save(cna_ren, file="data-raw/cna_ren.RData")
+
+# Mutations
+mut_ren <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+  geneticProfiles = "prad_eururol_2017_mutations", # Omics profile
+  caseList = "prad_eururol_2017_sequenced" # Case list
+)
+mut_ren[which(mut_ren=="NaN")] <- NA
+save(mut_ren, file="data-raw/mut_ren.RData")
 
 # Create MAE object
 mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
