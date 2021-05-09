@@ -581,19 +581,173 @@ usethis::use_data(mae_weiner, overwrite = TRUE)
 #####
 ##
 ## Genomic risk scores: Prolaris, OncotypeDX & Decipher
-##
-#####
-
-
-#rbind(
-#	Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Prolaris"),
-#	OncotypeDX = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Oncotype DX"),
-#	Decipher = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Decipher")
-#)
-
-#####
-##
 ## AR scores as used by TCGA, originally presented in Hieronymus et al. 2006
-##
 #####
 
+
+## Abida
+
+mae_abida <- c(mae_abida,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_abida, object = "gex_capture", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_abida, object = "gex_capture", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_abida, overwrite = TRUE)
+
+## Barbieri
+
+mae_barbieri <- c(mae_barbieri,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_barbieri, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_barbieri, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_barbieri, overwrite = TRUE)
+
+## Chandran
+
+mae_chandran <- c(mae_chandran,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_chandran, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_chandran, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_chandran, overwrite = TRUE)
+
+## Friedrich
+
+mae_friedrich <- c(mae_friedrich,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_friedrich, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_friedrich, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_friedrich, overwrite = TRUE)
+
+## Hieronymus et al without gex, cannot estimate scores
+
+## ICGC-CA
+
+mae_icgcca <- c(mae_icgcca,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_icgcca, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_icgcca, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_icgcca, overwrite = TRUE)
+
+## IGC
+
+mae_igc <- c(mae_igc,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_igc, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_igc, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_igc, overwrite = TRUE)
+
+## Kim
+
+mae_kim <- c(mae_kim,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_kim, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_kim, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_kim, overwrite = TRUE)
+
+## Kunderfranco
+
+mae_kunderfranco <- c(mae_kunderfranco,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_kunderfranco, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_kunderfranco, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+
+## Sun
+
+mae_sun <- c(mae_sun,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_sun, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_sun, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_sun, overwrite = TRUE)
+
+## Taylor
+
+mae_taylor <- c(mae_taylor,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_taylor, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_taylor, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_taylor, overwrite = TRUE)
+
+## TCGA
+
+mae_tcga <- c(mae_tcga,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_tcga, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_tcga, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_tcga, overwrite = TRUE)
+
+## True
+
+mae_true <- c(mae_true,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_true, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_true, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_true, overwrite = TRUE)
+
+## Wallace
+
+mae_wallace <- c(mae_wallace,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_wallace, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_wallace, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_wallace, overwrite = TRUE)
+
+## Wang
+
+mae_wang <- c(mae_wang,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_wang, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_wang, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_wang, overwrite = TRUE)
+
+## Weiner
+
+mae_weiner <- c(mae_weiner,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_weiner, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_weiner, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_weiner, overwrite = TRUE)

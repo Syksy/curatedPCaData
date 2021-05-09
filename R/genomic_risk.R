@@ -179,7 +179,7 @@ genomic_score <- function(mae,
 	}
 	# TCGA version of AR score supporting gene aliases and different naming conventions
 	
-	if(test == "AR"){		
+	if(tolower(test) == "ar"){		
 		# Aliases queried using https://www.genecards.org/
 		ar_genes <- list(
 			"KLK3" = c("KLK3", "PSA", "APS", "KLK2A1"), # Possibly HK3; ambiguous
@@ -229,7 +229,7 @@ genomic_score <- function(mae,
 			# lapply over genes for AR score and their aliases
 			sum(unlist(lapply(ar_genes, FUN=function(z){
 				gez[intersect(rownames(gez), z), patient]
-			})))
+			})), na.rm=TRUE)
 		}))
 		names(res) <- colnames(gex)
 		res		
