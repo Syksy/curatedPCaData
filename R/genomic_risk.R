@@ -130,7 +130,8 @@ genomic_risk <- function(mae,
 #' AR score by Hieronymus et al 2006 as used by TCGA 2015
 genomic_score <- function(mae,
 			object = "gex",
-			test = "Hieronymus"
+			test = "AR",
+			verbose = TRUE # Warnings for not found symbols etc
 ){
 	# TCGA methodology for AR output score analysis: (Section 6 in supplementary of https://www.cell.com/cms/10.1016/j.cell.2015.10.025/attachment/70a60372-cdaf-4c72-aa6d-ded4b33ce5a0/mmc1.pdf )
 	# "The AR output score is derived from the mRNA expression of genes that are experimentally
@@ -165,7 +166,7 @@ genomic_score <- function(mae,
 		hieronymus_genes_dn <- c("TNK1", "GLRA2", "MAPRE2", "PIP5K2B", "MAN1A1", "CD200")
 	}
 	# TCGA version of Hieronymus AR-genes (panel A rows): https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4695400/figure/F4/ 
-	if(TRUE){
+	if(FALSE){
 		hieronymus_genes_up <- c(
 			"KLK3", "KLK2", "PMEPA1",
 			"ABCC4", 
@@ -176,22 +177,60 @@ genomic_score <- function(mae,
 			"GNMT", "CENPN", "ELL2", "TMPRSS2"
 		)	
 	}
+	# TCGA version of AR score supporting gene aliases and different naming conventions
 	
+	if(test == "AR"){		
+		# Aliases queried using https://www.genecards.org/
+		ar_genes <- list(
+			"KLK3" = c("KLK3", "PSA", "APS", "KLK2A1"), # Possibly HK3; ambiguous
+			"KLK2" = c("KLK2", "HGK-1", "HGK.1", "KLK2A2"), # Possibly HK2; ambiguous
+			"ABCC4" = c("ABCC4", "MRP4", "MOATB", "MOAT-B", "MOAT.B"),
+			"NKX3-1" = c("NKX3-1", "NKX3.1", "BAPX2", "NKX3A"),
+			"C1orf116" = c("C1orf116", "SARG", "FLJ36507", "MGC2742", "MGC4309"),
+			"FKBP5" = c("FKBP5", "FKBP51", "FKBP54", "FKBP-51", "FKBP.51", "AIG6", "FKBP-5", "FKBP.5"),
+			"ACSL3" = c("ACSL3", "FACL3", "LACS3"),
+			"ZBTB10" = c("ZBTB10", "RINZFC", "RINZF"),
+			"HERC3" = c("HERC3"),
+			"PTGER4" = c("PTGER4", "EP4", "P4R"), # Possibly PTGER2; ambiguous
+			"MPHOSPH9" = c("MPHOSPH9", "MPHOS9", "MPP9", "MPP-9", "MPP.9"),
+			"EAF2" = c("EAF2", "TRAITS", "BM040", "U19"),
+			"MED28" = c("MED28", "EG1"),
+			"NNMT" = c("NNMT"),
+			"MAF" = c("MAF", "CTRCT21", "AYGRP", "CCA4", "C-MAF", "C.MAF"),
+			"GNMT" = c("GNMT"),
+			"CENPN" = c("CENPN", "ICEN32", "BM039", "FLJ13607", "FLJ22660"),
+			"ELL2" = c("ELL2", "MRCCAT1"),
+			"TMPRSS2" = c("TMPRSS2", "PRSS10")
+		)
 	
-	if(test == "Hieronymus"){	
-		overlap <- intersect(hieronymus_genes_up, rownames(mae[[object]]))
-		# Compute pooled shifts and scales
-		gex <- mae[[object]]
+		missing <- 0
 
-		# Pooled normalization - pooling within sample over genes
+		# Pooled normalization - pooling within sample over all genes as per TCGA
+		gex <- mae[[object]]
 		gez <- t(apply(gex, MARGIN=1, FUN=function(z) { 
 			scale(z, center=TRUE, scale=TRUE)
 		}))
-		rownames(gez) <- rownames(gex)
-		colnames(gez) <- colnames(gez)
+		dimnames(gez) <- dimnames(gex)
 		
 		# TCGA computed AR scores based on just up regulated genes; sum of z-scores from pooled normalization
-		res <- unlist(apply(gez[overlap,], MARGIN=2, FUN=sum))
+		# Check for gene name overlaps and warn of missing ones
+		if(verbose){
+			lapply(1:length(ar_genes), FUN=function(z){
+				if(length(intersect(rownames(gez), ar_genes[[z]]))>1){
+					warning(paste("Warning! More than one gene name alias found for:", names(ar_genes)[z]))
+				}
+				if(length(intersect(rownames(gez), ar_genes[[z]]))==0){
+					warning(paste("Warning! No gene name from alias list found for:", names(ar_genes)[z]))
+				}
+			})
+		}
+		# lapply over patients
+		res <- unlist(lapply(colnames(gez), FUN=function(patient){
+			# lapply over genes for AR score and their aliases
+			sum(unlist(lapply(ar_genes, FUN=function(z){
+				gez[intersect(rownames(gez), z), patient]
+			})))
+		}))
 		names(res) <- colnames(gex)
 		res		
 	}
