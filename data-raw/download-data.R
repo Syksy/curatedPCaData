@@ -315,6 +315,15 @@ cna_abida <- curatedPCaData:::generate_cbioportal(
 )
 save(cna_abida, file="data-raw/cna_abida.RData")
 
+# Mutations
+mut_abida <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_su2c_2019_mutations", 
+  caseList="prad_su2c_2019_sequenced"
+)
+mut_abida[which(mut_abida=="NaN")] <- NA
+save(mut_abida, file="data-raw/mut_abida.RData")
+
 # Create MAE object
 mae_abida <- curatedPCaData:::create_mae(study_name = "abida")
 usethis::use_data(mae_abida, overwrite = TRUE)
