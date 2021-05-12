@@ -637,7 +637,7 @@ generate_cbioportal <- function(
   # Fetch split gene name lists as separate calls
   pb <- progress::progress_bar$new(total = length(splitgenes))
   # Bind the API calls as per columns
-  gex <- as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN = function(z){
+  ret <- as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN = function(z){
       if(verb == TRUE) pb$tick()
       # Sleep if necessary to avoid API call overflow
       Sys.sleep(delay)
@@ -646,10 +646,156 @@ generate_cbioportal <- function(
                             geneticProfiles = geneticProfiles, caseList = caseList)
     })))  
   
-  gex <- t(gex)
+  ret <- t(ret)
+  # Remove fully empty rows/columns (redundancy)
+  ret <- ret %>% janitor::remove_empty(which = c("rows", "cols"))
   
-  gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
-  
+}
+
+#' Download mutation data from cBioPortal and format them into an oncoprint-friendly matrix
+#'
+#' @param study_id TODO
+#' @param genes TODO
+#' @param delay TODO
+#' @param splitsize TODO
+#' @param verb TODO
+#' @param oncoprintify TODO
+#' @examples
+#' oncop_tcga <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="tcga", oncoprintify=TRUE)
+#' oncop_taylor <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="taylor", oncoprintify=TRUE)
+#' oncop_barbieri <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="barbieri", oncoprintify=TRUE)
+#' oncop_ren <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="ren", oncoprintify=TRUE)
+#' # TODO
+#' # oncop_abida <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="abida", oncoprintify=TRUE)
+generate_cbioportal_oncoprint <- function(
+	study_id, # tcga, taylor, barbieri, ren, or abida
+	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+	delay = 0.05,
+	splitsize = 100,
+	verb = TRUE,
+	oncoprintify = TRUE
+){
+	study_id <- tolower(study_id)
+	# Remember cBioPortal genetic profile names and query according to study id
+	# Mutations
+	geneticProfileMutations = c(
+		tcga = "prad_tcga_pub_mutations", # TCGA mutations
+		taylor = "prad_mskcc_mutations", # Taylor et al. mutations
+		barbieri = "prad_broad_mutations", # Barbieri et al. mutations
+		ren = "prad_eururol_2017_mutations", # Ren et al. mutations
+		abida = "prad_su2c_2019_mutations" # Abida et al. mutations
+	)
+	# CNA listings for GISTIC
+	geneticProfileCNA = c( # Gistic-level mutation info, {-2,-1,0,1,2}
+		tcga = "prad_tcga_pub_gistic", # TCGA (GISTIC instead of capped relative linear copy numbers)
+		taylor = "prad_mskcc_cna", # Taylor et al., GISTIC
+		barbieri = "prad_broad_cna", # Barbieri et al., GISTIC
+		ren = "prad_eururol_2017_cna", # Ren et al. (GISTIC instead of capped relative linear copy numbers)
+		abida = "prad_su2c_2019_gistic" # Abida et al., GISTIC
+	)
+	# Sample ID list
+	caseList = c(
+		tcga = "prad_tcga_pub_sequenced", # TCGA samples
+		taylor = "prad_mskcc_sequenced", # Taylor et al. samples
+		barbieri = "prad_broad_sequenced", # Barbieri et al. samples
+		ren = "prad_eururol_2017_sequenced", # Ren et al. samples
+		abida = "prad_su2c_2019_sequenced" # Abida et al. samples 		
+	)
+
+	# If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
+	if(class(genes)=="list"){
+		genes <- genes$hgnc_symbol
+	}
+	# Establisigh connection to cBioPortal
+	mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+	# Split gene name vector into suitable lengths
+	genesplit <- rep(1:ceiling(length(genes)/splitsize), each = splitsize)[1:length(genes)]
+	splitgenes <- split(genes, f = genesplit)
+	# Fetch split gene name lists as separate calls
+	pb <- progress::progress_bar$new(total = length(splitgenes))
+	# Bind the API calls as per columns
+	if(verb) print("Downloading mutation data...")
+	mut <- do.call("rbind", lapply(1:length(splitgenes), FUN = function(z){
+		# Sleep if necessary to avoid API call overflow
+		Sys.sleep(delay)
+		# Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
+		cgdsr::getMutationData(mycgds, 
+			genes = splitgenes[[z]], # 
+			geneticProfile = geneticProfileMutations[study_id], 
+			caseList = caseList[study_id]
+		)[,c("case_id", "gene_symbol", "mutation_type")]
+	}))
+	if(verb) print("Downloading copy number alteration (GISTIC) data...")
+	cna <- as.matrix(do.call("cbind", lapply(1:length(splitgenes), FUN = function(z){
+		# Sleep if necessary to avoid API call overflow
+		Sys.sleep(delay)
+		# Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
+		cgdsr::getProfileData(mycgds, genes = splitgenes[[z]], 
+				geneticProfile = geneticProfileCNA[study_id], 
+				caseList = caseList[study_id]
+			)
+		}
+	)))  
+	cna <- t(cna)	
+	cna[which(cna=="NaN")] <- NA
+
+	if(!oncoprintify){
+		# Return raw mutation and cna calls
+		list(mut, cna)
+	}else{
+		# Return an oncoprint-friendly, textified matrix with ;-separators
+		# Create base text matrix from GISTIC CNAs
+		if(verb) print("Appending CNAs to the oncoprint")
+		oncop <- t(apply(cna, MARGIN=1, FUN=function(z){
+			c("DEEP_DEL", "SHALLOW_DEL", "", "LOW_GAIN", "HIGH_AMP")[z+3]
+		}))
+		dimnames(oncop) <- dimnames(cna)
+		# Add samples from mutation list that may have been lacking from CNA matrix
+		if(!all(mut$case_id %in% colnames(oncop))){
+			samps <- matrix(NA, nrow=nrow(oncop), ncol=sum(!unique(mut$case_id) %in% colnames(oncop)))
+			colnames(samps) <- unique(mut$case_id)[!unique(mut$case_id) %in% colnames(oncop)]
+			oncop <- cbind(oncop, samps)
+		}
+		if(verb) print("Appending mutations to the oncoprint")
+		# Add gene names from mutation list that may have been lacking from CNA matrix
+		if(!all(mut$gene_symbol %in% rownames(oncop))){
+			genes <- matrix(NA, nrow=sum(!unique(mut$gene_symbol) %in% rownames(oncop)), ncol=ncol(oncop))
+			rownames(genes) <- unique(mut$gene_symbol)[!unique(mut$gene_symbol) %in% rownames(oncop)]
+			oncop <- rbind(oncop, genes)
+		}
+		# Sanitize '-' symbols to '.' in mutations for genes and sample names similar to how CNA matrix has them
+		mut[,"gene_symbol"] <- gsub("-", ".", mut[,"gene_symbol"])
+		mut[,"case_id"] <- gsub("-", ".", mut[,"case_id"])
+		# Append mutations
+		for(i in 1:nrow(mut)){
+			if(is.na(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]])){
+				oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] <- mut[i,"mutation_type"]
+			}else{
+				oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] <- paste(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]], mut[i,"mutation_type"], sep=";")
+			}
+		}
+		#apply(mut, MARGIN=1, FUN=function(z){
+		#	if(z["gene_symbol"] %in% rownames(oncop) & z["case_id"] %in% colnames(oncop)){
+		#		oncop[z["gene_symbol"],z["case_id"]] <- ifelse(is.na(oncop[z["gene_symbol"],z["case_id"]]), oncop[z["gene_symbol"],z["case_id"]], paste(oncop[z["gene_symbol"],z["case_id"]], z["mutation_type"], sep=";"))
+		#	}else{
+		#		warning(paste("Gene symbol", z["gene_symbol"], "of case_id", z["case_id"], "not found from oncoprint matrix"))
+		#	}
+		#})
+		if(verb) print("Subsetting samples to match those present in MAE")
+		# Sample names from the corresponding MAE object
+		cols <- switch(study_id,
+			"tcga" = MultiAssayExperiment::colData(curatedPCaData::mae_tcga)$sample_name,
+			"taylor" = MultiAssayExperiment::colData(curatedPCaData::mae_taylor)$patient_id,
+			"barbieri" = MultiAssayExperiment::colData(curatedPCaData::mae_barbieri)$sample_name,
+			"ren" = MultiAssayExperiment::colData(curatedPCaData::mae_ren)$sample_name,
+			"abida" = MultiAssayExperiment::colData(curatedPCaData::mae_abida)$sample_name
+		)
+		#oncop <- oncop %>% janitor::remove_empty(which = c("rows", "cols"))
+		# NA columns if samples are not present
+		oncop <- oncop[,match(cols, colnames(oncop))]
+		colnames(oncop) <- cols
+		oncop
+	}
 }
 
 #' Download and generate omics from the ICGC
