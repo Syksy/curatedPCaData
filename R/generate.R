@@ -768,19 +768,12 @@ generate_cbioportal_oncoprint <- function(
 		mut[,"case_id"] <- gsub("-", ".", mut[,"case_id"])
 		# Append mutations
 		for(i in 1:nrow(mut)){
-			if(is.na(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]])){
+			if(is.na(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] | oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] == "")){
 				oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] <- mut[i,"mutation_type"]
 			}else{
 				oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] <- paste(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]], mut[i,"mutation_type"], sep=";")
 			}
 		}
-		#apply(mut, MARGIN=1, FUN=function(z){
-		#	if(z["gene_symbol"] %in% rownames(oncop) & z["case_id"] %in% colnames(oncop)){
-		#		oncop[z["gene_symbol"],z["case_id"]] <- ifelse(is.na(oncop[z["gene_symbol"],z["case_id"]]), oncop[z["gene_symbol"],z["case_id"]], paste(oncop[z["gene_symbol"],z["case_id"]], z["mutation_type"], sep=";"))
-		#	}else{
-		#		warning(paste("Gene symbol", z["gene_symbol"], "of case_id", z["case_id"], "not found from oncoprint matrix"))
-		#	}
-		#})
 		if(verb) print("Subsetting samples to match those present in MAE")
 		# Sample names from the corresponding MAE object
 		cols <- switch(study_id,
