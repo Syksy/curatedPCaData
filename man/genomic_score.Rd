@@ -4,7 +4,7 @@
 \alias{genomic_score}
 \title{Various genomic scores}
 \usage{
-genomic_score(mae, object = "gex", test = "Hieronymus")
+genomic_score(mae, object = "gex", test = "AR", verbose = TRUE)
 }
 \description{
 AR score by Hieronymus et al 2006 as used by TCGA 2015
