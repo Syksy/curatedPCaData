@@ -675,6 +675,17 @@ mae_kunderfranco <- c(mae_kunderfranco,
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
+## Ren
+
+mae_ren <- c(mae_ren,
+	scores = rbind(
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_ren, object = "gex", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_ren, object = "gex", test = "AR")
+	)
+)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_ren, overwrite = TRUE)
+
 ## Sun
 
 mae_sun <- c(mae_sun,
