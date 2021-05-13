@@ -747,7 +747,7 @@ generate_cbioportal_oncoprint <- function(
 		# Create base text matrix from GISTIC CNAs
 		if(verb) print("Appending CNAs to the oncoprint")
 		oncop <- t(apply(cna, MARGIN=1, FUN=function(z){
-			c("DEEP_DEL", "SHALLOW_DEL", "", "LOW_GAIN", "HIGH_AMP")[z+3]
+			c("HOMDEL", "HETLOSS", "", "LOW_GAIN", "HIGH_AMP")[z+3]
 		}))
 		dimnames(oncop) <- dimnames(cna)
 		# Add samples from mutation list that may have been lacking from CNA matrix
@@ -768,7 +768,7 @@ generate_cbioportal_oncoprint <- function(
 		mut[,"case_id"] <- gsub("-", ".", mut[,"case_id"])
 		# Append mutations
 		for(i in 1:nrow(mut)){
-			if(is.na(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] | oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] == "")){
+			if(is.na(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]]) | oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] == ""){
 				oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] <- mut[i,"mutation_type"]
 			}else{
 				oncop[mut[i,"gene_symbol"], mut[i,"case_id"]] <- paste(oncop[mut[i,"gene_symbol"], mut[i,"case_id"]], mut[i,"mutation_type"], sep=";")
