@@ -10,7 +10,8 @@ save(gex_tcga, file="data-raw/gex_tcga.RData")
 # CNA
 cna_tcga <- curatedPCaData:::generate_cbioportal(
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_tcga_pub_linear_CNA", # changed from GISTIC to linear values to be comparable to log2 FCs from other datasets
+  #geneticProfiles="prad_tcga_pub_linear_CNA", # changed from GISTIC to linear values to be comparable to log2 FCs from other datasets
+  geneticProfiles="prad_tcga_pub_gistic", # changed back to GISTIC for interpretability in oncoprints
   caseList="prad_tcga_pub_sequenced"
 )
 save(cna_tcga, file="data-raw/cna_tcga.RData")

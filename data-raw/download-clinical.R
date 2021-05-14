@@ -79,12 +79,6 @@ curated <- curated %>%
   )) %>%
   dplyr::mutate(year_diagnosis = uncurated$INITIAL_PATHOLOGIC_DX_YEAR) %>%
   dplyr::mutate(overall_survival_status = uncurated$OS_STATUS) %>%
-  ## TDL: Below cases might've changed in cBio as they were no longer correct (prefixed with {"0:","1:"})
-  #dplyr::mutate(overall_survival_status = dplyr::case_when(
-  #  is.na(overall_survival_status) ~ NA_real_,
-  #  overall_survival_status == "DECEASED" ~ 1,
-  #  overall_survival_status != "DECEASED" ~ 0
-  #)) %>% 
   dplyr::mutate(overall_survival_status = dplyr::case_when(
     is.na(overall_survival_status) ~ NA_real_,
     overall_survival_status == "1:DECEASED" ~ 1,
@@ -92,12 +86,6 @@ curated <- curated %>%
   )) %>% 
   dplyr::mutate(days_to_overall_survival = as.numeric(uncurated$OS_MONTHS) * 30.5) %>%
   dplyr::mutate(disease_specific_recurrence_status = uncurated$DFS_STATUS) %>% 
-  ## TDL: Below cases might've changed in cBio as they were no longer correct (prefixed with {"0:","1:"})
-  #dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
-  #  disease_specific_recurrence_status == "[Not Available]" ~ NA_real_,
-  #  disease_specific_recurrence_status == "Recurred/Progressed" ~ 1,
-  #  disease_specific_recurrence_status == "DiseaseFree" ~ 0
-  #)) %>% 
   dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
     disease_specific_recurrence_status == "" ~ NA_real_,
     disease_specific_recurrence_status == "1:Recurred/Progressed" ~ 1,
@@ -114,6 +102,7 @@ curated <- curated %>%
   )) %>% 
   # stringr:: commands return true NA not character NA
   dplyr::mutate(M_substage = stringr::str_sub(uncurated$CLIN_M_STAGE, 3, 3)) %>% 
+  # single instance '[Unknown]' will throw a warning for below
   dplyr::mutate(T_clinical = readr::parse_number(uncurated$CLIN_T_STAGE)) %>% 
   dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$CLIN_T_STAGE, "[a-c]+")) %>%
   dplyr::mutate(T_pathological = readr::parse_number(uncurated$PATH_T_STAGE)) %>%
@@ -124,7 +113,33 @@ curated <- curated %>%
     race == "ASIAN" ~ "asian",
     race == "BLACK OR AFRICAN AMERICAN" ~ "african_american",
     TRUE ~ "NA"
-  )) 
+  )) %>%
+  	dplyr::mutate(therapy_radiation_initial = uncurated$RADIATION_TREATMENT_ADJUVANT) %>%
+  	# Radiation treatment given at initial treatment
+  	dplyr::mutate(therapy_radiation_initial = dplyr::case_when(
+  		therapy_radiation_initial == "YES" ~ 1,
+  		therapy_radiation_initial == "NO" ~ 0,
+  		therapy_radiation_initial == "" ~ NA_real_
+  	)) %>%
+  	dplyr::mutate(other_treatment = uncurated$TARGETED_MOLECULAR_THERAPY) %>%
+  	# Add additional treatments
+	dplyr::mutate(other_treatment = dplyr::case_when(
+		other_treatment == "YES" ~ 1,
+		other_treatment == "NO" ~ 0,
+		other_treatment == "" ~ NA_real_
+	)) %>%
+	# Fraction of genome altered
+	dplyr::mutate(genome_altered = uncurated$FRACTION_GENOME_ALTERED) %>%
+	# Nx, N0 or N1 if findings in lymph nodes
+	dplyr::mutate(N_stage = uncurated$PATH_N_STAGE) %>%
+	dplyr::mutate(N_stage = dplyr::case_when(
+		N_stage == "N0" ~ 0,
+		N_stage == "N1" ~ 1,
+		N_stage == "" ~ NA_real_
+	))
+		
+		
+  
 
 clinical_tcga <- curated
 
