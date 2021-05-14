@@ -62,3 +62,4 @@ therapy_surgery_initial,integer,non-unique,optional,1|0,was surgery given as a p
 therapy_hormonal_initial,integer,non-unique,optional,1|0,was hormonal therapy given as a primary therapy?,,
 other_treatment,string,non-unique,optional,"fish_oil|no_neoadjuvant|prednisone|selenium|vitaminE|taxane,any other treatments",,,
 psa_category,string,non-unique,optional,Normal|Elevated,was psa normal or elevated in the patient?,,
+genome_altered,numeric,non-unique,optional,[0-x],"numeric value depicting fraction of genome altered or absolute number mutations called preferring prior",,
