@@ -47,7 +47,8 @@ Imports:
     RCurl,
     R.utils,
     survminer,
-    shiny, DT
+    shiny, DT,
+    markdown
 Suggests: 
     knitr,
     rmarkdown,
