@@ -6,7 +6,7 @@
 ###
 
 genes_fusion <- c("ERG", "ETV1", "ETV4", "FLI1")
-genes_mutations <- c("SPOP", "TP53", "FOXA1", "AKT1", "CDKN1B", "PIK3CA", "RB1")
+genes_mutations <- c("SPOP", "TP53", "FOXA1", "AKT1", "CDKN1B", "PIK3CA", "RB1", "BRCA1", "BRCA2")
 genes_deletions <- c("MAP3K7", "CHD1", "RB1", "TP53", "PTEN", "BRCA1", "BRCA2", "PARP1", "ATM", "CDKN1B")
 genes_amplification <- c("MYC", "AR", "AKT1")
 
