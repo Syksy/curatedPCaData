@@ -5,6 +5,20 @@
 ##
 #####
 
+# Load MAE objects to local workspace from the R-package
+mae_abida <- curatedPCaData::mae_abida
+mae_barbieri <- curatedPCaData::mae_barbieri
+mae_chandran <- curatedPCaData::mae_chandran
+mae_friedrich <- curatedPCaData::mae_friedrich
+mae_icgcca <- curatedPCaData::mae_icgcca
+mae_kunderfranco <- curatedPCaData::mae_kunderfranco
+mae_ren <- curatedPCaData::mae_ren
+mae_sun <- curatedPCaData::mae_sun
+mae_taylor <- curatedPCaData::mae_taylor
+mae_tcga <- curatedPCaData::mae_tcga
+mae_wallace <- curatedPCaData::mae_wallace
+mae_weiner <- curatedPCaData::mae_weiner
+
 ## IMMUNE DECONVOLUTION VARIABLES
 
 library(immunedeconv) # NECESSARY!
@@ -29,13 +43,13 @@ library(immunedeconv) # NECESSARY!
 # Abida et al.
 
 # 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_capture"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_abida <- c(mae_abida, xcell_capture = tmp)
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_polyA"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -46,7 +60,7 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Barbieri et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_barbieri[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -56,7 +70,7 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Chandran et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_chandran[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -66,7 +80,7 @@ usethis::use_data(mae_chandran, overwrite = TRUE)
 
 # Friedrich et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_friedrich[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -76,7 +90,7 @@ usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 # ICGCCA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_icgcca[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_icgcca[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -86,7 +100,7 @@ usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Kunderfranco et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kunderfranco[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_kunderfranco[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -96,7 +110,7 @@ usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 # Ren et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_ren[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -106,7 +120,7 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 
 # Sun et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_sun[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -117,7 +131,7 @@ usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_taylor[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_taylor[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -128,7 +142,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_tcga[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -139,7 +153,7 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # Wallace et al.
 
-#tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_wallace[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -149,7 +163,7 @@ usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # Weiner et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_weiner[["gex"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -167,13 +181,13 @@ usethis::use_data(mae_weiner, overwrite = TRUE)
 
 # Abida et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_capture"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_abida <- c(mae_abida, epic_capture = tmp)
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_polyA"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -184,7 +198,7 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Barbieri et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_barbieri[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -194,7 +208,7 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Chandran et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_chandran[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -204,7 +218,7 @@ usethis::use_data(mae_chandran, overwrite = TRUE)
 
 # Friedrich et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_friedrich[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -214,7 +228,7 @@ usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 # ICGCCA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_icgcca[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_icgcca[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -224,7 +238,7 @@ usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Kunderfranco et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kunderfranco[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_kunderfranco[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -234,7 +248,7 @@ usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 # Ren et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_ren[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -244,7 +258,7 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 
 # Sun et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_sun[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -255,7 +269,7 @@ usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_taylor[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_taylor[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -266,7 +280,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_tcga[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -277,17 +291,17 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # Wallace et al.
 
-#tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex"]], method="epic"))
-#rownames(tmp) <- tmp$cell_type
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_wallace[["gex"]], method="epic"))
+rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
-#tmp <- as.matrix(tmp[,-1])
-#mae_wallace <- c(mae_wallace, epic = tmp)
+tmp <- as.matrix(tmp[,-1])
+mae_wallace <- c(mae_wallace, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
-#usethis::use_data(mae_wallace, overwrite = TRUE)
+usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # Weiner et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_weiner[["gex"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -306,13 +320,13 @@ usethis::use_data(mae_weiner, overwrite = TRUE)
 
 # Abida et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_capture"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_abida <- c(mae_abida, quantiseq_capture = tmp)
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_polyA"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -323,7 +337,7 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Barbieri et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_barbieri[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -333,17 +347,17 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Chandran et al.  QUANTISEQ DOES NOT APPEAR TO WORK FOR CHANDRAN
 
-#tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex"]], method="quantiseq"))
-#rownames(tmp) <- tmp$cell_type
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex"]], method="quantiseq"))
+rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
-#tmp <- as.matrix(tmp[,-1])
-#mae_chandran <- c(mae_chandran, quantiseq = tmp)
+tmp <- as.matrix(tmp[,-1])
+mae_chandran <- c(mae_chandran, quantiseq = tmp)
 # Save the derived new 'assay' types to the mae-object
-#usethis::use_data(mae_chandran, overwrite = TRUE)
+usethis::use_data(mae_chandran, overwrite = TRUE)
 
 # Friedrich et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_friedrich[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -353,7 +367,7 @@ usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 # ICGCCA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_icgcca[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_icgcca[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -363,7 +377,7 @@ usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Kunderfranco et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kunderfranco[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_kunderfranco[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -373,7 +387,7 @@ usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 # Ren et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_ren[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -383,7 +397,7 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 
 # Sun et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_sun[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -394,7 +408,7 @@ usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_taylor[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_taylor[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -405,7 +419,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_tcga[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -416,7 +430,7 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # Wallace et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_wallace[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -426,7 +440,7 @@ usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # Weiner et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_weiner[["gex"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -446,13 +460,13 @@ usethis::use_data(mae_weiner, overwrite = TRUE)
 
 # Abida et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_capture"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_abida <- c(mae_abida, mcp_capture = tmp)
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex_polyA"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -463,7 +477,7 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Barbieri et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_barbieri[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -473,7 +487,7 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Chandran et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_chandran[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -483,7 +497,7 @@ usethis::use_data(mae_chandran, overwrite = TRUE)
 
 # Friedrich et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_friedrich[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -493,7 +507,7 @@ usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 # ICGCCA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_icgcca[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_icgcca[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -503,7 +517,7 @@ usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Kunderfranco et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kunderfranco[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_kunderfranco[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -516,7 +530,7 @@ usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 # Ren et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_ren[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -526,7 +540,7 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 
 # Sun et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_sun[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -537,7 +551,7 @@ usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_taylor[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_taylor[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -548,7 +562,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_tcga[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -559,7 +573,7 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # Wallace et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_wallace[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -569,7 +583,7 @@ usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # Weiner et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_weiner[["gex"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
