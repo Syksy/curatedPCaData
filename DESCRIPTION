@@ -21,6 +21,8 @@ Imports:
     MultiAssayExperiment,
     S4Vectors,
     shiny, DT
+    knitr, rmarkdown, markdown
+    utils
 Suggests: 
     progress,
     cgdsr,
@@ -28,7 +30,6 @@ Suggests:
     GenomicFeatures,
     here,
     GEOquery,
-    utils,
     affy,
     affyio,
     AnnotationDbi,
@@ -51,8 +52,6 @@ Suggests:
     RCurl,
     R.utils,
     survminer,
-    knitr,
-    rmarkdown,
     osfr, textshape, pacman,
     hgu133a.db,
     hgu95av2cdf, hgu95av2.db,
