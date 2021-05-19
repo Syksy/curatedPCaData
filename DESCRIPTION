@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.5.6
-Date: 2021-05-18
+Version: 0.5.7
+Date: 2021-05-19
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -21,9 +21,10 @@ Imports:
     MultiAssayExperiment,
     S4Vectors,
     shiny, DT
-    knitr, rmarkdown, markdown
+    knitr, rmarkdown, markdown,
     utils
 Suggests: 
+    xtable
     progress,
     cgdsr,
     biomaRt,
