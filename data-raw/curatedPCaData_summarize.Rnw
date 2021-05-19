@@ -1,0 +1,28 @@
+\documentclass[a4paper]{article}
+
+% commands to compile this in R to TeX to PDF:
+% > utils::Sweave("curatedPCaData_summarize.Rnw")
+% > tools::texi2pdf("curatedPCaData_summarize.tex")
+
+\title{Summary of the curatedPCaData-package}
+\author{Teemu Daniel Laajala}
+
+\usepackage{Sweave}
+\begin{document}
+
+\maketitle
+
+<<echo=F>>==
+library(curatedPCaData)
+@
+
+This is a summary of the MultiAssayExperiment-objects (MAE) offered for curated prostate cancer datasets in the \textit{curatedPCaData}-package version \Sexpr{utils::packageVersion("curatedPCaData")}. The following objects are currently available in the package:
+
+<<>>=
+utils::data(package="curatedPCaData")$result[,c("Item", "Title")]
+@
+
+They can be accessed via syntax \textit{curatedPCaData::mae\_name} or by first calling \textit{library("curatedPCaData")} and then calling directly the objects \textit{mae\_name} in the workspace environment.
+
+
+\end{document}
