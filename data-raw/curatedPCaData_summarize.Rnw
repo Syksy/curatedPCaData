@@ -30,14 +30,70 @@ They can be accessed via syntax \textit{curatedPCaData::mae\_name} or by first c
 <<echo=F>>=
 # List of MAE objects
 maes <- utils::data(package="curatedPCaData")$result[,"Item"]
+
 # Currently used .csv template for clinical features
 template <- read.csv("template_prad.csv")
 # Only loop through the optional fields
-fields <- template[which(template$requiredness=="optional"),"col.name"]
+fields <- template[which(template$requiredness=="optional" & !template$col.name=="alt_sample_name"),"col.name"]
+
 # Create a template matrix for data per study
-mat <- matrix(NA, nrow=length(fields), ncol=3)
-colnames(mat) <- c("Variable name", "Instances", "Missingness")
+mat <- matrix(NA, nrow=length(fields), ncol=2)
+colnames(mat) <- c("Instances", "Missingness")
 rownames(mat) <- fields
+
+# Create functions for summarizing MAE-object fields
+summarize_feature <- function(mae, feature){
+	x <- MultiAssayExperiment::colData(mae)[,feature]
+	# Summarizing character-fields
+	if(all(is.na(x))){
+		"N/A"
+	}
+	else if(template[which(template$col.name == feature),"var.class"] %in% c("character", "string")){
+		# Tabulate and order tabulation
+		tab <- table(x, useNA="ifany")
+		tab <- sort(tab, decreasing=TRUE)
+		# If there are only 3 or less unique character string entries summarize them
+		if(length(unique(x))<=3){
+			return(paste0(paste0(paste0(names(tab), ": ", tab), " (", round(tab/sum(tab)*100,0), "%)"), collapse=";"))
+		}
+		# Else summarize top 3 common entries and NAs
+		else{
+			return(paste0(paste0(paste0(paste0(names(tab)[1:3], ": ", tab[1:3]), " (", round(tab[1:3]/sum(tab)*100,0), "%)"), collapse=";"), "; ..."))
+		}		
+	# Summarizing numeric fields
+	}else if(template[which(template$col.name == feature),"var.class"] %in% c("integer", "numeric")){
+		# Cast to numeric; for example, an error entry may be psa value ">2000" causing string value
+		x <- as.numeric(x)
+		# If there are only 3 or less unique numeric entries summarize them tabulated
+		if(length(unique(x))<=3){
+			# Tabulate and order tabulation
+			tab <- table(x, useNA="ifany")
+			tab <- sort(tab, decreasing=TRUE)
+			return(paste0(paste0(paste0(names(tab), ": ", tab), " (", round(tab/sum(tab)*100,0), "%)"), collapse=";"))
+		}
+		# For 4 or more unique values, use quantiles
+		else{
+			# Contains missing values
+			if(any(is.na(x))){
+				return(paste0("[",paste0(round(quantile(x, na.rm=TRUE),2), collapse=","),"], NA n=", sum(is.na(x))))
+			# No missing values
+			}else{ 
+				return(paste0("[",paste0(round(quantile(x),2), collapse=", "),"]"))
+			}
+		}		
+	}else{
+		return("Unidentified var.class")
+	}
+}
+missingness_feature <- function(mae, feature){
+	x <- MultiAssayExperiment::colData(mae)[,feature]
+	if(sum(is.na(x))>0){
+		paste0("n=", sum(is.na(x)), " (", round(100*sum(is.na(x))/length(x),0), "%)")
+	}else{
+		"-"
+	}
+}
+
 @
 
 \section{Summary of all MAE-objects}
@@ -50,12 +106,26 @@ Looping over and summarizing the datasets:
 
 <<results=tex, echo=F>>=
 for(mae in maes){
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))
 	cat(gsub("mae_", "", paste0("\\subsection{", mae, "}")))
 	# Here: recompute 'mat' template for each 'mae' specificly
+	maemat <- mat
+	for(i in 1:nrow(maemat)){
+		if(!rownames(maemat)[i] %in% colnames(MultiAssayExperiment::colData(mae_obj))){
+			maemat[i,"Instances"] <- "Feature not found in MAE"
+			maemat[i,"Missingness"] <- "-"
+		}else{	
+			maemat[i,"Instances"] <- summarize_feature(mae_obj, rownames(maemat)[i])
+			maemat[i,"Missingness"] <- missingness_feature(mae_obj, rownames(maemat)[i])
+		}
+	}
 	# longtable of all variables and their instances
-	print(xtable::xtable(mat), tabular.environment = "longtable", floating = FALSE)
+	xtab <- xtable::xtable(maemat)
+	# Taken from https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+	xtable::align(xtab) <- c("|cp{7cm}|c|")
+	print(xtab, tabular.environment = "longtable", floating = FALSE)
 	# Summary of all MAE-object slots
-	paste(names(mae), collapse="\n")
+	paste(names(mae_obj), collapse="\n")
 }
 @
 
