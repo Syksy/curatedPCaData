@@ -100,6 +100,43 @@ missingness_feature <- function(mae, feature){
 
 Summary table of all MAE-objects and availability of most important variables.
 
+\subsection{End-points}
+
+\subsubsection{Gleason grades}
+
+Gleason grade distribution over studies:
+
+<<results=tex, echo=F>>=
+
+
+# Create a Gleason grade end-point availability table; NA-value in addition to Gleason sums of 5-10; Other-values for debugging
+gleasons <- matrix(NA, nrow=length(maes), ncol=length(5:10)+1+1)
+rownames(gleasons) <- paste(gsub("mae_", "", maes))
+colnames(gleasons) <- c(5:10, "Other", "N/A")
+for(i in 1:nrow(gleasons)){
+	eval(parse(text=paste0("gl <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$gleason_grade")))
+	# Iterate through gleasons 5-10
+	gls <- 5:10
+	for(j in 1:(ncol(gleasons)-2)){
+		if(!sum(gl==gls[j], na.rm=T)==0){
+			gleasons[i,j] <- paste0(sum(gl==gls[j], na.rm=T), " (", round(100*sum(gl==gls[j], na.rm=T)/length(gl),0), "%)")	
+		}else{
+			gleasons[i,j] <- "-"
+		}
+	}
+	# Other values
+	vals <- c(5:10, NA)
+	gleasons[i,ncol(gleasons)-1] <- paste0(sum(!gl %in% vals, na.rm=T), " (", round(100*sum(!gl %in% vals, na.rm=T)/length(gl),0), "%)")
+	# NA-values
+	gleasons[i,ncol(gleasons)] <- paste0(sum(is.na(gl), na.rm=T), " (", round(100*sum(is.na(gl), na.rm=T)/length(gl),0), "%)")
+}
+print(xtable::xtable(gleasons))
+@
+
+\subsubsection{Survival and recurrence}
+
+
+
 \section{Individual MAE-summaries}
 
 Looping over and summarizing the datasets:
