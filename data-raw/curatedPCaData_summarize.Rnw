@@ -107,8 +107,6 @@ Summary table of all MAE-objects and availability of most important variables.
 Gleason grade distribution over studies:
 
 <<results=tex, echo=F>>=
-
-
 # Create a Gleason grade end-point availability table; NA-value in addition to Gleason sums of 5-10; Other-values for debugging
 gleasons <- matrix(NA, nrow=length(maes), ncol=length(5:10)+1+1)
 rownames(gleasons) <- paste(gsub("mae_", "", maes))
@@ -134,6 +132,12 @@ print(xtable::xtable(gleasons))
 @
 
 \subsubsection{Survival and recurrence}
+
+Quantiles [min, 25\%, median, 75\%, max] for follow-up times and 0 (no event) and 1 (event) for end-point statuses:
+
+<<results=tex, echo=F>>=
+
+@
 
 
 
