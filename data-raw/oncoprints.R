@@ -209,17 +209,33 @@ annotations_ren <- data.frame(
 
 
 # ComplexHeatmap colouring options
+# Colours for alterations
+col = c(
+	"Fusion" = "purple",
+	"HOMDEL" = "blue", # Deep deletion
+	"HETLOSS" = "lightblue3", # Shallow deletion
+	"LOW_GAIN" = "lightpink2", # "Gain"
+	"HIGH_AMP" = "red", # "Amplification"
+	"Splice_Site" = "greenyellow",
+	"Missense_Mutation" = "green4",
+	"Nonsense_Mutation" = "green4", # Truncating mutation
+	"Frame_Shift_Del" = "orange",
+	"Frame_Shift_Ins" = "orange",
+	"Nonstop_Mutation" = "green4", 
+	"In_Frame_Del" = "orange",
+	"In_Frame_Ins" = "orange"
+)
 # Alteration annotation function
 alter_fun = list(
-	Fusion = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.9, 
+	Fusion = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.7, 
 		gp = gpar(fill = col["Fusion"], col = NA)),
-	HOMDEL = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.4, 
+	HOMDEL = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.9, 
 		gp = gpar(fill = col["HOMDEL"], col = NA)),
-	HETLOSS = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.4, 
+	HETLOSS = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.9, 
 		gp = gpar(fill = col["HETLOSS"], col = NA)),
-	LOW_GAIN = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.4, 
+	LOW_GAIN = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.9, 
 		gp = gpar(fill = col["LOW_GAIN"], col = NA)),
-	HIGH_AMP = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.4, 
+	HIGH_AMP = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.9, 
 		gp = gpar(fill = col["HIGH_AMP"], col = NA)),
 	Splice_Site = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.4, 
 		gp = gpar(fill = col["Splice_Site"], col = NA)),
@@ -238,68 +254,85 @@ alter_fun = list(
 	In_Frame_Ins = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.4, 
 		gp = gpar(fill = col["In_Frame_Ins"], col = NA))
 )
-# Colours for alterations
-col = c(
-	"Fusion" = rainbow(13)[1],
-	"HOMDEL" = rainbow(13)[2],
-	"HETLOSS" = rainbow(13)[3],
-	"LOW_GAIN" = rainbow(13)[4],
-	"HIGH_AMP" = rainbow(13)[5],
-	"Splice_Site" = rainbow(13)[6],
-	"Missense_Mutation" = rainbow(13)[7],
-	"Nonsense_Mutation" = rainbow(13)[8],
-	"Frame_Shift_Del" = rainbow(13)[9],
-	"Frame_Shift_Ins" = rainbow(13)[10],
-	"Nonstop_Mutation" = rainbow(13)[11],
-	"In_Frame_Del" = rainbow(13)[12],
-	"In_Frame_Ins" = rainbow(13)[13]
+# Custom heatmap_legend_param
+legpar <- list(
+	title = "Alterations",
+	at = c("Fusion", "HOMDEL", "HETLOSS", "LOW_GAIN", "HIGH_AMP", "Splice_Site", "Missense_Mutation", "Nonsense_Mutation", "Frame_Shift_Del", "Frame_Shift_Ins", "Nonstop_Mutation", "In_Frame_Del", "In_Frame_Ins"),
+	labels = c("Fusion", "Deep Deletion", "Shallow Deletion", "Gain", "Amplification", "Splice Site", "SNV", "SNV", "Indel", "Indel", "SNV", "Indel", "Indel")
 )
+	
 
 
-
-pdf("Oncoprint_TCGA_draft_May18.pdf", width=12, height=7)
+pdf("Oncoprint_TCGA_draft_May26.pdf", width=12, height=7)
 # ComplexHeatmap OncoPrint for TCGA	
-ComplexHeatmap::draw(ComplexHeatmap::oncoPrint(
+ht_tcga <- ComplexHeatmap::oncoPrint(
 	tcga, 
 	column_title = "TCGA",
+	row_title = NULL,
 	alter_fun = alter_fun, 
 	row_split = unlist(lapply(rownames(tcga), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
+	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(tcga)),
+	heatmap_legend_param = legpar,
 	col=col
-))
+)
+ComplexHeatmap::draw(ht_tcga)
 dev.off()
 
-pdf("Oncoprint_Taylor_draft_May18.pdf", width=12, height=7)
+# Samples in taylor et all with no 'omics overlap, omit
+taylor <- taylor[,-which(apply(taylor, MARGIN=2, FUN=function(z){ all(is.na(z)) }))]
+pdf("Oncoprint_Taylor_draft_May26.pdf", width=12, height=7)
 # ComplexHeatmap OncoPrint for Taylor et al. / MSKCC	
-ComplexHeatmap::draw(ComplexHeatmap::oncoPrint(
+ht_taylor <- ComplexHeatmap::oncoPrint(
 	taylor, 
 	column_title = "Taylor/MSKCC",
+	row_title = NULL,
 	alter_fun = alter_fun, 
 	row_split = unlist(lapply(rownames(taylor), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
+	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(taylor)),
+	heatmap_legend_param = legpar,
 	col=col
-))
+)
+ComplexHeatmap::draw(ht_taylor)
 dev.off()
 
-pdf("Oncoprint_Barbieri_draft_May18.pdf", width=12, height=7)
+# AR expression not properly reported in barbieri
+barbieri <- barbieri[-grep("AR", rownames(barbieri)),]
+pdf("Oncoprint_Barbieri_draft_May26.pdf", width=12, height=7)
 # ComplexHeatmap OncoPrint for Barbieri et al. / BROAD	
-ComplexHeatmap::draw(ComplexHeatmap::oncoPrint(
+ht_barbieri <- ComplexHeatmap::oncoPrint(
 	barbieri, 
 	column_title = "Barbieri/BROAD",
+	row_title = NULL,
 	alter_fun = alter_fun, 
 	row_split = unlist(lapply(rownames(barbieri), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
+	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(barbieri)),
+	heatmap_legend_param = legpar,
 	col=col
-))
+)
+ComplexHeatmap::draw(ht_barbieri)
 dev.off()
 
-pdf("Oncoprint_Ren_draft_May18.pdf", width=12, height=7)
+# ERG fusions not properly reported in ren
+ren <- ren[-grep("ERG", rownames(ren)),]
+pdf("Oncoprint_Ren_draft_May26.pdf", width=12, height=7)
 # ComplexHeatmap OncoPrint for Ren et al. / EurUrol2017
-ComplexHeatmap::draw(ComplexHeatmap::oncoPrint(
-	ren, 
+ht_ren <- ComplexHeatmap::oncoPrint(
+	ren, # ERG fusions not properly called
 	column_title = "Ren/EurUrol2017",
+	row_title = NULL,
 	alter_fun = alter_fun, 
 	row_split = unlist(lapply(rownames(ren), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
+	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(ren)),
+	heatmap_legend_param = legpar,
 	col=col
-))
+)
+ComplexHeatmap::draw(ht_ren)
 dev.off()
+
+#ht_list <- ht_tcga %v% ht_taylor %v% ht_barbieri %v% ht_ren
+#draw(ht_list, heatmap_legend_param = legpar)
+
+
 
 # Write annotations & raw oncoprints as TSVs
 write.table(cbind(annotations_tcga, t(oncop_tcga)), file="data_tcga.tsv", sep="\t", quote=FALSE, dec=",")
