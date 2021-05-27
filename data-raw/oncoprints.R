@@ -260,18 +260,38 @@ legpar <- list(
 	at = c("Fusion", "HOMDEL", "HETLOSS", "LOW_GAIN", "HIGH_AMP", "Splice_Site", "Missense_Mutation", "Nonsense_Mutation", "Frame_Shift_Del", "Frame_Shift_Ins", "Nonstop_Mutation", "In_Frame_Del", "In_Frame_Ins"),
 	labels = c("Fusion", "Deep Deletion", "Shallow Deletion", "Gain", "Amplification", "Splice Site", "SNV", "SNV", "Indel", "Indel", "SNV", "Indel", "Indel")
 )
-	
 
+# Try to order genes (depending on the intersect, may vary by dataset)	
+gene_ordering <- c(
+	# Fusions
+	"ERG", "ETV1", "ETV4", "FLI1",
+	# Deletions
+	"PTEN", "TP53", "RB1", "MAP3K7", "CHD1", "SPOP", "FOXA1", "CDKN1B", "PARP1", "ATM", "BRCA1", "BRCA2",
+	# Amps/gains
+	"MYC", "PIK3CA", "AKT1", "AR"
+)
+# Tidy up prefixes
+remove_prefix <- function(x) { gsub("Fusion_|GainFunction_|LossFunction_", "", x) }
+rownames(tcga) <- remove_prefix(rownames(tcga))
+rownames(taylor) <- remove_prefix(rownames(taylor))
+rownames(barbieri) <- remove_prefix(rownames(barbieri))
+rownames(ren) <- remove_prefix(rownames(ren))
+# Reorder matrices
+tcga <- tcga[intersect(rownames(tcga), gene_ordering),]
+taylor <- taylor[intersect(rownames(taylor), gene_ordering),]
+barbieri <- barbieri[intersect(rownames(barbieri), gene_ordering),]
+ren <- ren[intersect(rownames(ren), gene_ordering),]
 
-pdf("Oncoprint_TCGA_draft_May26.pdf", width=12, height=7)
+pdf("Oncoprint_TCGA_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for TCGA	
 ht_tcga <- ComplexHeatmap::oncoPrint(
+	# 
 	tcga, 
 	column_title = "TCGA",
 	row_title = NULL,
 	alter_fun = alter_fun, 
-	row_split = unlist(lapply(rownames(tcga), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
-	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(tcga)),
+	row_order = 1:nrow(tcga), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
 	heatmap_legend_param = legpar,
 	col=col
 )
@@ -280,15 +300,15 @@ dev.off()
 
 # Samples in taylor et all with no 'omics overlap, omit
 taylor <- taylor[,-which(apply(taylor, MARGIN=2, FUN=function(z){ all(is.na(z)) }))]
-pdf("Oncoprint_Taylor_draft_May26.pdf", width=12, height=7)
+pdf("Oncoprint_Taylor_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for Taylor et al. / MSKCC	
 ht_taylor <- ComplexHeatmap::oncoPrint(
 	taylor, 
-	column_title = "Taylor/MSKCC",
+	column_title = "MSKCC",
 	row_title = NULL,
 	alter_fun = alter_fun, 
-	row_split = unlist(lapply(rownames(taylor), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
-	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(taylor)),
+	row_order = 1:nrow(taylor), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
 	heatmap_legend_param = legpar,
 	col=col
 )
@@ -297,15 +317,15 @@ dev.off()
 
 # AR expression not properly reported in barbieri
 barbieri <- barbieri[-grep("AR", rownames(barbieri)),]
-pdf("Oncoprint_Barbieri_draft_May26.pdf", width=12, height=7)
+pdf("Oncoprint_Barbieri_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for Barbieri et al. / BROAD	
 ht_barbieri <- ComplexHeatmap::oncoPrint(
 	barbieri, 
-	column_title = "Barbieri/BROAD",
+	column_title = "BROAD",
 	row_title = NULL,
 	alter_fun = alter_fun, 
-	row_split = unlist(lapply(rownames(barbieri), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
-	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(barbieri)),
+	row_order = 1:nrow(barbieri), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
 	heatmap_legend_param = legpar,
 	col=col
 )
@@ -314,29 +334,36 @@ dev.off()
 
 # ERG fusions not properly reported in ren
 ren <- ren[-grep("ERG", rownames(ren)),]
-pdf("Oncoprint_Ren_draft_May26.pdf", width=12, height=7)
+pdf("Oncoprint_Ren_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for Ren et al. / EurUrol2017
 ht_ren <- ComplexHeatmap::oncoPrint(
-	ren, # ERG fusions not properly called
-	column_title = "Ren/EurUrol2017",
+	ren, 
+	column_title = "SMMU",
 	row_title = NULL,
 	alter_fun = alter_fun, 
-	row_split = unlist(lapply(rownames(ren), FUN=function(z) { strsplit(z, "_")[[1]][1] })),
-	row_labels = gsub("Fusion_|GainFunction_|LossFunction_|", "", rownames(ren)),
+	row_order = 1:nrow(ren), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
 	heatmap_legend_param = legpar,
 	col=col
 )
 ComplexHeatmap::draw(ht_ren)
 dev.off()
 
-#ht_list <- ht_tcga %v% ht_taylor %v% ht_barbieri %v% ht_ren
-#draw(ht_list, heatmap_legend_param = legpar)
-
-
-
 # Write annotations & raw oncoprints as TSVs
-write.table(cbind(annotations_tcga, t(oncop_tcga)), file="data_tcga.tsv", sep="\t", quote=FALSE, dec=",")
-write.table(cbind(annotations_taylor, t(oncop_taylor)), file="data_taylor.tsv", sep="\t", quote=FALSE, dec=",")
-write.table(cbind(annotations_barbieri, t(oncop_barbieri)), file="data_barbieri.tsv", sep="\t", quote=FALSE, dec=",")
-write.table(cbind(annotations_ren, t(oncop_ren)), file="data_ren.tsv", sep="\t", quote=FALSE, dec=",")
+# set to FALSE to comment out for now so whole .R-file script can be run just for heatmaps
+if(FALSE){
+	write.table(cbind(annotations_tcga, t(oncop_tcga)), file="data_tcga.tsv", sep="\t", quote=FALSE, dec=",")
+	write.table(cbind(annotations_taylor, t(oncop_taylor)), file="data_taylor.tsv", sep="\t", quote=FALSE, dec=",")
+	write.table(cbind(annotations_barbieri, t(oncop_barbieri)), file="data_barbieri.tsv", sep="\t", quote=FALSE, dec=",")
+	write.table(cbind(annotations_ren, t(oncop_ren)), file="data_ren.tsv", sep="\t", quote=FALSE, dec=",")
+}
 
+## N counts for reporting
+#> dim(tcga)
+#[1]  20 333
+#> dim(taylor)
+#[1]  17 122
+#> dim(barbieri)
+#[1]  15 109
+#> dim(ren)
+#[1] 16 63
