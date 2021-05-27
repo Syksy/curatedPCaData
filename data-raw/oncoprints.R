@@ -277,10 +277,10 @@ rownames(taylor) <- remove_prefix(rownames(taylor))
 rownames(barbieri) <- remove_prefix(rownames(barbieri))
 rownames(ren) <- remove_prefix(rownames(ren))
 # Reorder matrices
-tcga <- tcga[intersect(rownames(tcga), gene_ordering),]
-taylor <- taylor[intersect(rownames(taylor), gene_ordering),]
-barbieri <- barbieri[intersect(rownames(barbieri), gene_ordering),]
-ren <- ren[intersect(rownames(ren), gene_ordering),]
+tcga <- tcga[intersect(gene_ordering, rownames(tcga)),]
+taylor <- taylor[intersect(gene_ordering, rownames(taylor)),]
+barbieri <- barbieri[intersect(gene_ordering, rownames(barbieri)),]
+ren <- ren[intersect(gene_ordering, rownames(ren)),]
 
 pdf("Oncoprint_TCGA_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for TCGA	
