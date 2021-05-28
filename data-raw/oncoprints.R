@@ -261,12 +261,42 @@ legpar <- list(
 	labels = c("Fusion", "Deep Deletion", "Shallow Deletion", "Gain", "Amplification", "Splice Site", "SNV", "SNV", "Indel", "Indel", "SNV", "Indel", "Indel")
 )
 
+# Function for counting alterations for a given gene, takes into account 
+order_oncop <- function(oncop, genes=c("ERG", "MAP3K7", "CHD1", "PTEN", "TP53", "SPOP", "RB1")){
+	# Intersect with available genes
+	genes <- intersect(genes, rownames(oncop))
+	# Binarization function for oncoprint matrix; alteration (=1) or not (=0)
+	binarize <- function(mat){
+		bin <- matrix(as.numeric(!mat==""), nrow=nrow(mat), ncol=ncol(mat))
+		dimnames(bin) <- dimnames(mat)
+		bin
+	}
+	# Genes in which order we'll perform initial sorting
+	oncomat <- binarize(oncop)
+	
+	#rest_genes <- rownames(oncomat)[!rownames(oncomat) %in% genes]
+	#burden <- apply(oncomat[rest_genes,], MARGIN=2, FUN=sum)
+	# Rest of gene alterations, will serve as a tiebreaker when sorting the rest
+	#oncop <- oncop[,order(burden, decreasing=TRUE)]
+	# Re-binarize due to re-organizing
+	# Genes in which order we'll perform initial sorting
+	oncomat <- binarize(oncop)
+	
+	# Order in reverse order so the right genes get assigned left-wards
+	ord <- rev(do.call("order", lapply(genes, FUN=function(g) { oncomat[g,] })))
+	#for(g in rev(genes)){
+	#	oncop <- oncop[,order(oncomat[g,], decreasing=TRUE)]
+	#}
+	# Return column-ordered oncoprint
+	oncop[,ord]
+}
+
 # Try to order genes (depending on the intersect, may vary by dataset)	
 gene_ordering <- c(
 	# Fusions
 	"ERG", "ETV1", "ETV4", "FLI1",
 	# Deletions
-	"PTEN", "TP53", "RB1", "MAP3K7", "CHD1", "SPOP", "FOXA1", "CDKN1B", "PARP1", "ATM", "BRCA1", "BRCA2",
+	"MAP3K7", "CHD1", "SPOP", "PTEN", "TP53", "RB1", "FOXA1", "CDKN1B", "PARP1", "ATM", "BRCA1", "BRCA2",
 	# Amps/gains
 	"MYC", "PIK3CA", "AKT1", "AR"
 )
@@ -285,12 +315,14 @@ ren <- ren[intersect(gene_ordering, rownames(ren)),]
 pdf("Oncoprint_TCGA_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for TCGA	
 ht_tcga <- ComplexHeatmap::oncoPrint(
-	# 
-	tcga, 
+	# Ordering to the desired priorization of genes
+	# tcga,
+	order_oncop(tcga), 
 	column_title = "TCGA",
 	row_title = NULL,
 	alter_fun = alter_fun, 
 	row_order = 1:nrow(tcga), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+	column_order = 1:ncol(tcga),
 	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
 	heatmap_legend_param = legpar,
 	col=col
@@ -300,14 +332,18 @@ dev.off()
 
 # Samples in taylor et all with no 'omics overlap, omit
 taylor <- taylor[,-which(apply(taylor, MARGIN=2, FUN=function(z){ all(is.na(z)) }))]
+# SPOP-gene spuriously shows too low alteration percentage, as there were a lack of samples with SNV-like mutations called
+taylor <- taylor[-which(rownames(taylor)=="SPOP"),]
 pdf("Oncoprint_Taylor_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for Taylor et al. / MSKCC	
 ht_taylor <- ComplexHeatmap::oncoPrint(
-	taylor, 
+	# taylor, 
+	order_oncop(taylor), 	
 	column_title = "MSKCC",
 	row_title = NULL,
 	alter_fun = alter_fun, 
 	row_order = 1:nrow(taylor), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+	column_order = 1:ncol(taylor),
 	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
 	heatmap_legend_param = legpar,
 	col=col
@@ -320,11 +356,13 @@ barbieri <- barbieri[-grep("AR", rownames(barbieri)),]
 pdf("Oncoprint_Barbieri_draft_May27.pdf", width=12, height=4)
 # ComplexHeatmap OncoPrint for Barbieri et al. / BROAD	
 ht_barbieri <- ComplexHeatmap::oncoPrint(
-	barbieri, 
+	# barbieri, 
+	order_oncop(barbieri), 		
 	column_title = "BROAD",
 	row_title = NULL,
 	alter_fun = alter_fun, 
 	row_order = 1:nrow(barbieri), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+	column_order = 1:ncol(barbieri),
 	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
 	heatmap_legend_param = legpar,
 	col=col
@@ -332,22 +370,24 @@ ht_barbieri <- ComplexHeatmap::oncoPrint(
 ComplexHeatmap::draw(ht_barbieri)
 dev.off()
 
-# ERG fusions not properly reported in ren
-ren <- ren[-grep("ERG", rownames(ren)),]
-pdf("Oncoprint_Ren_draft_May27.pdf", width=12, height=4)
-# ComplexHeatmap OncoPrint for Ren et al. / EurUrol2017
-ht_ren <- ComplexHeatmap::oncoPrint(
-	ren, 
-	column_title = "SMMU",
-	row_title = NULL,
-	alter_fun = alter_fun, 
-	row_order = 1:nrow(ren), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
-	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
-	heatmap_legend_param = legpar,
-	col=col
-)
-ComplexHeatmap::draw(ht_ren)
-dev.off()
+## Omitting Ren / SMMU dataset due to its moderately small size
+
+## ERG fusions not properly reported in ren
+#ren <- ren[-grep("ERG", rownames(ren)),]
+#pdf("Oncoprint_Ren_draft_May27.pdf", width=12, height=4)
+## ComplexHeatmap OncoPrint for Ren et al. / EurUrol2017
+#ht_ren <- ComplexHeatmap::oncoPrint(
+#	ren, 
+#	column_title = "SMMU",
+#	row_title = NULL,
+#	alter_fun = alter_fun, 
+#	row_order = 1:nrow(ren), # Default gene ordering after taking intersection; do not reorder based on alteration percentages
+#	top_annotation = NULL, right_annotation = NULL, # Omit default annotations
+#	heatmap_legend_param = legpar,
+#	col=col
+#)
+#ComplexHeatmap::draw(ht_ren)
+#dev.off()
 
 # Write annotations & raw oncoprints as TSVs
 # set to FALSE to comment out for now so whole .R-file script can be run just for heatmaps
