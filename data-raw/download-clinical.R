@@ -799,9 +799,10 @@ curated <- curated %>%
   dplyr::mutate(study_name = "Barbieri et al.") %>%
   dplyr::mutate(sample_name = row.names(uncurated)) %>%
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
-  dplyr::mutate(gleason_grade = gsub(";.*","",uncurated$GLEASON_SCORE)) %>%
   dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,1,1))) %>%
   dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
+  dplyr::mutate(gleason_grade = gleason_major+gleason_minor) %>%
+  #dplyr::mutate(gleason_grade = gsub(";.*","",uncurated$GLEASON_SCORE)) %>%
   dplyr::mutate(grade_group = dplyr::case_when(
     stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
     stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
