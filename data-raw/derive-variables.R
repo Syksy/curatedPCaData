@@ -5,10 +5,6 @@
 ##
 #####
 
-## IMMUNE DECONVOLUTION VARIABLES
-
-library(immunedeconv) # NECESSARY!
-
 #####################################################################
 #####################################################################
 ##                                                                 ##
@@ -18,6 +14,80 @@ library(immunedeconv) # NECESSARY!
 #####################################################################
 
 
+## IMMUNE DECONVOLUTION VARIABLES
+
+#####################################################
+#####################################################
+##                                                 ##
+##                     CIBERSORTX                  ##
+##                                                 ##
+#####################################################
+#####################################################
+
+# Kunderfranco et al.
+
+cibersort_kunderfranco<-rio::import("data-raw/CIBERSORTx_kunderfranco_Results.csv")
+cibersort_kunderfranco <- t(cibersort_kunderfranco)
+colnames(cibersort_kunderfranco)<- cibersort_kunderfranco[1,]
+cibersort_kunderfranco<-cibersort_kunderfranco[-1,]
+cibersort_kunderfranco<-as.matrix(cibersort_kunderfranco)
+save(cibersort_kunderfranco, file="data-raw/cibersort_kunderfranco.RData")
+#mae_kunderfranco <- c(mae_kunderfranco, cibersort = cibersort_kunderfranco)
+mae_kunderfranco <- create_mae(study_name = "kunderfranco")
+usethis::use_data(mae_kunderfranco, overwrite = TRUE,internal=TRUE)
+
+# Sun et al.
+
+cibersort_sun<-rio::import("data-raw/CIBERSORTx_sun_Results.csv")
+cibersort_sun <- t(cibersort_sun)
+colnames(cibersort_sun)<- cibersort_sun[1,]
+cibersort_sun<-cibersort_sun[-1,]
+cibersort_sun<-as.matrix(cibersort_sun)
+save(cibersort_sun, file="data-raw/cibersort_sun.RData")
+#mae_sun <- c(mae_sun, cibersort = cibersort_sun)
+mae_sun <- create_mae(study_name = "sun")
+usethis::use_data(mae_sun, overwrite = TRUE,internal=TRUE)
+
+# Wang et al.
+
+cibersort_wang<-rio::import("data-raw/CIBERSORTx_wang_Results.csv")
+cibersort_wang <- t(cibersort_wang)
+colnames(cibersort_wang)<- cibersort_wang[1,]
+cibersort_wang<-cibersort_wang[-1,]
+cibersort_wang<-as.matrix(cibersort_wang)
+save(cibersort_wang, file="data-raw/cibersort_wang.RData")
+#mae_wang <- c(mae_wang, cibersort = cibersort_wang)
+mae_wang <- create_mae(study_name = "wang")
+usethis::use_data(mae_wang, overwrite = TRUE,internal=TRUE)
+
+# Kim et al.
+
+cibersort_kim<-rio::import("data-raw/CIBERSORTx_kim_Results.csv")
+cibersort_kim <- t(cibersort_kim)
+colnames(cibersort_kim)<- cibersort_kim[1,]
+cibersort_kim<-cibersort_kim[-1,]
+cibersort_kim<-as.matrix(cibersort_kim)
+save(cibersort_kim, file="data-raw/cibersort_kim.RData")
+#mae_kim <- c(mae_kim, cibersort = cibersort_kim)
+mae_kim <- create_mae(study_name = "kim")
+usethis::use_data(mae_kim, overwrite = TRUE,internal=TRUE)
+
+# Barbieri et al.
+
+cibersort_barbieri<-rio::import("data-raw/CIBERSORTx_barbieri_Results.csv")
+cibersort_barbieri <- t(cibersort_barbieri)
+colnames(cibersort_barbieri)<- cibersort_barbieri[1,]
+cibersort_barbieri<-cibersort_barbieri[-1,]
+cibersort_barbieri<-as.matrix(cibersort_barbieri)
+save(cibersort_barbieri, file="data-raw/cibersort_barbieri.RData")
+#mae_barbieri <- c(mae_barbieri, cibersort = cibersort_barbieri)
+mae_barbieri <- create_mae(study_name = "barbieri")
+usethis::use_data(mae_barbieri, overwrite = TRUE,internal=TRUE)
+
+
+
+library(immunedeconv) # NECESSARY!
+
 #####################################################
 #####################################################
 ##                                                 ##
@@ -25,6 +95,7 @@ library(immunedeconv) # NECESSARY!
 ##                                                 ##
 #####################################################
 #####################################################
+
 
 # Abida et al.
 
@@ -52,7 +123,7 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_barbieri <- c(mae_barbieri, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_barbieri, overwrite = TRUE)
+usethis::use_data(mae_barbieri, overwrite = TRUE,internal = TRUE)
 
 # Chandran et al.
 
@@ -92,7 +163,7 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_kunderfranco <- c(mae_kunderfranco, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+usethis::use_data(mae_kunderfranco, overwrite = TRUE,internal = TRUE)
 
 # Ren et al.
 
@@ -124,7 +195,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_taylor <- c(curatedPCaData::mae_taylor, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_taylor, overwrite = TRUE)
+usethis::use_data(mae_taylor, overwrite = TRUE,internal = TRUE)
 
 # TCGA
 
@@ -135,7 +206,29 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_tcga <- c(curatedPCaData::mae_tcga, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_tcga, overwrite = TRUE)
+usethis::use_data(mae_tcga, overwrite = TRUE,internal = TRUE)
+
+# Wang et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex"]], method="xcell"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_wang <- c(curatedPCaData::mae_wang, xcell = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_wang, overwrite = TRUE,internal = TRUE)
+
+# Kim et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex"]], method="xcell"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_kim <- c(curatedPCaData::mae_kim, xcell = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_kim, overwrite = TRUE,internal = TRUE)
 
 # Wallace et al.
 
@@ -190,7 +283,7 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_barbieri <- c(mae_barbieri, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_barbieri, overwrite = TRUE)
+usethis::use_data(mae_barbieri, overwrite = TRUE,internal = TRUE)
 
 # Chandran et al.
 
@@ -230,7 +323,8 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_kunderfranco <- c(mae_kunderfranco, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+usethis::use_data(mae_kunderfranco, overwrite = TRUE,internal = TRUE)
+
 
 # Ren et al.
 
@@ -262,7 +356,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_taylor <- c(curatedPCaData::mae_taylor, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_taylor, overwrite = TRUE)
+usethis::use_data(mae_taylor, overwrite = TRUE,internal = TRUE)
 
 # TCGA
 
@@ -273,7 +367,29 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_tcga <- c(curatedPCaData::mae_tcga, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_tcga, overwrite = TRUE)
+usethis::use_data(mae_tcga, overwrite = TRUE,internal = TRUE)
+
+# Wang et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex"]], method="epic"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_wang <- c(curatedPCaData::mae_wang, epic = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_wang, overwrite = TRUE,internal = TRUE)
+
+# Kim et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex"]], method="epic"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_kim <- c(curatedPCaData::mae_kim, epic = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_kim, overwrite = TRUE,internal = TRUE)
 
 # Wallace et al.
 
@@ -329,7 +445,7 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_barbieri <- c(mae_barbieri, quantiseq = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_barbieri, overwrite = TRUE)
+usethis::use_data(mae_barbieri, overwrite = TRUE,internal = TRUE)
 
 # Chandran et al.  QUANTISEQ DOES NOT APPEAR TO WORK FOR CHANDRAN
 
@@ -369,7 +485,7 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_kunderfranco <- c(mae_kunderfranco, quantiseq = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+usethis::use_data(mae_kunderfranco, overwrite = TRUE,internal=TRUE)
 
 # Ren et al.
 
@@ -390,7 +506,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_sun <- c(curatedPCaData::mae_sun, quantiseq = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_sun, overwrite = TRUE)
+usethis::use_data(mae_sun, overwrite = TRUE,internal = TRUE)
 
 # Taylor et al.
 
@@ -401,7 +517,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_taylor <- c(curatedPCaData::mae_taylor, quantiseq = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_taylor, overwrite = TRUE)
+usethis::use_data(mae_taylor, overwrite = TRUE,internal = TRUE)
 
 # TCGA
 
@@ -412,7 +528,29 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_tcga <- c(curatedPCaData::mae_tcga, quantiseq = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_tcga, overwrite = TRUE)
+usethis::use_data(mae_tcga, overwrite = TRUE,internal=TRUE)
+
+# Wang et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex"]], method="quantiseq"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_wang <- c(curatedPCaData::mae_wang, quantiseq = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_wang, overwrite = TRUE,internal=TRUE)
+
+# Kim et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex"]], method="quantiseq"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_kim <- c(curatedPCaData::mae_kim, quantiseq = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_kim, overwrite = TRUE,internal=TRUE)
 
 # Wallace et al.
 
@@ -439,7 +577,7 @@ usethis::use_data(mae_weiner, overwrite = TRUE)
 #####################################################
 #####################################################
 ##                                                 ##
-##                     MPC COUNTER                 ##
+##                     MCP COUNTER                 ##
 ##                                                 ##
 #####################################################
 #####################################################
@@ -469,7 +607,7 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_barbieri <- c(mae_barbieri, mcp = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_barbieri, overwrite = TRUE)
+usethis::use_data(mae_barbieri, overwrite = TRUE,internal = TRUE)
 
 # Chandran et al.
 
@@ -508,11 +646,10 @@ rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
-mae_wallace <- c(curatedPCaData::mae_wallace, mcp_counter = tmp)
-
-mae_kunderfranco <- c(mae_kunderfranco, mcp = tmp)
+#mae_wallace <- c(curatedPCaData::mae_wallace, mcp_counter = tmp)
+mae_kunderfranco <- c(curatedPCaData::mae_kunderfranco, mcp = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+usethis::use_data(mae_kunderfranco, overwrite = TRUE,internal=TRUE)
 
 # Ren et al.
 
@@ -533,7 +670,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_sun <- c(curatedPCaData::mae_sun, mcp = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_sun, overwrite = TRUE)
+usethis::use_data(mae_sun, overwrite = TRUE,internal=TRUE)
 
 # Taylor et al.
 
@@ -544,7 +681,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_taylor <- c(curatedPCaData::mae_taylor, mcp = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_taylor, overwrite = TRUE)
+usethis::use_data(mae_taylor, overwrite = TRUE,internal = TRUE)
 
 # TCGA
 
@@ -555,7 +692,29 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_tcga <- c(curatedPCaData::mae_tcga, mcp = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_tcga, overwrite = TRUE)
+usethis::use_data(mae_tcga, overwrite = TRUE,internal = TRUE)
+
+# Wang et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex"]], method="mcp_counter"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_wang <- c(curatedPCaData::mae_wang, mcp = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_wang, overwrite = TRUE,internal = TRUE)
+
+# Kim et al.
+
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex"]], method="mcp_counter"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_kim <- c(curatedPCaData::mae_kim, mcp = tmp)
+# Save the derived new 'assay' types to the mae-object
+usethis::use_data(mae_kim, overwrite = TRUE,internal = TRUE)
 
 # Wallace et al.
 
