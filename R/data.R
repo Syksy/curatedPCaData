@@ -1,5 +1,4 @@
 #' Abida et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' Multiassay experiment obtained from cBioPortal 
 #' @format A MAE object with clinical data for 444 tumors and 11 different aassays based on author supplied data (the CNA and two expression datasets), together with 8 immune deconvolution analyses for the expression data.  The two different gene expression datasets are partially overlappy, hence why they sum to 474 samples.
@@ -22,7 +21,6 @@
 "mae_abida"
 
 #' Barbieri MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing gene expression (gex) and copy number alteration (cna), together with immune deconvolution data. 
 #' 
@@ -42,7 +40,6 @@
 "mae_barbieri"
 
 #' Barwick MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing gene expression (gex), together with immune deconvolution data. 
 #' 
@@ -57,7 +54,6 @@
 #"mae_barwick"
 
 #' Chandran et al., Yu et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX from Chandran et al., Yu et al. in GSE6919
 #'
@@ -77,7 +73,6 @@
 "mae_chandran"
 
 #' Friedrich et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX from Friedrich et al. dataset.
 #' @format An MAE object spanning 112 men with prostate cancer
@@ -97,7 +92,6 @@
 "mae_friedrich"
 
 #' Hieronymus et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #' 
 #' MultiAssayExperiment object containing CNA from Hieronymus et al.
 #' @format A MAE object spanning 104 tumor samples
@@ -110,7 +104,6 @@
 "mae_hieronymus"
 
 #' ICGC CA MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX from the Canadian ICGC cohort.
 #'
@@ -129,7 +122,6 @@
 "mae_icgcca"
 
 #' Kunderfranco et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX from Kunderfranco et al.
 #'
@@ -148,7 +140,6 @@
 "mae_kunderfranco"
 
 #' Ren 2017 MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing gene expression (gex) and copy 
 #' number alteration (cna).
@@ -169,7 +160,6 @@
 "mae_ren"
 
 #' Sun et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX from Sun et al.
 #' 
@@ -186,7 +176,6 @@
 "mae_sun"
 
 #' Taylor et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX (exon and transcript) and CNA from Taylor et al.
 #'
@@ -207,7 +196,6 @@
 "mae_taylor"
 
 #' TCGA MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing gene expression (gex) and copy 
 #' number alteration (cna) from TCGA and the Open Science Framework datasets.
@@ -235,7 +223,6 @@
 "mae_tcga"
 
 #' True et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX from True et al.
 #' @format An MAE object spanning 333 men with prostate cancer
@@ -249,7 +236,6 @@
 "mae_true"
 
 #' Wallace et al. MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' MultiAssayExperiment object containing GEX from Wallace et al.
 #' @format An MAE object spanning 333 men with prostate cancer
@@ -266,7 +252,6 @@
 "mae_wallace"
 
 #' Weiner 2021 MAE-object
-#' @docType clinical, expression, and deconvolution data
 #'
 #' 
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_eururol_2017}
