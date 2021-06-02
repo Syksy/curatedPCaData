@@ -6,8 +6,7 @@
 \alias{curatedPCaData-package}
 \title{curatedPCaData: Curated Prostate Cancer Data}
 \description{
-A selection of annotated prostate cancer datasets including TCGA, 
-    Taylor et al., Sun et al., and others.
+A selection of annotated prostate cancer datasets featuring multiple omics and derived downstream variables
 }
 \seealso{
 Useful links:

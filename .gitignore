@@ -27,3 +27,9 @@ data-raw/prostate_experiment_summaries_JC_ST.xlsx
 data-raw/prostate_experiment_summaries_JC_ST_TDL.xlsx
 
 R-4.0.0.pkg
+
+# Ignore R Sweave to PDF pipeline intermediary filetypes
+*.aux
+*.log
+*.tex
+*.toc
