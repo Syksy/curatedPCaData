@@ -20,11 +20,11 @@ Depends: R (>= 3.5.0), S4Vectors (>= 0.23.18), MultiAssayExperiment
 Imports: 
     MultiAssayExperiment,
     S4Vectors,
-    shiny, DT
+    shiny, DT,
     knitr, rmarkdown, markdown,
     utils
 Suggests: 
-    xtable
+    xtable,
     progress,
     cgdsr,
     biomaRt,
