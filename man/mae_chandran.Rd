@@ -3,17 +3,45 @@
 \docType{data}
 \name{mae_chandran}
 \alias{mae_chandran}
-\title{Chandran et al., Yu et al. MAE-object}
+\title{Barwick MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 1.
+A MAE object spanning prostate cancer samples.
+\describe{
+  \item{gex}{matrix with 18193 rows and 20 columns, for the gene expression data}
+}
+
+An MAE object spanning 112 men with prostate cancer
+\describe{
+  \item{gex}{matrix with 15681 rows and 503 columns, for the gene expression data}
+  \item{xcell}{matrix with 39 rows and 503 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 503 columns, of epic based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 503 columns, of mpc-counter based deconvolution data}
+}
 }
 \source{
+\url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18655}
+Chandran et al., Yu et al. MAE-object
+
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6919}
 }
 \usage{
 mae_chandran
 }
 \description{
-MultiAssayExperiment object containing GEX from Chandran et al., Yu et al. in GSE6919
+Barwick MAE-object
+}
+\details{
+NA
+
+.
+}
+\references{
+Barwick, B. G., Abramovitz, M., Kodani, M., Moreno, C. S., Nam, R., Tang, W., Bouzyk, M., Seth, A., & Leyland-Jones, B. (2010). Prostate cancer genes associated with TMPRSS2-ERG gene fusion and prognostic of biochemical recurrence in multiple cohorts. British journal of cancer, 102(3), 570–576. https://doi.org/10.1038/sj.bjc.6605519
+(\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
+
+Chandran, U. R., Ma, C., Dhir, R., et al. (2007). Gene expression profiles of prostate cancer reveal involvement of multiple molecular pathways in the metastatic process. BMC cancer, 7, 64. https://doi.org/10.1186/1471-2407-7-64
+(\href{https://pubmed.ncbi.nlm.nih.gov/17430594/}{PubMed})
+Yu, Y. P., Landsittel, D., Jing, L., et al. (2004). Gene expression alterations in prostate cancer predicting tumor aggression and preceding development of malignancy. Journal of clinical oncology : official journal of the American Society of Clinical Oncology, 22(14), 2790–2799. https://doi.org/10.1200/JCO.2004.05.158
+(\href{https://pubmed.ncbi.nlm.nih.gov/15254046/}{PubMed})
 }
 \keyword{datasets}

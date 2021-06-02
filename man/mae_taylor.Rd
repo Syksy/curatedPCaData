@@ -5,15 +5,28 @@
 \alias{mae_taylor}
 \title{Taylor et al. MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 7.
+An MAE object spanning 79 men 
+\describe{
+  \item{gex}{matrix with 17638 rows and 300 columns}
+  \item{cna}{matrix with 22431 rows and 65 columns}
+  \item{xcell}{matrix with 39 rows and 300 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 300 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 300 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 300 columns, of mcp-counter based deconvolution data}
+  \item{cibersortx}{matrix with 11 rows and 300 columns, of mcp-counter based deconvolution data}
+}
 }
 \source{
-\url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
+\url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21035}
 }
 \usage{
 mae_taylor
 }
 \description{
-MultiAssayExperiment object containing GEX (exon and transcript) and CNA from Taylor et al.
+Taylor et al. MAE-object
+}
+\references{
+Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026
+ (\href{https://pubmed.ncbi.nlm.nih.gov/20579941/}{PubMed})
 }
 \keyword{datasets}
