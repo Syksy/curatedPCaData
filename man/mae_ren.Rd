@@ -15,7 +15,7 @@ An MAE object spanning 112 men with prostate cancer
   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
 }
 
-An object of class \code{MultiAssayExperiment} of length 7.
+An object of class \code{MultiAssayExperiment} of length 8.
 }
 \source{
 \url{https://www.cbioportal.org/study/summary?id=prad_eururol_2017}
