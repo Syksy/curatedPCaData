@@ -53,6 +53,18 @@ mae_sun <- c(mae_sun, cibersort = cibersort_sun)
 #mae_sun <- create_mae(study_name = "sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
 
+# Icgcca et al.
+
+cibersort_icgcca<-rio::import("data-raw/CIBERSORTx_icgcca_Results.csv")
+cibersort_icgcca <- t(cibersort_icgcca)
+colnames(cibersort_icgcca)<- cibersort_icgcca[1,]
+cibersort_icgcca<-cibersort_icgcca[-1,]
+cibersort_icgcca<-as.matrix(cibersort_icgcca)
+save(cibersort_icgcca, file="data-raw/cibersort_icgcca.RData")
+mae_icgcca <- c(mae_icgcca, cibersort = cibersort_icgcca)
+#mae_icgcca <- create_mae(study_name = "icgcca")
+usethis::use_data(mae_icgcca, overwrite = TRUE)
+
 # Abida et al.
 
 cibersort_capture_abida<-rio::import("data-raw/CIBERSORTx_capture_abida_Results.csv")
