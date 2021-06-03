@@ -339,6 +339,7 @@ save(gex_wang, file="data-raw/gex_wang.RData")
 cna_wang <- curatedPCaData:::generate_cna_geo(
   geo_code = "GSE8218"
 )
+
 save(cna_wang, file="data-raw/cna_wang.RData")
 
 # Create MAE object
