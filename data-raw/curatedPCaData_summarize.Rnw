@@ -131,15 +131,72 @@ for(i in 1:nrow(gleasons)){
 print(xtable::xtable(gleasons))
 @
 
-\subsubsection{Survival and recurrence}
+\subsubsection{Survival}
 
-Quantiles [min, 25\%, median, 75\%, max] for follow-up times and 0 (no event) and 1 (event) for end-point statuses:
+Quantiles [min, 25\%, median, 75\%, max] for follow-up times and 0 (no event) and 1 (event) for survival:
 
 <<results=tex, echo=F>>=
+survivals <- matrix(NA, nrow=length(maes), ncol=5)
+rownames(survivals) <- paste(gsub("mae_", "", maes))
+colnames(survivals) <- c("0 (no event)", "1 (event)", "N/A (event)", "Time (d)", "N/A (time)")
+for(i in 1:nrow(survivals)){
+	eval(parse(text=paste0("surv_time <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$days_to_overall_survival")))
+	eval(parse(text=paste0("surv_event <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$overall_survival_status")))
+	ifelse(all(is.na(surv_event)),
+		survivals[i,1] <- "-",
+		survivals[i,1] <- paste0(sum(surv_event == 0, na.rm=TRUE), " (", round(100*sum(surv_event == 0, na.rm=TRUE)/length(surv_event),0), "%)")
+	)
+	ifelse(all(is.na(surv_event)),
+		survivals[i,2] <- "-",
+		survivals[i,2] <- paste0(sum(surv_event == 1, na.rm=TRUE), " (", round(100*sum(surv_event == 1, na.rm=TRUE)/length(surv_event),0), "%)")
+	)
+	survivals[i,3] <- paste0(sum(is.na(surv_event)), " (", round(100*sum(is.na(surv_event))/length(surv_event),0), "%)")
+	qs <- round(quantile(surv_time, na.rm=TRUE),0)
+	ifelse(all(is.na(qs)),
+		survivals[i,4] <- "-",
+		survivals[i,4] <- paste0("[", qs[1], ",", qs[2], ",", qs[3], ",", qs[4], ",", qs[5], "]")
+	)
+	survivals[i,5] <- paste0(sum(is.na(surv_time)), " (", round(100*sum(is.na(surv_time))/length(surv_time),0), "%)")
+}
 
+print(xtable::xtable(survivals), floating=FALSE)
 @
 
+\subsubsection{Recurrence}
 
+Quantiles [min, 25\%, median, 75\%, max] for follow-up times and counts for 0 (no event) and 1 (event) for recurrence:
+
+<<results=tex, echo=F>>=
+recurrences <- matrix(NA, nrow=length(maes), ncol=5)
+rownames(recurrences) <- paste(gsub("mae_", "", maes))
+colnames(recurrences) <- c("0 (no event)", "1 (event)", "N/A (event)", "Time (d)", "N/A (time)")
+for(i in 1:nrow(recurrences)){
+	eval(parse(text=paste0("recur_time <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$days_to_disease_specific_recurrence")))
+	eval(parse(text=paste0("recur_event <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$disease_specific_recurrence_status")))
+	ifelse(all(is.na(recur_event)),
+		recurrences[i,1] <- "-",
+		recurrences[i,1] <- paste0(sum(recur_event == 0, na.rm=TRUE), " (", round(100*sum(recur_event == 0, na.rm=TRUE)/length(recur_event),0), "%)")
+	)
+	ifelse(all(is.na(recur_event)),
+		recurrences[i,2] <- "-",
+		recurrences[i,2] <- paste0(sum(recur_event == 1, na.rm=TRUE), " (", round(100*sum(recur_event == 1, na.rm=TRUE)/length(recur_event),0), "%)")
+	)
+	recurrences[i,3] <- paste0(sum(is.na(recur_event)), " (", round(100*sum(is.na(recur_event))/length(recur_event),0), "%)")
+	qs <- round(quantile(recur_time, na.rm=TRUE),0)
+	ifelse(all(is.na(qs)),
+		recurrences[i,4] <- "-",
+		recurrences[i,4] <- paste0("[", qs[1], ",", qs[2], ",", qs[3], ",", qs[4], ",", qs[5], "]")
+	)
+	recurrences[i,5] <- paste0(sum(is.na(recur_time)), " (", round(100*sum(is.na(recur_time))/length(recur_time),0), "%)")
+
+}
+
+print(xtable::xtable(recurrences), floating=FALSE)
+@
+
+\subsubsection{Other end-points}
+
+TODO, for example the newer grading system available in Weiner et al.
 
 \section{Individual MAE-summaries}
 
