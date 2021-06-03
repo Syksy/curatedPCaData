@@ -53,6 +53,29 @@ mae_sun <- c(mae_sun, cibersort = cibersort_sun)
 #mae_sun <- create_mae(study_name = "sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
 
+# Abida et al.
+
+cibersort_capture_abida<-rio::import("data-raw/CIBERSORTx_capture_abida_Results.csv")
+cibersort_capture_abida <- t(cibersort_capture_abida)
+colnames(cibersort_capture_abida)<- cibersort_capture_abida[1,]
+cibersort_capture_abida<-cibersort_capture_abida[-1,]
+cibersort_capture_abida<-as.matrix(cibersort_capture_abida)
+save(cibersort_capture_abida, file="data-raw/cibersort_capture_abida.RData")
+mae_abida <- c(mae_abida, cibersort_capture = cibersort_capture_abida)
+#mae_capture_abida <- create_mae(study_name = "capture_abida")
+usethis::use_data(mae_abida, overwrite = TRUE)
+mae_abida <- c(mae_abida,cibersort=ciber)
+
+cibersort_polyA_abida<-rio::import("data-raw/CIBERSORTx_polyA_abida_Results.csv")
+cibersort_polyA_abida <- t(cibersort_polyA_abida)
+colnames(cibersort_polyA_abida)<- cibersort_polyA_abida[1,]
+cibersort_polyA_abida<-cibersort_polyA_abida[-1,]
+cibersort_polyA_abida<-as.matrix(cibersort_polyA_abida)
+save(cibersort_polyA_abida, file="data-raw/cibersort_polyA_abida.RData")
+mae_abida <- c(mae_abida, cibersort_polyA = cibersort_polyA_abida)
+#mae_capture_abida <- create_mae(study_name = "capture_abida")
+usethis::use_data(mae_abida, overwrite = TRUE)
+
 # Wang et al.
 
 cibersort_wang<-rio::import("data-raw/CIBERSORTx_wang_Results.csv")
@@ -215,6 +238,16 @@ tmp <- as.matrix(tmp[,-1])
 mae_ren <- c(mae_ren, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_ren, overwrite = TRUE)
+
+# True et al.
+
+# tmp <- as.data.frame(immunedeconv::deconvolute(mae_true[["gex"]], method="xcell"))
+# rownames(tmp) <- tmp$cell_type
+# # Omit cell type column and store only data of cell type populations
+# tmp <- as.matrix(tmp[,-1])
+# mae_true <- c(mae_true, xcell = tmp)
+# # Save the derived new 'assay' types to the mae-object
+# usethis::use_data(mae_true, overwrite = TRUE)
 
 # Sun et al.
 
