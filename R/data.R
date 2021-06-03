@@ -32,6 +32,7 @@
 #'   \item{epic}{matrix with 8 rows and 20 columns, of epic based deconvolution data}
 #'   \item{quantiseq}{matrix with 11 rows and 20 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 11 rows and 20 columns, of mcp-counter based deconvolution data}
+#'   \item{scores}{matrix with 2 rows and 20 columns, genomic risk and AR scores}
 #' }
 #' @details The data comprises of primary localised prostate tumors from two cohorts, the Weill Cornell Medical College (WCMC; New York, NY), and the Uropath (Perth, Australia), which commercially provides banked urological tissues. None of the samples comes from patients who had received prior treatment for prostate cancer.  
 #' @references Barbieri, C. E., Baca, S. C., Lawrence, M. S., et al. (2012). Exome sequencing identifies recurrent SPOP, FOXA1 and MED12 mutations in prostate cancer. Nature genetics, 44(6), 685–689. https://doi.org/10.1038/ng.2279
@@ -51,7 +52,7 @@
 #' @references Barwick, B. G., Abramovitz, M., Kodani, M., Moreno, C. S., Nam, R., Tang, W., Bouzyk, M., Seth, A., & Leyland-Jones, B. (2010). Prostate cancer genes associated with TMPRSS2-ERG gene fusion and prognostic of biochemical recurrence in multiple cohorts. British journal of cancer, 102(3), 570–576. https://doi.org/10.1038/sj.bjc.6605519
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18655}
-#"mae_barwick"
+"mae_barwick"
 
 #' Chandran et al., Yu et al. MAE-object
 #'
@@ -132,6 +133,8 @@
 #'   \item{epic}{matrix with 8 rows and 67 columns, of epic based deconvolution data}
 #'   \item{quantiseq}{matrix with 11 rows and 67 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 11 rows and 67 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 25 rows and 67 columns, of cibersort based deconvolution data}
+#'   \item{scores}{matrix with 2 rows and 67 columns, genomic risk scores and AR scores}
 #' }
 #' @details The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples. 
 #' @references Kunderfranco, P., Mello-Grand, M., Cangemi, R., et al.  (2010). ETS transcription factors control transcription of EZH2 and epigenetic silencing of the tumor suppressor gene Nkx3.1 in prostate cancer. PloS one, 5(5), e10547. https://doi.org/10.1371/journal.pone.0010547
@@ -152,6 +155,8 @@
 #'   \item{epic}{matrix with 8 rows and 65 columns, of epic based deconvolution data}
 #'   \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 25 rows and 65 columns, of cibersort based deconvolution data}
+#'   \item{scores}{matrix with 2 rows and 65 columns, genomic risk scores and AR scores}
 #' }
 #' @details The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples. 
 #' @references Ren, S., Wei, G. H., Liu, D., et al.  (2018). Whole-genome and Transcriptome Sequencing of Prostate Cancer Identify New Genetic Alterations Driving Disease Progression. European urology, 73(3), 322–339. https://doi.org/10.1016/j.eururo.2017.08.027
@@ -168,6 +173,8 @@
 #'   \item{gex}{matrix with 12057 rows and 79 columns}
 #'   \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 25 rows and 79 columns, of cibersort based deconvolution data}
+#'   \item{scores}{matrix with 2 rows and 79 columns, genomic risk scores and AR scores}
 #' }
 #' @details 
 #' @references Sun, Y., & Goodison, S. (2009). Optimizing molecular signatures for predicting prostate cancer recurrence. The Prostate, 69(10), 1119–1127. https://doi.org/10.1002/pros.20961
@@ -187,7 +194,8 @@
 #'   \item{epic}{matrix with 8 rows and 300 columns, of epic based deconvolution data}
 #'   \item{quantiseq}{matrix with 11 rows and 300 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 11 rows and 300 columns, of mcp-counter based deconvolution data}
-#'   \item{cibersortx}{matrix with 11 rows and 300 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 11 rows and 300 columns, of mcp-counter based deconvolution data}
+#'   \item{scores}{matrix with 2 rows and 300 columns, genomic risk scores and AR scores}
 #' }
 #' @details 
 #' @references Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026
@@ -208,13 +216,14 @@
 #'   \item{epic}{matrix with 8 rows and 333 columns}
 #'   \item{quantiseq}{matrix with 11 rows and 333 columns}
 #'   \item{mcp}{matrix with 11 rows and 333 columns}
-#'   \item{cibersortx}{matrix with 25 rows and 333 columns}
+#'   \item{cibersort}{matrix with 25 rows and 333 columns}
 #'   \item{osfgex}{matrix with 58684 rows and 483 columns}
 #'   \item{osf_xcell}{matrix with 39 rows and 483 columns}
 #'   \item{osf_epic}{matrix with 8 rows and 483 columns}
 #'   \item{osf_quantiseq}{matrix with 11 rows and 483 columns}
 #'   \item{osf_mcp}{matrix with 11 rows and 483 columns}
-#'   \item{osf_cibersortx}{matrix with 25 rows and 483 columns}
+#'   \item{osf_cibersort}{matrix with 25 rows and 483 columns}
+#'   \item{scores}{matrix with 2 rows and 333 columns, genomic risk scores and AR scores}
 #' }
 #' @details
 #' @references Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025
@@ -243,6 +252,8 @@
 #'   \item{gex}{matrix with 12048 rows and 83 columns}
 #'   \item{mcp}{matrix with 11 rows and 83 columns}
 #'   \item{quantiseq}{matrix with 4 rows and 83 columns}
+#'   \item{cibersort}{matrix with 25 rows and 83 columns}
+#'   \item{scores}{matrix with 2 rows and 83 columns}
 #'}
 #' @details The data contains 69 samples. For all 69 sample the dataset contains tumor data, and for 14 individual there is a matched healthy prostate tissue sample (the clinical data 
 #' @references Wallace, T. A., Prueitt, R. L., Yi, M., Howe, T. M., Gillespie, J. W., Yfantis, H. G., Stephens, R. M., Caporaso, N. E., Loffredo, C. A., & Ambs, S. (2008). Tumor immunobiological differences in prostate cancer between African-American and European-American men. Cancer research, 68(3), 927–936. https://doi.org/10.1158/0008-5472.CAN-07-2608
@@ -272,3 +283,5 @@
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE157548}
 #' @examples
 "mae_weiner"
+
+
