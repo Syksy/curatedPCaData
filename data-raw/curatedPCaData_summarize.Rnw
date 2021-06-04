@@ -131,7 +131,7 @@ for(i in 1:nrow(gleasons)){
 print(xtable::xtable(gleasons))
 @
 
-\subsubsection{Survival}
+\subsubsection{Overall Survival}
 
 Quantiles [min, 25\%, median, 75\%, max] for follow-up times and 0 (no event) and 1 (event) for survival:
 
