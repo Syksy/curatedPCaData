@@ -5,6 +5,8 @@
 
 \usepackage{Sweave}
 \usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{float}
 
 \begin{document}
 
@@ -15,6 +17,8 @@
 
 <<echo=F>>=
 library(curatedPCaData)
+#install.packages('VennDiagram')
+library(VennDiagram)
 # Compiling in R:
 # > utils::Sweave("curatedPCaData_summarize.Rnw"); tools::texi2pdf("curatedPCaData_summarize.tex")
 @
@@ -227,4 +231,41 @@ for(mae in maes){
 }
 @
 
+\section{Omics sample overlap within MAE-objects}
+
+% Begin MAE-loop, generate raw venn diagram PDF
+<<echo=F>>=
+pdf("venns.pdf", width=7, height=7)
+for(mae in maes){
+	eval(parse(text=paste0("obj <- curatedPCaData::", mae)))
+	#cat(gsub("mae_", "", paste0("\\subsection{", mae, "}")))
+	omics <- grep("cna|gex|mut", names(obj), value=TRUE)
+	samps <- lapply(omics, FUN=function(z){
+		colnames(obj[[z]])	
+	})
+	names(samps) <- omics
+	vd <- invisible(VennDiagram::venn.diagram(samps,
+		fill = rainbow(length(samps)),
+		alpha = rep(0.5, times=length(samps)),
+		filename=NULL))
+	grid.newpage()
+	grid.draw(vd)
+}
+dev.off()
+@
+
+% Create TeX-formatted Venn-figures with corresponding subsections
+<<results=tex, echo=FALSE>>=
+for(i in 1:length(maes)){
+	cat(paste0("\\subsection{", gsub("mae_", "", maes[i]), "}\n"))
+	cat("\\begin{figure}[H]\n")
+	cat("\\centering\n")
+	cat(paste0("\\includegraphics[page=", i, ",width=0.75\textwidth]{venns.pdf}\n"))
+	cat("\\caption{Omics sample overlap in", maes[i], "}\n")
+	cat("\\end{figure}\n\n")
+}
+@
+
+
 \end{document}
+
