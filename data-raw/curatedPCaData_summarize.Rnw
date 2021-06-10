@@ -241,7 +241,9 @@ for(mae in maes){
 	#cat(gsub("mae_", "", paste0("\\subsection{", mae, "}")))
 	omics <- grep("cna|gex|mut", names(obj), value=TRUE)
 	samps <- lapply(omics, FUN=function(z){
-		colnames(obj[[z]])	
+		map <- MultiAssayExperiment::sampleMap(obj)
+		map <- map[which(map$assay == z),]
+		map[match(colnames(obj[[z]]), map[,"colname"]),"primary"]
 	})
 	names(samps) <- omics
 	vd <- invisible(VennDiagram::venn.diagram(samps,
