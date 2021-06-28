@@ -262,7 +262,7 @@ for(i in 1:length(maes)){
 	cat(paste0("\\subsection{", gsub("mae_", "", maes[i]), "}\n"))
 	cat("\\begin{figure}[H]\n")
 	cat("\\centering\n")
-	cat(paste0("\\includegraphics[page=", i, ",width=0.75\textwidth]{venns.pdf}\n"))
+	cat(paste0("\\includegraphics[page=", i, ",width=0.75\\textwidth]{venns.pdf}\n"))
 	cat("\\caption{Omics sample overlap in", maes[i], "}\n")
 	cat("\\end{figure}\n\n")
 }
