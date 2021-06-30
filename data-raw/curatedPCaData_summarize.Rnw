@@ -7,6 +7,7 @@
 \usepackage{longtable}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{rotating}
 
 \begin{document}
 
@@ -201,6 +202,46 @@ print(xtable::xtable(recurrences), floating=FALSE)
 \subsubsection{Other end-points}
 
 TODO, for example the newer grading system available in Weiner et al.
+
+\subsubsection{MAE-slots}
+
+The following MAE-slots are available in each study:
+
+<<results=tex, echo=F>>=
+# Extract up-to-date slotnames over all MAE-objects
+slotnames <- c()
+for(mae in maes){
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))
+	slotnames <- c(slotnames, names(mae_obj))
+}
+# Unique slot names
+slotnames <- unique(slotnames)
+# Remove osf_* as a special case in TCGA; most likely to be separated as its own dataset
+if(length(grep("osf", slotnames))>0) slotnames <- slotnames[-grep("osf", slotnames)]
+# Create present ('x') or absent ('') matrix to be printed out as xtable
+slotmat <- matrix("", nrow=length(slotnames), ncol=length(maes))
+rownames(slotmat) <- sort(slotnames) # Alphabetic ordering
+colnames(slotmat) <- maes
+for(col in 1:length(maes)){
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", maes[col])))
+	for(row in 1:nrow(slotmat)){
+		if(rownames(slotmat)[row] %in% names(mae_obj)){
+			slotmat[row,col] <- "x"
+		}
+	}
+}
+xtab <- xtable::xtable(slotmat)
+# For sanitizing TeX output
+large <- function(x){
+	paste0('{\\Large ', x, '}')
+}
+# Create TeX table
+print(xtab, 
+	#sanitize.rownames.function = large, 
+	#sanitize.colname.function = large, 
+	rotate.colnames=TRUE,
+	floating=FALSE)
+@
 
 \section{Individual MAE-summaries}
 
