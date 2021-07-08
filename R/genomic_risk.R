@@ -34,7 +34,7 @@ genomic_risk <- function(mae,
   dat <- t(dat) 
   dat <- as.data.frame(dat)
   
-  if(test == "Prolaris"){
+  if(base::tolower(test) == "prolaris"){
     
     if(length(intersect(colnames(dat), prolaris_genes)) != 31){
       warning("Prolaris risk score based off of ",
@@ -51,7 +51,7 @@ genomic_risk <- function(mae,
     risk_score <- log2(risk_score)
     return(risk_score)
     
-  } else if (test %in% c("Oncotype DX", "OncotypeDX")){
+  } else if (base::tolower(test) %in% c("oncotype dx", "oncotypedx", "oncotype")){
     
     if(length(intersect(colnames(dat), oncotype_genes)) == 12){
       
@@ -85,16 +85,16 @@ genomic_risk <- function(mae,
            " are not present in colnames of the data")
     }
     
-  } else if (test %in% "Decipher") {
+  } else if (base::tolower(test) %in% "decipher") {
     
     if(length(intersect(colnames(dat), decipher_genes)) != 19){
       
       #stop("Only ",
       #     length(intersect(colnames(dat), decipher_genes)),
       #     " out of 19 required genes for Decipher risk score were found")
-      stop("The following required Decipher genes: ", 
+      warning("The following required Decipher genes: ", 
            paste(setdiff(decipher_genes, colnames(dat)), collapse = ", "),
-           " are not present in colnames of the data")
+           " are not present in colnames of the GEX data")
     }
     
     # Overrepresented genes (increase the risk value)
@@ -183,7 +183,7 @@ genomic_score <- function(mae,
 	}
 	# TCGA version of AR score supporting gene aliases and different naming conventions
 	
-	if(tolower(test) == "ar"){		
+	if(base::tolower(test) == "ar"){		
 		# Aliases queried using https://www.genecards.org/
 		ar_genes <- list(
 			"KLK3" = c("KLK3", "PSA", "APS", "KLK2A1"), # Possibly HK3; ambiguous
