@@ -5,6 +5,9 @@
 
 \usepackage{Sweave}
 \usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{rotating}
 
 \begin{document}
 
@@ -15,6 +18,8 @@
 
 <<echo=F>>=
 library(curatedPCaData)
+#install.packages('VennDiagram')
+library(VennDiagram)
 # Compiling in R:
 # > utils::Sweave("curatedPCaData_summarize.Rnw"); tools::texi2pdf("curatedPCaData_summarize.tex")
 @
@@ -131,7 +136,7 @@ for(i in 1:nrow(gleasons)){
 print(xtable::xtable(gleasons))
 @
 
-\subsubsection{Survival}
+\subsubsection{Overall Survival}
 
 Quantiles [min, 25\%, median, 75\%, max] for follow-up times and 0 (no event) and 1 (event) for survival:
 
@@ -198,6 +203,46 @@ print(xtable::xtable(recurrences), floating=FALSE)
 
 TODO, for example the newer grading system available in Weiner et al.
 
+\subsubsection{MAE-slots}
+
+The following MAE-slots are available in each study:
+
+<<results=tex, echo=F>>=
+# Extract up-to-date slotnames over all MAE-objects
+slotnames <- c()
+for(mae in maes){
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))
+	slotnames <- c(slotnames, names(mae_obj))
+}
+# Unique slot names
+slotnames <- unique(slotnames)
+# Remove osf_* as a special case in TCGA; most likely to be separated as its own dataset
+if(length(grep("osf", slotnames))>0) slotnames <- slotnames[-grep("osf", slotnames)]
+# Create present ('x') or absent ('') matrix to be printed out as xtable
+slotmat <- matrix("", nrow=length(slotnames), ncol=length(maes))
+rownames(slotmat) <- sort(slotnames) # Alphabetic ordering
+colnames(slotmat) <- maes
+for(col in 1:length(maes)){
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", maes[col])))
+	for(row in 1:nrow(slotmat)){
+		if(rownames(slotmat)[row] %in% names(mae_obj)){
+			slotmat[row,col] <- "x"
+		}
+	}
+}
+xtab <- xtable::xtable(slotmat)
+# For sanitizing TeX output
+large <- function(x){
+	paste0('{\\Large ', x, '}')
+}
+# Create TeX table
+print(xtab, 
+	#sanitize.rownames.function = large, 
+	#sanitize.colname.function = large, 
+	rotate.colnames=TRUE,
+	floating=FALSE)
+@
+
 \section{Individual MAE-summaries}
 
 Looping over and summarizing the datasets:
@@ -227,4 +272,43 @@ for(mae in maes){
 }
 @
 
+\section{Omics sample overlap within MAE-objects}
+
+% Begin MAE-loop, generate raw venn diagram PDF
+<<echo=F>>=
+pdf("venns.pdf", width=7, height=7)
+for(mae in maes){
+	eval(parse(text=paste0("obj <- curatedPCaData::", mae)))
+	#cat(gsub("mae_", "", paste0("\\subsection{", mae, "}")))
+	omics <- grep("cna|gex|mut", names(obj), value=TRUE)
+	samps <- lapply(omics, FUN=function(z){
+		map <- MultiAssayExperiment::sampleMap(obj)
+		map <- map[which(map$assay == z),]
+		map[match(colnames(obj[[z]]), map[,"colname"]),"primary"]
+	})
+	names(samps) <- omics
+	vd <- invisible(VennDiagram::venn.diagram(samps,
+		fill = rainbow(length(samps)),
+		alpha = rep(0.5, times=length(samps)),
+		filename=NULL))
+	grid.newpage()
+	grid.draw(vd)
+}
+dev.off()
+@
+
+% Create TeX-formatted Venn-figures with corresponding subsections
+<<results=tex, echo=FALSE>>=
+for(i in 1:length(maes)){
+	cat(paste0("\\subsection{", gsub("mae_", "", maes[i]), "}\n"))
+	cat("\\begin{figure}[H]\n")
+	cat("\\centering\n")
+	cat(paste0("\\includegraphics[page=", i, ",width=0.75\\textwidth]{venns.pdf}\n"))
+	cat("\\caption{Omics sample overlap in", maes[i], "}\n")
+	cat("\\end{figure}\n\n")
+}
+@
+
+
 \end{document}
+
