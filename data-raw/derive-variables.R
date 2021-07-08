@@ -172,6 +172,18 @@ mae_chandran <- c(mae_chandran, cibersort = cibersort_chandran)
 #mae_chandran <- create_mae(study_name = "chandran")
 usethis::use_data(mae_chandran, overwrite = TRUE)
 
+# Friedrich et al.
+
+cibersort_friedrich<-rio::import("data-raw/CIBERSORTx_friedrich_Results.csv")
+cibersort_friedrich <- t(cibersort_friedrich)
+colnames(cibersort_friedrich)<- cibersort_friedrich[1,]
+cibersort_friedrich<-cibersort_friedrich[-1,]
+cibersort_friedrich<-as.matrix(cibersort_friedrich)
+save(cibersort_friedrich, file="data-raw/cibersort_friedrich.RData")
+mae_friedrich <- c(mae_friedrich, cibersort = cibersort_friedrich)
+#mae_friedrich <- create_mae(study_name = "friedrich")
+usethis::use_data(mae_friedrich, overwrite = TRUE)
+
 
 
 library(immunedeconv) # NECESSARY!
