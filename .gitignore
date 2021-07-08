@@ -35,3 +35,6 @@ R-4.0.0.pkg
 *.toc
 # SVG-figures are sizeable albeit readable as plaintext, exclude for now
 *.svg
+
+# Temporary files
+temp/

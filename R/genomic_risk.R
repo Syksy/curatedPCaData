@@ -97,24 +97,28 @@ genomic_risk <- function(mae,
            " are not present in colnames of the data")
     }
     
-    risk <- dat[,colnames(dat) %in% decipher_genes]
+    # Overrepresented genes (increase the risk value)
+    over <- c("CAMK2N1","EPPK1","IQGAP3","LASP1","NFIB","NUSAP1","PBX1","S1PR4","THBS2","UBE2C","ZWILCH")
+    
+    # Underrepresented genes (decrease the risk value)
+    under <- c("ANO7",
+    	"C6orf10","TSBP1", # Aliases
+    	"MYBPC1","PCDH7","RABGAP1","TNFRSF19")
+
+    # Intersect between Decipher risk score genes ideally available and current data matrix    
+    risk <- dat[,intersect(colnames(dat),c(over, under))]
+
+    # Median centering    
     gene_med <- apply(risk, 2, median)
     risk_centered <- risk - gene_med
     
-    # cluster1 <- hclust(dist(t(risk)), method="centroid")
-    
-    over <- c("CAMK2N1","EPPK1","IQGAP3","LASP1","NFIB","NUSAP1","PBX1","S1PR4","THBS2","UBE2C",
-              "ZWILCH")
-    
-    under <- c("ANO7","C6orf10","MYBPC1","PCDH7","RABGAP1","TNFRSF19")
-    
     # average of the log2 normalized values for the 9 over-expressed targets
-    c1 <- apply(risk[,c("CAMK2N1","EPPK1","IQGAP3","LASP1","NFIB","NUSAP1","PBX1",
-                        "S1PR4","THBS2","UBE2C","ZWILCH")], 1, mean)
+    c1 <- apply(risk[,over], MARGIN=1, FUN=function(x) { mean(x, na.rm=TRUE) })
     
     # average of the log2 normalized values for the 9 under-expressed targets
-    c2 <- apply(risk[,c("ANO7","C6orf10","MYBPC1","PCDH7","RABGAP1","TNFRSF19")], 1, mean)
-    
+    c2 <- apply(risk[,under], MARGIN=1, FUN=function(x) { mean(x, na.rm=TRUE) })
+
+    # Risk score as the difference between over- and underrepresented genes    
     risk_score <- c1-c2
     
     return(risk_score)
