@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.6.2
-Date: 2021-07-08
+Version: 0.6.3
+Date: 2021-07-28
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -52,7 +52,7 @@ Suggests:
     data.tree,
     RCurl,
     R.utils,
-    survminer,
+    survival, survminer,
     osfr, textshape, pacman,
     hgu133a.db,
     hgu95av2cdf, hgu95av2.db,
