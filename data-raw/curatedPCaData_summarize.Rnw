@@ -243,7 +243,26 @@ print(xtab,
 	floating=FALSE)
 @
 
-\section{Individual MAE-summaries}
+\subsubsection{MAE-slot classes}
+
+The classes for each slot for datasets
+
+<<results=tex, echo=F>>=
+# Sanity checking to see what classe sthe slots are; ideally, they are homogeneously all matrices (in contrast, v0.6.3 Friedrich et al and True et al GEX seems to be a data.frame instead of a matrix)
+for(mae in maes){
+	# Class names need to be printed in verbatim in TeX
+	cat("\\begin{verbatim}")
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))
+	classes <- lapply(lapply(mae_obj@ExperimentList, FUN=class), FUN=function(x) { paste(x, collapse=", ") })
+	cat(gsub("mae_", "", mae))
+	cat("\n ")
+	cat(paste0(names(classes), ": ", classes, "\n"))
+	cat("\\end{verbatim}")
+	cat("\n")
+}
+@
+
+\section{Individual MAE colData-summaries}
 
 Looping over and summarizing the datasets:
 
