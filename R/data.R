@@ -5,18 +5,12 @@
 #' \describe{
 #'    \item{cna_gistic}{a matrix with 20264 rows and 444 columns, of the Copy Number Alteration of the 444 tumor samples}
 #'    \item{mut}{a matrix with 30357 rows and 444 columns, of mutation data}
-#'    \item{gex_capture}{a matrix with 18786 rows and 208 columns, from a library obtained by Agilent SureSelect Human All Exon V4 reagent capture}
 #'    \item{gex_polyA}{a matrix with 18823 rows and 266 columns, from a library obtained by polyA+ RNA isolation}
-#'    \item{xcell_capture}{a matrix with 39 rows and 208 columns, of xcell based deconvolution for the capture library}
 #'    \item{xcell_polyA}{a matrix with 39 rows and 266 columns, of xcell based deconvolution for the capture polyA Library}
-#'    \item{epic_capture}{a matrix with 8 rows and 208 columns, of epic based deconvolution for the capture library}
 #'    \item{epic_polyA}{a matrix with 8 rows and 266 columns, of epic based deconvolution for the polyA library}
-#'    \item{quantiseq_capture}{a matrix with 11 rows and 208 columns, of quantiseq based deconvolution for the capture library}
 #'    \item{quantiseq_polyA}{a matrix with 11 rows and 266 columns, of quantiseq based deconvolution for the polyA library}
-#'    \item{mcp_capture}{a matrix with 11 rows and 208 columns, of mcp-counter based deconvolution for the capture library}
 #'    \item{mcp_polyA}{a matrix with 11 rows and 266 columns, of mcp-counter based deconvolution for the polyA library}
 #'    \item{cibersort_polyA}{a matrix with 25 rows and 266 columns, of cibersort based deconvolution for the polyA library}
-#'    \item{cibersort_capture}{a matrix with 25 rows and 208 columns, of cibersort based deconvolution for the capture library}
 #'    \item{scores}{matrix with 2 rows and 208 columns, genomic risk and AR scores}
 #' @details the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
 #' @references Abida, W., Cyrta, J., Heller, G., et al. (2019). Genomic correlates of clinical outcome in advanced prostate cancer. Proceedings of the National Academy of Sciences of the United States of America, 116, 11428 - 11436.
@@ -220,20 +214,13 @@
 #' 
 #' @format An MAE object spanning 333 men with prostate cancer
 #' \describe{
-#'   \item{gex}{matrix with 19958 rows and 333 columns}
 #'   \item{cna_log}{matrix with 21735 rows and 333 columns}
 #'   \item{mut}{matrix with 29707 rows and 333 columns,of mutation data}
-#'   \item{xcell}{matrix with 39 rows and 333 columns,of xcell based deconvolution data}
-#'   \item{epic}{matrix with 8 rows and 333 columns,of epic based deconvolution data}
-#'   \item{quantiseq}{matrix with 11 rows and 333 columns,of quantiseq based deconvolution data}
-#'   \item{mcp}{matrix with 11 rows and 333 columns,of mcp-counter based deconvolution data}
-#'   \item{cibersort}{matrix with 25 rows and 333 columns,of cibersort based deconvolution data}
-#'   \item{osfgex}{matrix with 58684 rows and 483 columns}
-#'   \item{osf_xcell}{matrix with 39 rows and 483 columns}
-#'   \item{osf_epic}{matrix with 8 rows and 483 columns}
-#'   \item{osf_quantiseq}{matrix with 11 rows and 483 columns}
-#'   \item{osf_mcp}{matrix with 11 rows and 483 columns}
-#'   \item{osf_cibersort}{matrix with 25 rows and 483 columns}
+#'   \item{gex}{matrix with 58684 rows and 483 columns}
+#'   \item{xcell}{matrix with 39 rows and 483 columns}
+#'   \item{epic}{matrix with 8 rows and 483 columns}
+#'   \item{quantiseq}{matrix with 11 rows and 483 columns}
+#'   \item{mcp}{matrix with 11 rows and 483 columns}
 #'   \item{scores}{matrix with 2 rows and 333 columns, genomic risk and AR scores}
 #'   
 #' }
