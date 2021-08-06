@@ -67,16 +67,6 @@ usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Abida et al.
 
-cibersort_capture_abida<-rio::import("data-raw/CIBERSORTx_capture_abida_Results.csv")
-cibersort_capture_abida <- t(cibersort_capture_abida)
-colnames(cibersort_capture_abida)<- cibersort_capture_abida[1,]
-cibersort_capture_abida<-cibersort_capture_abida[-1,]
-cibersort_capture_abida<-as.matrix(cibersort_capture_abida)
-save(cibersort_capture_abida, file="data-raw/cibersort_capture_abida.RData")
-mae_abida <- c(mae_abida, cibersort_capture = cibersort_capture_abida)
-#mae_capture_abida <- create_mae(study_name = "capture_abida")
-usethis::use_data(mae_abida, overwrite = TRUE)
-mae_abida <- c(mae_abida,cibersort=ciber)
 
 cibersort_polyA_abida<-rio::import("data-raw/CIBERSORTx_polyA_abida_Results.csv")
 cibersort_polyA_abida <- t(cibersort_polyA_abida)
@@ -199,12 +189,6 @@ library(immunedeconv) # NECESSARY!
 
 # Abida et al.
 
-# 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="xcell"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_abida <- c(mae_abida, xcell_capture = tmp)
 
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
@@ -401,12 +385,6 @@ usethis::use_data(mae_true, overwrite = TRUE)
 
 # Abida et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="epic"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_abida <- c(mae_abida, epic_capture = tmp)
-
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -582,12 +560,6 @@ usethis::use_data(mae_true, overwrite = TRUE)
 #####################################################
 
 # Abida et al.
-
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="quantiseq"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_abida <- c(mae_abida, quantiseq_capture = tmp)
 
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
@@ -770,12 +742,6 @@ usethis::use_data(mae_true, overwrite = TRUE)
 
 # Abida et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_capture"]], method="mcp_counter"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_abida <- c(mae_abida, mcp_capture = tmp)
-
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_abida[["gex_polyA"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -956,8 +922,8 @@ usethis::use_data(mae_true, overwrite = TRUE)
 
 mae_abida <- c(mae_abida,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_abida, object = "gex_capture", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_abida, object = "gex_capture", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(curatedPCaData::mae_abida, object = "gex_polyA", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(curatedPCaData::mae_abida, object = "gex_polyA", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object

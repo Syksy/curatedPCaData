@@ -1,11 +1,39 @@
 # tcga data ------
+#Download OSF GEX data
+osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
+R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
+osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
+
+#Download the mapping file 
+osf <- format_osf_data(osf_data)
+osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
+
+# Re-format the OSF data
+osf_t <- t(osf)
+osf_t <- as.data.frame(osf_t)
+colnames(osf_t) <- osf_t[1,]
+osf <- osf_t[-1,]
+
+colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
+colnames(osf) <- paste(colnames(osf), '01', sep='.')
+usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
+save(osf, file="data-raw/osfgex_tcga.RData")
+
+load("data-raw/osfgex_tcga.RData")
+osf<-as.matrix(osf)
+storage.mode(osf) <- "numeric"
+osf_gex_rounded<-round(osf,digits = 1)
+save(osf_gex_rounded, file="data-raw/osfgex_rounded_tcga.RData")
+unlink("data-raw/osfgex_tcga.RData")
+file.rename("data-raw/osfgex_rounded_tcga.RData","data-raw/gex_tcga.RData")
+
 # GEX
-gex_tcga <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # Omics profile
-  caseList = "prad_tcga_pub_sequenced" # Case list
-)
-save(gex_tcga, file="data-raw/gex_tcga.RData")
+# gex_tcga <- curatedPCaData:::generate_cbioportal(
+#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+#   geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # Omics profile
+#   caseList = "prad_tcga_pub_sequenced" # Case list
+# )
+# save(gex_tcga, file="data-raw/gex_tcga.RData")
 
 # CNA
 cna_tcga <- curatedPCaData:::generate_cbioportal(
@@ -200,25 +228,7 @@ gex_wallace = gex_wallace[, !is.element(colnames(gex_wallace), unmatched_healty_
 save(gex_wallace,  file = "data-raw/gex_wallace.RData")
 
 
-#Download OSF data
-osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
-R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
-osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
 
-#Download the mapping file 
-osf <- format_osf_data(osf_data)
-osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
-
-# Re-format the OSF data
-osf_t <- t(osf)
-osf_t <- as.data.frame(osf_t)
-colnames(osf_t) <- osf_t[1,]
-osf <- osf_t[-1,]
-
-colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
-colnames(osf) <- paste(colnames(osf), '01', sep='.')
-usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
-save(osf, file="data-raw/osfgex_tcga.RData")
 
 # PRAD Barbieri ------
 # GEX
@@ -292,13 +302,6 @@ mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
 usethis::use_data(mae_kim, overwrite = TRUE)
 
 #Abida et al data -----
-# GEX Capture assay (FPKM)
-gex_capture_abida <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_su2c_2019_mrna_seq_fpkm_capture_all_sample_Zscores", # Omics profile
-  caseList = "prad_su2c_2019_all" # Case list
-)
-save(gex_capture_abida, file="data-raw/gex_capture_abida.RData")
 
 # GEX PolyA (FPKM)
 gex_polyA_abida <- curatedPCaData:::generate_cbioportal(
