@@ -914,6 +914,7 @@ usethis::use_data(mae_true, overwrite = TRUE)
 ##
 ## Genomic risk scores: Prolaris, OncotypeDX & Decipher
 ## AR scores as used by TCGA, originally presented in Hieronymus et al. 2006
+##
 #####
 
 
@@ -1105,3 +1106,42 @@ mae_weiner <- c(mae_weiner,
 )
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_weiner, overwrite = TRUE)
+
+
+####
+##
+## Tumor purity estimation - DeMix(T) (DeMix is deprecated, DeMixT is the up-to-date version)
+##
+###
+
+# devtools::install_github("wwylab/DeMixT")
+
+library(DeMixT)
+
+
+####
+##
+## Tumor purity estimation - ABSOLUTE
+##
+###
+
+# Unclear as to how it's available, i.e.
+
+# https://software.broadinstitute.org/cancer/cga/absolute
+# (lacking download in https://software.broadinstitute.org/cancer/cga/absolute_run )
+# https://software.broadinstitute.org/cancer/cga/absolute_download
+# -> Requires separate registration & license agreement, then 'ABSOLUTE_1.0.6.tar.gz' is available
+
+# install.packages("ABSOLUTE_1.0.6.tar.gz", repo=NULL)
+
+# or possibly
+# https://www.genepattern.org/modules/docs/ABSOLUTE
+
+library(ABSOLUTE)
+
+# Read in TCGA segmentation file required as ABSOLUTE input
+# downloaded from https://www.cbioportal.org/study/cnSegments?id=prad_tcga_pub > "Download a copy number segment file for the selected samples"
+TCGA_seg <- read.table("..\\temp\\prad_tcga_pub_segments.seg", sep="\t", header=TRUE)
+# ABSOLUTE requires pre-specified column names "Chromosome", "Start", "End", "Num_Probes", and "Segment_Mean";
+# replacing default column names with these
+
