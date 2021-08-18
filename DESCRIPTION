@@ -58,5 +58,6 @@ Suggests:
     hgu95av2cdf, hgu95av2.db,
     hgu95bcdf, hgu95b.db,
     hgu95ccdf, hgu95c.db,
-    VennDiagram
+    VennDiagram,
+    org.Hs.eg.db, DBI
     
