@@ -10,7 +10,7 @@
 generate_gex_geo <- function(
   geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
                "GSE25136", # Sun et al.
-               "GSE8218",  #Wang et al.
+               "GSE8218",  # Wang et al.
                "GSE6919",  # Chandran et al., Yu et al. from three platforms combined
                "GSE18655", # Barwick et al.
                "GSE2109",  #IGC
@@ -407,6 +407,39 @@ generate_gex_geo <- function(
 	symbols <- symbols[!is.na(symbols)]
 	rownames(gex) <- symbols
 	gex <- gex[order(rownames(gex)),]	
+  }
+  
+  # Friedrich et al. 2020
+  else if(geo_code == "GSE134051"){
+  	# TDL: Original code by FC moved from download-data.R for concordance with other raw data processing and fixed
+  
+	# load series and platform data from GEO
+	fr_gset <- GEOquery::getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
+
+	labels = Biobase::fData(fr_gset[[1]])
+	gtab = curatedPCaData:::curatedPCaData_genes
+
+	if (length(fr_gset) > 1) idx <- grep("GPL26898", attr(gset, "names")) else idx <- 1
+	fr_ex <- Biobase::exprs(fr_gset[[idx]])
+
+	# replacing row names with gene ids
+	##############################################
+	labels$ensb = substr(labels$SPOT_ID, 1, 15)
+	rownames(fr_ex) = labels$ensb
+	fr_ex <- fr_ex[rownames(fr_ex) != 'NoEntry', ]
+	fr_ex <- fr_ex[substr(rownames(fr_ex), 1, 4) != 'XLOC', ]
+	fr_ex <- fr_ex[is.element(rownames(fr_ex), gtab[,1]), ]
+	gtab2 <- gtab[match(rownames(fr_ex), gtab[,1]), ]
+
+	gtab2[which(gtab2[,3] == ''), 3] <- gtab2[which(gtab2[,3] == ''), 1]
+
+	rownames(fr_ex) <- gtab2[,3]
+	## Typo ?
+	#gex <- aggregate(fr_ex, by = list(rownames(ex)), mean)
+	gex <- aggregate(fr_ex, by = list(rownames(fr_ex)), mean)
+	rownames(gex) <- gex[,1]
+	gex <- gex[, -1]
+	gex <- gex[order(rownames(gex)),]
   }
   
   # Unknown GEO id (throw an error) -----
