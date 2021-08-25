@@ -17,6 +17,7 @@ generate_gex_geo <- function(
                "GSE119616", #
                "GSE134051", # Friedrich et al.
                "GSE6956",   # Wallace et al.
+               "GSE14206"  # Kunderfranco et al.
                ), 
   file_directory, 
   cleanup = TRUE, 
@@ -470,6 +471,17 @@ generate_gex_geo <- function(
 
 	## TDL: Store (unmatched) healthy tissues, can be useful for e.g. assessing tumor purity assessment where normal samples are required
 	#gex <- gex[, !is.element(colnames(gex), unmatched_healty_tissue)]
+  }
+  
+  # Kunderfranco et al.
+  else if(geo_code == "GSE14206"){
+	gpl <- GEOquery::getGEO(geo_code, GSEMatrix =TRUE, getGPL=TRUE)
+	labels <- Biobase::fData(gpl[[1]])
+	gex <- Biobase::exprs(gpl[[1]])
+	rownames(gex) <- labels$GENE_SYMBOL
+	gex <- gex[-which(rownames(gex) == ''), ]
+	## TDL: RMA?
+	gex <- gex[order(rownames(gex)),]
   }
   
   # Unknown GEO id (throw an error) -----
