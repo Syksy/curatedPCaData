@@ -8,13 +8,15 @@
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
 generate_gex_geo <- function(
-  geo_code = c("GSE21032", # Taylor et al. TODO: Alternative more specific accession code "GSE21034" for GEX
-               "GSE25136", # Sun et al.
-               "GSE8218",  # Wang et al.
-               "GSE6919",  # Chandran et al., Yu et al. from three platforms combined
-               "GSE18655", # Barwick et al.
-               "GSE2109",  #IGC
-               "GSE119616"
+  geo_code = c("GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
+               "GSE25136",  # Sun et al.
+               "GSE8218",   # Wang et al.
+               "GSE6919",   # Chandran et al., Yu et al. from three platforms combined
+               "GSE18655",  # Barwick et al.
+               "GSE2109",   # IGC
+               "GSE119616", #
+               "GSE134051", # Friedrich et al.
+               "GSE6956",   # Wallace et al.
                ), 
   file_directory, 
   cleanup = TRUE, 
@@ -440,6 +442,34 @@ generate_gex_geo <- function(
 	rownames(gex) <- gex[,1]
 	gex <- gex[, -1]
 	gex <- gex[order(rownames(gex)),]
+  }
+  
+  # Wallace et al.
+  else if(geo_code == "GSE6956"){
+	unmatched_healty_tissue <- c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430')
+
+	supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+
+	utils::untar(tarfile=rownames(supfiles))
+	# Make sure to function in a working directory where the are no other tarballs present
+	supfiles2 <- list.files()
+	supfiles2 <- supfiles2[grep(".gz", supfiles2)]
+	# Read CEL files and name columns accordingly
+	wallace <- affy::ReadAffy()
+	colnames(affy::exprs(wallace)) <- gsub(".gz|.CEL", "", colnames(wallace))
+	# RMA normalization
+	gex <- affy::rma(wallace)
+	# Removing .CEL and packaging names from the GEO-compatible sample names
+	colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
+	keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
+	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
+	nam[is.na(nam)] <- "NA"
+	# Collapse probes
+	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
+	# Return numeric matrix
+
+	## TDL: Store (unmatched) healthy tissues, can be useful for e.g. assessing tumor purity assessment where normal samples are required
+	#gex <- gex[, !is.element(colnames(gex), unmatched_healty_tissue)]
   }
   
   # Unknown GEO id (throw an error) -----
