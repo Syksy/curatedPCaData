@@ -195,7 +195,7 @@ cna_barbieri <- curatedPCaData:::generate_cbioportal(
 )
 save(cna_barbieri, file="data-raw/cna_barbieri.RData")
 
-# CNA
+# MUT
 mut_barbieri <- curatedPCaData:::generate_cbioportal(
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_broad_mutations", 
@@ -239,6 +239,8 @@ save(mut_ren, file="data-raw/mut_ren.RData")
 mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
 usethis::use_data(mae_ren, overwrite = TRUE)
 
+
+
 #Kim et al data -----
 gex_kim <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE119616"
@@ -248,6 +250,8 @@ save(gex_kim, file="data-raw/gex_kim.RData")
 # Create MAE object
 mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
 usethis::use_data(mae_kim, overwrite = TRUE)
+
+
 
 #Abida et al data -----
 
@@ -280,6 +284,9 @@ save(mut_abida, file="data-raw/mut_abida.RData")
 mae_abida <- curatedPCaData:::create_mae(study_name = "abida")
 usethis::use_data(mae_abida, overwrite = TRUE)
 
+
+
+
 # Wang et al.
 #GEX
 gex_wang <- curatedPCaData:::generate_gex_geo(
@@ -302,20 +309,20 @@ gex_barwick <- curatedPCaData:::generate_gex_geo("GSE18655")
 save(gex_barwick, file="data-raw/gex_barwick.RData")
 
 
-# Kunderfranco
 
-g_kunder <- getGEO("GSE14206", GSEMatrix =TRUE, getGPL=TRUE)
-kunder_labels = Biobase::fData(g_kunder[[1]])
-kunder_ex <- exprs(g_kunder[[1]])
-rownames(kex) = kunder_labels$GENE_SYMBOL
-kunder_ex = kunder_ex[-which(rownames(kunder_ex) == ''), ]
+# Kunderfranco et al.
 
-gex_kunderfranco = aggregate(kunder_ex, by = list(rownames(ex)), mean)
-
-rownames(gex_kunderfranco) = gex_kunderfranco[, 1]
-gex_kunderfranco = gex_kunderfranco[, -1]
-
+# Create and save GEX of Kunderfranco et al.
+gex_kunderfranco <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE14206"
+)
 save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")
+
+# Create MAE object
+mae_kunderfranco <- curatedPCaData:::create_mae(study_name = "kunderfranco")
+usethis::use_data(mae_kunderfranco, internal = FALSE, overwrite = TRUE)
+
+
 
 # True 
 # as mentioned in the clinical section this data has been split in two datasest, one of 31 samples and one of just 1 sample
