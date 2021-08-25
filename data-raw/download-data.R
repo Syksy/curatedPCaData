@@ -144,6 +144,7 @@ gex_friedrich <- curatedPCaData:::generate_gex_geo(
 save(gex_friedrich, file="data-raw/gex_friedrich.RData")
 
 mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
+usethis::use_data(mae_friedrich, internal = FALSE, overwrite = TRUE)
 
 ##
 #
@@ -159,48 +160,21 @@ save(gex_chandran, file="data-raw/gex_chandran.RData")
 mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
 usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 
+
+
 ######################################################################
-#Wallace et a. BASED ON RAW AFFY DATA
+#Wallace et al. BASED ON RAW AFFY DATA & RMA NORMALIZATION
 ######################################################################
 
-library(hgu133a2cdf, lib = '~/Rloc')
-library(hgu133a.db, lib = '~/Rloc')
-collapseFUN = function(z) { apply(z, MARGIN=2, FUN=median) }
+# Create and save GEX of Wallace et al.
+gex_wallace <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE6956"
+)
+save(gex_wallace, file = "data-raw/gex_wallace.RData")
 
-unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430')
-
-
-
-supfiles <- GEOquery::getGEOSuppFiles('GSE6956')
-
-utils::untar(tarfile=rownames(supfiles))
-	# Make sure to function in a working directory where the are no other tarballs present
-supfiles2 <- list.files()
-supfiles2 <- supfiles2[grep(".gz", supfiles2)]
-
-Wallace <- affy::ReadAffy()
-colnames(affy::exprs(Wallace)) <- gsub(".gz|.CEL", "", colnames(Wallace))
-GEX_Wallace <- affy::rma(Wallace)
-# Removing .CEL and packaging names from the GEO-compatible sample names
-colnames(GEX_Wallace) <- gsub(".CEL.gz", "", colnames(affy::exprs(GEX_Wallace)))
-keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(GEX_Wallace), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
-nam[is.na(nam)] <- "NA"
-# Collapse probes
-gex_wallace <- do.call("rbind", by(as.matrix(affy::exprs(GEX_Wallace)), INDICES=nam, FUN=collapseFUN))
-# Remove downloaded files
-if(cleanup){
-  # First GEO download
-  file.remove(rownames(supfiles))
-  # Tarballs
-  file.remove(supfiles2)
-}
-# Return numeric matrix
-
-gex_wallace = gex_wallace[, !is.element(colnames(gex_wallace), unmatched_healty_tissue)]
-
-save(gex_wallace,  file = "data-raw/gex_wallace.RData")
-
+# Create and save MAE object
+mae_wallace <- curatedPCaData:::create_mae(study_name = "wallace")
+usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 
 
 
