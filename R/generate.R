@@ -17,7 +17,8 @@ generate_gex_geo <- function(
                "GSE119616", #
                "GSE134051", # Friedrich et al.
                "GSE6956",   # Wallace et al.
-               "GSE14206"  # Kunderfranco et al.
+               "GSE14206",  # Kunderfranco et al.
+               "GSE5132"    # True et al.
                ), 
   file_directory, 
   cleanup = TRUE, 
@@ -481,6 +482,43 @@ generate_gex_geo <- function(
 	rownames(gex) <- labels$GENE_SYMBOL
 	gex <- gex[-which(rownames(gex) == ''), ]
 	## TDL: RMA?
+	gex <- gex[order(rownames(gex)),]
+  }
+  
+  # True et al.
+  else if(geo_code == "GSE5132"){
+	# As mentioned in the clinical section this data has been split in two datasest, one of 31 samples and one of just 1 sample
+	gset <- GEOquery::getGEO(geo_code, GSEMatrix =TRUE, getGPL=TRUE)
+	labels1 = Biobase::fData(gset[[1]])
+	labels2 = Biobase::fData(gset[[2]])
+
+	# First part of the data
+	ex1 <- Biobase::exprs(gset[[1]])
+	rownames(ex1) = labels1$"Related Gene Symbol"
+	ex1 = ex1[-which(rownames(ex1) == ''), ]
+	gex1 = aggregate(ex1, by = list(rownames(ex1)), mean, na.rm = T)
+	rownames(gex1) = gex1[, 1]
+	gex1 = gex1[, -1]
+	# Second part of the data
+	gex2 <- Biobase::exprs(gset[[2]])
+	rownames(gex2) = labels2$Hugo
+	gex2 = ex2[-which(rownames(gex2) == ''), , drop = F]
+	gex2 = cbind(gex2, 1)
+	gex2 = aggregate(gex2, by = list(rownames(gex2)), mean, na.rm = T)
+	rownames(gex2) = gex2[, 1]
+	gex2 = gex2[, -1]
+	gex2 = gex2 [, -2, drop = F]
+
+	# Intersect to common genes
+	common_genes = intersect(rownames(gex1), rownames(gex2))
+	gex1 = gex1[is.element(rownames(gex1), common_genes), ,drop = F]
+	gex2 = gex2[is.element(rownames(gex2), common_genes), ,drop = F]
+
+	# the two datasets are merged respecting the order of the GEO sample IDs
+	if(identical(rownames(gex1), rownames(gex2))) gex = cbind(gex1[,1:10], gex2[,1], gex1[,11:31])
+	# the appropriate name is used for the new column
+	colnames(gex)[11] = colnames(gex2)
+	# Sort genes by alphabetic order
 	gex <- gex[order(rownames(gex)),]
   }
   
