@@ -1,6 +1,7 @@
 ###
 #
-# Pre-package functions for updating gene annotations (based one unexported object curatedPCaData:::curatedPCaData_genes with biomaRt)
+# Utility functions:
+# - for updating gene annotations (based one unexported object curatedPCaData:::curatedPCaData_genes with biomaRt)
 #
 ###
 
@@ -12,8 +13,8 @@ updateAnno <- function(
 	main = "hgnc_symbol",
 	# Legitimate mapping types; Aliaes broken down into lists with ';' delimiter, others have non-unique multirow mappins between each other
 	type = c("Aliases", "ensembl_gene_id", "ensembl_transcript_id", "refseq_mrna"),
-	# Collapsing functions to merge rows for which the end result is multirow mapping (i.e. duplicated probes etc); by default col-wise median
-	collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
+	# Collapsing functions to merge rows for which the end result is multirow mapping (i.e. duplicated probes etc)
+	collapse_fun,
 	# Whether empty or NA rows should be omitted
 	omitNAempty = TRUE,
 	# Additional parameters
@@ -63,7 +64,7 @@ updateAnno <- function(
 	# Omit "" or NA rows
 	if(omitNAempty){
 		# Include those that are not NA or equal to ""
-		x <- x[which(!(is.na(rownames(x)) | rownames(x)=="")),]
+		x <- x[which(!(is.na(rownames(x)) | rownames(x)=="" | rownames(x)=="NA")),]
 	}
 	
 	x

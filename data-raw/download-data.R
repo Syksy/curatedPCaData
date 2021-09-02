@@ -58,12 +58,13 @@ save(mut_tcga, file="data-raw/mut_tcga.RData")
 mae_tcga <- curatedPCaData:::create_mae(study_name = "TCGA")
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
-# sun et al data -----
+## Sun et al. data -----
 # GEX
-gex_sun <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE25136"
+gex.rma_sun <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE25136",
+	cleanup = FALSE
 )
-save(gex_sun, file="data-raw/gex_sun.RData")
+save(gex.rma_sun, file="data-raw/gex.rma_sun.RData")
 
 # Create MAE object
 mae_sun <- curatedPCaData:::create_mae(study_name = "Sun")
