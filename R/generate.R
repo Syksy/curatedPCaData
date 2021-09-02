@@ -31,8 +31,8 @@ generate_gex_geo <- function(
 
   # Sun et al. -----  
   if(geo_code == "GSE25136"){
-	  # Open the tarball(s)
-	 utils::untar(tarfile = rownames(supfiles))
+	# Open the tarball(s)
+	utils::untar(tarfile = rownames(supfiles))
 
 	# Make sure to function in a working directory where the are no other tarballs present
 	gz_files <- list.files()
@@ -50,28 +50,14 @@ generate_gex_geo <- function(
 
 	# Find gene annotations
 	keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
-								    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
+	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
 	# Collapse probes
-	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, 
-	                           FUN = collapse_fun))
+	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, FUN = collapse_fun))
 	
-    # Sun et al does not use Hugo names so the below code makes the names for sun 
-	  # et al comparable with those in tcga/taylor
-    compare_names <- data.frame(original = row.names(gex),
-                               current = limma::alias2SymbolTable(row.names(gex),
-                                                                  species="Hs"))
-    duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
-
-    compare_names <- compare_names %>%
-     dplyr::mutate(new_names = dplyr::case_when(
-       current %in% duplicated_hugo_symbols ~ original,
-       TRUE ~ current
-     ))
-
-    row.names(gex) <- compare_names$new_names
-    
+	# Gene mapping and uniqueness via updateAnno-functionality
+	gex <- curatedPCaData:::updateAnno(x=gex, main="hgnc_symbol", type="Aliases", collapse_fun=collapse_fun)
+	
 	# Sort genes to alphabetic order for consistency
 	gex <- gex[order(rownames(gex)),]
   }
