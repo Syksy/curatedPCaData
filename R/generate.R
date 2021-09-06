@@ -8,7 +8,7 @@
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
 generate_gex_geo <- function(
-  geo_code = c("GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
+	geo_code = c("GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
                "GSE25136",  # Sun et al.
                "GSE8218",   # Wang et al.
                "GSE6919",   # Chandran et al., Yu et al. from three platforms combined
@@ -20,47 +20,60 @@ generate_gex_geo <- function(
                "GSE14206",  # Kunderfranco et al.
                "GSE5132"    # True et al.
                ), 
-  file_directory, 
-  cleanup = TRUE, 
-  collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
-  ...
+	pckg = "oligo", # Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data
+	file_directory, 
+	cleanup = TRUE, 
+	collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
+	...
 ){
-  if(!missing(file_directory)) here::set_here(file_directory)
-  # Supplementary files include the raw CEL files
-  supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+	if(!missing(file_directory)) here::set_here(file_directory)
+	# Supplementary files include the raw CEL files
+	supfiles <- GEOquery::getGEOSuppFiles(geo_code)
 
-  # Sun et al. -----  
-  if(geo_code == "GSE25136"){
-	# Open the tarball(s)
-	utils::untar(tarfile = rownames(supfiles))
+	if(!pckg %in% c("oligo", "affy")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo' or 'affy'):", pckg))
 
-	# Make sure to function in a working directory where the are no other tarballs present
-	gz_files <- list.files()
-	gz_files <- gz_files[grep(".gz", gz_files)]
-	
-	# Read Affymetrix MA
-	Sun <- affy::ReadAffy()
-	colnames(affy::exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
 
-	# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
-	gex <- affy::rma(Sun)
+	# Sun et al. -----  
+	if(geo_code == "GSE25136"){
+		# Open the tarball(s)
+		utils::untar(tarfile = rownames(supfiles))
 
-	# Extracting .CEL and packaging names from the GEO-compatible sample names
-	colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
+		# Make sure to function in a working directory where the are no other tarballs present
+		gz_files <- list.files()
+		gz_files <- gz_files[grep(".gz", gz_files)]
 
-	# Find gene annotations
-	keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
-	nam[is.na(nam)] <- "NA"
-	# Collapse probes
-	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, FUN = collapse_fun))
-	
-	# Gene mapping and uniqueness via updateAnno-functionality
-	gex <- curatedPCaData:::updateAnno(x=gex, main="hgnc_symbol", type="Aliases", collapse_fun=collapse_fun)
-	
-	# Sort genes to alphabetic order for consistency
-	gex <- gex[order(rownames(gex)),]
-  }
+		if(pckg == "oligo"){
+			# Read CEL
+			gex <- oligo::read.celfiles(gz_files)
+			# Normalize background convolution of noise and signal using RMA (median-polish)
+			gex <- oligo::rma(gex)
+			
+			
+		}else if(pckg == "affy"){	
+			# Read Affymetrix MA
+			Sun <- affy::ReadAffy()
+			colnames(affy::exprs(Sun)) <- gsub(".gz|.CEL", "", colnames(Sun))
+
+			# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
+			gex <- affy::rma(Sun)
+
+			# Extracting .CEL and packaging names from the GEO-compatible sample names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
+
+			# Find gene annotations
+			keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
+			nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
+			nam[is.na(nam)] <- "NA"
+			# Collapse probes
+			gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, FUN = collapse_fun))
+
+			# Gene mapping and uniqueness via updateAnno-functionality
+			gex <- curatedPCaData:::updateAnno(x=gex, main="hgnc_symbol", type="Aliases", collapse_fun=collapse_fun)
+
+			# Sort genes to alphabetic order for consistency
+			gex <- gex[order(rownames(gex)),]
+		}
+	}
 
   #Wang et al.  
   else if(geo_code == "GSE8218"){
@@ -453,7 +466,7 @@ generate_gex_geo <- function(
 	nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
 	nam[is.na(nam)] <- "NA"
 	# Collapse probes
-	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapseFUN))
+	gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapse_fun))
 	# Return numeric matrix
 
 	## TDL: Store (unmatched) healthy tissues, can be useful for e.g. assessing tumor purity assessment where normal samples are required
