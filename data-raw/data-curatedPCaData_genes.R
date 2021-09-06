@@ -13,6 +13,9 @@
 
 # See if legacy aliases are supported
 # grep("alias", biomaRt::listAttributes(biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl"))[,"name"], value=TRUE)
+
+# Example for extracting the affy specific probes as suggested in https://www.biostars.org/p/402677/
+# listAttributes(mart)[grep("affy", listAttributes(mart)[,1]),]
   
 # Fetch gene names for various annotations
 curatedPCaData_genes <- biomaRt::getBM(
@@ -27,9 +30,9 @@ curatedPCaData_genes <- biomaRt::getBM(
 			# Chromosomal information
 			'chromosome_name','start_position','end_position',
 			# Description
-			'description'
-			# Additional external synonyms available
-			#'external_synonym'
+			'description',
+			# Array specific probe identifiers needed by processed studies
+			"affy_hg_u133a" 			
 		),
 	mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 )
