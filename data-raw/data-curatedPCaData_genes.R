@@ -32,7 +32,8 @@ curatedPCaData_genes <- biomaRt::getBM(
 			# Description
 			'description',
 			# Array specific probe identifiers needed by processed studies
-			"affy_hg_u133a" 			
+			"affy_hg_u133a",	# Used by: Sun et al., ...
+			"affy_hg_u133a_2"	# Used by: Wallace et al., ... 
 		),
 	mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 )
@@ -40,7 +41,7 @@ curatedPCaData_genes <- biomaRt::getBM(
 curatedPCaData_genes <- curatedPCaData_genes[order(curatedPCaData_genes$chromosome_name, curatedPCaData_genes$start_position, curatedPCaData_genes$end_position),]
 # Connect to annotation database and extract a list of gene name synonyms, aliases, legacy names
 db.con <- org.Hs.eg.db::org.Hs.eg_dbconn()
-# Query 
+# SQL query 
 aliases <- DBI::dbGetQuery(db.con, "SELECT * FROM alias, gene_info WHERE alias._id == gene_info._id;")
 curatedPCaData_genes[,"Aliases"] <- unlist(lapply(curatedPCaData_genes$hgnc_symbol, FUN=function(g){
 	w <- which(aliases[,"symbol"] == g)

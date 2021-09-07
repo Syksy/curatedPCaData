@@ -59,10 +59,11 @@ mae_tcga <- curatedPCaData:::create_mae(study_name = "TCGA")
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
 ## Sun et al. data -----
-# GEX
+# GEX: [HG-U133A] Affymetrix Human Genome U133A Array
 gex.rma_sun <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE25136",
-	cleanup = FALSE
+	cleanup = FALSE,
+	pckg = "oligo"	
 )
 save(gex.rma_sun, file="data-raw/gex.rma_sun.RData")
 
@@ -70,9 +71,11 @@ save(gex.rma_sun, file="data-raw/gex.rma_sun.RData")
 mae_sun <- curatedPCaData:::create_mae(study_name = "Sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
 
-#taylor et al data -----
-gex_taylor <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE25136"
+#tTaylor et al., also known as the MSKCC data -----
+gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE21032",
+	cleanup = FALSE,
+	pckg = "oligo"
 )
 save(gex_taylor, file="data-raw/gex_taylor.RData")
 
@@ -168,6 +171,7 @@ usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 ######################################################################
 
 # Create and save GEX of Wallace et al.
+# GEX: [HG-U133A_2] Affymetrix Human Genome U133A 2.0 Array
 gex.rma_wallace <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE6956",
   cleanup = FALSE
