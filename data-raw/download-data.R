@@ -168,10 +168,11 @@ usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 ######################################################################
 
 # Create and save GEX of Wallace et al.
-gex_wallace <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE6956"
+gex.rma_wallace <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE6956",
+  cleanup = FALSE
 )
-save(gex_wallace, file = "data-raw/gex_wallace.RData")
+save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 
 # Create and save MAE object
 mae_wallace <- curatedPCaData:::create_mae(study_name = "wallace")

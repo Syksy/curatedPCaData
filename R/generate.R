@@ -47,8 +47,16 @@ generate_gex_geo <- function(
 			gex <- oligo::read.celfiles(gz_files)
 			# Normalize background convolution of noise and signal using RMA (median-polish)
 			gex <- oligo::rma(gex)
-			
-			
+			# Extract expression matrix with probe ids
+			gex <- oligo::exprs(gex)
+			# Sanitize column names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
+			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a),"hgnc_symbol"]
+			# Collapse probes that target the same gene
+			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
+			# Sort gene symbols to alphabetic order
+			gex <- gex[order(rownames(gex)),]
 		}else if(pckg == "affy"){	
 			# Read Affymetrix MA
 			Sun <- affy::ReadAffy()
