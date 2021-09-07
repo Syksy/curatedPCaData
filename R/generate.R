@@ -8,18 +8,19 @@
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
 generate_gex_geo <- function(
-	geo_code = c("GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
-               "GSE25136",  # Sun et al.
-               "GSE8218",   # Wang et al.
-               "GSE6919",   # Chandran et al., Yu et al. from three platforms combined
-               "GSE18655",  # Barwick et al.
-               "GSE2109",   # IGC
-               "GSE119616", #
-               "GSE134051", # Friedrich et al.
-               "GSE6956",   # Wallace et al.
-               "GSE14206",  # Kunderfranco et al.
-               "GSE5132"    # True et al.
-               ), 
+	geo_code = c(
+		"GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
+		"GSE25136",  # Sun et al.
+		"GSE8218",   # Wang et al.
+		"GSE6919",   # Chandran et al., Yu et al. from three platforms combined
+		"GSE18655",  # Barwick et al.
+		"GSE2109",   # IGC
+		"GSE119616", #
+		"GSE134051", # Friedrich et al.
+		"GSE6956",   # Wallace et al.
+		"GSE14206",  # Kunderfranco et al.
+		"GSE5132"    # True et al.
+		), 
 	pckg = "oligo", # Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data
 	file_directory, 
 	cleanup = TRUE, 
