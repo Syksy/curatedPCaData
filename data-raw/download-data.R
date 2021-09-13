@@ -248,6 +248,7 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 
 
 #Kim et al data -----
+# GEX: [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
 gex_kim <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE119616"
 )
@@ -294,11 +295,12 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 
 
 # Wang et al.
-#GEX
-gex_wang <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE8218"
+# GEX: [HG-U133A] Affymetrix Human Genome U133A Array
+gex.rma_wang <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE8218",
+	pckg = "oligo"
 )
-save(gex_wang, file="data-raw/gex_wang.RData")
+save(gex.rma_wang, file="data-raw/gex.rma_wang.RData")
 #CNA
 cna_wang <- curatedPCaData:::generate_cna_geo(
   geo_code = "GSE8218"
@@ -310,15 +312,20 @@ save(cna_wang, file="data-raw/cna_wang.RData")
 mae_wang <- curatedPCaData:::create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
 
+
 # Barwick et al.
-gex_barwick <- curatedPCaData:::generate_gex_geo("GSE18655")
+gex_barwick <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE18655"
+)
 save(gex_barwick, file="data-raw/gex_barwick.RData")
 
+## TODO: MAE, missing clinical info
 
 
 # Kunderfranco et al.
 
 # Create and save GEX of Kunderfranco et al.
+# GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
 gex_kunderfranco <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE14206"
 )

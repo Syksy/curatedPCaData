@@ -56,8 +56,6 @@ generate_gex_geo <- function(
 			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
-			# Sort gene symbols to alphabetic order
-			gex <- gex[order(rownames(gex)),]
 		}else if(pckg == "affy"){	
 			# Read Affymetrix MA
 			Sun <- affy::ReadAffy()
@@ -78,55 +76,72 @@ generate_gex_geo <- function(
 
 			# Gene mapping and uniqueness via updateAnno-functionality
 			gex <- curatedPCaData:::updateAnno(x=gex, main="hgnc_symbol", type="Aliases", collapse_fun=collapse_fun)
-
-			# Sort genes to alphabetic order for consistency
-			gex <- gex[order(rownames(gex)),]
 		}
+		# Sort genes to alphabetic order for consistency
+		gex <- gex[order(rownames(gex)),]
 	}
 
-  #Wang et al.  
-  else if(geo_code == "GSE8218"){
-    # Make sure to function in a working directory where the are no other tarballs present
-  gz_files <- list.files()
-  gz_files <- gz_files[grep(".gz", gz_files)]
-  
-    # Read Affymetrix MA
-    wang <- affy::ReadAffy()
-    colnames(affy::exprs(wang)) <- gsub(".gz|.CEL", "", colnames(wang))
-    
-    # Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
-    gex <- affy::rma(wang)
-    
-    # Extracting .CEL and packaging names from the GEO-compatible sample names
-    colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
-    
-    # Find gene annotations
-    keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-    nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
-                                                                    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
-    nam[is.na(nam)] <- "NA"
-    # Collapse probes
-    gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, 
-                               FUN = collapse_fun))
-    
-    # Sun et al does not use Hugo names so the below code makes the names for sun 
-    # et al comparable with those in tcga/taylor
-    compare_names <- data.frame(original = row.names(gex),
-                                current = limma::alias2SymbolTable(row.names(gex),
-                                                                   species="Hs"))
-    duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
-    
-    compare_names <- compare_names %>%
-      dplyr::mutate(new_names = dplyr::case_when(
-        current %in% duplicated_hugo_symbols ~ original,
-        TRUE ~ current
-      ))
-    
-    row.names(gex) <- compare_names$new_names
-    
-    # Sort genes to alphabetic order for consistency
-    gex <- gex[order(rownames(gex)),]
-  }
+	#Wang et al.  
+	else if(geo_code == "GSE8218"){
+		# Open the tarball(s)
+		utils::untar(tarfile = rownames(supfiles))
+
+		# Make sure to function in a working directory where the are no other tarballs present
+		gz_files <- list.files()
+		gz_files <- gz_files[grep(".gz", gz_files)]
+
+		if(pckg == "oligo"){
+			# Read CEL
+			gex <- oligo::read.celfiles(gz_files)
+			# Normalize background convolution of noise and signal using RMA (median-polish)
+			gex <- oligo::rma(gex)
+			# Extract expression matrix with probe ids
+			gex <- oligo::exprs(gex)
+			# Sanitize column names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
+			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a),"hgnc_symbol"]
+			# Collapse probes that target the same gene
+			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
+		}else if(pckg == "affy"){
+			# Read Affymetrix MA
+			wang <- affy::ReadAffy()
+			colnames(affy::exprs(wang)) <- gsub(".gz|.CEL", "", colnames(wang))
+
+			# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
+			gex <- affy::rma(wang)
+
+			# Extracting .CEL and packaging names from the GEO-compatible sample names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
+
+			# Find gene annotations
+			keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
+			nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
+										    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
+			nam[is.na(nam)] <- "NA"
+			# Collapse probes
+			gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, 
+					       FUN = collapse_fun))
+
+			# Sun et al does not use Hugo names so the below code makes the names for sun 
+			# et al comparable with those in tcga/taylor
+			compare_names <- data.frame(original = row.names(gex),
+						current = limma::alias2SymbolTable(row.names(gex),
+										   species="Hs"))
+			duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
+
+			compare_names <- compare_names %>%
+			dplyr::mutate(new_names = dplyr::case_when(
+			current %in% duplicated_hugo_symbols ~ original,
+			TRUE ~ current
+			))
+
+			row.names(gex) <- compare_names$new_names
+		}
+
+		# Sort genes to alphabetic order for consistency
+		gex <- gex[order(rownames(gex)),]
+	}
   
   # Kim et al
   else if(geo_code == "GSE119616"){
@@ -530,25 +545,30 @@ generate_gex_geo <- function(
 	gex <- gex[order(rownames(gex)),]
   }
   
-  # Unknown GEO id (throw an error) -----
-  else{
-  	stop("Unknown GEO id, see allowed parameter values for geo_code")
-  }
+	# Unknown GEO id (throw an error) -----
+	else{
+		stop("Unknown GEO id, see allowed parameter values for geo_code")
+	}
 
-  ## TODO: Move cleanup inside each GEO as file types and custom files are very cohort specific
-  # Remove downloaded files
-  if(cleanup){
-    # First GEO download
-    file.remove(rownames(supfiles))
-    # Tarballs
-    #file.remove(gz_files)
-    # Remove empty folder
-    file.remove(paste0(here::here(), "/", geo_code))
-  }
+	## TODO: Move cleanup inside each GEO as file types and custom files are very cohort specific
+	# Remove downloaded files
+	if(cleanup){
+		# First GEO download
+		file.remove(rownames(supfiles))
+		# Tarballs
+		#file.remove(gz_files)
+		# Remove empty folder
+		file.remove(paste0(here::here(), "/", geo_code))
+	}
 
-  gex <- as.matrix(gex)
-  gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
-  gex
+	# Remove rows with no names or redundancy
+	if(any(is.na(rownames(gex))) | any(rownames(gex) %in% c(""))){
+		gex <- gex[-which(is.na(rownames(gex)) | rownames(gex) %in% c("")),]
+	}
+	# Cast to matrix type, remove empty rows/columns and return gene expression matrix
+	gex <- as.matrix(gex)
+	gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
+	gex
 }
 
 #' Download copy number variant data from GEO using study specific id and process it
