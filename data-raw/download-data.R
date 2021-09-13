@@ -58,20 +58,24 @@ save(mut_tcga, file="data-raw/mut_tcga.RData")
 mae_tcga <- curatedPCaData:::create_mae(study_name = "TCGA")
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
-# sun et al data -----
-# GEX
-gex_sun <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE25136"
+## Sun et al. data -----
+# GEX: [HG-U133A] Affymetrix Human Genome U133A Array
+gex.rma_sun <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE25136",
+	cleanup = FALSE,
+	pckg = "oligo"	
 )
-save(gex_sun, file="data-raw/gex_sun.RData")
+save(gex.rma_sun, file="data-raw/gex.rma_sun.RData")
 
 # Create MAE object
 mae_sun <- curatedPCaData:::create_mae(study_name = "Sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
 
-#taylor et al data -----
-gex_taylor <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE25136"
+#tTaylor et al., also known as the MSKCC data -----
+gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE21032",
+	cleanup = FALSE,
+	pckg = "oligo"
 )
 save(gex_taylor, file="data-raw/gex_taylor.RData")
 
@@ -138,38 +142,13 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 # Friedrich 2020 BASED ON GPL DATA
 ###################################################
 
-library(GEOquery)
-library(Biobase)
-
-# load series and platform data from GEO
-
-fr_gset <- getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
-
-labels = Biobase::fData(fr_gset[[1]])
-gtab = curatedPCaData:::curatedPCaData_genes
-
-if (length(fr_gset) > 1) idx <- grep("GPL26898", attr(gset, "names")) else idx <- 1
-fr_ex <- exprs(fr_gset[[idx]])
-
-# replacing row names with gene ids
-##############################################
-labels$ensb = substr(labels$SPOT_ID, 1, 15)
-rownames(fr_ex) = labels$ensb
-fr_ex = fr_ex[rownames(fr_ex) != 'NoEntry', ]
-fr_ex = fr_ex[substr(rownames(fr_ex), 1, 4) != 'XLOC', ]
-fr_ex = fr_ex[is.element(rownames(fr_ex), gtab[,1]), ]
-gtab2 = gtab[match(rownames(fr_ex), gtab[,1]), ]
-
-gtab2[which(gtab2[,3] == ''), 3] = gtab2[which(gtab2[,3] == ''), 1]
-
-rownames(fr_ex) = gtab2[,3]
-gex_friedrich = aggregate(fr_ex, by = list(rownames(ex)), mean)
-rownames(gex_friedrich) = gex_friedrich[,1]
-gex_friedrich = gex_friedrich[, -c(1)]
-
-save(gex_friedrich, file = "data-raw/gex_friedrich.RData")
+gex_friedrich <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE134051"
+)
+save(gex_friedrich, file="data-raw/gex_friedrich.RData")
 
 mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
+usethis::use_data(mae_friedrich, internal = FALSE, overwrite = TRUE)
 
 ##
 #
@@ -185,48 +164,23 @@ save(gex_chandran, file="data-raw/gex_chandran.RData")
 mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
 usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 
+
+
 ######################################################################
-#Wallace et a. BASED ON RAW AFFY DATA
+#Wallace et al. BASED ON RAW AFFY DATA & RMA NORMALIZATION
 ######################################################################
 
-library(hgu133a2cdf, lib = '~/Rloc')
-library(hgu133a.db, lib = '~/Rloc')
-collapseFUN = function(z) { apply(z, MARGIN=2, FUN=median) }
+# Create and save GEX of Wallace et al.
+# GEX: [HG-U133A_2] Affymetrix Human Genome U133A 2.0 Array
+gex.rma_wallace <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE6956",
+  cleanup = FALSE
+)
+save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 
-unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430')
-
-
-
-supfiles <- GEOquery::getGEOSuppFiles('GSE6956')
-
-utils::untar(tarfile=rownames(supfiles))
-	# Make sure to function in a working directory where the are no other tarballs present
-supfiles2 <- list.files()
-supfiles2 <- supfiles2[grep(".gz", supfiles2)]
-
-Wallace <- affy::ReadAffy()
-colnames(affy::exprs(Wallace)) <- gsub(".gz|.CEL", "", colnames(Wallace))
-GEX_Wallace <- affy::rma(Wallace)
-# Removing .CEL and packaging names from the GEO-compatible sample names
-colnames(GEX_Wallace) <- gsub(".CEL.gz", "", colnames(affy::exprs(GEX_Wallace)))
-keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(GEX_Wallace), as.character(hgu133a.db::hgu133aALIAS2PROBE))])
-nam[is.na(nam)] <- "NA"
-# Collapse probes
-gex_wallace <- do.call("rbind", by(as.matrix(affy::exprs(GEX_Wallace)), INDICES=nam, FUN=collapseFUN))
-# Remove downloaded files
-if(cleanup){
-  # First GEO download
-  file.remove(rownames(supfiles))
-  # Tarballs
-  file.remove(supfiles2)
-}
-# Return numeric matrix
-
-gex_wallace = gex_wallace[, !is.element(colnames(gex_wallace), unmatched_healty_tissue)]
-
-save(gex_wallace,  file = "data-raw/gex_wallace.RData")
-
+# Create and save MAE object
+mae_wallace <- curatedPCaData:::create_mae(study_name = "wallace")
+usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 
 
 
@@ -247,7 +201,7 @@ cna_barbieri <- curatedPCaData:::generate_cbioportal(
 )
 save(cna_barbieri, file="data-raw/cna_barbieri.RData")
 
-# CNA
+# MUT
 mut_barbieri <- curatedPCaData:::generate_cbioportal(
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_broad_mutations", 
@@ -291,7 +245,10 @@ save(mut_ren, file="data-raw/mut_ren.RData")
 mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
 usethis::use_data(mae_ren, overwrite = TRUE)
 
+
+
 #Kim et al data -----
+# GEX: [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
 gex_kim <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE119616"
 )
@@ -300,6 +257,8 @@ save(gex_kim, file="data-raw/gex_kim.RData")
 # Create MAE object
 mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
 usethis::use_data(mae_kim, overwrite = TRUE)
+
+
 
 #Abida et al data -----
 
@@ -332,12 +291,16 @@ save(mut_abida, file="data-raw/mut_abida.RData")
 mae_abida <- curatedPCaData:::create_mae(study_name = "abida")
 usethis::use_data(mae_abida, overwrite = TRUE)
 
+
+
+
 # Wang et al.
-#GEX
-gex_wang <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE8218"
+# GEX: [HG-U133A] Affymetrix Human Genome U133A Array
+gex.rma_wang <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE8218",
+	pckg = "oligo"
 )
-save(gex_wang, file="data-raw/gex_wang.RData")
+save(gex.rma_wang, file="data-raw/gex.rma_wang.RData")
 #CNA
 cna_wang <- curatedPCaData:::generate_cna_geo(
   geo_code = "GSE8218"
@@ -349,69 +312,43 @@ save(cna_wang, file="data-raw/cna_wang.RData")
 mae_wang <- curatedPCaData:::create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
 
+
 # Barwick et al.
-gex_barwick <- curatedPCaData:::generate_gex_geo("GSE18655")
+gex_barwick <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE18655"
+)
 save(gex_barwick, file="data-raw/gex_barwick.RData")
 
+## TODO: MAE, missing clinical info
 
-# Kunderfranco
 
-g_kunder <- getGEO("GSE14206", GSEMatrix =TRUE, getGPL=TRUE)
-kunder_labels = Biobase::fData(g_kunder[[1]])
-kunder_ex <- exprs(g_kunder[[1]])
-rownames(kex) = kunder_labels$GENE_SYMBOL
-kunder_ex = kunder_ex[-which(rownames(kunder_ex) == ''), ]
+# Kunderfranco et al.
 
-gex_kunderfranco = aggregate(kunder_ex, by = list(rownames(ex)), mean)
-
-rownames(gex_kunderfranco) = gex_kunderfranco[, 1]
-gex_kunderfranco = gex_kunderfranco[, -1]
-
+# Create and save GEX of Kunderfranco et al.
+# GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
+gex_kunderfranco <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE14206"
+)
 save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")
 
-# True 
-# as mentioned in the clinical section this data has been split in two datasest, one of 31 samples and one of just 1 sample
-
-gset <- getGEO("GSE5132", GSEMatrix =TRUE, getGPL=TRUE)
-labels1 = Biobase::fData(gset[[1]])
-labels2 = Biobase::fData(gset[[2]])
-
-ex1 <- exprs(gset[[1]])
-rownames(ex1) = labels1$"Related Gene Symbol"
-ex1 = ex1[-which(rownames(ex1) == ''), ]
-
-gex_true1 = aggregate(ex1, by = list(rownames(ex1)), mean, na.rm = T)
-
-rownames(gex_true1) = gex_true1[, 1]
-gex_true1 = gex_true1[, -1]
+# Create MAE object
+mae_kunderfranco <- curatedPCaData:::create_mae(study_name = "kunderfranco")
+usethis::use_data(mae_kunderfranco, internal = FALSE, overwrite = TRUE)
 
 
-ex2 <- exprs(gset[[2]])
-rownames(ex2) = labels2$Hugo
-ex2 = ex2[-which(rownames(ex2) == ''), , drop = F]
-ex2 = cbind(ex2, 1)
 
+# True et al.
 
-gex_true2 = aggregate(ex2, by = list(rownames(ex2)), mean, na.rm = T)
-
-rownames(gex_true2) = gex_true2[, 1]
-gex_true2 = gex_true2[, -1]
-gex_true2 = gex_true2 [, -2, drop = F]
-
-# not the same number of genes!
-common_genes = intersect(rownames(gex_true1), rownames(gex_true2))
-
-
-gex_true1 = gex_true1[is.element(rownames(gex_true1), common_genes), ,drop = F]
-gex_true2 = gex_true2[is.element(rownames(gex_true2), common_genes), ,drop = F]
-
-# the two datasets are merged respecting the order of the GEO sample IDs
-if(identical(rownames(gex_true1), rownames(gex_true2))) gex_true = cbind(gex_true1[,1:10], gex_true2[,1], gex_true1[,11:31])
-# the appropriate name is used for the new column
-colnames(gex_true)[11] = colnames(gex_true2)
-
-
+# Create and save GEX of True et al.
+gex_true <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE5132"
+)
 save(gex_true, file = "data-raw/gex_true.RData")
+
+# Create MAE object
+mae_true <- curatedPCaData:::create_mae(study_name = "true")
+usethis::use_data(mae_true, internal = FALSE, overwrite = TRUE)
+
 
 
 # IGC - GSE2109
