@@ -1933,6 +1933,7 @@ curated <- initial_curated_df(
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "BACA") %>%
+  dplyr::mutate(patient_id = rownames(uncurated)) %>%
   dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
   dplyr::mutate(sample_type=uncurated$SAMPLE_TYPE)%>%
   dplyr::mutate(psa=uncurated$SERUM_PSA)%>%
