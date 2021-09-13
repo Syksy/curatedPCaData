@@ -425,3 +425,17 @@ save(gex_igc, file="data-raw/gex_igc.RData")
 mae_igc <- create_mae(study_name = "igc")
 usethis::use_data(mae_igc, overwrite = TRUE)
 
+#BACA -----
+
+# CNA
+cna_baca <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_broad_2013_cna", 
+  caseList="prad_broad_2013_sequenced"
+)
+save(cna_baca, file="data-raw/cna_baca.RData")
+
+mae_baca <- create_mae(study_name = "baca")
+usethis::use_data(mae_baca, overwrite = TRUE)
+
+
