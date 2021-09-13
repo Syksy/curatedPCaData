@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.6.3
-Date: 2021-07-28
+Version: 0.6.14
+Date: 2021-09-13
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -31,16 +31,14 @@ Suggests:
     GenomicFeatures,
     here,
     GEOquery,
-    affy,
-    affyio,
-    AnnotationDbi,
+    affy, affyio,
+    oligo, AnnotationDbi,
     magrittr,
     dplyr,
     rlang,
     janitor,
     limma,
     rCGH,
-    oligo,
     Biobase,
     immunedeconv,
     tidyr,
@@ -58,5 +56,6 @@ Suggests:
     hgu95av2cdf, hgu95av2.db,
     hgu95bcdf, hgu95b.db,
     hgu95ccdf, hgu95c.db,
-    VennDiagram
+    VennDiagram,
+    org.Hs.eg.db, DBI
     
