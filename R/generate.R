@@ -227,48 +227,68 @@ generate_gex_geo <- function(
     
     # Sort genes to alphabetic order for consistency
     gex <- gex[order(rownames(gex)),]}
-  
-  # Taylor  et al.-----
-  else if(geo_code == "GSE21032"){ # TODO: Alternative more specific accession code "GSE21034"
-	  # Open the tarball(s)
-    	utils::untar(tarfile = rownames(supfiles))
-	# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
-	 CELs <- oligo::read.celfiles(affy::list.celfiles())
+    }
+	# Taylor  et al.-----
+	else if(geo_code == "GSE21032"){ # TODO: Alternative more specific accession code "GSE21034"
+		# Open the tarball(s)
+		utils::untar(tarfile = rownames(supfiles))
+		# Make sure to function in a working directory where the are no other tarballs present
+		gz_files <- list.files()
+		gz_files <- gz_files[grep(".gz", gz_files)]
 	
-	# Perform RMA normalization
-	  RMAs <- oligo::rma(CELs)
-	
-	# Obtain gene and sample information
-	  Biobase::featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
-	# GSM######-type names from GEO
-	  nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
-	                        FUN = function(z) z[[1]])) 
-	# Two naming conventions for the files; picking the PCA###-style 
-	  nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
-	                      FUN = function(z) z[[3]])) 
-	  nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"),
-	                                          FUN = function(z) z[[4]])))
-	# Some samples were suffixed with HuEx, while others had Exonl prefix
-	  nam <- paste(nam0, "_", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
+		if(pckg == "oligo"){
+			# Read CEL
+			gex <- oligo::read.celfiles(gz_files)
+			# Normalize background convolution of noise and signal using RMA (median-polish)
+			gex <- oligo::rma(gex)
+			# Extract expression matrix with probe ids
+			gex <- oligo::exprs(gex)
+			# Sanitize column names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
+			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a),"hgnc_symbol"]
+			# Collapse probes that target the same gene
+			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
+		}
+		else if(pcgk == "affy"){
+			# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
+			CELs <- oligo::read.celfiles(affy::list.celfiles())
 
-	# Extract gene names
-	  genenames <- unlist(lapply(Biobase::fData(RMAs)[,"geneassignment"], 
-	                           FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
+			# Perform RMA normalization
+			RMAs <- oligo::rma(CELs)
 
-	# Transform into a matrix and remove empty gene names
-  	gex <- as.matrix(Biobase::exprs(RMAs))
-  	gex <- gex[-which(is.na(genenames)),]
-  	rownames(gex) <- genenames[-which(is.na(genenames))]
-  	# Map the coventionally used Taylor sample names instead of GEO codes 
-  	# Compatible with e.g. cBioPortal sample names
-  	# Give unique names with GSM#####.{PCA,PAN}##### combination for uniqueness
-  	##colnames(gex) <- nam
-  	# Use the unique GSM###-names
-  	colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
+			# Obtain gene and sample information
+			Biobase::featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
+			# GSM######-type names from GEO
+			nam0 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
+					FUN = function(z) z[[1]])) 
+			# Two naming conventions for the files; picking the PCA###-style 
+			nam1 <- unlist(lapply(strsplit(affy::list.celfiles(), "_"), 
+				      FUN = function(z) z[[3]])) 
+			nam2 <- gsub(".CEL.gz", "", unlist(lapply(strsplit(affy::list.celfiles(), "_"),
+							  FUN = function(z) z[[4]])))
+			# Some samples were suffixed with HuEx, while others had Exonl prefix
+			nam <- paste(nam0, "_", ifelse(nam1 == "Exon1", nam2, nam1), sep="")
+
+			# Extract gene names
+			genenames <- unlist(lapply(Biobase::fData(RMAs)[,"geneassignment"], 
+					   FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
+
+			# Transform into a matrix and remove empty gene names
+			gex <- as.matrix(Biobase::exprs(RMAs))
+			gex <- gex[-which(is.na(genenames)),]
+			rownames(gex) <- genenames[-which(is.na(genenames))]
+			# Map the coventionally used Taylor sample names instead of GEO codes 
+			# Compatible with e.g. cBioPortal sample names
+			# Give unique names with GSM#####.{PCA,PAN}##### combination for uniqueness
+			##colnames(gex) <- nam
+			# Use the unique GSM###-names
+			colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
+		}
   	
-  	# Sort genes to alphabetic order for consistency
-  	gex <- gex[order(rownames(gex)),]
-  }
+		# Sort genes to alphabetic order for consistency
+		gex <- gex[order(rownames(gex)),]
+	  }
 	
 
   # Chandran et al.-----  
@@ -399,8 +419,8 @@ generate_gex_geo <- function(
     # Sort genes to alphabetic order for consistency
     gex <- gex[order(rownames(gex)),]
   }
-  # Barwick et al.-----  
   
+  # Barwick et al.-----    
   else if(geo_code == "GSE18655"){
 	# Custom DASL
 	# .gz
