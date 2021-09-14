@@ -1,4 +1,251 @@
-# tcga data ------
+### Data downloading scripts for:
+## GEX: Gene expression
+## CNA: Copy number alteration
+## MUT: Mutations
+### Available platforms for extracting raw or processed data
+## GEO: Gene Omnibus
+## cBioPortal (query via cgdsr-package)
+
+### Rough pipeline:
+## Download clinical data first (via download-clinical.R), and save in data-raw
+## Download GEX/CNA/MUT and save in data-raw using functions via generate.R
+## Create final MAE object for package export using functions via create.R
+
+
+### Alphabetic ordering of datasets:
+## - Barbieri et al.
+## - Barwick et al. (TODO, not exported yet)
+## - Chandran et al.
+## - Friedrich et al.
+## - Hieronymus et al.
+## - Kunderfranco et al.
+## - Ren et al.
+## - Sun et al.
+## - Taylor et al. (MSKCC)
+## - TCGA
+## - Wallace et al.
+## - Wang et al.
+## (to be updated)
+
+## - Abida et al. -
+#
+
+# GEX PolyA (FPKM)
+gex_polyA_abida <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+  geneticProfiles = "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", # Omics profile
+  caseList = "prad_su2c_2019_all" # Case list
+)
+save(gex_polyA_abida, file="data-raw/gex_polyA_abida.RData")
+
+# CNA
+cna_abida <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_su2c_2019_gistic", 
+  caseList="prad_su2c_2019_sequenced"
+)
+save(cna_abida, file="data-raw/cna_abida.RData")
+
+# Mutations
+mut_abida <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_su2c_2019_mutations", 
+  caseList="prad_su2c_2019_sequenced"
+)
+mut_abida[which(mut_abida=="NaN")] <- NA
+save(mut_abida, file="data-raw/mut_abida.RData")
+
+# Create MAE object
+mae_abida <- curatedPCaData:::create_mae(study_name = "abida")
+usethis::use_data(mae_abida, overwrite = TRUE)
+
+## - end Abida et al. -
+
+
+## - Barbieri et al. -
+# GEX
+gex_barbieri <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+  geneticProfiles = "prad_broad_mrna", # Omics profile
+  caseList = "prad_broad_sequenced" # Case list
+)
+save(gex_barbieri, file="data-raw/gex_barbieri.RData")
+
+# CNA
+cna_barbieri <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_broad_cna", 
+  caseList="prad_broad_sequenced"
+)
+save(cna_barbieri, file="data-raw/cna_barbieri.RData")
+
+# MUT
+mut_barbieri <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_broad_mutations", 
+  caseList="prad_broad_sequenced"
+)
+mut_barbieri[which(mut_barbieri=="NaN")] <- NA
+save(mut_barbieri, file="data-raw/mut_barbieri.RData")
+
+# Create MAE object
+mae_barbieri <- curatedPCaData:::create_mae(study_name = "Barbieri")
+usethis::use_data(mae_barbieri, overwrite = TRUE)
+
+## - end Barbieri et al. -
+
+
+## - Barwick et al.
+#
+gex_barwick <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE18655"
+)
+save(gex_barwick, file="data-raw/gex_barwick.RData")
+
+## TODO: MAE, missing clinical info
+ 
+## - end Barwick et al. -
+
+
+## - Chandran et al. (Yu et al.) -
+#
+gex_chandran <- curatedPCaData::generate_gex_geo("GSE6919")
+save(gex_chandran, file="data-raw/gex_chandran.RData")
+
+# Create and save MAE object
+mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
+usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
+
+# - end Chandran et al. -
+
+
+## - Friedrich et al. (2020) -
+#
+
+gex_friedrich <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE134051"
+)
+save(gex_friedrich, file="data-raw/gex_friedrich.RData")
+
+mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
+usethis::use_data(mae_friedrich, internal = FALSE, overwrite = TRUE)
+
+## - end Friedrich et al. -
+
+
+## - Hieronymus et al. -
+# CNA
+cna_hieronymus <- curatedPCaData:::generate_cna_geo(
+  geo_code = "GSE54691"
+)
+save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")
+
+# Create MAE object
+mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
+usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
+
+## - end Hieronymus et al. -
+
+
+## Kunderfranco et al.
+# GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
+gex_kunderfranco <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE14206"
+)
+save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")
+
+# Create MAE object
+mae_kunderfranco <- curatedPCaData:::create_mae(study_name = "kunderfranco")
+usethis::use_data(mae_kunderfranco, internal = FALSE, overwrite = TRUE)
+
+## - end Kunderfranco et al. -
+
+
+
+## - Ren et al. -
+# GEX
+gex_ren <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+  geneticProfiles = "prad_eururol_2017_rna_seq_mrna", # Omics profile
+  caseList = "prad_eururol_2017_sequenced" # Case list
+)
+save(gex_ren, file="data-raw/gex_ren.RData")
+
+# CNA
+cna_ren <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_eururol_2017_cna", 
+  caseList="prad_eururol_2017_sequenced"
+)
+save(cna_ren, file="data-raw/cna_ren.RData")
+
+# Mutations
+mut_ren <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+  geneticProfiles = "prad_eururol_2017_mutations", # Omics profile
+  caseList = "prad_eururol_2017_sequenced" # Case list
+)
+mut_ren[which(mut_ren=="NaN")] <- NA
+save(mut_ren, file="data-raw/mut_ren.RData")
+
+# Create MAE object
+mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
+usethis::use_data(mae_ren, overwrite = TRUE)
+
+## - end Ren et al.
+
+
+## - Sun et al.  -
+# GEX: [HG-U133A] Affymetrix Human Genome U133A Array
+gex.rma_sun <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE25136",
+	cleanup = FALSE,
+	pckg = "oligo"	
+)
+save(gex.rma_sun, file="data-raw/gex.rma_sun.RData")
+
+# Create MAE object
+mae_sun <- curatedPCaData:::create_mae(study_name = "Sun")
+usethis::use_data(mae_sun, overwrite = TRUE)
+
+## - end Sun et al. -
+
+
+## Taylor et al., also known as the MSKCC data -----
+#
+gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE21032",
+	cleanup = FALSE,
+	pckg = "oligo"
+)
+save(gex_taylor, file="data-raw/gex.rma_taylor.RData")
+
+# CNA
+cna_taylor <- curatedPCaData:::generate_cna_geo(
+  geo_code = "GSE21035"
+)
+save(cna_taylor, file="data-raw/cna_taylor.RData")
+
+# Mutations - notice this is downloaded from cBioPortal rather than processed from GEO
+mut_taylor <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles = "prad_mskcc_mutations",
+  caseList="prad_mskcc_sequenced"
+) 
+# Save NA values as truly NA instead of "NaN" even if other instances exist on column
+mut_taylor[which(mut_taylor=="NaN")] <- NA
+# Grep down to using only patient samples, omitting cell lines etc
+mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
+save(mut_taylor, file="data-raw/mut_taylor.RData")
+
+# Create MAE object
+mae_taylor <- curatedPCaData:::create_mae(study_name = "Taylor")
+usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
+
+## - end Taylor et al. (MSKCC) -
+
+
+## - TCGA - 
 #Download OSF GEX data
 osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
 R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
@@ -58,59 +305,10 @@ save(mut_tcga, file="data-raw/mut_tcga.RData")
 mae_tcga <- curatedPCaData:::create_mae(study_name = "TCGA")
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
-## Sun et al. data -----
-# GEX: [HG-U133A] Affymetrix Human Genome U133A Array
-gex.rma_sun <- curatedPCaData:::generate_gex_geo(
-	geo_code = "GSE25136",
-	cleanup = FALSE,
-	pckg = "oligo"	
-)
-save(gex.rma_sun, file="data-raw/gex.rma_sun.RData")
+## - end TCGA -
 
-# Create MAE object
-mae_sun <- curatedPCaData:::create_mae(study_name = "Sun")
-usethis::use_data(mae_sun, overwrite = TRUE)
 
-#tTaylor et al., also known as the MSKCC data -----
-gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
-	geo_code = "GSE21032",
-	cleanup = FALSE,
-	pckg = "oligo"
-)
-save(gex_taylor, file="data-raw/gex_taylor.RData")
 
-# CNA
-cna_taylor <- curatedPCaData:::generate_cna_geo(
-  geo_code = "GSE21035"
-)
-save(cna_taylor, file="data-raw/cna_taylor.RData")
-
-# Mutations - notice this is downloaded from cBioPortal rather than processed from GEO
-mut_taylor <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles = "prad_mskcc_mutations",
-  caseList="prad_mskcc_sequenced"
-) 
-# Save NA values as truly NA instead of "NaN" even if other instances exist on column
-mut_taylor[which(mut_taylor=="NaN")] <- NA
-# Grep down to using only patient samples, omitting cell lines etc
-mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
-save(mut_taylor, file="data-raw/mut_taylor.RData")
-
-# Create MAE object
-mae_taylor <- curatedPCaData:::create_mae(study_name = "Taylor")
-usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
-
-#hieronymus et al data -----
-# CNA
-cna_hieronymus <- curatedPCaData:::generate_cna_geo(
-  geo_code = "GSE54691"
-)
-save(cna_hieronymus, file="data-raw/cna_hieronymus.RData")
-
-# Create MAE object
-mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
-usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 
 
 ##
@@ -138,39 +336,9 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 # PRAD-UK
 
 
-###################################################
-# Friedrich 2020 BASED ON GPL DATA
-###################################################
-
-gex_friedrich <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE134051"
-)
-save(gex_friedrich, file="data-raw/gex_friedrich.RData")
-
-mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
-usethis::use_data(mae_friedrich, internal = FALSE, overwrite = TRUE)
-
-##
-#
-# Chandran et al.
-#
-##
-
-# Create and save GEX of Chandran et al., Yu et al.
-gex_chandran <- curatedPCaData::generate_gex_geo("GSE6919")
-save(gex_chandran, file="data-raw/gex_chandran.RData")
-
-# Create and save MAE object
-mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
-usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 
 
-
-######################################################################
-#Wallace et al. BASED ON RAW AFFY DATA & RMA NORMALIZATION
-######################################################################
-
-# Create and save GEX of Wallace et al.
+## - Wallace et al. -
 # GEX: [HG-U133A_2] Affymetrix Human Genome U133A 2.0 Array
 gex.rma_wallace <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE6956",
@@ -182,68 +350,8 @@ save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 mae_wallace <- curatedPCaData:::create_mae(study_name = "wallace")
 usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 
+## - end Wallace et al. -
 
-
-# PRAD Barbieri ------
-# GEX
-gex_barbieri <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_broad_mrna", # Omics profile
-  caseList = "prad_broad_sequenced" # Case list
-)
-save(gex_barbieri, file="data-raw/gex_barbieri.RData")
-
-# CNA
-cna_barbieri <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_broad_cna", 
-  caseList="prad_broad_sequenced"
-)
-save(cna_barbieri, file="data-raw/cna_barbieri.RData")
-
-# MUT
-mut_barbieri <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_broad_mutations", 
-  caseList="prad_broad_sequenced"
-)
-mut_barbieri[which(mut_barbieri=="NaN")] <- NA
-save(mut_barbieri, file="data-raw/mut_barbieri.RData")
-
-# Create MAE object
-mae_barbieri <- curatedPCaData:::create_mae(study_name = "Barbieri")
-usethis::use_data(mae_barbieri, overwrite = TRUE)
-
-# PRAD Ren ------
-
-# GEX
-gex_ren <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_eururol_2017_rna_seq_mrna", # Omics profile
-  caseList = "prad_eururol_2017_sequenced" # Case list
-)
-save(gex_ren, file="data-raw/gex_ren.RData")
-
-# CNA
-cna_ren <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_eururol_2017_cna", 
-  caseList="prad_eururol_2017_sequenced"
-)
-save(cna_ren, file="data-raw/cna_ren.RData")
-
-# Mutations
-mut_ren <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_eururol_2017_mutations", # Omics profile
-  caseList = "prad_eururol_2017_sequenced" # Case list
-)
-mut_ren[which(mut_ren=="NaN")] <- NA
-save(mut_ren, file="data-raw/mut_ren.RData")
-
-# Create MAE object
-mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
-usethis::use_data(mae_ren, overwrite = TRUE)
 
 
 
@@ -259,37 +367,6 @@ mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
 usethis::use_data(mae_kim, overwrite = TRUE)
 
 
-
-#Abida et al data -----
-
-# GEX PolyA (FPKM)
-gex_polyA_abida <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", # Omics profile
-  caseList = "prad_su2c_2019_all" # Case list
-)
-save(gex_polyA_abida, file="data-raw/gex_polyA_abida.RData")
-
-# CNA
-cna_abida <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_su2c_2019_gistic", 
-  caseList="prad_su2c_2019_sequenced"
-)
-save(cna_abida, file="data-raw/cna_abida.RData")
-
-# Mutations
-mut_abida <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_su2c_2019_mutations", 
-  caseList="prad_su2c_2019_sequenced"
-)
-mut_abida[which(mut_abida=="NaN")] <- NA
-save(mut_abida, file="data-raw/mut_abida.RData")
-
-# Create MAE object
-mae_abida <- curatedPCaData:::create_mae(study_name = "abida")
-usethis::use_data(mae_abida, overwrite = TRUE)
 
 
 
@@ -313,27 +390,7 @@ mae_wang <- curatedPCaData:::create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
 
 
-# Barwick et al.
-gex_barwick <- curatedPCaData:::generate_gex_geo(
-	geo_code = "GSE18655"
-)
-save(gex_barwick, file="data-raw/gex_barwick.RData")
 
-## TODO: MAE, missing clinical info
-
-
-# Kunderfranco et al.
-
-# Create and save GEX of Kunderfranco et al.
-# GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
-gex_kunderfranco <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE14206"
-)
-save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")
-
-# Create MAE object
-mae_kunderfranco <- curatedPCaData:::create_mae(study_name = "kunderfranco")
-usethis::use_data(mae_kunderfranco, internal = FALSE, overwrite = TRUE)
 
 
 
