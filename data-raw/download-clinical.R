@@ -266,7 +266,8 @@ curated <- initial_curated_df(
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Taylor, et al.") %>% 
-  dplyr::mutate(sample_name = uncurated$geo_accession) %>% 
+  dplyr::mutate(alt_sample_name = uncurated$geo_accession) %>% 
+  dplyr::mutate(sample_name = row.names(uncurated)) %>%
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
   dplyr::mutate(sample_type = tolower(uncurated$`tumor type:ch1`)) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
@@ -1916,6 +1917,46 @@ save(clinical_igc, file = "data-raw/clinical_igc.RData")
   #"Type of Tobacco Use: Cigars" %in% uncurated$description.6 ~ 1),  
 #  is.na(uncurated$description.6) ~ 0))
 
+#####################################################################################
+#cBioportal BACA
+#####################################################################################
+
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_2013_all")
+#mycancerstudy = cgdsr::getCancerStudies(mycgds)
+mycaselistren = cgdsr::getCaseLists(mycgds,"prad_broad_2013")
+
+# create the curated object
+curated <- initial_curated_df(
+  df_rownames = rownames(uncurated),
+  template_name="data-raw/template_prad.csv")
+
+curated <- curated %>% 
+  dplyr::mutate(study_name = "BACA") %>%
+  dplyr::mutate(patient_id = rownames(uncurated)) %>%
+  dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
+  dplyr::mutate(sample_type=uncurated$SAMPLE_TYPE)%>%
+  dplyr::mutate(psa=uncurated$SERUM_PSA)%>%
+  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,1,1))) %>%
+  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
+  dplyr::mutate(T_pathological = readr::parse_number(uncurated$PATH_T_STAGE)) %>%
+  dplyr::mutate(T_substage_pathological = dplyr::case_when(
+    uncurated$PATH_T_STAGE %in% c("Metastatic") ~ "NA",
+    TRUE ~ stringr::str_extract(uncurated$PATH_T_STAGE, "[a-c]+")
+  )) %>%
+  dplyr::mutate(gleason_grade = gleason_major+gleason_minor) %>%
+  #dplyr::mutate(gleason_grade = gsub(";.*","",uncurated$GLEASON_SCORE)) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "4+3" ~ "4+3",
+    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8"
+  ))
+  
+clinical_baca <- curated
+
+save(clinical_baca, file = "data-raw/clinical_baca.RData")   
+  
 
     
   

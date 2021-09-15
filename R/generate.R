@@ -782,13 +782,15 @@ generate_cbioportal <- function(
                       "prad_eururol_2017_cna", # PRAD Eururol CNA
                       "prad_su2c_2019_mrna_seq_fpkm_capture_all_sample_Zscores", # Abida et al. FPKM values capture assay
                       "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", # Abida et al. FPKM values PolyA
-                      "prad_su2c_2019_gistic" #Abida et al. CNA
+                      "prad_su2c_2019_gistic", #Abida et al. CNA
+                      "prad_broad_2013_cna" #BACA
                       ), # for cgdsr calls, platform and dataset specific string
   caseList = c("prad_tcga_pub_sequenced", # TCGA
                "prad_mskcc_sequenced", # Taylor et al.
                "prad_broad_sequenced", # PRAD Broad
                "prad_eururol_2017_sequenced", # PRAD Eururol
-               "prad_su2c_2019_sequenced" #Abida et al.
+               "prad_su2c_2019_sequenced",#Abida et al.
+               "prad_broad_2013_sequenced"#BACA
                ), # for cgdsr calls, platform and dataset specific string
   delay = 0.05, 
   splitsize = 100, 
