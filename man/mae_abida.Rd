@@ -14,7 +14,7 @@
 mae_abida
 }
 \description{
-Abida et al. MAE-object
+Multiassay experiment obtained from cBioPortal
 }
 \details{
 the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.

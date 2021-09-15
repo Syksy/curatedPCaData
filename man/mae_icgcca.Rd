@@ -12,6 +12,8 @@ An MAE object spanning 112 men with prostate cancer
   \item{epic}{matrix with 8 rows and 213 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 213 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 213 columns, of mcp-counter based deconvolution data}
+  \item{cibersort}{matrix with 25 rows and 213 columns, of cibersort based deconvolution data}
+  \item{scores}{matrix with 2 rows and 213 columns, genomic risk and AR scores}
 }
 }
 \source{
@@ -21,7 +23,7 @@ An MAE object spanning 112 men with prostate cancer
 mae_icgcca
 }
 \description{
-ICGC CA MAE-object
+MultiAssayExperiment object containing GEX from the Canadian ICGC cohort.
 }
 \details{
 The data refers to samples from the ICGC Canadian Prostate Cancer Genome Network (ICGC-PRAD-CA)

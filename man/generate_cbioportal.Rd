@@ -11,9 +11,11 @@ generate_cbioportal(
     "prad_mskcc_mrna_median_Zscores", "prad_mskcc_cna", "prad_broad_mrna",
     "prad_broad_cna", "prad_eururol_2017_rna_seq_mrna", "prad_eururol_2017_cna",
     "prad_su2c_2019_mrna_seq_fpkm_capture_all_sample_Zscores",
-    "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", "prad_su2c_2019_gistic"),
+    "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", "prad_su2c_2019_gistic",
+    "prad_broad_2013_cna"),
   caseList = c("prad_tcga_pub_sequenced", "prad_mskcc_sequenced",
-    "prad_broad_sequenced", "prad_eururol_2017_sequenced", "prad_su2c_2019_sequenced"),
+    "prad_broad_sequenced", "prad_eururol_2017_sequenced", "prad_su2c_2019_sequenced",
+    "prad_broad_2013_sequenced"),
   delay = 0.05,
   splitsize = 100,
   verb = TRUE

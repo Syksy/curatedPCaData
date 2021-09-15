@@ -8,29 +8,25 @@
 An MAE object spanning 112 men with prostate cancer
 \describe{
   \item{gex}{matrix with 21589 rows and 65 columns}
-  \item{cna}{matrix with 20873 rows and 65 columns}
+  \item{cna_gistic}{matrix with 20873 rows and 65 columns}
+  \item{mut}{matrix with 27291 rows and 63 columns, of mutation data}
   \item{xcell}{matrix with 39 rows and 65 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 65 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
+  \item{cibersort}{matrix with 25 rows and 65 columns, of cibersort based deconvolution data}
+  \item{scores}{matrix with 2 rows and 65 columns, genomic risk and AR scores}
 }
-
-An object of class \code{MultiAssayExperiment} of length 8.
 }
 \source{
-\url{https://www.cbioportal.org/study/summary?id=prad_eururol_2017}
-
 \url{https://www.cbioportal.org/study/summary?id=prad_eururol_2017}
 }
 \usage{
 mae_ren
-
-mae_ren
 }
 \description{
-Ren 2017 MAE-object
-
-Weiner 2021 MAE-object
+MultiAssayExperiment object containing gene expression (gex) and copy 
+number alteration (cna).
 }
 \details{
 The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples.

@@ -7,19 +7,15 @@
 \format{
 An MAE object spanning 333 men with prostate cancer
 \describe{
-  \item{gex}{matrix with 19958 rows and 333 columns}
-  \item{cna}{matrix with 21735 rows and 333 columns}
-  \item{xcell}{matrix with 39 rows and 333 columns}
-  \item{epic}{matrix with 8 rows and 333 columns}
-  \item{quantiseq}{matrix with 11 rows and 333 columns}
-  \item{mcp}{matrix with 11 rows and 333 columns}
-  \item{cibersortx}{matrix with 25 rows and 333 columns}
-  \item{osfgex}{matrix with 58684 rows and 483 columns}
-  \item{osf_xcell}{matrix with 39 rows and 483 columns}
-  \item{osf_epic}{matrix with 8 rows and 483 columns}
-  \item{osf_quantiseq}{matrix with 11 rows and 483 columns}
-  \item{osf_mcp}{matrix with 11 rows and 483 columns}
-  \item{osf_cibersortx}{matrix with 25 rows and 483 columns}
+  \item{cna_log}{matrix with 21735 rows and 333 columns}
+  \item{mut}{matrix with 29707 rows and 333 columns,of mutation data}
+  \item{gex}{matrix with 58684 rows and 483 columns}
+  \item{xcell}{matrix with 39 rows and 483 columns}
+  \item{epic}{matrix with 8 rows and 483 columns}
+  \item{quantiseq}{matrix with 11 rows and 483 columns}
+  \item{mcp}{matrix with 11 rows and 483 columns}
+  \item{scores}{matrix with 2 rows and 333 columns, genomic risk and AR scores}
+  
 }
 }
 \source{
@@ -29,7 +25,8 @@ An MAE object spanning 333 men with prostate cancer
 mae_tcga
 }
 \description{
-TCGA MAE-object
+MultiAssayExperiment object containing gene expression (gex) and copy 
+number alteration (cna) from TCGA and the Open Science Framework datasets.
 }
 \references{
 Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025

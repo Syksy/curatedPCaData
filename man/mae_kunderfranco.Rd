@@ -12,6 +12,8 @@ An MAE object spanning 67 samples of normal prostate samples and prostate cancer
   \item{epic}{matrix with 8 rows and 67 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 67 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 67 columns, of mcp-counter based deconvolution data}
+  \item{cibersort}{matrix with 25 rows and 67 columns, of cibersort based deconvolution data}
+  \item{scores}{matrix with 2 rows and 67 columns, genomic risk and AR scores}
 }
 }
 \source{
@@ -21,7 +23,7 @@ An MAE object spanning 67 samples of normal prostate samples and prostate cancer
 mae_kunderfranco
 }
 \description{
-Kunderfranco et al. MAE-object
+MultiAssayExperiment object containing GEX from Kunderfranco et al.
 }
 \details{
 The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples.

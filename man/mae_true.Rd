@@ -8,6 +8,7 @@
 An MAE object spanning 333 men with prostate cancer
 \describe{
   \item{gex}{matrix with 3398 rows and 32 columns}
+  \item{scores}{matrix with 2 rows and 32 columns, genomic risk and AR scores}
 }
 }
 \source{
@@ -17,7 +18,7 @@ An MAE object spanning 333 men with prostate cancer
 mae_true
 }
 \description{
-True et al. MAE-object
+MultiAssayExperiment object containing GEX from True et al.
 }
 \details{
 The expression data for this dataset has been produced by a two colour chip that provides the relative expression levels for each tumor rather than its absolute value as in all other dataset.  Thus it is not possible to provide immune deconvolution for this dataset.  This dataset also has a rich clinical data.  In this dataset the Gleason grade group follows the grading described in \url{https://www.cancerresearchuk.org/about-cancer/prostate-cancer/stages/grades}. The clinical data also includes an extra column named 'gleason_group' where the the samples are grouped based on their primary and secondary greason scores as <=6|3+4|4+3|>=8.
