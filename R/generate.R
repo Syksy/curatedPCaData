@@ -34,7 +34,7 @@ generate_gex_geo <- function(
 	if(!pckg %in% c("oligo", "affy")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo' or 'affy'):", pckg))
 
 
-	# Sun et al. -----  
+	# Sun et al. 
 	if(geo_code == "GSE25136"){
 		# Open the tarball(s)
 		utils::untar(tarfile = rownames(supfiles))
@@ -79,7 +79,7 @@ generate_gex_geo <- function(
 		}
 	}
 
-	#Wang et al.  
+	# Wang et al.  
 	else if(geo_code == "GSE8218"){
 		# Open the tarball(s)
 		utils::untar(tarfile = rownames(supfiles))
@@ -138,7 +138,7 @@ generate_gex_geo <- function(
 		}
 	}
   
-	# Kim et al
+	# Kim et al.
 	else if(geo_code == "GSE119616"){
 		# Open the tarball(s)
 		supfiles <- supfiles[-2,]
@@ -221,7 +221,8 @@ generate_gex_geo <- function(
 		colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
     
 	}
-	# Taylor  et al.-----
+	
+	# Taylor et al.
 	# [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
 	# Affymetrix Human Exon 1.0 ST Array [CDF: HuEx_1_0_st_v2_main_A20071112_EP.cdf]
 	else if(geo_code == "GSE21032"){ # TODO: Alternative more specific accession code "GSE21034"
@@ -284,9 +285,8 @@ generate_gex_geo <- function(
 		# Sort genes to alphabetic order for consistency
 		gex <- gex[order(rownames(gex)),]
 	}
-	
 
-	# Chandran et al.-----  
+	# Chandran et al.
 	else if(geo_code == "GSE6919"){
 		# Open the tarball(s)
 		utils::untar(tarfile = rownames(supfiles))
@@ -365,7 +365,7 @@ generate_gex_geo <- function(
 		gex <- tmp
 	}
 
-	# GSE2109 - IGC
+	# IGC
 	else if(geo_code == "GSE2109"){
 		# Open the tarball(s)
 		utils::untar(tarfile = rownames(supfiles[17,]))
@@ -412,7 +412,7 @@ generate_gex_geo <- function(
 		row.names(gex) <- compare_names$new_names
 	}
   
-	# Barwick et al.-----    
+	# Barwick et al.
 	else if(geo_code == "GSE18655"){
 		# Custom DASL
 		# .gz
@@ -447,7 +447,7 @@ generate_gex_geo <- function(
 		rownames(gex) <- symbols
 	}
   
-	# Friedrich et al. 2020
+	# Friedrich et al. 
 	else if(geo_code == "GSE134051"){
 		# TDL: Original code by FC moved from download-data.R for concordance with other raw data processing and fixed
 
@@ -532,7 +532,6 @@ generate_gex_geo <- function(
 		rownames(gex) <- labels$GENE_SYMBOL
 		gex <- gex[-which(rownames(gex) == ''), ]
 		## TDL: RMA?
-		gex <- gex[order(rownames(gex)),]
 	}
 
 	# True et al.
@@ -543,16 +542,16 @@ generate_gex_geo <- function(
 		labels2 = Biobase::fData(gset[[2]])
 
 		# First part of the data
-		ex1 <- Biobase::exprs(gset[[1]])
-		rownames(ex1) = labels1$"Related Gene Symbol"
-		ex1 = ex1[-which(rownames(ex1) == ''), ]
-		gex1 = aggregate(ex1, by = list(rownames(ex1)), mean, na.rm = T)
+		gex1 <- Biobase::exprs(gset[[1]])
+		rownames(gex1) = labels1$"Related Gene Symbol"
+		gex1 = gex1[-which(rownames(gex1) == ''), ]
+		gex1 = aggregate(gex1, by = list(rownames(gex1)), mean, na.rm = T)
 		rownames(gex1) = gex1[, 1]
 		gex1 = gex1[, -1]
 		# Second part of the data
 		gex2 <- Biobase::exprs(gset[[2]])
 		rownames(gex2) = labels2$Hugo
-		gex2 = ex2[-which(rownames(gex2) == ''), , drop = F]
+		gex2 = gex2[-which(rownames(gex2) == ''), , drop = F]
 		gex2 = cbind(gex2, 1)
 		gex2 = aggregate(gex2, by = list(rownames(gex2)), mean, na.rm = T)
 		rownames(gex2) = gex2[, 1]
@@ -568,8 +567,6 @@ generate_gex_geo <- function(
 		if(identical(rownames(gex1), rownames(gex2))) gex = cbind(gex1[,1:10], gex2[,1], gex1[,11:31])
 		# the appropriate name is used for the new column
 		colnames(gex)[11] = colnames(gex2)
-		# Sort genes by alphabetic order
-		gex <- gex[order(rownames(gex)),]
 	}
   
 	# Unknown GEO id (throw an error) -----
