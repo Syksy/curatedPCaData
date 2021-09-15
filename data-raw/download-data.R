@@ -18,6 +18,9 @@
 ## - Chandran et al.
 ## - Friedrich et al.
 ## - Hieronymus et al.
+## - ICGC datasets
+## - IGC
+## - Kim et al.
 ## - Kunderfranco et al.
 ## - Ren et al.
 ## - Sun et al.
@@ -120,8 +123,7 @@ usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 
 
 ## - Friedrich et al. (2020) -
-#
-
+# GEX: GPL26898	Agilent-058029 Custom human expression microarray (Probe Name version)
 gex_friedrich <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE134051"
 )
@@ -147,7 +149,59 @@ usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 ## - end Hieronymus et al. -
 
 
-## Kunderfranco et al.
+## - ICGC datasets -
+
+# PRAD-CA
+gex_icgcca <- curatedPCaData:::generate_icgc("PRAD_CA", "gex")
+save(gex_icgcca, file="data-raw/gex_icgcca.RData")
+
+# Create MAE object
+mae_icgcca <- curatedPCaData:::create_mae(study_name = "icgcca")
+usethis::use_data(mae_icgcca, internal = FALSE, overwrite = TRUE)
+
+# PRAD-FR
+gex_icgcfr <- curatedPCaData::generate_icgc("PRAD_FR", "gex")
+save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
+
+# TODO: At this point the data contains raw read counts, and is not yet usable as a 2-dim gex matrix
+
+# TODO: MAE
+
+# PRAD-UK
+
+## - end ICGC datatasets -
+
+
+
+## - IGC -
+#GEX
+gex_igc <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE2109"
+)
+save(gex_igc, file="data-raw/gex_igc.RData")
+
+# Create MAE object
+mae_igc <- create_mae(study_name = "igc")
+usethis::use_data(mae_igc, overwrite = TRUE)
+
+## - end IGC -
+
+
+## - Kim et al. -
+# GEX: [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
+gex_kim <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE119616"
+)
+save(gex_kim, file="data-raw/gex_kim.RData")
+
+# Create MAE object
+mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
+usethis::use_data(mae_kim, overwrite = TRUE)
+
+## - end Kim et al. -
+
+
+## - Kunderfranco et al. -
 # GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
 gex_kunderfranco <- curatedPCaData:::generate_gex_geo(
   geo_code = "GSE14206"
@@ -212,7 +266,10 @@ usethis::use_data(mae_sun, overwrite = TRUE)
 
 
 ## Taylor et al., also known as the MSKCC data -----
-#
+# GEX:
+#	GPL5188	[HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
+#	GPL8227	Agilent-019118 Human miRNA Microarray 2.0 G4470B (miRNA ID version)
+#	GPL10264	Affymetrix Human Exon 1.0 ST Array [CDF: HuEx_1_0_st_v2_main_A20071112_EP.cdf]
 gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE21032",
 	cleanup = FALSE,
@@ -307,42 +364,28 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 
 ## - end TCGA -
 
-
-
-
-
-##
-#
-# ICGC datasets
-#
-##
-
-# PRAD-CA
-gex_icgcca <- curatedPCaData:::generate_icgc("PRAD_CA", "gex")
-save(gex_icgcca, file="data-raw/gex_icgcca.RData")
+## - True et al. -
+# GEX:
+#	GPL3834	FHCRC Human Prostate PEDB cDNA Array v4
+#	GPL3836	FHCRC Human Prostate PEDB cDNA Array v3
+gex_true <- curatedPCaData:::generate_gex_geo(
+  geo_code = "GSE5132"
+)
+save(gex_true, file = "data-raw/gex_true.RData")
 
 # Create MAE object
-mae_icgcca <- curatedPCaData:::create_mae(study_name = "icgcca")
-usethis::use_data(mae_icgcca, internal = FALSE, overwrite = TRUE)
+mae_true <- curatedPCaData:::create_mae(study_name = "true")
+usethis::use_data(mae_true, internal = FALSE, overwrite = TRUE)
 
-# PRAD-FR
-gex_icgcfr <- curatedPCaData::generate_icgc("PRAD_FR", "gex")
-save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
-
-# TODO: At this point the data contains raw read counts, and is not yet usable as a 2-dim gex matrix
-
-# TODO: MAE
-
-# PRAD-UK
-
-
+## - end True et al. -
 
 
 ## - Wallace et al. -
 # GEX: [HG-U133A_2] Affymetrix Human Genome U133A 2.0 Array
 gex.rma_wallace <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE6956",
-  cleanup = FALSE
+	geo_code = "GSE6956",
+	pckg = "oligo",
+	cleanup = FALSE
 )
 save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 
@@ -353,25 +396,7 @@ usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 ## - end Wallace et al. -
 
 
-
-
-#Kim et al data -----
-# GEX: [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
-gex_kim <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE119616"
-)
-save(gex_kim, file="data-raw/gex_kim.RData")
-
-# Create MAE object
-mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
-usethis::use_data(mae_kim, overwrite = TRUE)
-
-
-
-
-
-
-# Wang et al.
+# - Wang et al. -
 # GEX: [HG-U133A] Affymetrix Human Genome U133A Array
 gex.rma_wang <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE8218",
@@ -389,33 +414,12 @@ save(cna_wang, file="data-raw/cna_wang.RData")
 mae_wang <- curatedPCaData:::create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
 
+# - end Wang et al. -
 
 
 
 
 
-# True et al.
-
-# Create and save GEX of True et al.
-gex_true <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE5132"
-)
-save(gex_true, file = "data-raw/gex_true.RData")
-
-# Create MAE object
-mae_true <- curatedPCaData:::create_mae(study_name = "true")
-usethis::use_data(mae_true, internal = FALSE, overwrite = TRUE)
 
 
-
-# IGC - GSE2109
-#GEX
-gex_igc <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE2109"
-)
-save(gex_igc, file="data-raw/gex_igc.RData")
-
-# Create MAE object
-mae_igc <- create_mae(study_name = "igc")
-usethis::use_data(mae_igc, overwrite = TRUE)
 
