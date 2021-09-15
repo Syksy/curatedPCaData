@@ -16,11 +16,14 @@ An MAE object spanning 112 men with prostate cancer
   \item{xcell}{matrix with 39 rows and 503 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 503 columns, of epic based deconvolution data}
   \item{mcp}{matrix with 11 rows and 503 columns, of mpc-counter based deconvolution data}
+  \item{scores}{matrix with 2 rows and 503 columns, genomic risk and AR scores}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18655}
 Chandran et al., Yu et al. MAE-object
+
+MultiAssayExperiment object containing GEX from Chandran et al., Yu et al. in GSE6919
 
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6919}
 }
@@ -28,7 +31,7 @@ Chandran et al., Yu et al. MAE-object
 mae_chandran
 }
 \description{
-Barwick MAE-object
+MultiAssayExperiment object containing gene expression (gex), together with immune deconvolution data.
 }
 \details{
 NA

@@ -10,6 +10,8 @@ An MAE object spanning 333 men with prostate cancer
   \item{gex}{matrix with 12048 rows and 83 columns}
   \item{mcp}{matrix with 11 rows and 83 columns}
   \item{quantiseq}{matrix with 4 rows and 83 columns}
+  \item{cibersort}{matrix with 25 rows and 83 columns}
+  \item{scores}{matrix with 2 rows and 83 columns, genomic risk and AR scores}
 }
 }
 \source{
@@ -19,7 +21,7 @@ An MAE object spanning 333 men with prostate cancer
 mae_wallace
 }
 \description{
-Wallace et al. MAE-object
+MultiAssayExperiment object containing GEX from Wallace et al.
 }
 \details{
 The data contains 69 samples. For all 69 sample the dataset contains tumor data, and for 14 individual there is a matched healthy prostate tissue sample (the clinical data

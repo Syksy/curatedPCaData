@@ -14,7 +14,7 @@
 mae_hieronymus
 }
 \description{
-Hieronymus et al. MAE-object
+MultiAssayExperiment object containing CNA from Hieronymus et al.
 }
 \details{
 The data comprises of 104 samples, for which are available clinical data and Copy Number Alteration, but no gene expression data -- thus no deconvolution results are available.

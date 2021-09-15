@@ -8,11 +8,12 @@
 A MAE object spanning prostate cancer samples.
 \describe{
   \item{gex}{matrix with 18193 rows and 20 columns, for the gene expression data}
-  \item{cna}{matrix with 21723 rows and 109 columns, for the Copy Number Alteration data}
+  \item{cna_gistic}{matrix with 21723 rows and 109 columns, for the Copy Number Alteration data}
   \item{xcell}{matrix with 39 rows and 20 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 20 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 20 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 20 columns, of mcp-counter based deconvolution data}
+  \item{scores}{matrix with 2 rows and 20 columns, genomic risk and AR scores}
 }
 }
 \source{
@@ -22,7 +23,7 @@ A MAE object spanning prostate cancer samples.
 mae_barbieri
 }
 \description{
-Barbieri MAE-object
+MultiAssayExperiment object containing gene expression (gex) and copy number alteration (cna), together with immune deconvolution data.
 }
 \details{
 The data comprises of primary localised prostate tumors from two cohorts, the Weill Cornell Medical College (WCMC; New York, NY), and the Uropath (Perth, Australia), which commercially provides banked urological tissues. None of the samples comes from patients who had received prior treatment for prostate cancer.
