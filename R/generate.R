@@ -8,6 +8,7 @@
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
 generate_gex_geo <- function(
+	# Unique GEO identifier
 	geo_code = c(
 		"GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
 		"GSE25136",  # Sun et al.
@@ -21,15 +22,25 @@ generate_gex_geo <- function(
 		"GSE14206",  # Kunderfranco et al.
 		"GSE5132"    # True et al.
 		), 
-	pckg = "oligo", # Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data
+	# Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data		
+	pckg = "oligo", 
+	# Working directory
 	file_directory, 
+	# Clean up (i.e. delete) files post-download/-processing
 	cleanup = TRUE, 
+	# Regex filter for GEOquery download
+	filter_regex,
+	# Function for collapsing rows
 	collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},
 	...
 ){
 	if(!missing(file_directory)) here::set_here(file_directory)
 	# Supplementary files include the raw CEL files
-	supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+	if(missing(filter)){
+		supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+	}else{
+		supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex = filter_regex)
+	}
 
 	if(!pckg %in% c("oligo", "affy")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo' or 'affy'):", pckg))
 
@@ -111,7 +122,12 @@ generate_gex_geo <- function(
 
 			# Extracting .CEL and packaging names from the GEO-compatible sample names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
-
+			
+			## !!
+			## TDL:
+			## NOTE! These probe names are wrong, the correct array is v2 not ordinary hg u133a
+			## !!
+			
 			# Find gene annotations
 			keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
 			nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
@@ -367,49 +383,75 @@ generate_gex_geo <- function(
 
 	# IGC
 	else if(geo_code == "GSE2109"){
+		## Note: IGC has >2k samples, many of which are not prostate cancer
+		
 		# Open the tarball(s)
-		utils::untar(tarfile = rownames(supfiles[17,]))
-		clinical <- rio::import("data-raw/clinical_igc.RData")
+		utils::untar(tarfile = rownames(supfiles))
+
 		# Make sure to function in a working directory where the are no other tarballs present
-		rownames(clinical) <- paste0(rownames(clinical),'.CEL.gz')
-
-		gz_files <- rownames(clinical)
+		gz_files <- list.files()
 		gz_files <- gz_files[grep(".gz", gz_files)]
-		gz_files <- as.data.frame(gz_files)
 
-		# Read Affymetrix MA
-		igc <- affy::ReadAffy(filenames=gz_files$gz_files)
-		colnames(affy::exprs(igc)) <- gsub(".gz|.CEL", "", colnames(igc))
+		if(pckg == "oligo"){
+			## TODO: Subset to just prostate cancer
+		
+			# Read CEL
+			gex <- oligo::read.celfiles(gz_files)
+			# Normalize background convolution of noise and signal using RMA (median-polish)
+			gex <- oligo::rma(gex)
+			# Extract expression matrix with probe ids
+			gex <- oligo::exprs(gex)
+			# Sanitize column names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
+			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a_2),"hgnc_symbol"]
+			# Collapse probes that target the same gene
+			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
+		}else if(pckg == "affy"){
+			# Open the tarball(s)
+			utils::untar(tarfile = rownames(supfiles[17,]))
+			clinical <- rio::import("data-raw/clinical_igc.RData")
+			# Make sure to function in a working directory where the are no other tarballs present
+			rownames(clinical) <- paste0(rownames(clinical),'.CEL.gz')
 
-		# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
-		gex <- affy::rma(igc)
+			gz_files <- rownames(clinical)
+			gz_files <- gz_files[grep(".gz", gz_files)]
+			gz_files <- as.data.frame(gz_files)
 
-		# Extracting .CEL and packaging names from the GEO-compatible sample names
-		colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
+			# Read Affymetrix MA
+			igc <- affy::ReadAffy(filenames=gz_files$gz_files)
+			colnames(affy::exprs(igc)) <- gsub(".gz|.CEL", "", colnames(igc))
 
-		# Find gene annotations
-		keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
-		nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
-									    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
-		nam[is.na(nam)] <- "NA"
-		# Collapse probes
-		gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, 
-				       FUN = collapse_fun))
+			# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
+			gex <- affy::rma(igc)
 
-		# Sun et al does not use Hugo names so the below code makes the names for sun 
-		# et al comparable with those in tcga/taylor
-		compare_names <- data.frame(original = row.names(gex),
-					current = limma::alias2SymbolTable(row.names(gex),
-									   species="Hs"))
-		duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
+			# Extracting .CEL and packaging names from the GEO-compatible sample names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(affy::exprs(gex)))
 
-		compare_names <- compare_names %>%
-		dplyr::mutate(new_names = dplyr::case_when(
-		current %in% duplicated_hugo_symbols ~ original,
-		TRUE ~ current
-		))
+			# Find gene annotations
+			keys <- AnnotationDbi::mappedkeys(hgu133a.db::hgu133aGENENAME)
+			nam <- names(as.character(hgu133a.db::hgu133aALIAS2PROBE)[match(rownames(gex),
+										    as.character(hgu133a.db::hgu133aALIAS2PROBE))])
+			nam[is.na(nam)] <- "NA"
+			# Collapse probes
+			gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, 
+					       FUN = collapse_fun))
 
-		row.names(gex) <- compare_names$new_names
+			# Sun et al does not use Hugo names so the below code makes the names for sun 
+			# et al comparable with those in tcga/taylor
+			compare_names <- data.frame(original = row.names(gex),
+						current = limma::alias2SymbolTable(row.names(gex),
+										   species="Hs"))
+			duplicated_hugo_symbols <- compare_names[duplicated(compare_names$current),]$current
+
+			compare_names <- compare_names %>%
+			dplyr::mutate(new_names = dplyr::case_when(
+			current %in% duplicated_hugo_symbols ~ original,
+			TRUE ~ current
+			))
+
+			row.names(gex) <- compare_names$new_names
+		}
 	}
   
 	# Barwick et al.
