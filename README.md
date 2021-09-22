@@ -31,6 +31,20 @@ devtools::install_github("Syksy/curatedPCaData")
 
 ```
 
+Above may fail depending on the connection stability, as the package is relatively large. In this case it's best to install via the tarball.
+To build the package tarball from a cloned git repo, run the following in terminal / command prompt while in the root of the project:
+
+```
+R CMD build curatedPCaData
+```
+
+One install the self-built tarball or download the a premade latest package tarball from the releases page and install it with:
+
+```
+R CMD INSTALL curatedPCaData_x.y.z.tar.gz
+```
+
+
 <!--- add BioConductor once up --->
 
 ## Usage
