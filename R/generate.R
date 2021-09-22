@@ -392,11 +392,16 @@ generate_gex_geo <- function(
 		gz_files <- list.files()
 		gz_files <- gz_files[grep(".gz", gz_files)]
 
+		# Need phenodata as samples as from mixed cancers
+		gset <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE)
+		# Subset to just prostate cancer samples	
+		pca_gsm <- rownames(Biobase::pData(gset[[1]]))[grep("Prostate", Biobase::pData(gset[[1]])[,"title"])]
+		gz_files_pca <- grep(paste0(pca_gsm, collapse="|"), gz_files, value=TRUE)
+
 		if(pckg == "oligo"){
-			## TODO: Subset to just prostate cancer
-		
+			## Subset to just prostate cancer as IGC covers in this GEO submission other cancer types also	
 			# Read CEL
-			gex <- oligo::read.celfiles(gz_files)
+			gex <- oligo::read.celfiles(gz_files_pca)
 			# Normalize background convolution of noise and signal using RMA (median-polish)
 			gex <- oligo::rma(gex)
 			# Extract expression matrix with probe ids
