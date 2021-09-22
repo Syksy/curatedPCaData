@@ -175,16 +175,16 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 
 ## - IGC -
 # GEX: [HG-U133_Plus_2] Affymetrix Human Genome U133 Plus 2.0 Array
-gex_igc <- curatedPCaData:::generate_gex_geo(
+gex.rma_igc <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE2109",
 	cleanup = FALSE
 	# Do not download the batch files, filter the raw dump and filter down to prostate specific samples afterwards
 	filter_regex = "_RAW",
 )
-save(gex_igc, file="data-raw/gex_igc.RData")
+save(gex.rma_igc, file="data-raw/gex.rma_igc.RData")
 
 # Create MAE object
-mae_igc <- create_mae(study_name = "igc")
+mae_igc <- curatedPCaData:::create_mae(study_name = "igc")
 usethis::use_data(mae_igc, overwrite = TRUE)
 
 ## - end IGC -
