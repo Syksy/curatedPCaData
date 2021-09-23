@@ -13,12 +13,13 @@
 
 
 ### Alphabetic ordering of datasets:
+## - Baca et al.
 ## - Barbieri et al.
 ## - Barwick et al. (TODO, not exported yet)
 ## - Chandran et al.
 ## - Friedrich et al.
 ## - Hieronymus et al.
-## - ICGC datasets
+## - ICGC sub datasets
 ## - IGC
 ## - Kim et al.
 ## - Kunderfranco et al.
@@ -30,9 +31,24 @@
 ## - Wang et al.
 ## (to be updated)
 
-## - Abida et al. -
-#
 
+## - Baca et al. -
+# CNA
+cna_baca <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_broad_2013_cna", 
+  caseList="prad_broad_2013_sequenced"
+)
+save(cna_baca, file="data-raw/cna_baca.RData")
+
+# Create MAE object
+mae_baca <- create_mae(study_name = "baca")
+usethis::use_data(mae_baca, overwrite = TRUE)
+
+## - end Baca et al. -
+
+
+## - Abida et al. -
 # GEX PolyA (FPKM)
 gex_polyA_abida <- curatedPCaData:::generate_cbioportal(
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
@@ -99,7 +115,7 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 
 ## - Barwick et al.
-#
+# GEX: GPL5858	DASL Human Cancer Panel by Gene
 gex_barwick <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE18655"
 )
@@ -111,8 +127,13 @@ save(gex_barwick, file="data-raw/gex_barwick.RData")
 
 
 ## - Chandran et al. (Yu et al.) -
-#
-gex_chandran <- curatedPCaData::generate_gex_geo("GSE6919")
+# GEX: Multiple array types:
+# - GPL92	[HG_U95B] Affymetrix Human Genome U95B Array
+# - GPL93	[HG_U95C] Affymetrix Human Genome U95C Array
+# - GPL8300	[HG_U95Av2] Affymetrix Human Genome U95 Version 2 Array
+gex_chandran <- curatedPCaData::generate_gex_geo(
+	geo_code = "GSE6919"
+)
 save(gex_chandran, file="data-raw/gex_chandran.RData")
 
 # Create and save MAE object
@@ -125,7 +146,7 @@ usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 ## - Friedrich et al. (2020) -
 # GEX: GPL26898	Agilent-058029 Custom human expression microarray (Probe Name version)
 gex_friedrich <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE134051"
+	geo_code = "GSE134051"
 )
 save(gex_friedrich, file="data-raw/gex_friedrich.RData")
 
@@ -192,10 +213,13 @@ usethis::use_data(mae_igc, overwrite = TRUE)
 
 ## - Kim et al. -
 # GEX: [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
-gex_kim <- curatedPCaData:::generate_gex_geo(
-  geo_code = "GSE119616"
+gex.rma_kim <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE119616"
+	pckg = "oligo",
+	cleanup = FALSE
+  
 )
-save(gex_kim, file="data-raw/gex_kim.RData")
+save(gex.rma_kim, file="data-raw/gex.rma_kim.RData")
 
 # Create MAE object
 mae_kim <- curatedPCaData:::create_mae(study_name = "kim")
@@ -272,9 +296,9 @@ usethis::use_data(mae_sun, overwrite = TRUE)
 
 ## Taylor et al., also known as the MSKCC data -----
 # GEX:
-#	GPL5188	[HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
-#	GPL8227	Agilent-019118 Human miRNA Microarray 2.0 G4470B (miRNA ID version)
-#	GPL10264	Affymetrix Human Exon 1.0 ST Array [CDF: HuEx_1_0_st_v2_main_A20071112_EP.cdf]
+# - GPL5188	[HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
+# - GPL8227	Agilent-019118 Human miRNA Microarray 2.0 G4470B (miRNA ID version)
+# - GPL10264	Affymetrix Human Exon 1.0 ST Array [CDF: HuEx_1_0_st_v2_main_A20071112_EP.cdf]
 gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE21032",
 	cleanup = FALSE,
@@ -428,19 +452,5 @@ usethis::use_data(mae_wang, overwrite = TRUE)
 
 
 
-
-
-#BACA -----
-
-# CNA
-cna_baca <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_broad_2013_cna", 
-  caseList="prad_broad_2013_sequenced"
-)
-save(cna_baca, file="data-raw/cna_baca.RData")
-
-mae_baca <- create_mae(study_name = "baca")
-usethis::use_data(mae_baca, overwrite = TRUE)
 
 

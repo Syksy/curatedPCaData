@@ -51,7 +51,7 @@
 #132     agilent_wholegenome_4x44k_v1     AGILENT WholeGenome 4x44k v1 probe feature_page
 #133     agilent_wholegenome_4x44k_v2     AGILENT WholeGenome 4x44k v2 probe feature_page  
   
-mart <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl"  
+mart <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")  
 # Fetch gene names for various annotations
 # Gene type annotations
 curatedPCaData_genes <- biomaRt::getBM(
