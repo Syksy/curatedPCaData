@@ -278,8 +278,9 @@ generate_gex_geo <- function(
 	}
 
 	# Kunderfranco et al.
+	# GPL887	Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
 	else if(geo_code == "GSE14206"){
-		gpl <- GEOquery::getGEO(geo_code, GSEMatrix =TRUE, getGPL=TRUE)
+		gpl <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE, getGPL = TRUE)
 		labels <- Biobase::fData(gpl[[1]])
 		gex <- Biobase::exprs(gpl[[1]])
 		rownames(gex) <- labels$GENE_SYMBOL
@@ -315,7 +316,7 @@ generate_gex_geo <- function(
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
 			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a_2),"hgnc_symbol"]
+			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2$affy_hg_u133a_2),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}else if(pckg == "affy"){
@@ -384,7 +385,7 @@ generate_gex_geo <- function(
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
 			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a),"hgnc_symbol"]
+			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a$affy_hg_u133a),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}else if(pckg == "affy"){	
@@ -526,7 +527,7 @@ generate_gex_geo <- function(
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
 			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a_2),"hgnc_symbol"]
+			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2$affy_hg_u133a_2),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}
@@ -569,7 +570,7 @@ generate_gex_geo <- function(
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
 			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a),"hgnc_symbol"]
+			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a$affy_hg_u133a),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}else if(pckg == "affy"){
@@ -651,25 +652,18 @@ generate_gex_geo <- function(
 #' @param cleanup logical value to remove intermediate files 
 #' @param ... additional arguments
 generate_cna_geo <- function(
-  geo_code = c("GSE21035", # Taylor et al.
-               "GSE54691" # Hieronymus et al.
-               ),
-  file_directory, 
-  cleanup = TRUE, 
-  ...
+	geo_code = c(
+		"GSE54691"	# Hieronymus et al.
+		"GSE21035",	# Taylor et al.
+	),
+	file_directory, 
+	cleanup = TRUE, 
+	...
 ){
   if(!missing(file_directory)) here::set_here(file_directory)
   # Supplementary files include the raw CEL files
   #supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex='tar')
   supfiles <- GEOquery::getGEOSuppFiles(geo_code)
-  
-
-  # Hieronymus et al. requires going to a subfolder
-  # you should NEVER use setwd() in a package - causes massive downstream problems 
-  # need to remove 
-  # if(geo_code == "GSE54691"){
-  #   setwd("GSE54691") # Contains both CNA input as well as clinical data txt.gz
-  # }
   
   # Open the tarball(s)
   #rownames(supfiles) <- shQuote(rownames(supfiles))
@@ -682,7 +676,7 @@ generate_cna_geo <- function(
   ##
   if(geo_code %in% c("GSE21035", "GSE54691")){
   	# For now, the package 'rCGH' has to be available in the workspace,
-    # otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
+	# otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
   	# Read in Agilent 2-color data
   	cna <- lapply(list.files(geo_code), FUN = function(z) { 
   		try({
