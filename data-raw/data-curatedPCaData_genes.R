@@ -51,7 +51,7 @@
 #132     agilent_wholegenome_4x44k_v1     AGILENT WholeGenome 4x44k v1 probe feature_page
 #133     agilent_wholegenome_4x44k_v2     AGILENT WholeGenome 4x44k v2 probe feature_page  
   
-  
+mart <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl"  
 # Fetch gene names for various annotations
 # Gene type annotations
 curatedPCaData_genes <- biomaRt::getBM(
@@ -68,7 +68,7 @@ curatedPCaData_genes <- biomaRt::getBM(
 			# Description
 			'description'
 		),
-	mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+	mart = mart)
 )
 # Annotations based on specific array platforms
 curatedPCaData_genes_affy_hg_u133a <- biomaRt::getBM(
@@ -79,7 +79,7 @@ curatedPCaData_genes_affy_hg_u133a <- biomaRt::getBM(
 			# Array specific probe identifiers needed by processed studies
 			"affy_hg_u133a"	# Used by: Sun et al., ...
 		),
-	mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+	mart = mart)
 )
 curatedPCaData_genes_affy_hg_u133a_2 <- biomaRt::getBM(
 	attributes = 
@@ -89,8 +89,9 @@ curatedPCaData_genes_affy_hg_u133a_2 <- biomaRt::getBM(
 			# Array specific probe identifiers needed by processed studies
 			"affy_hg_u133a_2"	# Used by: Wallace et al., IGC... 
 		),
-	mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+	mart = mart)
 )
+# Timing out
 curatedPCaData_genes_affy_huex_1_0_st_v2 <- biomaRt::getBM(
 	attributes = 
 		c(
@@ -99,10 +100,10 @@ curatedPCaData_genes_affy_huex_1_0_st_v2 <- biomaRt::getBM(
 			# Array specific probe identifiers needed by processed studies
 			"affy_huex_1_0_st_v2"	# Used by: Taylor et al., ...
 		),
-	mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+	mart = mart)
 )
 
-# Sort using chromosomes and then bp locations
+# Sort the generic list first using chromosomes and then bp locations
 curatedPCaData_genes <- curatedPCaData_genes[order(curatedPCaData_genes$chromosome_name, curatedPCaData_genes$start_position, curatedPCaData_genes$end_position),]
 # Connect to annotation database and extract a list of gene name synonyms, aliases, legacy names
 db.con <- org.Hs.eg.db::org.Hs.eg_dbconn()
@@ -121,5 +122,9 @@ rownames(curatedPCaData_genes) <- NULL
 # Save gene information extraction date as an attribute 'date'
 attr(curatedPCaData_genes, 'date') <- Sys.time()
 # Save the data frame of various gene annotations for package's internal use
-usethis::use_data(curatedPCaData_genes, internal = TRUE, overwrite = TRUE)
-
+usethis::use_data(
+	# Unquoted names for objects to save
+	curatedPCaData_genes, curatedPCaData_genes_affy_hg_u133a, curatedPCaData_genes_affy_hg_u133a_2,
+	## Timeout issues: curatedPCaData_genes_affy_huex_1_0_st_v2
+	# Saving parameters
+	internal = TRUE, overwrite = TRUE)
