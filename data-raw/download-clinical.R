@@ -956,10 +956,6 @@ clinical_abida <- curated
 save(clinical_abida, file = "data-raw/clinical_abida.RData")
 
 
-
-# create the curated object
-
-
 ####
 #
 # Barwick et al.
@@ -971,28 +967,40 @@ gse <- GEOquery::getGEO("GSE18655", GSEMatrix = TRUE)
 uncurated <- Biobase::pData(gse[[1]])
 
 curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+	df_rownames = rownames(uncurated),
+	template_name="data-raw/template_prad.csv"
+)
 
-  dplyr::mutate(study_name = "Barwick et al.") %>%
-  dplyr::mutate(patient_id = paste0("X", uncurated$'title')) %>%
-  dplyr::mutate(age_at_initial_diagnosis = as.numeric(uncurated$'age:ch1')) %>%
-  dplyr::mutate(psa = as.numeric(uncurated$'psa:ch1')) %>%
-  dplyr::mutate(gleason_grade = as.numeric(uncurated$'gleason score:ch1')) %>%
-  dplyr::mutate(days_to_disease_specific_recurrence = round(30.5*as.numeric(uncurated$'follow-up (months):ch1'),0)) %>%
-  dplyr::mutate(disease_specific_recurrence_status = as.numeric(uncurated$'recurrence:ch1' == "Rec")) %>%
-  dplyr::mutate(tumor_margins_positive = as.numeric(uncurated$'positive surgical margin:ch1' == "Positive Margin")) %>%
-  dplyr::mutate(tissue_source = "prostatectomy") %>% 
-  # Based on the publication text, ERG-fusion status was determined using over-expression of ERG-transcripts in gene expression and then experimentally validated
-  dplyr::mutate(ERG_fusion_GEX = as.numeric(uncurated$'tmprss2:ch1' == "ERG Fusion: Fusion")) %>%
-  # It appears the T staging was based on pathology
-  dplyr::mutate(T_pathological = as.numeric(uncurated$'grade:ch1'))
+curated <- curated %>% 
+	dplyr::mutate(study_name = "Barwick et al.") %>%
+	dplyr::mutate(patient_id = paste0("X", uncurated$'title')) %>%
+	dplyr::mutate(sample_name = paste0("X", uncurated$'title')) %>%
+	dplyr::mutate(age_at_initial_diagnosis = as.numeric(uncurated$'age:ch1')) %>%
+	dplyr::mutate(psa = as.numeric(uncurated$'psa:ch1')) %>%
+	dplyr::mutate(gleason_grade = as.numeric(uncurated$'gleason score:ch1')) %>%
+	dplyr::mutate(days_to_disease_specific_recurrence = round(30.5*as.numeric(uncurated$'follow-up (months):ch1'),0)) %>%
+	dplyr::mutate(disease_specific_recurrence_status = as.numeric(uncurated$'recurrence:ch1' == "Rec")) %>%
+	dplyr::mutate(tumor_margins_positive = as.numeric(uncurated$'positive surgical margin:ch1' == "Positive Margin")) %>%
+	dplyr::mutate(tissue_source = "prostatectomy") %>% 
+	# Based on the publication text, ERG-fusion status was determined using over-expression of ERG-transcripts in gene expression and then experimentally validated
+	dplyr::mutate(ERG_fusion_GEX = as.numeric(uncurated$'tmprss2:ch1' == "ERG Fusion: Fusion")) %>%
+	# It appears the T staging was based on pathology
+	dplyr::mutate(T_pathological = as.numeric(uncurated$'grade:ch1'))
+
+# Replicates provided in the raw gene expression matrix:
+#> grep("rep", colnames(gex), value=TRUE)
+# [1] "X1_rep1"   "X1_rep2"   "X100_rep1" "X100_rep2" "X105_rep1" "X105_rep2" "X151_rep1" "X151_rep2" "X172_rep1" "X172_rep2" "X61_rep1"  "X61_rep2"  "X77_rep1"  "X77_rep2"  "X9_rep1"   "X9_rep2"
+#> unique(unlist(lapply(grep("rep", colnames(gex), value=TRUE), FUN=function(x) { strsplit(x, "_")[[1]][1]})))
+#[1] "X1"   "X100" "X105" "X151" "X172" "X61"  "X77"  "X9"
+
+# Append correct "_rep1", "_rep2" suffixes to correct samples
+curated <- rbind(curated, curated[which(curated$patient_id %in% c("X1", "X100", "X105", "X151", "X172", "X61", "X77", "X9")),])
+curated[curated$sample_name %in% c("X1", "X100", "X105", "X151", "X172", "X61", "X77", "X9"),"sample_name"] <- paste0(curated$sample_name[curated$sample_name %in% c("X1", "X100", "X105", "X151", "X172", "X61", "X77", "X9")], rep(c("_rep1", "_rep2"), each=7))
+rownames(curated) <- NULL
   
 clinical_barwick <- curated
 
 save(clinical_barwick, file = "./data-raw/clinical_barwick.RData")
-
-# Clinical mapping of Barwick replicates? The raw GEX file of Barwick contains 180 samples, but is still not equal to the 139 samples after 7 presumed replicated samples
 
 ##########################################################
 #
@@ -1679,7 +1687,7 @@ clinical_wang <- curated
 save(clinical_wang, file = "data-raw/clinical_wang.RData")
 
 #######################################################################
-#GSE2109
+# IGC - GSE2109
 ######################################################################
 gse <- GEOquery::getGEO("GSE2109", GSEMatrix = TRUE)
 

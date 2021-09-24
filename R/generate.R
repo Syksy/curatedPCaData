@@ -47,9 +47,11 @@ generate_gex_geo <- function(
 
   
 	# Barwick et al.
-	else if(geo_code == "GSE18655"){
-		# Custom DASL
-		# .gz
+	if(geo_code == "GSE18655"){
+		# Following lumi-package variance stabilizing transformation normalization
+		# https://www.bioconductor.org/packages//2.13/bioc/vignettes/lumi/inst/doc/lumi.pdf
+	
+		# Custom DASL, just .gz (gunzipped) raw file
 		GEOquery::gunzip(rownames(supfiles), overwrite=TRUE)
 		tmp <- read.table("./GSE18655/GSE18655_HCP_Toronto_raw.txt", header=TRUE, row.names=1, skip=4)
 		# Contains
@@ -58,6 +60,11 @@ generate_gex_geo <- function(
 		#GI_10092618-S-1 25222.37 22141.40 25871.17  26419.28  23814.04
 		#GI_10092618-S-2 30202.68 30705.60 32448.47  30405.46  29000.44
 
+		# No probe level variance information available; log-transforming after quantile normalization		
+		gex <- log2(preprocessCore::normalize.quantiles(as.matrix(tmp)))
+		dimnames(gex) <- dimnames(tmp)
+		tmp <- gex
+		
 		# Download GPL annotations for the custom platform
 		gpl <- GEOquery::getGEO(geo_code, GSEMatrix = FALSE, getGPL = TRUE)
 		map_barwick <- gpl@gpls[[1]]@dataTable@table
@@ -79,6 +86,11 @@ generate_gex_geo <- function(
 		gex <- gex[!is.na(symbols),]
 		symbols <- symbols[!is.na(symbols)]
 		rownames(gex) <- symbols
+		
+		# Collapse multiple instances of same gene symbol
+		gex <- do.call("rbind", by(as.matrix(gex), INDICES=rownames(gex), FUN=function(x){
+			collapse_fun(x)
+		}))
 	}
   
   	# Chandran et al.
@@ -653,8 +665,8 @@ generate_gex_geo <- function(
 #' @param ... additional arguments
 generate_cna_geo <- function(
 	geo_code = c(
-		"GSE54691"	# Hieronymus et al.
-		"GSE21035",	# Taylor et al.
+		"GSE54691",	# Hieronymus et al.
+		"GSE21035"	# Taylor et al.
 	),
 	file_directory, 
 	cleanup = TRUE, 
