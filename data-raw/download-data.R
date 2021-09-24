@@ -32,21 +32,6 @@
 ## (to be updated)
 
 
-## - Baca et al. -
-# CNA
-cna_baca <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_broad_2013_cna", 
-  caseList="prad_broad_2013_sequenced"
-)
-save(cna_baca, file="data-raw/cna_baca.RData")
-
-# Create MAE object
-mae_baca <- create_mae(study_name = "baca")
-usethis::use_data(mae_baca, overwrite = TRUE)
-
-## - end Baca et al. -
-
 
 ## - Abida et al. -
 # GEX PolyA (FPKM)
@@ -79,6 +64,22 @@ mae_abida <- curatedPCaData:::create_mae(study_name = "abida")
 usethis::use_data(mae_abida, overwrite = TRUE)
 
 ## - end Abida et al. -
+
+
+## - Baca et al. -
+# CNA
+cna_baca <- curatedPCaData:::generate_cbioportal(
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  geneticProfiles="prad_broad_2013_cna", 
+  caseList="prad_broad_2013_sequenced"
+)
+save(cna_baca, file="data-raw/cna_baca.RData")
+
+# Create MAE object
+mae_baca <- create_mae(study_name = "baca")
+usethis::use_data(mae_baca, overwrite = TRUE)
+
+## - end Baca et al. -
 
 
 ## - Barbieri et al. -
@@ -116,12 +117,14 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 ## - Barwick et al.
 # GEX: GPL5858	DASL Human Cancer Panel by Gene
-gex_barwick <- curatedPCaData:::generate_gex_geo(
+gex.logq_barwick <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE18655"
 )
-save(gex_barwick, file="data-raw/gex_barwick.RData")
+save(gex.logq_barwick, file="data-raw/gex.logq_barwick.RData")
 
-## TODO: MAE, missing clinical info
+# Create MAE object
+mae_barwick <- curatedPCaData:::create_mae(study_name = "Barwick")
+usethis::use_data(mae_barwick, overwrite = TRUE)
  
 ## - end Barwick et al. -
 
