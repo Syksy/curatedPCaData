@@ -51,13 +51,13 @@
 #' 
 #' @format A MAE object spanning prostate cancer samples.
 #' \describe{
-#'   \item{gex}{matrix with 18193 rows and 20 columns, for the gene expression data}
+#'   \item{gex.logq}{matrix with 482 rows and 146 columns, for the gene expression data}
 #' }
 #' @details NA
 #' @references Barwick, B. G., Abramovitz, M., Kodani, M., Moreno, C. S., Nam, R., Tang, W., Bouzyk, M., Seth, A., & Leyland-Jones, B. (2010). Prostate cancer genes associated with TMPRSS2-ERG gene fusion and prognostic of biochemical recurrence in multiple cohorts. British journal of cancer, 102(3), 570–576. https://doi.org/10.1038/sj.bjc.6605519
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18655}
-#"mae_barwick"
+"mae_barwick"
 
 #' Chandran et al., Yu et al. MAE-object
 #'
@@ -131,6 +131,13 @@
 #' @source \url{https://dcc.icgc.org/projects/PRAD-CA}
 "mae_icgcca"
 
+#' IGC
+#' 
+#' MAE ...
+#' 
+#' @source \url{...}
+"mae_igc"
+
 #' Kunderfranco et al. MAE-object
 #'
 #' MultiAssayExperiment object containing GEX from Kunderfranco et al.
@@ -151,7 +158,7 @@
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE14206}
 "mae_kunderfranco"
 
-#' Ren 2017 MAE-object
+#' Ren et al. MAE-object
 #'
 #' MultiAssayExperiment object containing gene expression (gex) and copy 
 #' number alteration (cna).

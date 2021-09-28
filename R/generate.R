@@ -18,9 +18,9 @@ generate_gex_geo <- function(
 		"GSE2109",   # IGC
 		"GSE25136",  # Sun et al.
 		"GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
+		"GSE5132",    # True et al.
 		"GSE8218",   # Wang et al.
-		"GSE6956",   # Wallace et al.
-		"GSE5132"    # True et al.
+		"GSE6956"   # Wallace et al.
 		), 
 	# Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data		
 	pckg = "oligo", 
@@ -174,35 +174,46 @@ generate_gex_geo <- function(
   	
 	# Friedrich et al. 
 	else if(geo_code == "GSE134051"){
-		# TDL: Original code by FC moved from download-data.R for concordance with other raw data processing and fixed
+		# TDL: Re-implement
+  		# Open the tarball(s)
+  		utils::untar(tarfile = rownames(supfiles))
+		gz_files <- list.files()
+		gz_files <- gz_files[grep(".gz", gz_files)]	
+		for (x in gz_files){GEOquery::gunzip(x)}
 
-		# load series and platform data from GEO
-		fr_gset <- GEOquery::getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
+		if(pckg == "oligo"){
+			
+		}else if(pckg == "affy"){
+			# TDL: Original code by FC moved from download-data.R for concordance with other raw data processing and fixed
 
-		labels = Biobase::fData(fr_gset[[1]])
-		gtab = curatedPCaData:::curatedPCaData_genes
+			# load series and platform data from GEO
+			fr_gset <- GEOquery::getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
 
-		if (length(fr_gset) > 1) idx <- grep("GPL26898", attr(gset, "names")) else idx <- 1
-		fr_ex <- Biobase::exprs(fr_gset[[idx]])
+			labels = Biobase::fData(fr_gset[[1]])
+			gtab = curatedPCaData:::curatedPCaData_genes
 
-		# replacing row names with gene ids
-		##############################################
-		labels$ensb = substr(labels$SPOT_ID, 1, 15)
-		rownames(fr_ex) = labels$ensb
-		fr_ex <- fr_ex[rownames(fr_ex) != 'NoEntry', ]
-		fr_ex <- fr_ex[substr(rownames(fr_ex), 1, 4) != 'XLOC', ]
-		fr_ex <- fr_ex[is.element(rownames(fr_ex), gtab[,1]), ]
-		gtab2 <- gtab[match(rownames(fr_ex), gtab[,1]), ]
+			if (length(fr_gset) > 1) idx <- grep("GPL26898", attr(gset, "names")) else idx <- 1
+			fr_ex <- Biobase::exprs(fr_gset[[idx]])
 
-		gtab2[which(gtab2[,3] == ''), 3] <- gtab2[which(gtab2[,3] == ''), 1]
+			# replacing row names with gene ids
+			##############################################
+			labels$ensb = substr(labels$SPOT_ID, 1, 15)
+			rownames(fr_ex) = labels$ensb
+			fr_ex <- fr_ex[rownames(fr_ex) != 'NoEntry', ]
+			fr_ex <- fr_ex[substr(rownames(fr_ex), 1, 4) != 'XLOC', ]
+			fr_ex <- fr_ex[is.element(rownames(fr_ex), gtab[,1]), ]
+			gtab2 <- gtab[match(rownames(fr_ex), gtab[,1]), ]
 
-		rownames(fr_ex) <- gtab2[,3]
-		## Typo ?
-		#gex <- aggregate(fr_ex, by = list(rownames(ex)), mean)
-		gex <- aggregate(fr_ex, by = list(rownames(fr_ex)), mean)
-		rownames(gex) <- gex[,1]
-		gex <- gex[, -1]
-		gex <- gex[order(rownames(gex)),]
+			gtab2[which(gtab2[,3] == ''), 3] <- gtab2[which(gtab2[,3] == ''), 1]
+
+			rownames(fr_ex) <- gtab2[,3]
+			## Typo ?
+			#gex <- aggregate(fr_ex, by = list(rownames(ex)), mean)
+			gex <- aggregate(fr_ex, by = list(rownames(fr_ex)), mean)
+			rownames(gex) <- gex[,1]
+			gex <- gex[, -1]
+			gex <- gex[order(rownames(gex)),]
+		}
 	}
   
 	# Kim et al.
