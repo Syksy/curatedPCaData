@@ -42,7 +42,7 @@ generate_gex_geo <- function(
 		supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex = filter_regex)
 	}
 
-	if(!pckg %in% c("oligo", "affy")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo' or 'affy'):", pckg))
+	if(!pckg %in% c("oligo", "affy", "limma")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo', 'affy' or 'limma'):", pckg))
 
 
   
@@ -180,10 +180,45 @@ generate_gex_geo <- function(
 		gz_files <- list.files()
 		gz_files <- gz_files[grep(".gz", gz_files)]	
 		for (x in gz_files){GEOquery::gunzip(x)}
+		files <- gsub(".gz", "", gz_files)
 
-		if(pckg == "oligo"){
+		if(pckg == "limma"){
+			# Download GPL for probe identifier annotations
+			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = FALSE, getGPL = TRUE)		
+			# Extract annotations in ENSG####
+			gpl <- GEOquery::Table(slot(gpl, "gpls")[[1]])
 			
+
+			
+			# Process using limma pipeline for Agilent single color custom arrays
+			# Read in raw data
+			gex <- limma::read.maimages(dir(".", "txt"), "agilent.median", green.only = TRUE)
+			# Perform background correction (and apparently log-transformation of intensities)
+			# 'method="normexp" a convolution of normal and exponential distributions is fitted to the foreground intensities using the 
+			# background intensities as a covariate, and the expected signal given the observed foreground becomes the corrected intensity.'
+			gex <- limma::backgroundCorrect(gex, method="normexp", offset=1)
+			# ^ normexp.method="rma" is a possibility
+			# Normalize between arrays using quantile normalization
+			gex <- limma::normalizeBetweenArrays(gex, method="quantile")
+			# Extract probe average expressions and use Agilent probe identifiers
+			gex <- limma::avereps(gex, ID=gex$genes$ProbeName)
+			# Transform into a matrix and truncate column names
+			gex <- as.matrix(gex)
+			colnames(gex) <- lapply(colnames(gex), FUN=function(x) { strsplit(x, "_")[[1]][1] })
+			
+			# Map rownames to ENSG#### 
+			ensg <- gpl[match(rownames(gex), gpl$ID),"SPOT_ID"]
+			ensg[which(ensg == "NoEntry")] <- NA
+			genes <- curatedPCaData:::curatedPCaData_genes$hgnc_symbol[match(ensg, curatedPCaData:::curatedPCaData_genes$ensembl_gene_id)]
+			genes[which(genes == "")] <- NA
+			# Collapse using hugo gene symbols
+			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
+			# Include non-redundant names (non-NAs)
+			gex <- gex[!rownames(gex) %in% c(""),]
+		}else if(pckg == "oligo"){
+			stop("Unavailable")
 		}else if(pckg == "affy"){
+			stop("Old code not processing raw data")
 			# TDL: Original code by FC moved from download-data.R for concordance with other raw data processing and fixed
 
 			# load series and platform data from GEO

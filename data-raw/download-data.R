@@ -148,11 +148,14 @@ usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 
 ## - Friedrich et al. (2020) -
 # GEX: GPL26898	Agilent-058029 Custom human expression microarray (Probe Name version)
-gex_friedrich <- curatedPCaData:::generate_gex_geo(
-	geo_code = "GSE134051"
+gex.logq_friedrich <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE134051",
+	pckg = "limma",
+	cleanup = FALSE
 )
-save(gex_friedrich, file="data-raw/gex_friedrich.RData")
+save(gex.logq_friedrich, file="data-raw/gex.logq_friedrich.RData")
 
+# Create and save MAE object
 mae_friedrich = curatedPCaData:::create_mae(study_name = 'Friedrich')
 usethis::use_data(mae_friedrich, internal = FALSE, overwrite = TRUE)
 
