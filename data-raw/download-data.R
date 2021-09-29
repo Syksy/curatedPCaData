@@ -151,6 +151,7 @@ usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 gex.logq_friedrich <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE134051",
 	pckg = "limma",
+	filter_regex = "_RAW",
 	cleanup = FALSE
 )
 save(gex.logq_friedrich, file="data-raw/gex.logq_friedrich.RData")
