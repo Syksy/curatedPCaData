@@ -5,8 +5,9 @@
 \title{Download copy number variant data from GEO using study specific id and process it}
 \usage{
 generate_cna_geo(
-  geo_code = c("GSE21035", "GSE54691"),
+  geo_code = c("GSE54691", "GSE21035"),
   file_directory,
+  filter_regex,
   cleanup = TRUE,
   ...
 )
