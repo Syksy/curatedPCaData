@@ -52,6 +52,7 @@ Suggests:
     R.utils,
     survival, survminer,
     osfr, textshape, pacman,
+    pd.huex.1.1.st.v2,
     hgu133a.db,
     hgu95av2cdf, hgu95av2.db,
     hgu95bcdf, hgu95b.db,

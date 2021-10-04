@@ -3,7 +3,7 @@
 \docType{data}
 \name{mae_ren}
 \alias{mae_ren}
-\title{Ren 2017 MAE-object}
+\title{Ren et al. MAE-object}
 \format{
 An MAE object spanning 112 men with prostate cancer
 \describe{
