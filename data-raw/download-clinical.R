@@ -197,28 +197,6 @@ save(clinical_sun, file = "data-raw/clinical_sun.RData")
 #   
 ############################################################################### 
 
-# GEOquery for GSE21032 is BUSTED 
-
-## TDL: below script is saved only temporarily as it overlaps with Jordan's solution
-gse <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
-if(FALSE){
-	## TDL: Split fetch into GSE21034 (GEX) and GSE21035 (CNA) for making the map
-	gse_gex <- GEOquery::getGEO("GSE21034", GSEMatrix = TRUE)
-	gse_cna <- GEOquery::getGEO("GSE21035", GSEMatrix = TRUE)
-	gse_gex_1 <- gse_gex[[1]]@phenoData@data[,'sample id:ch1',drop=FALSE] # Exon part
-	gse_gex_2 <- gse_gex[[2]]@phenoData@data[,'sample id:ch1',drop=FALSE] # Transcript part
-	gse_cna_1 <- gse_cna[[1]]@phenoData@data[,'sample id:ch1',drop=FALSE]
-
-	map <- data.frame(
-		assay = c(rep("cna", nrow(gse_cna_1)), rep("gex", nrow(gse_gex_1)+nrow(gse_gex_2))),
-		colname = c(rownames(gse_cna_1), rownames(gse_gex_1), rownames(gse_gex_2)),
-		primary = c(gse_cna_1[,1], gse_gex_1[,1], gse_gex_2[,1])
-	)
-	# grep down into patient samples only
-	map <- map[grep("PCA", map[,"primary"]),]
-}
-
-uncurated <- Biobase::pData(gse[[2]])
 gse_gex <- GEOquery::getGEO("GSE21034", GSEMatrix = TRUE)
 uncurated_gex_exon <- Biobase::pData(gse_gex[[2]])
 uncurated_gex_transcript <- Biobase::pData(gse_gex[[1]])
@@ -917,13 +895,13 @@ clinical_kim <- curated
 save(clinical_kim, file = "data-raw/clinical_kim.RData")
   
 
-########################################################################
-#Abida et al. 2019
+#######################################################################
+#
+# Abida et al. 2019
+#
 #######################################################################
 mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_su2c_2019_cnaseq")
-#mycancerstudy = cgdsr::getCancerStudies(mycgds)
-#mycaselist = cgdsr::getCaseLists(mycgds,"prad_su2c_2019")
 gp = cgdsr::getGeneticProfiles(mycgds,"prad_su2c_2019")
 
 curated <- initial_curated_df(
@@ -935,22 +913,42 @@ curated <- curated %>%
   dplyr::mutate(alt_sample_name = uncurated$OTHER_SAMPLE_ID) %>%
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
   dplyr::mutate(sample_name = row.names(uncurated)) %>%
-  dplyr::mutate(tissue_source = uncurated$TISSUE_SITE) %>%
+  ## TDL: See template_prad.csv, tissue_source does not mean tissue extraction site but rather method of extraction - follow template_prad.csv instructions for all fields
+  #dplyr::mutate(tissue_source = uncurated$TISSUE_SITE) %>%
   dplyr::mutate(age_at_initial_diagnosis = floor(uncurated$AGE_AT_DIAGNOSIS)) %>%
   dplyr::mutate(age_at_procurement = floor(uncurated$AGE_AT_PROCUREMENT)) %>%
+  # All samples are metastatic
+  dplyr::mutate(metastasis_occurrence_status = 1) %>%
+  dplyr::mutate(sample_type = "metastatic") %>%
+  dplyr::mutate(metastatic_site = dplyr::case_when(
+  	uncurated$TISSUE_SITE == "Adrenal" ~ "adrenal_gland",
+  	uncurated$TISSUE_SITE == "Bone" ~ "bone",
+  	uncurated$TISSUE_SITE == "Brain" ~ "brain",
+  	uncurated$TISSUE_SITE == "Liver" ~ "liver",
+  	uncurated$TISSUE_SITE == "LN" ~ "lymph_node",
+  	uncurated$TISSUE_SITE == "Lung" ~ "lung",
+  	uncurated$TISSUE_SITE == "Other Soft tissue" ~ "soft_tissue",
+  	uncurated$TISSUE_SITE == "Prostate" ~ "prostate",
+  	uncurated$TISSUE_SITE == "Unknown" ~ "other")) %>%
   dplyr::mutate(psa = uncurated$PSA) %>%
-  dplyr::mutate(gleason_score=uncurated$GLEASON_SCORE) %>%
+  #dplyr::mutate(gleason_score=uncurated$GLEASON_SCORE) %>%
+  dplyr::mutate(gleason_grade=as.numeric(uncurated$GLEASON_SCORE)) %>%
   dplyr::mutate(AR_score=uncurated$AR_SCORE) %>%
+  dplyr::mutate(genome_altered = uncurated$FRACTION_GENOME_ALTERED) %>%
   dplyr::mutate(NEPC_score=uncurated$NEPC_SCORE) %>%
   dplyr::mutate(ABI_ENZA_exposure_status=uncurated$ABI_ENZA_EXPOSURE_STATUS) %>%
   dplyr::mutate(ETS_FUSION_DETAILS=uncurated$ETS_FUSION_DETAILS) %>%
-  dplyr::mutate(TMPRSS2_ERG_FUSION_STATUS = dplyr::case_when(
+  #dplyr::mutate(TMPRSS2_ERG_FUSION_STATUS = dplyr::case_when(
+  ## Fusions were determined from gene expression
+  dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
     uncurated$ETS_FUSION_DETAILS == "TMPRSS2-ERG" ~ 1,
     uncurated$ETS_FUSION_DETAILS != "TMPRSS2-ERG" ~ 0)) %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
     uncurated$OS_STATUS == "1:DECEASED" ~ 1,
     uncurated$OS_STATUS == "0:LIVING" ~ 0)) %>%
-  dplyr::mutate(days_to_overall_survival=as.numeric(uncurated$OS_MONTHS)*30)
+  dplyr::mutate(days_to_overall_survival=as.numeric(uncurated$OS_MONTHS)*30.5) %>%
+  ## Possibly TODO: AGE_AT_PROCUREMENT may be an indicator for time from non-metastatic to metastatic disease (difference in years)
+  dplyr::mutate(other_treatment = uncurated$CHEMO_REGIMEN_CATEGORY)
 
 clinical_abida <- curated
 save(clinical_abida, file = "data-raw/clinical_abida.RData")
