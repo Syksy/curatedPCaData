@@ -15,7 +15,7 @@
 ### Alphabetic ordering of datasets:
 ## - Baca et al.
 ## - Barbieri et al.
-## - Barwick et al. (TODO, not exported yet)
+## - Barwick et al. 
 ## - Chandran et al.
 ## - Friedrich et al.
 ## - Hieronymus et al.
@@ -42,7 +42,7 @@ gex.relz_abida <- curatedPCaData:::generate_cbioportal(
 )
 save(gex.relz_abida, file="data-raw/gex.relz_abida.RData")
 
-# CNA
+# CNA (discretized GISTIC)
 cna.gistic_abida <- curatedPCaData:::generate_cbioportal(
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
   geneticProfiles="prad_su2c_2019_gistic", 
@@ -315,16 +315,16 @@ gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
 save(gex.rma_taylor, file="data-raw/gex.rma_taylor.RData")
 
 # CNA
-cna_taylor <- curatedPCaData:::generate_cna_geo(
-  geo_code = "GSE21035"
+cna.logr_taylor <- curatedPCaData:::generate_cna_geo(
+	geo_code = "GSE21035"
 )
-save(cna_taylor, file="data-raw/cna_taylor.RData")
+save(cna.logr_taylor, file="data-raw/cna.logr_taylor.RData")
 
 # Mutations - notice this is downloaded from cBioPortal rather than processed from GEO
 mut_taylor <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles = "prad_mskcc_mutations",
-  caseList="prad_mskcc_sequenced"
+	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+	geneticProfiles = "prad_mskcc_mutations",
+	caseList="prad_mskcc_sequenced"
 ) 
 # Save NA values as truly NA instead of "NaN" even if other instances exist on column
 mut_taylor[which(mut_taylor=="NaN")] <- NA
@@ -446,7 +446,6 @@ save(gex.rma_wang, file="data-raw/gex.rma_wang.RData")
 cna_wang <- curatedPCaData:::generate_cna_geo(
   geo_code = "GSE8218"
 )
-
 save(cna_wang, file="data-raw/cna_wang.RData")
 
 # Create MAE object

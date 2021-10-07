@@ -197,110 +197,146 @@ save(clinical_sun, file = "data-raw/clinical_sun.RData")
 #   
 ############################################################################### 
 
-gse_gex <- GEOquery::getGEO("GSE21034", GSEMatrix = TRUE)
-uncurated_gex_exon <- Biobase::pData(gse_gex[[2]])
-uncurated_gex_transcript <- Biobase::pData(gse_gex[[1]])
+gse_all <- GEOquery::getGEO("GSE21032", GSEMatrix = TRUE)
 
-gse_cna <- GEOquery::getGEO("GSE21035", GSEMatrix = TRUE)
-uncurated_cna <- Biobase::pData(gse_cna[[1]])
 
-gse_mrna <- GEOquery::getGEO("GSE21036", GSEMatrix = TRUE)
-uncurated_mrna <- Biobase::pData(gse_mrna[[1]])
+gse <- rbind(
+	# Transcript
+	Biobase::pData(gse_all[[1]])[,c("sample id:ch1", "tissue:ch1", "tumor type:ch1", "biopsy_gleason_grade:ch1", "clint_stage:ch1", "disease status:ch1", "pathological_stage:ch1")],
+	# aCGH
+	Biobase::pData(gse_all[[2]])[,c("sample id:ch1", "tissue:ch1", "tumor type:ch1", "biopsy_gleason_grade:ch1", "clint_stage:ch1", "disease status:ch1", "pathological_stage:ch1")],
+	# Exon
+	Biobase::pData(gse_all[[3]])[,c("sample id:ch1", "tissue:ch1", "tumor type:ch1", "biopsy_gleason_grade:ch1", "clint_stage:ch1", "disease status:ch1", "pathological_stage:ch1")],
+	# miRNA
+	Biobase::pData(gse_all[[4]])[,c("sample id:ch1", "tissue:ch1", "tumor type:ch1", "biopsy_gleason_grade:ch1", "clint_stage:ch1", "disease status:ch1", "pathological_stage:ch1")]
+)
+
+
+
+#gse_gex <- GEOquery::getGEO("GSE21034", GSEMatrix = TRUE)
+#uncurated_gex_exon <- Biobase::pData(gse_gex[[2]])
+#uncurated_gex_transcript <- Biobase::pData(gse_gex[[1]])
+
+#gse_cna <- GEOquery::getGEO("GSE21035", GSEMatrix = TRUE)
+#uncurated_cna <- Biobase::pData(gse_cna[[1]])
+
+#gse_mrna <- GEOquery::getGEO("GSE21036", GSEMatrix = TRUE)
+#uncurated_mrna <- Biobase::pData(gse_mrna[[1]])
 
 mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 uncurated_cbio <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
 
-uncurated <- uncurated_cna %>% 
-  dplyr::select(title, cna = geo_accession, dplyr::everything()) %>% 
-  dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
-  dplyr::mutate(title = stringr::str_remove(title, " \\(aCGH\\)")) %>% 
-  dplyr::left_join(uncurated_gex_exon %>% 
-                     dplyr::select(title, gex_exon = geo_accession) %>%
-                     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
-                     dplyr::mutate(title = stringr::str_remove(title, " exon")),
-                   by = "title") %>% 
-  dplyr::left_join(uncurated_gex_transcript %>% 
-                     dplyr::select(title, gex_transcript = geo_accession) %>%
-                     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
-                     dplyr::mutate(title = stringr::str_remove(title, " transcript")),
-                   by = "title") %>% 
-  dplyr::left_join(uncurated_mrna %>% 
-                     dplyr::select(title, mrna = geo_accession) %>%
-                     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
-                     dplyr::mutate(title = stringr::str_remove(title, " miRNA")), 
-                   by = "title") %>%
-  dplyr::mutate(geo_accession = paste(paste0("cna: ", cna),
-                                      paste0("gex_exon: ", gex_exon), 
-                                      paste0("gex_transcript: ", gex_transcript), 
-                                      paste0("mrna: ", mrna),
-                                      # TDL: Mutation sample names come from cBio rather than GEO, but we don't know which ones will have mutation data
-                                      paste0("mut: ", uncurated$"sample id:ch1"), sep = "|"))
+# Outdated names no longer in use (GSM######)
+if(FALSE){
+	uncurated <- uncurated_cna %>% 
+	  dplyr::select(title, cna = geo_accession, dplyr::everything()) %>% 
+	  dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+	  dplyr::mutate(title = stringr::str_remove(title, " \\(aCGH\\)")) %>% 
+	  dplyr::left_join(uncurated_gex_exon %>% 
+			     dplyr::select(title, gex_exon = geo_accession) %>%
+			     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+			     dplyr::mutate(title = stringr::str_remove(title, " exon")),
+			   by = "title") %>% 
+	  dplyr::left_join(uncurated_gex_transcript %>% 
+			     dplyr::select(title, gex_transcript = geo_accession) %>%
+			     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+			     dplyr::mutate(title = stringr::str_remove(title, " transcript")),
+			   by = "title") %>% 
+	  dplyr::left_join(uncurated_mrna %>% 
+			     dplyr::select(title, mrna = geo_accession) %>%
+			     dplyr::mutate(title = stringr::str_remove(title, "Prostate tumor ")) %>% 
+			     dplyr::mutate(title = stringr::str_remove(title, " miRNA")), 
+			   by = "title") %>%
+	  dplyr::mutate(geo_accession = paste(paste0("cna: ", cna),
+					      paste0("gex_exon: ", gex_exon), 
+					      paste0("gex_transcript: ", gex_transcript), 
+					      paste0("mrna: ", mrna),
+					      # TDL: Mutation sample names come from cBio rather than GEO, but we don't know which ones will have mutation data
+					      paste0("mut: ", uncurated$"sample id:ch1"), sep = "|"))
 
-rownames(uncurated) <- uncurated$title
+	rownames(uncurated) <- uncurated$title
+}
 
 curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
+  df_rownames = gse$"sample id:ch1",
   template_name="data-raw/template_prad.csv")
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Taylor, et al.") %>% 
-  dplyr::mutate(alt_sample_name = uncurated$geo_accession) %>% 
-  dplyr::mutate(sample_name = row.names(uncurated)) %>%
-  dplyr::mutate(patient_id = row.names(uncurated)) %>%
-  dplyr::mutate(sample_type = tolower(uncurated$`tumor type:ch1`)) %>%
+  #dplyr::mutate(alt_sample_name = uncurated$geo_accession) %>% 
+  #dplyr::mutate(sample_name = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = gse$"sample id:ch1") %>%
+  dplyr::mutate(sample_type = tolower(gse$"tumor type:ch1")) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
     sample_type == "primary tumor" ~ "primary",
     sample_type == "cell line" ~ "cell.line",
+    sample_type == "xenograft" ~ "xenograft",
+    sample_type == "metastatsis" ~ "metastasis",
+    is.na(sample_type) ~ "normal",
     TRUE ~ sample_type
   )) %>%
-  dplyr::mutate(gleason_grade = as.numeric(uncurated$`biopsy_gleason_grade:ch1`)) %>%
-  dplyr::mutate(T_clinical = stringr::str_sub(uncurated$`clint_stage:ch1`,2,2)) %>%
+  dplyr::mutate(gleason_grade = as.numeric(gse$"biopsy_gleason_grade:ch1")) %>%
+  dplyr::mutate(T_clinical = stringr::str_sub(gse$"clint_stage:ch1",2,2)) %>%
   dplyr::mutate(T_clinical = as.numeric(T_clinical)) %>%
-  dplyr::mutate(T_substage_clinical = tolower(stringr::str_sub(uncurated$`clint_stage:ch1`,3,3))) %>%
+  dplyr::mutate(T_substage_clinical = tolower(stringr::str_sub(gse$"clint_stage:ch1",3,3))) %>%
   dplyr::mutate(T_substage_clinical = dplyr::case_when(
     T_substage_clinical == "" ~ NA_character_,
     TRUE ~ T_substage_clinical
   )) %>%
-  dplyr::mutate(T_pathological = as.numeric(stringr::str_sub(uncurated$`pathological_stage:ch1`,2,2))) %>%
-  dplyr::mutate(T_substage_pathological = tolower(stringr::str_sub(uncurated$`pathological_stage:ch1`,3,3))) %>%
+  dplyr::mutate(T_pathological = as.numeric(stringr::str_sub(gse$"pathological_stage:ch1",2,2))) %>%
+  dplyr::mutate(T_substage_pathological = tolower(stringr::str_sub(gse$"pathological_stage:ch1",3,3))) %>%
   dplyr::mutate(T_substage_pathological = dplyr::case_when(
     T_substage_pathological == "" ~ NA_character_,
     TRUE ~ T_substage_pathological
   ))
 
+# Order additional clinical information from cBio according to the order in current df
 uncurated_cbio <- uncurated_cbio[match(curated$patient_id, row.names(uncurated_cbio)),]
 
+# Additional clinical parameters as recored in cBioPortal
 curated <- curated %>%
-  dplyr::mutate(gleason_major = uncurated_cbio$GLEASON_SCORE_1) %>% 
-  dplyr::mutate(gleason_minor = uncurated_cbio$GLEASON_SCORE_2) %>% 
-  dplyr::mutate(grade_group = dplyr::case_when(
-    gleason_grade == 6 ~ "<=6",
-    gleason_grade %in% 8:10 ~ ">=8",
-    gleason_major == 3 & gleason_minor == 4 ~ "3+4",
-    gleason_major == 4 & gleason_minor == 3 ~ "4+3",
-  )) %>% 
-  dplyr::mutate(ERG_fusion_GEX = uncurated_cbio$ERG_FUSION_GEX) %>% 
-  dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
-    ERG_fusion_GEX == "Negative" ~ 0,
-    ERG_fusion_GEX == "Positive" ~ 1,
-    TRUE ~ NA_real_
-  )) %>% 
-  dplyr::mutate(ERG_fusion_CNA = uncurated_cbio$ERG_FUSION_ACGH) %>% 
-  dplyr::mutate(ERG_fusion_CNA =  dplyr::case_when(
-    ERG_fusion_CNA == "Positive" ~ 1,
-    ERG_fusion_CNA %in% c("Negative", "Flat") ~ 0,
-    TRUE ~ NA_real_
-  )) %>% 
-  dplyr::mutate(disease_specific_recurrence_status = uncurated_cbio$DFS_STATUS) %>% 
-  dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
-    disease_specific_recurrence_status == "1:Recurred" ~ 1,
-    disease_specific_recurrence_status == "0:DiseaseFree" ~ 0,
-    TRUE ~ NA_real_
-  )) %>% 
-  dplyr::mutate(days_to_disease_specific_recurrence = round(uncurated_cbio$DFS_MONTHS*30.5,0)) 
+	# Gleason grades reported in GEO seem to differ from cBioPortal even for same IDs; using the ones provided by cBio:
+	dplyr::mutate(gleason_grade = uncurated_cbio$GLEASON_SCORE) %>% 
+	dplyr::mutate(gleason_major = uncurated_cbio$GLEASON_SCORE_1) %>% 
+	dplyr::mutate(gleason_minor = uncurated_cbio$GLEASON_SCORE_2) %>% 
+	dplyr::mutate(grade_group = dplyr::case_when(
+		gleason_grade == 6 ~ "<=6",
+		gleason_grade %in% 8:10 ~ ">=8",
+		gleason_major == 3 & gleason_minor == 4 ~ "3+4",
+		gleason_major == 4 & gleason_minor == 3 ~ "4+3",
+	)) %>% 
+	dplyr::mutate(ERG_fusion_GEX = uncurated_cbio$ERG_FUSION_GEX) %>% 
+	dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
+		ERG_fusion_GEX == "Negative" ~ 0,
+		ERG_fusion_GEX == "Positive" ~ 1,
+		TRUE ~ NA_real_
+	)) %>% 
+	dplyr::mutate(ERG_fusion_CNA = uncurated_cbio$ERG_FUSION_ACGH) %>% 
+	dplyr::mutate(ERG_fusion_CNA =  dplyr::case_when(
+		ERG_fusion_CNA == "Positive" ~ 1,
+		ERG_fusion_CNA %in% c("Negative", "Flat") ~ 0,
+		TRUE ~ NA_real_
+	)) %>% 
+	dplyr::mutate(disease_specific_recurrence_status = uncurated_cbio$DFS_STATUS) %>% 
+	dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
+		disease_specific_recurrence_status == "1:Recurred" ~ 1,
+		disease_specific_recurrence_status == "0:DiseaseFree" ~ 0,
+		TRUE ~ NA_real_
+	)) %>% 
+	dplyr::mutate(days_to_disease_specific_recurrence = round(uncurated_cbio$DFS_MONTHS*30.5,0)) %>%
+	dplyr::mutate(genome_altered = uncurated_cbio$FRACTION_GENOME_ALTERED)
 
-curated <- curated %>%
-  dplyr::filter(sample_type %in% c("metastasis", "primary"))
+## Old filters when normals weren't requested
+#curated <- curated %>%
+#  dplyr::filter(sample_type %in% c("metastasis", "primary"))
+
+# Leave out cell.line and xenograft samples
+curated <- curated[which(curated$sample_type %in% c("primary", "metastasis", "normal")),]
+curated <- curated[grep("PCA|PAN", curated$sample_name),]
+curated <- curated[order(curated$sample_name),]
+# Only include unique entries
+curated <- curated[which(!duplicated(curated$patient_id)),]
+
 
 clinical_taylor <- curated
 
@@ -597,14 +633,10 @@ clinical_friedrich <- curated
 save(clinical_friedrich, file = "./clinical_friedrich.RData")
 
 ##################################################################
-##################################################################
-#
 #
 # Wallace et al. samples: This code downloads both gene expression
 # BOTH clinical and GPL, but just the clinical data is used
 #
-#
-##################################################################
 ##################################################################
 
 library(GEOquery)
