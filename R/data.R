@@ -1,36 +1,27 @@
 #' Abida et al. MAE-object
 #'
-#' Multiassay experiment obtained from cBioPortal 
+#' MultiAssayExperiment object for Abida et al.
+#'
 #' @format A MAE object with clinical data for 444 tumors and 11 different aassays based on author supplied data (the CNA and two expression datasets), together with 8 immune deconvolution analyses for the expression data.  The two different gene expression datasets are partially overlappy, hence why they sum to 474 samples.
 #' \describe{
-#'    \item{cna_gistic}{a matrix with 20264 rows and 444 columns, of the Copy Number Alteration of the 444 tumor samples}
-#'    \item{mut}{a matrix with 30357 rows and 444 columns, of mutation data}
-#'    \item{gex_polyA}{a matrix with 18823 rows and 266 columns, from a library obtained by polyA+ RNA isolation}
-#'    \item{xcell_polyA}{a matrix with 39 rows and 266 columns, of xcell based deconvolution for the capture polyA Library}
-#'    \item{epic_polyA}{a matrix with 8 rows and 266 columns, of epic based deconvolution for the polyA library}
-#'    \item{quantiseq_polyA}{a matrix with 11 rows and 266 columns, of quantiseq based deconvolution for the polyA library}
-#'    \item{mcp_polyA}{a matrix with 11 rows and 266 columns, of mcp-counter based deconvolution for the polyA library}
-#'    \item{cibersort_polyA}{a matrix with 25 rows and 266 columns, of cibersort based deconvolution for the polyA library}
-#'    \item{scores}{matrix with 2 rows and 208 columns, genomic risk and AR scores}
+#'    \item{cna.gistic}{a matrix with 20264 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
+#'    \item{gex.relz}{a matrix with 18823 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
+#'    \item{mut}{matrix with 30357 rows and 444 columns, genetic aberration calls.}
 #' @details the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
 #' @references Abida, W., Cyrta, J., Heller, G., et al. (2019). Genomic correlates of clinical outcome in advanced prostate cancer. Proceedings of the National Academy of Sciences of the United States of America, 116, 11428 - 11436.
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/31061129/}{PubMed})
 #' @source  \url{https://www.cbioportal.org/study/summary?id=prad_su2c_2019}
 "mae_abida"
 
-#' Barbieri MAE-object
+#' Barbieri et al. MAE-object
 #'
-#' MultiAssayExperiment object containing gene expression (gex) and copy number alteration (cna), together with immune deconvolution data. 
+#' MultiAssayExperiment object for Barbieri et al. 
 #' 
 #' @format A MAE object spanning prostate cancer samples.
 #' \describe{
-#'   \item{gex}{matrix with 18193 rows and 20 columns, for the gene expression data}
-#'   \item{cna_gistic}{matrix with 21723 rows and 109 columns, for the Copy Number Alteration data}
-#'   \item{xcell}{matrix with 39 rows and 20 columns, of xcell based deconvolution data}
-#'   \item{epic}{matrix with 8 rows and 20 columns, of epic based deconvolution data}
-#'   \item{quantiseq}{matrix with 11 rows and 20 columns, of quantiseq based deconvolution data}
-#'   \item{mcp}{matrix with 11 rows and 20 columns, of mcp-counter based deconvolution data}
-#'   \item{scores}{matrix with 2 rows and 20 columns, genomic risk and AR scores}
+#'   \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
+#'   \item{gex.relz}{matrix with 18193 rows and 20 columns, from z-score normalized expression in relative to paired normals.}
+#'   \item{mut}{matrix with 29009 rows and 112 columns, genetic aberration calls.}
 #' }
 #' @details The data comprises of primary localised prostate tumors from two cohorts, the Weill Cornell Medical College (WCMC; New York, NY), and the Uropath (Perth, Australia), which commercially provides banked urological tissues. None of the samples comes from patients who had received prior treatment for prostate cancer.  
 #' @references Barbieri, C. E., Baca, S. C., Lawrence, M. S., et al. (2012). Exome sequencing identifies recurrent SPOP, FOXA1 and MED12 mutations in prostate cancer. Nature genetics, 44(6), 685–689. https://doi.org/10.1038/ng.2279
@@ -38,20 +29,24 @@
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad}
 "mae_barbieri"
 
-#' Baca et al.
+#' Baca et al. MAE-object
 #' 
-#' MAE ...
-#' 
-#' @source \url{...}
-"mae_baca"
-
-#' Barwick MAE-object
-#'
-#' MultiAssayExperiment object containing gene expression (gex), together with immune deconvolution data. 
+#' MultiAssayExperiment object for Baca et al. 
 #' 
 #' @format A MAE object spanning prostate cancer samples.
 #' \describe{
-#'   \item{gex.logq}{matrix with 482 rows and 146 columns, for the gene expression data}
+#'   \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
+#' }
+#' @source \url{...}
+"mae_baca"
+
+#' Barwick et al. MAE-object
+#'
+#' MultiAssayExperiment object for Barwick et al. 
+#' 
+#' @format A MAE object spanning prostate cancer samples.
+#' \describe{
+#'   \item{gex.logq}{matrix with 482 rows and 146 columns, for the log-quantile normalized gene expression data}
 #' }
 #' @details NA
 #' @references Barwick, B. G., Abramovitz, M., Kodani, M., Moreno, C. S., Nam, R., Tang, W., Bouzyk, M., Seth, A., & Leyland-Jones, B. (2010). Prostate cancer genes associated with TMPRSS2-ERG gene fusion and prognostic of biochemical recurrence in multiple cohorts. British journal of cancer, 102(3), 570–576. https://doi.org/10.1038/sj.bjc.6605519
@@ -61,15 +56,11 @@
 
 #' Chandran et al., Yu et al. MAE-object
 #'
-#' MultiAssayExperiment object containing GEX from Chandran et al., Yu et al. in GSE6919
+#' MultiAssayExperiment object for Chandran et al., Yu et al.
 #'
 #' @format An MAE object spanning 112 men with prostate cancer
 #' \describe{
 #'   \item{gex}{matrix with 15681 rows and 503 columns, for the gene expression data}
-#'   \item{xcell}{matrix with 39 rows and 503 columns, of xcell based deconvolution data}
-#'   \item{epic}{matrix with 8 rows and 503 columns, of epic based deconvolution data}
-#'   \item{mcp}{matrix with 11 rows and 503 columns, of mpc-counter based deconvolution data}
-#'   \item{scores}{matrix with 2 rows and 503 columns, genomic risk and AR scores}
 #' }
 #' @details .  
 #' @references Chandran, U. R., Ma, C., Dhir, R., et al. (2007). Gene expression profiles of prostate cancer reveal involvement of multiple molecular pathways in the metastatic process. BMC cancer, 7, 64. https://doi.org/10.1186/1471-2407-7-64
@@ -81,15 +72,10 @@
 
 #' Friedrich et al. MAE-object
 #'
-#' MultiAssayExperiment object containing GEX from Friedrich et al. dataset.
+#' MultiAssayExperiment object for Friedrich et al.
 #' @format An MAE object spanning 112 men with prostate cancer
 #' \describe{
-#'   \item{gex}{matrix with 30408 rows and 255 columns, for the gene expression data}
-#'   \item{xcell}{matrix with 39 rows and 255 columns, of xcell based deconvolution data}
-#'   \item{epic}{matrix with 8 rows and 255 columns, of epic based deconvolution data}
-#'   \item{quantiseq}{matrix with 11 rows and 255 columns, of quantiseq based deconvolution data}
-#'   \item{mcp}{matrix with 11 rows and 255 columns, of mcp-counter based deconvolution data}
-#'   \item{scores}{matrix with 2 rows and 255 columns, genomic risk and AR scores}
+#'   \item{gex.logq}{matrix with 23097 rows and 255 columns, for the log-quantile normalized gene expression data}
 #' }
 #' @details The data comprises of 255 samples, with 164 primary tumors samples, 52 adjacent normal samples, and 39 benign prostate hyperplasia samples.  This dataset includes in its totality the 164 samples analysed in Kreutz et al. 2020.
 #' @references Friedrich, M., Wiedemann, K., Reiche, K., et al. (2020). The Role of lncRNAs TAPIR-1 and -2 as Diagnostic Markers and Potential Therapeutic Targets in Prostate Cancer. Cancers, 12(5), 1122. https://doi.org/10.3390/cancers12051122
@@ -101,10 +87,10 @@
 
 #' Hieronymus et al. MAE-object
 #' 
-#' MultiAssayExperiment object containing CNA from Hieronymus et al.
+#' MultiAssayExperiment object for Hieronymus et al.
 #' @format A MAE object spanning 104 tumor samples
 #' \describe{
-#'   \item{cna}{matrix with 22895 rows and 104 columns, for the Copy Number Alteration data}
+#'   \item{cna.logr}{matrix with 22895 rows and 104 columns, for the log-ratios for copy number alteration data}
 #' @details The data comprises of 104 samples, for which are available clinical data and Copy Number Alteration, but no gene expression data -- thus no deconvolution results are available.
 #' @references Hieronymus, H., Schultz, N., Gopalan, A., et al. (2014). Copy number alteration burden predicts prostate cancer relapse. Proceedings of the National Academy of Sciences of the United States of America, 111(30), 11139–11144. https://doi.org/10.1073/pnas.1411446111
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/25024180/}{PubMed})
@@ -113,7 +99,7 @@
 
 #' ICGC CA MAE-object
 #'
-#' MultiAssayExperiment object containing GEX from the Canadian ICGC cohort.
+#' MultiAssayExperiment object for the ICGC CA (Canadian) cohort.
 #'
 #' @format An MAE object spanning 112 men with prostate cancer
 #' \describe{

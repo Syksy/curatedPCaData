@@ -3,9 +3,12 @@
 \docType{data}
 \name{mae_baca}
 \alias{mae_baca}
-\title{Baca et al.}
+\title{Baca et al. MAE-object}
 \format{
-An object of class \code{MultiAssayExperiment} of length 1.
+A MAE object spanning prostate cancer samples.
+\describe{
+  \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
+}
 }
 \source{
 \url{...}
@@ -14,6 +17,6 @@ An object of class \code{MultiAssayExperiment} of length 1.
 mae_baca
 }
 \description{
-MAE ...
+MultiAssayExperiment object for Baca et al.
 }
 \keyword{datasets}
