@@ -240,7 +240,7 @@ usethis::use_data(mae_kim, overwrite = TRUE)
 # GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
 gex_kunderfranco <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE14206",
-	pckg = "oligo",
+	pckg = "limma",
 	cleanup = FALSE	
 )
 save(gex_kunderfranco, file = "data-raw/gex_kunderfranco.RData")

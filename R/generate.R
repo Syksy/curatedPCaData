@@ -181,14 +181,12 @@ generate_gex_geo <- function(
 		gz_files <- gz_files[grep(".gz", gz_files)]	
 		for (x in gz_files){GEOquery::gunzip(x)}
 		files <- gsub(".gz", "", gz_files)
-
+		# Single color Agilent array 
 		if(pckg == "limma"){
 			# Download GPL for probe identifier annotations
 			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = FALSE, getGPL = TRUE)		
 			# Extract annotations in ENSG####
 			gpl <- GEOquery::Table(slot(gpl, "gpls")[[1]])
-			
-
 			
 			# Process using limma pipeline for Agilent single color custom arrays
 			# Read in raw data
@@ -338,12 +336,30 @@ generate_gex_geo <- function(
 	# Kunderfranco et al.
 	# GPL887	Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
 	else if(geo_code == "GSE14206"){
-		gpl <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE, getGPL = TRUE)
-		labels <- Biobase::fData(gpl[[1]])
-		gex <- Biobase::exprs(gpl[[1]])
-		rownames(gex) <- labels$GENE_SYMBOL
-		gex <- gex[-which(rownames(gex) == ''), ]
-		## TDL: RMA?
+		# Two colour Agilent array
+		utils::untar(tarfile = rownames(supfiles))
+		gz_files <- list.files()
+		gz_files <- gz_files[grep(".gz", gz_files)]	
+		for (x in gz_files){GEOquery::gunzip(x)}
+		files <- gsub(".gz", "", gz_files)
+
+		if(pckg=="limma"){
+			# New code RAW data processed in limma
+			# Download GPL for probe identifier annotations
+			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = FALSE, getGPL = TRUE)		
+			# Extract annotations in ENSG####
+			gpl <- GEOquery::Table(slot(gpl, "gpls")[[1]])
+			# Read in raw data
+			gex <- limma::read.maimages(dir(".", "txt"), "agilent.median", green.only = FALSE)
+				
+		}else{
+			# Old code by FC - does not process RAW data
+			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE, getGPL = TRUE)
+			labels <- Biobase::fData(gpl[[1]])
+			gex <- Biobase::exprs(gpl[[1]])
+			rownames(gex) <- labels$GENE_SYMBOL
+			gex <- gex[-which(rownames(gex) == ''), ]
+		}
 	}
 
 	# IGC
