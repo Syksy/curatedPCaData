@@ -238,7 +238,7 @@ usethis::use_data(mae_kim, overwrite = TRUE)
 
 ## - Kunderfranco et al. -
 # GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
-# Global LOESS normalized log ratios between the two colour arrays combined with flipped dye swap
+# Global LOESS normalized log ratios between the two colour arrays combined by mean with flipped dye swap
 gex.logr_kunderfranco <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE14206",
 	pckg = "limma",
