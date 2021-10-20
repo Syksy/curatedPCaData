@@ -23,7 +23,7 @@ An MAE object spanning 112 men with prostate cancer
 mae_icgcca
 }
 \description{
-MultiAssayExperiment object containing GEX from the Canadian ICGC cohort.
+MultiAssayExperiment object for the ICGC CA (Canadian) cohort.
 }
 \details{
 The data refers to samples from the ICGC Canadian Prostate Cancer Genome Network (ICGC-PRAD-CA)
