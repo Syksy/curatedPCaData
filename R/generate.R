@@ -342,7 +342,8 @@ generate_gex_geo <- function(
 		gz_files <- gz_files[grep(".gz", gz_files)]	
 		for (x in gz_files){GEOquery::gunzip(x)}
 		files <- gsub(".gz", "", gz_files)
-
+		# Files inlcude 'GPL887_old_annotation.txt', grep this away
+		files <- files[-grep("GPL887", files)]
 		if(pckg=="limma"){
 			# New code RAW data processed in limma
 			# Download GPL for probe identifier annotations
@@ -350,8 +351,20 @@ generate_gex_geo <- function(
 			# Extract annotations in ENSG####
 			gpl <- GEOquery::Table(slot(gpl, "gpls")[[1]])
 			# Read in raw data
-			gex <- limma::read.maimages(dir(".", "txt"), "agilent.median", green.only = FALSE)
-				
+			gex <- limma::read.maimages(files, "agilent", green.only = FALSE)
+			# Background correction
+			gex <- limma::backgroundCorrect(gex, method="normexp", offset=1)
+			# Normalize with global loess
+			gex <- limma::normalizeWithinArrays(gex, method="loess")
+			# Average expression
+			gex <- limma::avereps(gex, ID=gex$genes$ProbeName)
+			# For diagnostics (mean should be at M=0): > limma::plotMA(gex, array=1)
+			# Checking dye-swapped correlations (flipped log ration)
+			#> quantile(unlist(lapply(seq(from=1, to=ncol(gex$M), by=2), FUN=function(x) { cor(gex$M[,x], -gex$M[,x+1], method="spearman") })), probs=seq(0,1,by=.1))
+			#        0%        10%        20%        30%        40%        50%        60%        70%        80%        90%       100% 
+			#-0.2760865  0.2179309  0.2766869  0.3413689  0.3967651  0.4219280  0.4615115  0.5176102  0.5468144  0.5776107  0.6099629
+			# ...
+			
 		}else{
 			# Old code by FC - does not process RAW data
 			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE, getGPL = TRUE)
