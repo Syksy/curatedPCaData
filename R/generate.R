@@ -358,13 +358,21 @@ generate_gex_geo <- function(
 			gex <- limma::normalizeWithinArrays(gex, method="loess")
 			# Average expression
 			gex <- limma::avereps(gex, ID=gex$genes$ProbeName)
+			# Extract sample names (GSM#####)
+			samples <- unlist(lapply(strsplit(colnames(gex$M)[seq(from=1, to=ncol(gex$M), by=2)], "_"), FUN=function(x) { x[[1]][1] }))
 			# For diagnostics (mean should be at M=0): > limma::plotMA(gex, array=1)
 			# Checking dye-swapped correlations (flipped log ration)
 			#> quantile(unlist(lapply(seq(from=1, to=ncol(gex$M), by=2), FUN=function(x) { cor(gex$M[,x], -gex$M[,x+1], method="spearman") })), probs=seq(0,1,by=.1))
 			#        0%        10%        20%        30%        40%        50%        60%        70%        80%        90%       100% 
 			#-0.2760865  0.2179309  0.2766869  0.3413689  0.3967651  0.4219280  0.4615115  0.5176102  0.5468144  0.5776107  0.6099629
 			# ...
-			
+			# For now take the average of the normal and flipped dye swapped log ratios:
+			gex$M <- do.call("cbind", lapply(seq(from=1, to=ncol(gex$M), by=2), FUN=function(x) { apply(cbind(-gex$M[,x], gex$M[,x+1]), MARGIN=1, FUN=mean) }))
+			rownames(gex$M) <- gex$genes$ProbeName
+			colnames(gex$M) <- samples
+			gex <- do.call("rbind", by(gex$M, INDICES=gpl[match(rownames(gex$M),gpl$SPOT_ID),"GENE_SYMBOL"], FUN=collapse_fun))
+			# Keep only non-NA & non-"" rows
+			gex <- gex[!(rownames(gex) == '' | is.na(rownames(gex)), ]
 		}else{
 			# Old code by FC - does not process RAW data
 			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE, getGPL = TRUE)
