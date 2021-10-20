@@ -66,7 +66,7 @@ gex_capture_abida2 <- gex_capture_abida2[,c(209,1:208)]
 #gex_capture_abida2 <- gex_capture_abida2[-6860,]
 write.table(gex_capture_abida2,"gex_capture_abida.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex_polyA_abida.RData")
+load("data-raw/gex.relz_abida.RData")
 gex_polyA_abida2 <- gex_polyA_abida
 gex_polyA_abida2 <- as.data.frame(gex_polyA_abida2)
 #gex_polyA_abida2 <- gex_polyA_abida2[-9561,]
@@ -75,7 +75,7 @@ gex_polyA_abida2[,267]<-rownames(gex_polyA_abida2)
 rownames(gex_polyA_abida2) <- NULL
 gex_polyA_abida2 <- gex_polyA_abida2[,c(267,1:266)]
 #gex_polyA_abida2 <- gex_polyA_abida2[-6860,]
-write.table(gex_polyA_abida2,"gex_polyA_abida.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_polyA_abida2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_polyA_abida.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 load("data-raw/gex_icgcca.RData")
 gex_icgcca2 <- gex_icgcca
@@ -88,8 +88,8 @@ gex_icgcca2 <- gex_icgcca2[,c(214,1:213)]
 #gex_icgcca2 <- gex_icgcca2[-6860,]
 write.table(gex_icgcca2,"gex_icgcca.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex_friedrich.RData")
-gex_friedrich2 <- gex_friedrich
+load("data-raw/gex.logq_friedrich.RData")
+gex_friedrich2 <- gex.logq_friedrich
 gex_friedrich2 <- as.data.frame(gex_friedrich2)
 #gex_friedrich2 <- gex_friedrich2[-9561,]
 gex_friedrich2[,256]<-rownames(gex_friedrich2)
@@ -97,7 +97,7 @@ gex_friedrich2[,256]<-rownames(gex_friedrich2)
 rownames(gex_friedrich2) <- NULL
 gex_friedrich2 <- gex_friedrich2[,c(256,1:255)]
 #gex_friedrich2 <- gex_friedrich2[-6860,]
-write.table(gex_friedrich2,"/Users/varsha/Desktop/gex_cibersortx/gex_friedrich.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_friedrich2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_friedrich.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 
 
