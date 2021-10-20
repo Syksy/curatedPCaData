@@ -18,9 +18,9 @@ generate_gex_geo <- function(
 		"GSE2109",   # IGC
 		"GSE25136",  # Sun et al.
 		"GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
-		"GSE5132",    # True et al.
+		"GSE5132",   # True et al.
 		"GSE8218",   # Wang et al.
-		"GSE6956"   # Wallace et al.
+		"GSE6956"    # Wallace et al.
 		), 
 	# Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data		
 	pckg = "oligo", 
@@ -35,8 +35,8 @@ generate_gex_geo <- function(
 	...
 ){
 	if(!missing(file_directory)) here::set_here(file_directory)
-	# Supplementary files include the raw CEL files
-	if(missing(filter)){
+	# Supplementary files include the raw CEL files, possibility to use regular expression filter
+	if(missing(filter_regex)){
 		supfiles <- GEOquery::getGEOSuppFiles(geo_code)
 	}else{
 		supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex = filter_regex)
@@ -478,20 +478,25 @@ generate_gex_geo <- function(
 		# Make sure to function in a working directory where the are no other tarballs present
 		gz_files <- list.files()
 		gz_files <- gz_files[grep(".gz", gz_files)]
-	
+		# Subset to prostate cancer or normal patient samples
+		gz_files <- grep("PCA|PAN", gz_files, value=TRUE)
+		
 		if(pckg == "oligo"){
 			# Read CEL
 			gex <- oligo::read.celfiles(gz_files)
 			# Normalize background convolution of noise and signal using RMA (median-polish)
 			gex <- oligo::rma(gex)
+			# Extract annotated gene information 
+			Biobase::featureData(gex) <- oligo::getNetAffx(gex, "transcript")
+			genes <- unlist(lapply(Biobase::fData(gex)[,"geneassignment"], FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
 			# Extract expression matrix with probe ids
 			gex <- oligo::exprs(gex)
 			# Sanitize column names
-			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
-			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			#genes <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes$affy_hg_u133a),"hgnc_symbol"]
-			# Collapse probes that target the same gene
+			colnames(gex) <- unlist(lapply(colnames(gex), FUN=function(x) { grep("PCA|PAN", gsub(".CEL.gz", "", strsplit(x, "_")[[1]]), value=TRUE)} ))
+			# Map the probes to gene symbols and collapse
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
+			# Omit duplicated entries that are replicated columns
+			gex <- gex[,!duplicated(colnames(gex))]
 		}
 		else if(pcgk == "affy"){
 			# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
@@ -712,144 +717,163 @@ generate_gex_geo <- function(
 generate_cna_geo <- function(
 	geo_code = c(
 		"GSE54691",	# Hieronymus et al.
-		"GSE21035"	# Taylor et al.
+		"GSE21035"	# Taylor et al. (aCGH only GSE-subset)
 	),
 	file_directory, 
+	filter_regex,
 	cleanup = TRUE, 
 	...
 ){
-  if(!missing(file_directory)) here::set_here(file_directory)
-  # Supplementary files include the raw CEL files
-  #supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex='tar')
-  supfiles <- GEOquery::getGEOSuppFiles(geo_code)
-  
-  # Open the tarball(s)
-  #rownames(supfiles) <- shQuote(rownames(supfiles))
-  utils::untar(tarfile = rownames(supfiles))
-  
-  ##
-  # same rCGH pipeline applied to datasets:
-  # Taylor et al.
-  # Hieronymus et al.
-  ##
-  if(geo_code %in% c("GSE21035", "GSE54691")){
-  	# For now, the package 'rCGH' has to be available in the workspace,
-	# otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
-  	# Read in Agilent 2-color data
-  	cna <- lapply(list.files(geo_code), FUN = function(z) { 
-  		try({
-  			cat("\n\nProcessing: ",z,"\n\n") 
-  			# Taylor et al. (and & Hieronymus et al.)
-  			#if(geo_code %in% c("GSE21035", "GSE54691")){
-			rCGH::readAgilent(z, genome = "hg38", sampleName = gsub(".txt.gz", "", z)) 
-  			# Hieronymus et al. - any reason to use hg19 since the locations are known?
-  			#}else if(geo_code == "GSE54691"){
-  			#	rCGH::readAgilent(z, genome = "hg19", sampleName = gsub(".txt.gz", "", z)) 
-  			#}
-  		})
-  	})
-	#> list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")]
-	#[1] "GSM525755.txt" "GSM525763.txt"
-	# Some files appear broken in Taylor et al; missing columns?
-	
-	# Not all files can always be successfully processed
-	tryerr <- which(lapply(cna, FUN = class) == "try-error")
-	if(length(tryerr)>0){
-		# Warn of try-errors
-		warning(paste("Error while processing files: ", 
-			# Collapse file names
-			paste(list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")], collapse=", ")
-		))
-		# Omit data that could not be succcessfully read
-		cna <- cna[-tryerr]
+	if(!missing(file_directory)) here::set_here(file_directory)
+	# Supplementary files include the raw CEL files, possibility to use regular expression filter
+	if(missing(filter_regex)){
+		supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+	}else{
+		supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex = filter_regex)
 	}
-	
-	# Signal adjustments
-	cna <- lapply(cna, FUN = function(z){
-		try({
-			rCGH::adjustSignal(z) 
+  
+	# Open the tarball(s)
+	utils::untar(tarfile = rownames(supfiles))
+  
+	##
+	# same rCGH pipeline applied to datasets:
+	# Taylor et al. : GPL4091	Agilent-014693 Human Genome CGH Microarray 244A (Feature number version)
+	# Hieronymus et al. : GPL8737	Agilent-021529 Human CGH Whole Genome Microarray 1x1M (G4447A) (Probe Name version)
+	##
+	if(geo_code %in% c("GSE21035", "GSE54691")){
+		# Extract sample names in Taylor et al. and format to PCA####, for this need to access GSM-level metadata
+		if(geo_code == "GSE21035"){
+			# Access metadata based on GSM####
+			samplenames <- lapply(gsub(".txt.gz", "", grep("GSM", list.files(), value=TRUE)), FUN=function(x){ GEOquery::getGEO(x, GSEMatrix=FALSE, getGPL=FALSE)@header$title })
+			# Parse to just PCA#### from the title, splitting on whitespace character ' '
+			samplenames <- unlist(lapply(samplenames, FUN=function(x) { strsplit(x, " ")[[1]][3] }))
+			# File names as they are
+			filenames <- grep("GSM", list.files(), value=TRUE)
+			# Omit cell lines
+			filenames <- filenames[grep("PCA", samplenames)]
+			samplenames <- samplenames[grep("PCA", samplenames)]
+		}
+		# Hieronymus et al names based on GSM####
+		else{
+			# File names end in suffix .txt.gz, sample names have this string replaced
+			samplenames <- gsub(".txt.gz", "", grep("GSM", list.files(), value=TRUE))
+			filenames <- grep("GSM", list.files(), value=TRUE)
+		}
+		# For now, the package 'rCGH' has to be available in the workspace,
+		require(rCGH)
+		# otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
+		# Read in Agilent 2-color data
+		cna <- lapply(1:length(filenames), FUN = function(i) { 
+			try({
+				cat("\nProcessing: ",filenames[i],"\n") 
+				rCGH::readAgilent(filenames[i], genome = "hg38", sampleName = samplenames[i]) 
+			})
 		})
-	})
-	# Segmentation
-	cna <- lapply(cna, FUN = function(z){
-		try({
-			rCGH::segmentCGH(z) 
+		#> list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")]
+		#[1] "GSM525755.txt" "GSM525763.txt"
+		# Some files appear broken in Taylor et al; missing columns?
+
+		# Not all files can always be successfully processed
+		tryerr <- which(lapply(cna, FUN = class) == "try-error")
+		if(length(tryerr)>0){
+			# Warn of try-errors
+			warning(paste("Error while processing files: ", 
+				# Collapse file names
+				paste(list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")], collapse=", ")
+			))
+			# Omit data that could not be succcessfully read
+			cna <- cna[-tryerr]
+		}
+
+		# Signal adjustments
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::adjustSignal(z) 
+			})
 		})
-	})
-	# EM-algorithm normalization
-	cna <- lapply(cna, FUN = function(z){
-		try({
-			rCGH::EMnormalize(z) 
+		# Segmentation
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::segmentCGH(z) 
+			})
 		})
-	})
-	# Remove additional suffixes from sample names
-	cna <- lapply(cna, FUN = function(z){ 
-		try({
-			if(!"rCGH-Agilent" %in% class(z)){
-				stop("This function is intended for Agilent aCGH analyzed with rCGH R Package (class \'rCGH-Agilent\')")		
-			}
-			# e.g. transform "GSM525575.txt|.gz" -> "GSM525575"
-			z@info["sampleName"] <- gsub(pattern = ".gz|.txt", replacement = "", z@info["fileName"])
-			z
-		}) 
-	})
-	# Save sample names separately (of 'length(cna)')
-	samplenames <- unlist(lapply(cna, FUN = function(z) { z@info["sampleName"] }))
-	# Reformat samplenames in Hieronymus
-	if(geo_code =="GSE54691"){
-		# Pick GSM-part in GSM###_PCA###
-		samplenames <- unlist(lapply(samplenames, FUN=function(z) { strsplit(z, "_")[[1]][[1]]}))
-	}	
-	# Get segmentation table
-	cna <- lapply(cna, FUN = function(z){
-		try({
-			rCGH::getSegTable(z)
+		# EM-algorithm normalization
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::EMnormalize(z) 
+			})
 		})
-	})
-	# Get per-gene table
-	cna <- lapply(cna, FUN = function(z){
-		try({
-			rCGH::byGeneTable(z)
+		## Samplenames picked prior to this
+		# Remove additional suffixes from sample names
+		#cna <- lapply(cna, FUN = function(z){ 
+		#	try({
+		#		if(!"rCGH-Agilent" %in% class(z)){
+		#			stop("This function is intended for Agilent aCGH analyzed with rCGH R Package (class \'rCGH-Agilent\')")		
+		#		}
+		#		# e.g. transform "GSM525575.txt|.gz" -> "GSM525575"
+		#		z@info["sampleName"] <- gsub(pattern = ".gz|.txt", replacement = "", z@info["fileName"])
+		#		z
+		#	}) 
+		#})
+		# Save sample names separately (of 'length(cna)')
+		#samplenames <- unlist(lapply(cna, FUN = function(z) { z@info["sampleName"] }))
+		# Reformat samplenames in Hieronymus
+		if(geo_code =="GSE54691"){
+			# Pick GSM-part in GSM###_PCA###
+			samplenames <- unlist(lapply(samplenames, FUN=function(z) { strsplit(z, "_")[[1]][[1]]}))
+		}	
+		# Get segmentation table
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::getSegTable(z)
+			})
 		})
-	})
-	# Extract all unique gene symbols present over all samples
-	genenames <- unique(unlist(lapply(cna, FUN = function(z) { z$symbol })))
-	# Bind genes to rows, name samples afterwards
-	cna <- do.call("cbind", lapply(cna, FUN = function(z){
-		# Return CNAs as Log2Ratios
-		z[match(genenames, z$symbol), "Log2Ratio"]
-	}))
-	# Name rows and columns to genes and sample names, respectively
-	rownames(cna) <- genenames
-	colnames(cna) <- samplenames
-	# CNA matrix is ready
+		# Get per-gene table
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::byGeneTable(z)
+			})
+		})
+		# Extract all unique gene symbols present over all samples
+		genenames <- unique(unlist(lapply(cna, FUN = function(z) { z$symbol })))
+		# Bind genes to rows, name samples afterwards
+		cna <- do.call("cbind", lapply(cna, FUN = function(z){
+			# Return CNAs as Log2Ratios
+			z[match(genenames, z$symbol), "Log2Ratio"]
+		}))
+		# Name rows and columns to genes and sample names, respectively
+		rownames(cna) <- genenames
+		colnames(cna) <- samplenames
+		# CNA matrix is ready
+		cna <- as.matrix(cna)
+		cna <- cna[!is.na(rownames(cna)),]
+	}
+	# Other (placeholder) - should probably place this in the beginning so it 
+	# doesnt try to run through all the beginning steps 
+	else if(geo_code == ""){
+		stop("Must supply a GEO id")
+	}
+	# Unknown
+	else{
+		stop("Unknown GEO id, see allowed parameter values for geo_code")
+	}
+
+	# Remove downloaded files
+	# TODO: Make sure appropriate permissions exist for removing files
+	if(cleanup){
+		# First GEO download
+		file.remove(rownames(supfiles))
+		# TODO: Tarballs
+		#file.remove(gz_files)
+		# Remove empty folder
+		file.remove(paste0(here::here(), "/", geo_code))
+	}
+	# Sort genes to alphabetic order for consistency
+	cna <- cna[order(rownames(cna)),]
+	# Return numeric matrix
 	cna <- as.matrix(cna)
-  }
-  # Other (placeholder) - should probably place this in the beginning so it 
-  # doesnt try to run through all the beginning steps 
-  else if(geo_code == ""){
-    stop("Must supply a GEO id")
-  }
-  # Unknown
-  else{
-    stop("Unknown GEO id, see allowed parameter values for geo_code")
-  }
-
-  # Remove downloaded files
-  # TODO: Make sure appropriate permissions exist for removing files
-  if(cleanup){
-    # First GEO download
-    file.remove(rownames(supfiles))
-    # TODO: Tarballs
-    #file.remove(gz_files)
-    # Remove empty folder
-    file.remove(paste0(here::here(), "/", geo_code))
-  }
-  # Return numeric matrix
-  cna <- as.matrix(cna)
-  cna <- cna %>% janitor::remove_empty(which = c("rows", "cols"))
-  cna
-
+	cna <- cna %>% janitor::remove_empty(which = c("rows", "cols"))
+	cna
 }
 
 

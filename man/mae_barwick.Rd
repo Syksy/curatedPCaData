@@ -3,11 +3,11 @@
 \docType{data}
 \name{mae_barwick}
 \alias{mae_barwick}
-\title{Barwick MAE-object}
+\title{Barwick et al. MAE-object}
 \format{
 A MAE object spanning prostate cancer samples.
 \describe{
-  \item{gex.logq}{matrix with 482 rows and 146 columns, for the gene expression data}
+  \item{gex.logq}{matrix with 482 rows and 146 columns, for the log-quantile normalized gene expression data}
 }
 }
 \source{
@@ -17,7 +17,7 @@ A MAE object spanning prostate cancer samples.
 mae_barwick
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex), together with immune deconvolution data.
+MultiAssayExperiment object for Barwick et al.
 }
 \details{
 NA

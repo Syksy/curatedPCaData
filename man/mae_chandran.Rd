@@ -8,10 +8,6 @@
 An MAE object spanning 112 men with prostate cancer
 \describe{
   \item{gex}{matrix with 15681 rows and 503 columns, for the gene expression data}
-  \item{xcell}{matrix with 39 rows and 503 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 503 columns, of epic based deconvolution data}
-  \item{mcp}{matrix with 11 rows and 503 columns, of mpc-counter based deconvolution data}
-  \item{scores}{matrix with 2 rows and 503 columns, genomic risk and AR scores}
 }
 }
 \source{
@@ -21,7 +17,7 @@ An MAE object spanning 112 men with prostate cancer
 mae_chandran
 }
 \description{
-MultiAssayExperiment object containing GEX from Chandran et al., Yu et al. in GSE6919
+MultiAssayExperiment object for Chandran et al., Yu et al.
 }
 \details{
 .
