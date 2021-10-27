@@ -20,7 +20,8 @@ generate_gex_geo <- function(
 		"GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
 		"GSE5132",   # True et al.
 		"GSE8218",   # Wang et al.
-		"GSE6956"    # Wallace et al.
+		"GSE6956",   # Wallace et al.
+		"GSE157548"  # Weiner et al.
 		), 
 	# Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data		
 	pckg = "oligo", 
@@ -366,13 +367,16 @@ generate_gex_geo <- function(
 			#        0%        10%        20%        30%        40%        50%        60%        70%        80%        90%       100% 
 			#-0.2760865  0.2179309  0.2766869  0.3413689  0.3967651  0.4219280  0.4615115  0.5176102  0.5468144  0.5776107  0.6099629
 			# ...
+			# Visual diagnostics 
+			# 
+			
 			# For now take the average of the normal and flipped dye swapped log ratios:
 			gex$M <- do.call("cbind", lapply(seq(from=1, to=ncol(gex$M), by=2), FUN=function(x) { apply(cbind(-gex$M[,x], gex$M[,x+1]), MARGIN=1, FUN=mean) }))
 			rownames(gex$M) <- gex$genes$ProbeName
 			colnames(gex$M) <- samples
 			gex <- do.call("rbind", by(gex$M, INDICES=gpl[match(rownames(gex$M),gpl$SPOT_ID),"GENE_SYMBOL"], FUN=collapse_fun))
 			# Keep only non-NA & non-"" rows
-			gex <- gex[!(rownames(gex) == '' | is.na(rownames(gex)), ]
+			gex <- gex[!(rownames(gex) == '' | is.na(rownames(gex))), ]
 		}else{
 			# Old code by FC - does not process RAW data
 			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE, getGPL = TRUE)
@@ -714,6 +718,11 @@ generate_gex_geo <- function(
 			row.names(gex) <- compare_names$new_names
 		}
 	}
+  	
+  	# Weiner et al.
+  	else if(geo_code == "GSE157548"){
+  		
+  	}
   	
 	# Unknown GEO id (throw an error) -----
 	else{
