@@ -732,6 +732,7 @@ generate_gex_geo <- function(
 			gex <- oligo::read.celfiles(gz_files)
 			# Too large for a high-end desktop: 
 			#> Error: cannot allocate vector of size 40.9 Gb 		
+
   		}
   		
   	}
