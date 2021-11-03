@@ -431,7 +431,7 @@ save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 
 # Create and save MAE object
 mae_wallace <- curatedPCaData:::create_mae(study_name = "wallace")
-usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
+7usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 
 ## - end Wallace et al. -
 
@@ -456,7 +456,16 @@ usethis::use_data(mae_wang, overwrite = TRUE)
 # - end Wang et al. -
 
 
+# - Weiner et al. -
+# GEX: GPL5175	[HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [transcript (gene) version]
+gex.rma_weiner <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE8218",
+	pckg = "oligo"
+)
+save(gex.rma_weiner, file="data-raw/gex.rma_weiner.RData")
 
+
+# - end Weiner et al. -
 
 
 
