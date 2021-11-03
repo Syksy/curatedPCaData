@@ -721,6 +721,18 @@ generate_gex_geo <- function(
   	
   	# Weiner et al.
   	else if(geo_code == "GSE157548"){
+		# Open the tarball(s)
+		utils::untar(tarfile = rownames(supfiles))
+
+		# Make sure to function in a working directory where the are no other tarballs present
+		gz_files <- list.files()
+		gz_files <- gz_files[grep(".gz", gz_files)]
+  		if(pckg == "oligo"){
+			# Read CEL
+			gex <- oligo::read.celfiles(gz_files)
+			# Too large for a high-end desktop: 
+			#> Error: cannot allocate vector of size 40.9 Gb 		
+  		}
   		
   	}
   	
