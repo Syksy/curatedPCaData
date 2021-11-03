@@ -459,11 +459,14 @@ usethis::use_data(mae_wang, overwrite = TRUE)
 # - Weiner et al. -
 # GEX: GPL5175	[HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [transcript (gene) version]
 gex.rma_weiner <- curatedPCaData:::generate_gex_geo(
-	geo_code = "GSE8218",
+	geo_code = "GSE157548",
 	pckg = "oligo"
 )
 save(gex.rma_weiner, file="data-raw/gex.rma_weiner.RData")
 
+# Create MAE object
+mae_weiner <- curatedPCaData:::create_mae(study_name = "weiner")
+usethis::use_data(mae_weiner, overwrite = TRUE)
 
 # - end Weiner et al. -
 

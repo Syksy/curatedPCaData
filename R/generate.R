@@ -534,7 +534,7 @@ generate_gex_geo <- function(
 			gex <- oligo::exprs(gex)
 			# Sanitize column names
 			colnames(gex) <- unlist(lapply(colnames(gex), FUN=function(x) { grep("PCA|PAN", gsub(".CEL.gz", "", strsplit(x, "_")[[1]]), value=TRUE)} ))
-			# Map the probes to gene symbols and collapse
+			# Collapse the mapped probes under the same gene name
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 			# Omit duplicated entries that are replicated columns
 			gex <- gex[,!duplicated(colnames(gex))]
@@ -729,12 +729,27 @@ generate_gex_geo <- function(
 		gz_files <- gz_files[grep(".gz", gz_files)]
   		if(pckg == "oligo"){
 			# Read CEL
-			gex <- oligo::read.celfiles(gz_files)
+			#gex <- oligo::read.celfiles(gz_files)
 			# Too large for a high-end desktop: 
 			#> Error: cannot allocate vector of size 40.9 Gb 		
-
-  		}
-  		
+			#gex <- oligo::read.celfiles(gz_files[1:400])
+			gex <- oligo::read.celfiles(gz_files)
+			# Normalize background convolution of noise and signal using RMA (median-polish)
+			gex <- oligo::rma(gex)
+			# Extract annotated gene information 
+			Biobase::featureData(gex) <- oligo::getNetAffx(gex, "transcript")
+			genes <- unlist(lapply(Biobase::fData(gex)[,"geneassignment"], FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
+			# Extract expression matrix with probe ids
+			gex <- oligo::exprs(gex)
+			# Sanitize column names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
+			# Collapse the mapped probes under the same gene name
+			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
+			# Sanitize sample names to only contain GSM####
+			colnames(gex) <- unlist(lapply(colnames(gex), FUN=function(x){ strsplit(x, "_")[[1]][1] }))
+			# Store intensities up to 6th decimal point to conserve space
+			gex <- round(gex, 6)
+  		}  		
   	}
   	
 	# Unknown GEO id (throw an error) -----
