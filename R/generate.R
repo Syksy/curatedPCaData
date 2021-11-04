@@ -43,7 +43,7 @@ generate_gex_geo <- function(
 		supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex = filter_regex)
 	}
 
-	if(!pckg %in% c("oligo", "affy", "limma")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo', 'affy' or 'limma'):", pckg))
+	if(!pckg %in% c("oligo", "affy", "limma", "other")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo', 'affy', 'limma', or 'other'):", pckg))
 
 
   
@@ -98,79 +98,100 @@ generate_gex_geo <- function(
   	else if(geo_code == "GSE6919"){
   		# Open the tarball(s)
   		utils::untar(tarfile = rownames(supfiles))
-  
-  		# Three different platforms were used; need to read them separately with ReadAffy
-  
-  		gse <- GEOquery::getGEO("GSE6919", GSEMatrix = TRUE)
-  		# ...
-  		# GSM152839 - GSM152855 : U95C
-  		# GSM152856 - GSM152880 : U95Av2
-  		# GSM152881 - GSM152905 : U95B
-  		# GSM152906 - GSM152930 : U95C
-  		# GSM152931 - GSM152991 : U95Av2
-  		# GSM152992 - GSM153053 : U95B
-  		# GSM153054 - GSM153114	: U95C
-  		# ...
-  
-  		# Read Affymetrix MA
-  
-  		# U95Av2
-  		GPL_Av2 <- rownames(Biobase::pData(gse[[1]]))
-  		Chandran_Av2 <- affy::ReadAffy(filenames=paste0(GPL_Av2, ".CEL.gz"))
-  
-  		# In U95B non-valid files, i.e.
-  		# Error: the following are not valid files:
-  		#   GSM152822.CEL.gz
-  
-  		# U95B
-  		broken <- c("GSM152822")
-  		GPL_U95B <- rownames(Biobase::pData(gse[[2]]))
-  		GPL_U95B <- GPL_U95B[-which(GPL_U95B %in% broken)]
-  		Chandran_U95B <- affy::ReadAffy(filenames=paste0(GPL_U95B, ".CEL.gz"))
-  
-  		# U95C
-  		Chandran_U95C <- affy::ReadAffy(filenames=paste0(GPL_U95C, ".CEL.gz"))
-  		GPL_U95C <- rownames(Biobase::pData(gse[[3]]))
-  
-  		# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
-  		gex_Av2 <- affy::rma(Chandran_Av2)
-  		gex_U95B <- affy::rma(Chandran_U95B)
-  		gex_U95C <- affy::rma(Chandran_U95C)
-  
-  		# Annotation dbs mapping manufacturer ids to gene symbols
-  		map_Av2 <- as.list(hgu95av2.db::hgu95av2SYMBOL[AnnotationDbi::mappedkeys(hgu95av2.db::hgu95av2SYMBOL)])
-  		map_U95B <- as.list(hgu95b.db::hgu95bSYMBOL[AnnotationDbi::mappedkeys(hgu95b.db::hgu95bSYMBOL)])
-  		map_U95C <- as.list(hgu95c.db::hgu95cSYMBOL[AnnotationDbi::mappedkeys(hgu95c.db::hgu95cSYMBOL)])
-  		# Extract mapped gene symbols per row (not all have a gene annotation)
-  		mapped_Av2 <- c(map_Av2[match(rownames(gex_Av2), names(map_Av2))])
-  		mapped_Av2 <- unlist(lapply(mapped_Av2, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
-  		mapped_U95B <- c(map_U95B[match(rownames(gex_U95B), names(map_U95B))])
-  		mapped_U95B <- unlist(lapply(mapped_U95B, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
-  		mapped_U95C <- c(map_U95C[match(rownames(gex_U95C), names(map_U95C))])
-  		mapped_U95C <- unlist(lapply(mapped_U95C, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
-  
-  		# Collapse per gene symbols over probes	
-  		gex_Av2_mapped <- do.call("rbind", (by(as.matrix(gex_Av2), INDICES=mapped_Av2, FUN=function(x){
-  			apply(x, MARGIN=2, FUN=collapse_fun)
-  		})))
-  		gex_U95B_mapped <- do.call("rbind", (by(as.matrix(gex_U95B), INDICES=mapped_U95B, FUN=function(x){
-  			apply(x, MARGIN=2, FUN=collapse_fun)
-  		})))
-  		gex_U95C_mapped <- do.call("rbind", (by(as.matrix(gex_U95C), INDICES=mapped_U95C, FUN=function(x){
-  			apply(x, MARGIN=2, FUN=collapse_fun)
-  		})))
-  
-  		# Merge according to common gene symbols
-  		tmp <- merge(gex_Av2_mapped, gex_U95B_mapped, by="row.names", all.x=TRUE, all.y=TRUE)
-  		rownames(tmp) <- tmp[,1]
-  		tmp <- tmp[,-1]
-  		tmp <- merge(tmp, gex_U95C_mapped, by="row.names", all.x=TRUE, all.y=TRUE)
-  		rownames(tmp) <- tmp[,1]
-  		tmp <- tmp[,-1]
-  		colnames(tmp) <- gsub(".CEL.gz", "", colnames(tmp))
-  		tmp <- tmp[order(rownames(tmp)),]
-  
-  		gex <- tmp
+		gz_files <- list.files()
+		gz_files <- gz_files[grep(".gz", gz_files)]	
+  	
+  		if(pckg == "affy"){
+  			# Download the GSE that contains indicators which samples were run on the most modern chip type Av2
+			gse <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE)
+			gpl_av2 <- rownames(Biobase::pData(gse[[1]]))
+			#gex <- affy::ReadAffy(filenames=paste0(gpl_av2, ".CEL.gz"))
+			gex <- oligo::read.celfiles(paste0(gpl_av2, ".CEL.gz"))
+			# Normalize background convolution of noise and signal using RMA (median-polish)
+			gex <- oligo::rma(gex)
+			# Extract expression matrix with probe ids
+			gex <- oligo::exprs(gex)
+			# Sanitize column names
+			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
+			# > Biobase::featureData(gex) <- oligo::getNetAffx(gex, "transcript")
+			# Error in oligo::getNetAffx(gex, "transcript") : 
+			#  NetAffx Annotation not available in 'pd.hg.u95av2'. Consider using 'biomaRt'.
+			
+  		}
+  		else if(pckg == "affy"){
+  			## DEPRECATED ANNOTATION OVER CHIP TYPES
+			# Three different platforms were used; need to read them separately with ReadAffy  
+			gse <- GEOquery::getGEO("GSE6919", GSEMatrix = TRUE)
+			# ...
+			# GSM152839 - GSM152855 : U95C
+			# GSM152856 - GSM152880 : U95Av2
+			# GSM152881 - GSM152905 : U95B
+			# GSM152906 - GSM152930 : U95C
+			# GSM152931 - GSM152991 : U95Av2
+			# GSM152992 - GSM153053 : U95B
+			# GSM153054 - GSM153114	: U95C
+			# ...
+
+			# Read Affymetrix MA
+
+			# U95Av2
+			GPL_Av2 <- rownames(Biobase::pData(gse[[1]]))
+			Chandran_Av2 <- affy::ReadAffy(filenames=paste0(GPL_Av2, ".CEL.gz"))
+
+			# In U95B non-valid files, i.e.
+			# Error: the following are not valid files:
+			#   GSM152822.CEL.gz
+
+			# U95B
+			broken <- c("GSM152822")
+			GPL_U95B <- rownames(Biobase::pData(gse[[2]]))
+			GPL_U95B <- GPL_U95B[-which(GPL_U95B %in% broken)]
+			Chandran_U95B <- affy::ReadAffy(filenames=paste0(GPL_U95B, ".CEL.gz"))
+
+			# U95C
+			Chandran_U95C <- affy::ReadAffy(filenames=paste0(GPL_U95C, ".CEL.gz"))
+			GPL_U95C <- rownames(Biobase::pData(gse[[3]]))
+
+			# Careful not to mask 'rma' from 'affy' by the 'rma' from 'oligo'
+			gex_Av2 <- affy::rma(Chandran_Av2)
+			gex_U95B <- affy::rma(Chandran_U95B)
+			gex_U95C <- affy::rma(Chandran_U95C)
+
+			# Annotation dbs mapping manufacturer ids to gene symbols
+			map_Av2 <- as.list(hgu95av2.db::hgu95av2SYMBOL[AnnotationDbi::mappedkeys(hgu95av2.db::hgu95av2SYMBOL)])
+			map_U95B <- as.list(hgu95b.db::hgu95bSYMBOL[AnnotationDbi::mappedkeys(hgu95b.db::hgu95bSYMBOL)])
+			map_U95C <- as.list(hgu95c.db::hgu95cSYMBOL[AnnotationDbi::mappedkeys(hgu95c.db::hgu95cSYMBOL)])
+			# Extract mapped gene symbols per row (not all have a gene annotation)
+			mapped_Av2 <- c(map_Av2[match(rownames(gex_Av2), names(map_Av2))])
+			mapped_Av2 <- unlist(lapply(mapped_Av2, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
+			mapped_U95B <- c(map_U95B[match(rownames(gex_U95B), names(map_U95B))])
+			mapped_U95B <- unlist(lapply(mapped_U95B, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
+			mapped_U95C <- c(map_U95C[match(rownames(gex_U95C), names(map_U95C))])
+			mapped_U95C <- unlist(lapply(mapped_U95C, FUN=function(x) ifelse(is.null(x[1]), NA, x[1])))
+
+			# Collapse per gene symbols over probes	
+			gex_Av2_mapped <- do.call("rbind", (by(as.matrix(gex_Av2), INDICES=mapped_Av2, FUN=function(x){
+				apply(x, MARGIN=2, FUN=collapse_fun)
+			})))
+			gex_U95B_mapped <- do.call("rbind", (by(as.matrix(gex_U95B), INDICES=mapped_U95B, FUN=function(x){
+				apply(x, MARGIN=2, FUN=collapse_fun)
+			})))
+			gex_U95C_mapped <- do.call("rbind", (by(as.matrix(gex_U95C), INDICES=mapped_U95C, FUN=function(x){
+				apply(x, MARGIN=2, FUN=collapse_fun)
+			})))
+
+			# Merge according to common gene symbols
+			tmp <- merge(gex_Av2_mapped, gex_U95B_mapped, by="row.names", all.x=TRUE, all.y=TRUE)
+			rownames(tmp) <- tmp[,1]
+			tmp <- tmp[,-1]
+			tmp <- merge(tmp, gex_U95C_mapped, by="row.names", all.x=TRUE, all.y=TRUE)
+			rownames(tmp) <- tmp[,1]
+			tmp <- tmp[,-1]
+			colnames(tmp) <- gsub(".CEL.gz", "", colnames(tmp))
+			tmp <- tmp[order(rownames(tmp)),]
+
+			gex <- tmp
+		}
   	}
   	
 	# Friedrich et al. 
