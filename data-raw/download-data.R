@@ -136,7 +136,9 @@ usethis::use_data(mae_barwick, overwrite = TRUE)
 # - GPL93	[HG_U95C] Affymetrix Human Genome U95C Array
 # - GPL8300	[HG_U95Av2] Affymetrix Human Genome U95 Version 2 Array
 gex_chandran <- curatedPCaData::generate_gex_geo(
-	geo_code = "GSE6919"
+	geo_code = "GSE6919",
+	pckg = "oligo",
+	filter_regex = "_RAW"
 )
 save(gex_chandran, file="data-raw/gex_chandran.RData")
 
