@@ -101,7 +101,7 @@ generate_gex_geo <- function(
 		gz_files <- list.files()
 		gz_files <- gz_files[grep(".gz", gz_files)]	
   	
-  		if(pckg == "affy"){
+  		if(pckg == "oligo"){
   			# Download the GSE that contains indicators which samples were run on the most modern chip type Av2
 			gse <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE)
 			gpl_av2 <- rownames(Biobase::pData(gse[[1]]))
@@ -116,7 +116,11 @@ generate_gex_geo <- function(
 			# > Biobase::featureData(gex) <- oligo::getNetAffx(gex, "transcript")
 			# Error in oligo::getNetAffx(gex, "transcript") : 
 			#  NetAffx Annotation not available in 'pd.hg.u95av2'. Consider using 'biomaRt'.
-			
+			# Using hgu95av2.db directly:
+			map <- AnnotationDbi::select(hgu95av2.db::hgu95av2.db, rownames(gex), c("SYMBOL"))
+			map <- map[match(rownames(gex),map$PROBEID),]
+			# Collapsing gene expression for a given symbol:
+			gex <- do.call("rbind", by(gex, INDICES=map$SYMBOL, FUN=collapse_fun))
   		}
   		else if(pckg == "affy"){
   			## DEPRECATED ANNOTATION OVER CHIP TYPES
