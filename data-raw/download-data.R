@@ -135,12 +135,12 @@ usethis::use_data(mae_barwick, overwrite = TRUE)
 # - GPL92	[HG_U95B] Affymetrix Human Genome U95B Array
 # - GPL93	[HG_U95C] Affymetrix Human Genome U95C Array
 # - GPL8300	[HG_U95Av2] Affymetrix Human Genome U95 Version 2 Array
-gex_chandran <- curatedPCaData::generate_gex_geo(
+gex.rma_chandran <- curatedPCaData::generate_gex_geo(
 	geo_code = "GSE6919",
 	pckg = "oligo",
 	filter_regex = "_RAW"
 )
-save(gex_chandran, file="data-raw/gex_chandran.RData")
+save(gex.rma_chandran, file="data-raw/gex.rma_chandran.RData")
 
 # Create and save MAE object
 mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
