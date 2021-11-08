@@ -411,7 +411,8 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 gex_true <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE5132",
 	pckg = "oligo",
-	cleanup = FALSE
+	cleanup = FALSE,
+	filter_regex = "_RAW"
 )
 save(gex_true, file = "data-raw/gex_true.RData")
 
