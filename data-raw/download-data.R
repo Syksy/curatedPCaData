@@ -183,8 +183,11 @@ usethis::use_data(mae_hieronymus, internal = FALSE, overwrite = TRUE)
 ## - ICGC datasets -
 
 # PRAD-CA
-gex_icgcca <- curatedPCaData:::generate_icgc("PRAD_CA", "gex")
-save(gex_icgcca, file="data-raw/gex_icgcca.RData")
+# Affymetrix Human Gene 1.0 ST
+gex.rma_icgcca <- curatedPCaData:::generate_icgc("PRAD_CA", "gex")
+save(gex.rma_icgcca, file="data-raw/gex.rma_icgcca.RData")
+
+# TODO: Copy-number alterations, mutations (available in ICGC)
 
 # Create MAE object
 mae_icgcca <- curatedPCaData:::create_mae(study_name = "icgcca")
@@ -199,6 +202,8 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 # TODO: MAE
 
 # PRAD-UK
+
+# Only contains CNA data
 
 ## - end ICGC datatasets -
 
@@ -407,14 +412,14 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 ## - True et al. -
 # GEX:
 #	GPL3834	FHCRC Human Prostate PEDB cDNA Array v4
-#	GPL3836	FHCRC Human Prostate PEDB cDNA Array v3
-gex_true <- curatedPCaData:::generate_gex_geo(
+#	GPL3836	FHCRC Human Prostate PEDB cDNA Array v3 (-> single sample only! 11th, GSM115769)
+gex.logr_true <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE5132",
-	pckg = "oligo",
+	pckg = "limma",
 	cleanup = FALSE,
 	filter_regex = "_RAW"
 )
-save(gex_true, file = "data-raw/gex_true.RData")
+save(gex.logr_true, file = "data-raw/gex.logr_true.RData")
 
 # Create MAE object
 mae_true <- curatedPCaData:::create_mae(study_name = "true")
@@ -434,7 +439,7 @@ save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 
 # Create and save MAE object
 mae_wallace <- curatedPCaData:::create_mae(study_name = "wallace")
-7usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
+usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 
 ## - end Wallace et al. -
 
