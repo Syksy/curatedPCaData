@@ -302,20 +302,6 @@ mae_tcga <- c(curatedPCaData::mae_tcga, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_tcga, overwrite = TRUE,internal = TRUE)
 
-#Mutation
-prad <- curatedTCGAData(
-  "PRAD", c("CN*", "Mutation"), dry.run = FALSE
-)
-ragex <- prad[["PRAD_Mutation-20160128"]]
-colnames(ragex)<-gsub("(01).*","\\1",colnames(ragex))
-colnames(ragex)<-gsub("-", ".", colnames(ragex))
-#ragex@assays@partitioning@NAMES[43]="TCGA.EJ.5501.01"
-colnames(ragex)[43]="TCGA.EJ.5501.01"
-mae_tcga[["mut_ragex"]]<-NULL
-mae_tcga <- c(mae_tcga, mut_ragex = ragex)
-
-usethis::use_data(mae_tcga, overwrite = TRUE)
-prad_grange<-as(mae_tcga[["mut_ragex"]], "GRangesList")
 
 
 # Wang et al.
@@ -1160,4 +1146,94 @@ library(ABSOLUTE)
 TCGA_seg <- read.table("..\\temp\\prad_tcga_pub_segments.seg", sep="\t", header=TRUE)
 # ABSOLUTE requires pre-specified column names "Chromosome", "Start", "End", "Num_Probes", and "Segment_Mean";
 # replacing default column names with these
+
+##################################################################################################################
+#Mutation - Raggedexp
+##################################################################################################################
+
+#TCGA
+prad <- curatedTCGAData(
+  "PRAD", c("CN*", "Mutation"), dry.run = FALSE
+)
+ragex <- prad[["PRAD_Mutation-20160128"]]
+colnames(ragex)<-gsub("(01).*","\\1",colnames(ragex))
+colnames(ragex)<-gsub("-", ".", colnames(ragex))
+#ragex@assays@partitioning@NAMES[43]="TCGA.EJ.5501.01"
+colnames(ragex)[43]="TCGA.EJ.5501.01"
+mae_tcga[["mut_ragex"]]<-NULL
+mae_tcga <- c(mae_tcga, mut_ragex = ragex)
+
+usethis::use_data(mae_tcga, overwrite = TRUE)
+#prad_grange<-as(mae_tcga[["mut_ragex"]], "GRangesList")
+
+#Ren et al
+
+ren_mut<-rio::import("/Users/varsha/Downloads/prad_eururol_2017/data_mutations_extended.txt")
+#ren_mut=cgdsr::getMutationData(mycgds, caseList="prad_eururol_2017_sequenced")
+ren_mut2<-ren_mut[,c(5:46,1:4)]
+colnames(ren_mut2)[1:4]=c("seqnames","start","end","strand")
+
+X<-split(ren_mut2, ren_mut2$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_ren=RaggedExperiment::RaggedExperiment(b)
+
+mae_ren <- c(mae_ren, mut_ragex = ragexp_ren)
+usethis::use_data(mae_ren, overwrite = TRUE)
+
+#as(ragexp_ren, "GRangesList")
+
+#Barbieri et al
+
+barbieri_mut<-rio::import("/Users/varsha/Downloads/prad_broad/data_mutations_extended.txt")
+barbieri_mut2<-barbieri_mut[,c(5:113,1:4)]
+colnames(barbieri_mut2)[1:4]=c("seqnames","start","end","strand")
+barbieri_mut2$Tumor_Sample_Barcode<-gsub("-", ".", barbieri_mut2$Tumor_Sample_Barcode, fixed=TRUE)
+
+X<-split(barbieri_mut2, barbieri_mut2$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_barbieri=RaggedExperiment::RaggedExperiment(b)
+
+mae_barbieri <- c(mae_barbieri, mut_ragex = ragexp_barbieri)
+usethis::use_data(mae_barbieri, overwrite = TRUE)
+
+#Abida et al
+
+abida_mut<-rio::import("/Users/varsha/Downloads/prad_su2c_2019/data_mutations_extended.txt")
+abida_mut2<-abida_mut[,c(5:46,1:4)]
+colnames(abida_mut2)[1:4]=c("seqnames","start","end","strand")
+abida_mut2$Tumor_Sample_Barcode<-gsub("-", ".", abida_mut2$Tumor_Sample_Barcode, fixed=TRUE)
+
+X<-split(abida_mut2, abida_mut2$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_abida=RaggedExperiment::RaggedExperiment(b)
+
+mae_abida <- c(mae_abida, mut_ragex = ragexp_abida)
+usethis::use_data(mae_abida, overwrite = TRUE)
+
+#Taylor et al
+
+taylor_mut<-rio::import("/Users/varsha/Downloads/prad_mskcc/data_mutations_extended.txt")
+taylor_mut2<-taylor_mut[,c(5:160,1:4)]
+colnames(taylor_mut2)[1:4]=c("seqnames","start","end","strand")
+same_barcode=taylor_mut2[grepl("PCA", taylor_mut2$Tumor_Sample_Barcode),]
+X<-split(same_barcode, same_barcode$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_taylor=RaggedExperiment::RaggedExperiment(b)
+
+mae_taylor <- c(mae_taylor, mut_ragex = ragexp_taylor)
+usethis::use_data(mae_taylor, overwrite = TRUE)
+
+
+
+
+
+
 
