@@ -602,6 +602,8 @@ generate_gex_geo <- function(
 	}
 
 	# True et al.
+	# GPL3834	FHCRC Human Prostate PEDB cDNA Array
+	# GPL3836	FHCRC Human Prostate PEDB cDNA Array v3 (-> single sample only! 11th, GSM115769)
 	else if(geo_code == "GSE5132"){
 		# Open the tarball(s)
 		utils::untar(tarfile = rownames(supfiles))
@@ -609,8 +611,73 @@ generate_gex_geo <- function(
 		gz_files <- list.files()
 		gz_files <- gz_files[grep(".gz", gz_files)]
 
-		if(pckg == ""){
-		
+		if(pckg == "limma"){
+			# Extract latest GPL annotations from GEO
+			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = FALSE, getGPL = TRUE)
+			# Add meta Block column for mapping between GPL and genes read in with limma::read.maimages; GEO's GPL-files do not share identifiers with raw .gpr files
+			gpl@gpls[[1]]@dataTable@table$Block <- rep(1:32, each=484)
+			#gpl@gpls[[1]]@dataTable@table$Block <- rep(1:32, times=484)
+			gpl@gpls[[2]]@dataTable@table$Block <- rep(1:32, each=420)			
+			#gpl@gpls[[2]]@dataTable@table$Block <- rep(1:32, times=420)
+			# Construct ID with xx_yy_zz where xx = Block, yy = Column, zz = Row (includes leading zeroes)
+			gpl@gpls[[1]]@dataTable@table$ID <- paste(sprintf("%02d", gpl@gpls[[1]]@dataTable@table$Block), sprintf("%02d", gpl@gpls[[1]]@dataTable@table$Column), sprintf("%02d", gpl@gpls[[1]]@dataTable@table$Row), sep="_")
+			gpl@gpls[[2]]@dataTable@table$ID <- paste(sprintf("%02d", gpl@gpls[[2]]@dataTable@table$Block), sprintf("%02d", gpl@gpls[[2]]@dataTable@table$Column), sprintf("%02d", gpl@gpls[[2]]@dataTable@table$Row), sep="_")
+			# Gunzip .gpr files and read them via limma
+			lapply(gz_files, FUN=GEOquery::gunzip)
+			# FHCRC Human Prostate PEDB cDNA Array v3 vs v4
+			#gpl_1 <- paste0(c("GSM115759", paste0("GSM11576", 0:8)), ".gpr")
+			#gpl_2 <- grep(".gpr", list.files(), value=TRUE)
+			#gpl_2 <- gpl_2[which(!gpl_2 %in% gpl_1)]
+			gpl_1 <- grep(".gpr", list.files(), value=TRUE)
+			gpl_1 <- gpl_1[!gpl_1 == "GSM115769.gpr"]
+			gpl_2 <- "GSM115769.gpr"
+			#gex <- limma::read.maimages(grep(".gpr", list.files(), value=TRUE), source="genepix")
+			gex1 <- limma::read.maimages(gpl_1, source="genepix")
+			gex2 <- limma::read.maimages(gpl_2, source="genepix")
+			# Platform 2 has IDs in different format
+			#gex2$genes$ID2 <- gex2$genes$ID
+			#gex2$genes$ID <- paste(sprintf("%02d", gex2$genes$Block), sprintf("%02d", gex2$genes$Column), sprintf("%02d", gex2$genes$Row), sep="_")
+			# Sort GPL data tables to be in same order as the read MA images
+			#gpl@gpls[[1]]@dataTable@table <- gpl@gpls[[1]]@dataTable@table[match(gpl@gpls[[1]]@dataTable@table$ID, gex1$genes$ID),]
+			#gpl@gpls[[2]]@dataTable@table <- gpl@gpls[[2]]@dataTable@table[match(gpl@gpls[[2]]@dataTable@table$ID, gex2$genes$ID),]
+			# Assign gene names to the metadata
+			gex1$genes$genename <- gpl@gpls[[1]]@dataTable@table[,"Related Gene Symbol"]
+			gex2$genes$genename <- gpl@gpls[[2]]@dataTable@table[,"Hugo"]
+			# Background correction separately for both platforms
+			gex1 <- limma::backgroundCorrect(gex1, method="normexp", offset=1)
+			gex2 <- limma::backgroundCorrect(gex2, method="normexp", offset=1)
+			# Normalize with global loess
+			gex1 <- limma::normalizeWithinArrays(gex1, method="loess")
+			gex2 <- limma::normalizeWithinArrays(gex2, method="loess")
+			# Average expression
+			gex1 <- limma::avereps(gex1)
+			gex2 <- limma::avereps(gex2)
+			# Collapse for gene names
+			gex1 <- do.call("rbind", by(as.matrix(gex1), INDICES=gex1$genes$genename, FUN=collapse_fun))
+			#gex2 <- do.call("rbind", by(as.matrix(gex2), INDICES=gex2$genes$genename, FUN=collapse_fun))
+			name <- colnames(gex2) # Store single sample name which would be dropped otherwise
+			gex2 <- as.matrix(by(as.matrix(gex2), INDICES=gex2$genes$genename, FUN=collapse_fun))
+			colnames(gex2) <- name
+			# Omit unannotated collapsed probes
+			gex1 <- gex1[which(!rownames(gex1) %in% c("", NA)),,drop=FALSE]
+			gex2 <- gex2[which(!rownames(gex2) %in% c("", NA)),,drop=FALSE]
+			# Median impute the genes not measured in v3 in order to retain full dimension of 3615 of v4 array instead of downtoning to 2727 present in v3
+			# This imputation happens only for a single paired sample:
+			gex2 <- gex2[match(rownames(gex1),rownames(gex2)),,drop=FALSE]
+			rownames(gex2) <- rownames(gex1)
+			for(r in which(is.na(gex2))){
+				gex2[r,] <- median(gex1[r,])
+			}
+			# Merge data based on intersecting genes
+			# 11th sample is a special case for v3 array and must be placed separately
+			gex <- cbind(gex1[,1:10], GSM115769 = gex2, gex1[,11:31])			
+			
+			# Channels were swapped in samples #3,4, 7 and 8, 12, 14, 15, 17, 18, 20, 22, 23, 24, 26, 30, 31
+			# In these tumor vs normal log ratio is inverted
+			for(i in c(3,4,7,8,12,14,15,17,18,20,22,23,24,26,30,31)){
+				gex[,i] <- -gex[,i]
+			}
+			# 11th sample (GSM115769) was oddly processed with v3 array, while samples 1-10, 12-32 were processed with v4 array
 		}
 		else if(pckg == "other"){
 			# As mentioned in the clinical section this data has been split in two datasest, one of 31 samples and one of just 1 sample
