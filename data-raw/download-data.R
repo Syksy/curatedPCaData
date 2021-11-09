@@ -135,10 +135,12 @@ usethis::use_data(mae_barwick, overwrite = TRUE)
 # - GPL92	[HG_U95B] Affymetrix Human Genome U95B Array
 # - GPL93	[HG_U95C] Affymetrix Human Genome U95C Array
 # - GPL8300	[HG_U95Av2] Affymetrix Human Genome U95 Version 2 Array
-gex_chandran <- curatedPCaData::generate_gex_geo(
-	geo_code = "GSE6919"
+gex.rma_chandran <- curatedPCaData::generate_gex_geo(
+	geo_code = "GSE6919",
+	pckg = "oligo",
+	filter_regex = "_RAW"
 )
-save(gex_chandran, file="data-raw/gex_chandran.RData")
+save(gex.rma_chandran, file="data-raw/gex.rma_chandran.RData")
 
 # Create and save MAE object
 mae_chandran <- curatedPCaData:::create_mae(study_name = "chandran")
@@ -431,7 +433,7 @@ save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 
 # Create and save MAE object
 mae_wallace <- curatedPCaData:::create_mae(study_name = "wallace")
-usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
+7usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 
 ## - end Wallace et al. -
 
@@ -456,7 +458,19 @@ usethis::use_data(mae_wang, overwrite = TRUE)
 # - end Wang et al. -
 
 
+# - Weiner et al. -
+# GEX: GPL5175	[HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [transcript (gene) version]
+gex.rma_weiner <- curatedPCaData:::generate_gex_geo(
+	geo_code = "GSE157548",
+	pckg = "oligo"
+)
+save(gex.rma_weiner, file="data-raw/gex.rma_weiner.RData")
 
+# Create MAE object
+mae_weiner <- curatedPCaData:::create_mae(study_name = "weiner")
+usethis::use_data(mae_weiner, overwrite = TRUE)
+
+# - end Weiner et al. -
 
 
 
