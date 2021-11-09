@@ -36,7 +36,7 @@ cibersort_kunderfranco <- t(cibersort_kunderfranco)
 colnames(cibersort_kunderfranco)<- cibersort_kunderfranco[1,]
 cibersort_kunderfranco<-cibersort_kunderfranco[-1,]
 cibersort_kunderfranco<-as.matrix(cibersort_kunderfranco)
-save(cibersort_kunderfranco, file="data-raw/cibersort_kunderfranco.RData")
+#save(cibersort_kunderfranco, file="data-raw/cibersort_kunderfranco.RData")
 mae_kunderfranco <- c(mae_kunderfranco, cibersort = cibersort_kunderfranco)
 #mae_kunderfranco <- create_mae(study_name = "kunderfranco")
 usethis::use_data(mae_kunderfranco, overwrite = TRUE)
@@ -48,7 +48,7 @@ cibersort_sun <- t(cibersort_sun)
 colnames(cibersort_sun)<- cibersort_sun[1,]
 cibersort_sun<-cibersort_sun[-1,]
 cibersort_sun<-as.matrix(cibersort_sun)
-save(cibersort_sun, file="data-raw/cibersort_sun.RData")
+#save(cibersort_sun, file="data-raw/cibersort_sun.RData")
 mae_sun <- c(mae_sun, cibersort = cibersort_sun)
 #mae_sun <- create_mae(study_name = "sun")
 usethis::use_data(mae_sun, overwrite = TRUE)
@@ -60,7 +60,7 @@ cibersort_icgcca <- t(cibersort_icgcca)
 colnames(cibersort_icgcca)<- cibersort_icgcca[1,]
 cibersort_icgcca<-cibersort_icgcca[-1,]
 cibersort_icgcca<-as.matrix(cibersort_icgcca)
-save(cibersort_icgcca, file="data-raw/cibersort_icgcca.RData")
+#save(cibersort_icgcca, file="data-raw/cibersort_icgcca.RData")
 mae_icgcca <- c(mae_icgcca, cibersort = cibersort_icgcca)
 #mae_icgcca <- create_mae(study_name = "icgcca")
 usethis::use_data(mae_icgcca, overwrite = TRUE)
@@ -68,13 +68,13 @@ usethis::use_data(mae_icgcca, overwrite = TRUE)
 # Abida et al.
 
 
-cibersort_polyA_abida<-rio::import("data-raw/CIBERSORTx_polyA_abida_Results.csv")
+cibersort_polyA_abida<-rio::import("data-raw/CIBERSORTx_abida_Results.csv")
 cibersort_polyA_abida <- t(cibersort_polyA_abida)
 colnames(cibersort_polyA_abida)<- cibersort_polyA_abida[1,]
 cibersort_polyA_abida<-cibersort_polyA_abida[-1,]
 cibersort_polyA_abida<-as.matrix(cibersort_polyA_abida)
-save(cibersort_polyA_abida, file="data-raw/cibersort_polyA_abida.RData")
-mae_abida <- c(mae_abida, cibersort_polyA = cibersort_polyA_abida)
+#save(cibersort_polyA_abida, file="data-raw/cibersort_polyA_abida.RData")
+mae_abida <- c(mae_abida, cibersort = cibersort_polyA_abida)
 #mae_capture_abida <- create_mae(study_name = "capture_abida")
 usethis::use_data(mae_abida, overwrite = TRUE)
 
@@ -85,7 +85,7 @@ cibersort_wang <- t(cibersort_wang)
 colnames(cibersort_wang)<- cibersort_wang[1,]
 cibersort_wang<-cibersort_wang[-1,]
 cibersort_wang<-as.matrix(cibersort_wang)
-save(cibersort_wang, file="data-raw/cibersort_wang.RData")
+#save(cibersort_wang, file="data-raw/cibersort_wang.RData")
 mae_wang <- c(mae_wang, cibersort = cibersort_wang)
 #mae_wang <- create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
@@ -97,7 +97,7 @@ cibersort_kim <- t(cibersort_kim)
 colnames(cibersort_kim)<- cibersort_kim[1,]
 cibersort_kim<-cibersort_kim[-1,]
 cibersort_kim<-as.matrix(cibersort_kim)
-save(cibersort_kim, file="data-raw/cibersort_kim.RData")
+#save(cibersort_kim, file="data-raw/cibersort_kim.RData")
 mae_kim <- c(mae_kim, cibersort = cibersort_kim)
 #mae_kim <- create_mae(study_name = "kim")
 usethis::use_data(mae_kim, overwrite = TRUE)
@@ -109,10 +109,10 @@ cibersort_barbieri <- t(cibersort_barbieri)
 colnames(cibersort_barbieri)<- cibersort_barbieri[1,]
 cibersort_barbieri<-cibersort_barbieri[-1,]
 cibersort_barbieri<-as.matrix(cibersort_barbieri)
-save(cibersort_barbieri, file="data-raw/cibersort_barbieri.RData")
+#save(cibersort_barbieri, file="data-raw/cibersort_barbieri.RData")
 mae_barbieri <- c(mae_barbieri, cibersort = cibersort_barbieri)
 #mae_barbieri <- create_mae(study_name = "barbieri")
-usethis::use_data(mae_barbieri, overwrite = TRUE,internal=TRUE)
+usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Ren et al.
 
@@ -121,7 +121,7 @@ cibersort_ren <- t(cibersort_ren)
 colnames(cibersort_ren)<- cibersort_ren[1,]
 cibersort_ren<-cibersort_ren[-1,]
 cibersort_ren<-as.matrix(cibersort_ren)
-save(cibersort_ren, file="data-raw/cibersort_ren.RData")
+#save(cibersort_ren, file="data-raw/cibersort_ren.RData")
 mae_ren <- c(mae_ren, cibersort = cibersort_ren)
 #mae_ren <- create_mae(study_name = "ren")
 usethis::use_data(mae_ren, overwrite = TRUE)
@@ -133,7 +133,7 @@ cibersort_wallace <- t(cibersort_wallace)
 colnames(cibersort_wallace)<- cibersort_wallace[1,]
 cibersort_wallace<-cibersort_wallace[-1,]
 cibersort_wallace<-as.matrix(cibersort_wallace)
-save(cibersort_wallace, file="data-raw/cibersort_wallace.RData")
+#save(cibersort_wallace, file="data-raw/cibersort_wallace.RData")
 mae_wallace <- c(mae_wallace, cibersort = cibersort_wallace)
 #mae_wallace <- create_mae(study_name = "wallace")
 usethis::use_data(mae_wallace, overwrite = TRUE)
@@ -145,7 +145,7 @@ cibersort_igc <- t(cibersort_igc)
 colnames(cibersort_igc)<- cibersort_igc[1,]
 cibersort_igc<-cibersort_igc[-1,]
 cibersort_igc<-as.matrix(cibersort_igc)
-save(cibersort_igc, file="data-raw/cibersort_igc.RData")
+#save(cibersort_igc, file="data-raw/cibersort_igc.RData")
 mae_igc <- c(mae_igc, cibersort = cibersort_igc)
 #mae_igc <- create_mae(study_name = "igc")
 usethis::use_data(mae_igc, overwrite = TRUE)
@@ -157,7 +157,7 @@ cibersort_chandran <- t(cibersort_chandran)
 colnames(cibersort_chandran)<- cibersort_chandran[1,]
 cibersort_chandran<-cibersort_chandran[-1,]
 cibersort_chandran<-as.matrix(cibersort_chandran)
-save(cibersort_chandran, file="data-raw/cibersort_chandran.RData")
+#save(cibersort_chandran, file="data-raw/cibersort_chandran.RData")
 mae_chandran <- c(mae_chandran, cibersort = cibersort_chandran)
 #mae_chandran <- create_mae(study_name = "chandran")
 usethis::use_data(mae_chandran, overwrite = TRUE)
@@ -169,7 +169,7 @@ cibersort_friedrich <- t(cibersort_friedrich)
 colnames(cibersort_friedrich)<- cibersort_friedrich[1,]
 cibersort_friedrich<-cibersort_friedrich[-1,]
 cibersort_friedrich<-as.matrix(cibersort_friedrich)
-save(cibersort_friedrich, file="data-raw/cibersort_friedrich.RData")
+#save(cibersort_friedrich, file="data-raw/cibersort_friedrich.RData")
 mae_friedrich <- c(mae_friedrich, cibersort = cibersort_friedrich)
 #mae_friedrich <- create_mae(study_name = "friedrich")
 usethis::use_data(mae_friedrich, overwrite = TRUE)
@@ -301,6 +301,8 @@ tmp <- as.matrix(tmp[,-1])
 mae_tcga <- c(curatedPCaData::mae_tcga, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_tcga, overwrite = TRUE,internal = TRUE)
+
+
 
 # Wang et al.
 
@@ -1144,4 +1146,94 @@ library(ABSOLUTE)
 TCGA_seg <- read.table("..\\temp\\prad_tcga_pub_segments.seg", sep="\t", header=TRUE)
 # ABSOLUTE requires pre-specified column names "Chromosome", "Start", "End", "Num_Probes", and "Segment_Mean";
 # replacing default column names with these
+
+##################################################################################################################
+#Mutation - Raggedexp
+##################################################################################################################
+
+#TCGA
+prad <- curatedTCGAData(
+  "PRAD", c("CN*", "Mutation"), dry.run = FALSE
+)
+ragex <- prad[["PRAD_Mutation-20160128"]]
+colnames(ragex)<-gsub("(01).*","\\1",colnames(ragex))
+colnames(ragex)<-gsub("-", ".", colnames(ragex))
+#ragex@assays@partitioning@NAMES[43]="TCGA.EJ.5501.01"
+colnames(ragex)[43]="TCGA.EJ.5501.01"
+mae_tcga[["mut_ragex"]]<-NULL
+mae_tcga <- c(mae_tcga, mut_ragex = ragex)
+
+usethis::use_data(mae_tcga, overwrite = TRUE)
+#prad_grange<-as(mae_tcga[["mut_ragex"]], "GRangesList")
+
+#Ren et al
+
+ren_mut<-rio::import("/Users/varsha/Downloads/prad_eururol_2017/data_mutations_extended.txt")
+#ren_mut=cgdsr::getMutationData(mycgds, caseList="prad_eururol_2017_sequenced")
+ren_mut2<-ren_mut[,c(5:46,1:4)]
+colnames(ren_mut2)[1:4]=c("seqnames","start","end","strand")
+
+X<-split(ren_mut2, ren_mut2$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_ren=RaggedExperiment::RaggedExperiment(b)
+
+mae_ren <- c(mae_ren, mut_ragex = ragexp_ren)
+usethis::use_data(mae_ren, overwrite = TRUE)
+
+#as(ragexp_ren, "GRangesList")
+
+#Barbieri et al
+
+barbieri_mut<-rio::import("/Users/varsha/Downloads/prad_broad/data_mutations_extended.txt")
+barbieri_mut2<-barbieri_mut[,c(5:113,1:4)]
+colnames(barbieri_mut2)[1:4]=c("seqnames","start","end","strand")
+barbieri_mut2$Tumor_Sample_Barcode<-gsub("-", ".", barbieri_mut2$Tumor_Sample_Barcode, fixed=TRUE)
+
+X<-split(barbieri_mut2, barbieri_mut2$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_barbieri=RaggedExperiment::RaggedExperiment(b)
+
+mae_barbieri <- c(mae_barbieri, mut_ragex = ragexp_barbieri)
+usethis::use_data(mae_barbieri, overwrite = TRUE)
+
+#Abida et al
+
+abida_mut<-rio::import("/Users/varsha/Downloads/prad_su2c_2019/data_mutations_extended.txt")
+abida_mut2<-abida_mut[,c(5:46,1:4)]
+colnames(abida_mut2)[1:4]=c("seqnames","start","end","strand")
+abida_mut2$Tumor_Sample_Barcode<-gsub("-", ".", abida_mut2$Tumor_Sample_Barcode, fixed=TRUE)
+
+X<-split(abida_mut2, abida_mut2$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_abida=RaggedExperiment::RaggedExperiment(b)
+
+mae_abida <- c(mae_abida, mut_ragex = ragexp_abida)
+usethis::use_data(mae_abida, overwrite = TRUE)
+
+#Taylor et al
+
+taylor_mut<-rio::import("/Users/varsha/Downloads/prad_mskcc/data_mutations_extended.txt")
+taylor_mut2<-taylor_mut[,c(5:160,1:4)]
+colnames(taylor_mut2)[1:4]=c("seqnames","start","end","strand")
+same_barcode=taylor_mut2[grepl("PCA", taylor_mut2$Tumor_Sample_Barcode),]
+X<-split(same_barcode, same_barcode$Tumor_Sample_Barcode)
+
+b=GRangesList(X)
+
+ragexp_taylor=RaggedExperiment::RaggedExperiment(b)
+
+mae_taylor <- c(mae_taylor, mut_ragex = ragexp_taylor)
+usethis::use_data(mae_taylor, overwrite = TRUE)
+
+
+
+
+
+
 
