@@ -37,6 +37,7 @@ colnames(cibersort_kunderfranco)<- cibersort_kunderfranco[1,]
 cibersort_kunderfranco<-cibersort_kunderfranco[-1,]
 cibersort_kunderfranco<-as.matrix(cibersort_kunderfranco)
 #save(cibersort_kunderfranco, file="data-raw/cibersort_kunderfranco.RData")
+mae_kunderfranco[["cibersort"]]=NULL
 mae_kunderfranco <- c(mae_kunderfranco, cibersort = cibersort_kunderfranco)
 #mae_kunderfranco <- create_mae(study_name = "kunderfranco")
 usethis::use_data(mae_kunderfranco, overwrite = TRUE)
@@ -48,6 +49,7 @@ cibersort_sun <- t(cibersort_sun)
 colnames(cibersort_sun)<- cibersort_sun[1,]
 cibersort_sun<-cibersort_sun[-1,]
 cibersort_sun<-as.matrix(cibersort_sun)
+mae_sun[["cibersort"]]=NULL
 #save(cibersort_sun, file="data-raw/cibersort_sun.RData")
 mae_sun <- c(mae_sun, cibersort = cibersort_sun)
 #mae_sun <- create_mae(study_name = "sun")
@@ -85,10 +87,24 @@ cibersort_wang <- t(cibersort_wang)
 colnames(cibersort_wang)<- cibersort_wang[1,]
 cibersort_wang<-cibersort_wang[-1,]
 cibersort_wang<-as.matrix(cibersort_wang)
+mae_wang[["cibersort"]]=NULL
 #save(cibersort_wang, file="data-raw/cibersort_wang.RData")
 mae_wang <- c(mae_wang, cibersort = cibersort_wang)
 #mae_wang <- create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
+
+# taylor et al.
+
+cibersort_taylor<-rio::import("data-raw/CIBERSORTx_taylor_Results.csv")
+cibersort_taylor <- t(cibersort_taylor)
+colnames(cibersort_taylor)<- cibersort_taylor[1,]
+cibersort_taylor<-cibersort_taylor[-1,]
+cibersort_taylor<-as.matrix(cibersort_taylor)
+mae_taylor[["cibersort"]]=NULL
+#save(cibersort_taylor, file="data-raw/cibersort_taylor.RData")
+mae_taylor <- c(mae_taylor, cibersort = cibersort_taylor)
+#mae_taylor <- create_mae(study_name = "taylor")
+usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # Kim et al.
 
@@ -97,6 +113,7 @@ cibersort_kim <- t(cibersort_kim)
 colnames(cibersort_kim)<- cibersort_kim[1,]
 cibersort_kim<-cibersort_kim[-1,]
 cibersort_kim<-as.matrix(cibersort_kim)
+mae_kim[["cibersort"]]=NULL
 #save(cibersort_kim, file="data-raw/cibersort_kim.RData")
 mae_kim <- c(mae_kim, cibersort = cibersort_kim)
 #mae_kim <- create_mae(study_name = "kim")
@@ -109,6 +126,7 @@ cibersort_barbieri <- t(cibersort_barbieri)
 colnames(cibersort_barbieri)<- cibersort_barbieri[1,]
 cibersort_barbieri<-cibersort_barbieri[-1,]
 cibersort_barbieri<-as.matrix(cibersort_barbieri)
+mae_barbieri[["cibersort"]]=NULL
 #save(cibersort_barbieri, file="data-raw/cibersort_barbieri.RData")
 mae_barbieri <- c(mae_barbieri, cibersort = cibersort_barbieri)
 #mae_barbieri <- create_mae(study_name = "barbieri")
@@ -121,6 +139,7 @@ cibersort_ren <- t(cibersort_ren)
 colnames(cibersort_ren)<- cibersort_ren[1,]
 cibersort_ren<-cibersort_ren[-1,]
 cibersort_ren<-as.matrix(cibersort_ren)
+mae_ren[["cibersort"]]=NULL
 #save(cibersort_ren, file="data-raw/cibersort_ren.RData")
 mae_ren <- c(mae_ren, cibersort = cibersort_ren)
 #mae_ren <- create_mae(study_name = "ren")
@@ -133,6 +152,7 @@ cibersort_wallace <- t(cibersort_wallace)
 colnames(cibersort_wallace)<- cibersort_wallace[1,]
 cibersort_wallace<-cibersort_wallace[-1,]
 cibersort_wallace<-as.matrix(cibersort_wallace)
+mae_wallace[["cibersort"]]=NULL
 #save(cibersort_wallace, file="data-raw/cibersort_wallace.RData")
 mae_wallace <- c(mae_wallace, cibersort = cibersort_wallace)
 #mae_wallace <- create_mae(study_name = "wallace")
@@ -1172,12 +1192,15 @@ ren_mut<-rio::import("/Users/varsha/Downloads/prad_eururol_2017/data_mutations_e
 #ren_mut=cgdsr::getMutationData(mycgds, caseList="prad_eururol_2017_sequenced")
 ren_mut2<-ren_mut[,c(5:46,1:4)]
 colnames(ren_mut2)[1:4]=c("seqnames","start","end","strand")
+rownames(ren_mut2)=ren_mut2$Hugo_Symbol
+
 
 X<-split(ren_mut2, ren_mut2$Tumor_Sample_Barcode)
 
 b=GRangesList(X)
 
 ragexp_ren=RaggedExperiment::RaggedExperiment(b)
+rownames(ragexp_ren)<-NULL
 
 mae_ren <- c(mae_ren, mut_ragex = ragexp_ren)
 usethis::use_data(mae_ren, overwrite = TRUE)
