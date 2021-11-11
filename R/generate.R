@@ -917,7 +917,10 @@ generate_cna_geo <- function(
 	# Taylor et al. : GPL4091	Agilent-014693 Human Genome CGH Microarray 244A (Feature number version)
 	# Hieronymus et al. : GPL8737	Agilent-021529 Human CGH Whole Genome Microarray 1x1M (G4447A) (Probe Name version)
 	##
-	if(geo_code %in% c("GSE21035", "GSE54691")){
+	if(geo_code %in% c(
+		"GSE21035", # Taylor
+		"GSE54691" # Hieronymus
+	)){
 		# Extract sample names in Taylor et al. and format to PCA####, for this need to access GSM-level metadata
 		if(geo_code == "GSE21035"){
 			# Access metadata based on GSM####
