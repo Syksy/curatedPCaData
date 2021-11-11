@@ -13,6 +13,7 @@
 
 
 ### Alphabetic ordering of datasets:
+## - Abida et al.
 ## - Baca et al.
 ## - Barbieri et al.
 ## - Barwick et al. 
@@ -451,11 +452,12 @@ gex.rma_wang <- curatedPCaData:::generate_gex_geo(
 	pckg = "oligo"
 )
 save(gex.rma_wang, file="data-raw/gex.rma_wang.RData")
-#CNA
-cna_wang <- curatedPCaData:::generate_cna_geo(
-  geo_code = "GSE8218"
-)
-save(cna_wang, file="data-raw/cna_wang.RData")
+
+##CNA
+#cna_wang <- curatedPCaData:::generate_cna_geo(
+#  geo_code = "GSE8218"
+#)
+#save(cna_wang, file="data-raw/cna_wang.RData")
 
 # Create MAE object
 mae_wang <- curatedPCaData:::create_mae(study_name = "wang")
