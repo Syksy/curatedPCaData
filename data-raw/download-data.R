@@ -349,6 +349,10 @@ usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
 
 
 ## - TCGA - 
+library(magrittr) # For pipe
+library(osfr) # For functions such as osf_retrieve_file
+source("./data-raw/format_osf_data.R") # For format_osf_data-function
+
 #Download OSF GEX data
 osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
 R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
@@ -366,16 +370,34 @@ osf <- osf_t[-1,]
 
 colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
 colnames(osf) <- paste(colnames(osf), '01', sep='.')
-usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
-save(osf, file="data-raw/osfgex_tcga.RData")
+#usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
+## TDL: No need for saving intermediate files
+#save(osf, file="data-raw/osfgex_tcga.RData")
 
-load("data-raw/osfgex_tcga.RData")
+#load("data-raw/osfgex_tcga.RData")
 osf<-as.matrix(osf)
 storage.mode(osf) <- "numeric"
 osf_gex_rounded<-round(osf,digits = 1)
-save(osf_gex_rounded, file="data-raw/osfgex_rounded_tcga.RData")
-unlink("data-raw/osfgex_tcga.RData")
-file.rename("data-raw/osfgex_rounded_tcga.RData","data-raw/gex_tcga.RData")
+# Alphebetic gene name ordering
+osf_gex_rounded <- osf_gex_rounded[order(rownames(osf_gex_rounded)),]
+
+#save(osf_gex_rounded, file="data-raw/osfgex_rounded_tcga.RData")
+#unlink("data-raw/osfgex_tcga.RData")
+
+## TDL:
+# Subset to TCGA provisional (N=333), which had gone through QC for pathology review and RNA degradation
+# Extract cBioPortal's provisional subset IDs
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+cases <- cgdsr::getCaseLists(mycgds, "prad_tcga_pub")
+cases <- gsub("-", ".", strsplit(cases[which(cases$case_list_id=="prad_tcga_pub_sequenced"),]$case_ids, " ")[[1]])
+
+# Intersect to IDs found from the TCGA provisional in cBioPortal (original N=333, N=322 found processed in OSF)
+osf_gex_rounded <- osf_gex_rounded[,intersect(cases, colnames(osf_gex_rounded))]
+save(osf_gex_rounded, file="./data-raw/gex.tpm_tcga.RData")
+
+#file.rename("data-raw/osfgex_rounded_tcga.RData","data-raw/gex.tpm_tcga.RData")
+
+
 
 # GEX
 # gex_tcga <- curatedPCaData:::generate_cbioportal(
