@@ -197,7 +197,7 @@ gex_weiner2 <- gex_weiner2[,c(839,1:838)]
 #gex_weiner2 <- gex_weiner2[-9534,]
 write.table(gex_weiner2,"gex_weiner.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex_true.RData")
+load("data-raw/gex.logr_true.RData")
 gex_true2 <- gex_true
 #gex_true2 <- as.data.frame(gex_true2)
 gex_true2<- gex_true2[complete.cases(gex_true2), ]
