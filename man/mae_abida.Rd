@@ -5,7 +5,12 @@
 \alias{mae_abida}
 \title{Abida et al. MAE-object}
 \format{
-
+A MAE object spanning prostate cancer samples.
+\describe{
+   \item{cna.gistic}{a matrix with 20264 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
+   \item{gex.relz}{a matrix with 18823 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
+   \item{mut}{matrix with 30357 rows and 444 columns, genetic aberration calls.}
+}
 }
 \source{
 \url{https://www.cbioportal.org/study/summary?id=prad_su2c_2019}
