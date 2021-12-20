@@ -1219,15 +1219,28 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 #Taylor et al
 
 taylor_mut<-rio::import("/Users/varsha/Downloads/prad_mskcc/data_mutations_extended.txt")
-taylor_mut2<-taylor_mut[,c(5:160,1:4)]
-colnames(taylor_mut2)[1:4]=c("seqnames","start","end","strand")
-same_barcode=taylor_mut2[grepl("PCA", taylor_mut2$Tumor_Sample_Barcode),]
+#taylor_mut2<-taylor_mut[,c(17,5:16,18:160,1:4)]
+#taylor_mut2<-taylor_mut[,c(5:160,1:4)]
+colnames(taylor_mut)[5:8]=c("seqnames","start","end","strand")
+
+same_barcode=taylor_mut[grepl("PCA", taylor_mut$Tumor_Sample_Barcode),]
+
+
 X<-split(same_barcode, same_barcode$Tumor_Sample_Barcode)
+count=1:43
+for (i in count){
+  rownames(X[[i]])=make.names(X[[i]]$Hugo_Symbol, unique=TRUE)
+  
+}
 
 b=GRangesList(X)
 
 ragexp_taylor=RaggedExperiment::RaggedExperiment(b)
+I=sparseAssay(ragexp_taylor,"Variant_Classification")
+I[rownames(I)=="ABL2"]
 
+#rownames(ragexp_taylor)=same_barcode$SYMBOL
+mae_taylor[["mut_ragex"]]<-NULL
 mae_taylor <- c(mae_taylor, mut_ragex = ragexp_taylor)
 usethis::use_data(mae_taylor, overwrite = TRUE)
 
