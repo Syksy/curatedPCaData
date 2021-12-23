@@ -37,7 +37,6 @@ colnames(cibersort_kunderfranco)<- cibersort_kunderfranco[1,]
 cibersort_kunderfranco<-cibersort_kunderfranco[-1,]
 cibersort_kunderfranco<-as.matrix(cibersort_kunderfranco)
 #save(cibersort_kunderfranco, file="data-raw/cibersort_kunderfranco.RData")
-mae_kunderfranco[["cibersort"]]=NULL
 mae_kunderfranco <- c(mae_kunderfranco, cibersort = cibersort_kunderfranco)
 #mae_kunderfranco <- create_mae(study_name = "kunderfranco")
 usethis::use_data(mae_kunderfranco, overwrite = TRUE)
@@ -49,7 +48,6 @@ cibersort_sun <- t(cibersort_sun)
 colnames(cibersort_sun)<- cibersort_sun[1,]
 cibersort_sun<-cibersort_sun[-1,]
 cibersort_sun<-as.matrix(cibersort_sun)
-mae_sun[["cibersort"]]=NULL
 #save(cibersort_sun, file="data-raw/cibersort_sun.RData")
 mae_sun <- c(mae_sun, cibersort = cibersort_sun)
 #mae_sun <- create_mae(study_name = "sun")
@@ -87,24 +85,10 @@ cibersort_wang <- t(cibersort_wang)
 colnames(cibersort_wang)<- cibersort_wang[1,]
 cibersort_wang<-cibersort_wang[-1,]
 cibersort_wang<-as.matrix(cibersort_wang)
-mae_wang[["cibersort"]]=NULL
 #save(cibersort_wang, file="data-raw/cibersort_wang.RData")
 mae_wang <- c(mae_wang, cibersort = cibersort_wang)
 #mae_wang <- create_mae(study_name = "wang")
 usethis::use_data(mae_wang, overwrite = TRUE)
-
-# taylor et al.
-
-cibersort_taylor<-rio::import("data-raw/CIBERSORTx_taylor_Results.csv")
-cibersort_taylor <- t(cibersort_taylor)
-colnames(cibersort_taylor)<- cibersort_taylor[1,]
-cibersort_taylor<-cibersort_taylor[-1,]
-cibersort_taylor<-as.matrix(cibersort_taylor)
-mae_taylor[["cibersort"]]=NULL
-#save(cibersort_taylor, file="data-raw/cibersort_taylor.RData")
-mae_taylor <- c(mae_taylor, cibersort = cibersort_taylor)
-#mae_taylor <- create_mae(study_name = "taylor")
-usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # Kim et al.
 
@@ -113,7 +97,6 @@ cibersort_kim <- t(cibersort_kim)
 colnames(cibersort_kim)<- cibersort_kim[1,]
 cibersort_kim<-cibersort_kim[-1,]
 cibersort_kim<-as.matrix(cibersort_kim)
-mae_kim[["cibersort"]]=NULL
 #save(cibersort_kim, file="data-raw/cibersort_kim.RData")
 mae_kim <- c(mae_kim, cibersort = cibersort_kim)
 #mae_kim <- create_mae(study_name = "kim")
@@ -126,7 +109,6 @@ cibersort_barbieri <- t(cibersort_barbieri)
 colnames(cibersort_barbieri)<- cibersort_barbieri[1,]
 cibersort_barbieri<-cibersort_barbieri[-1,]
 cibersort_barbieri<-as.matrix(cibersort_barbieri)
-mae_barbieri[["cibersort"]]=NULL
 #save(cibersort_barbieri, file="data-raw/cibersort_barbieri.RData")
 mae_barbieri <- c(mae_barbieri, cibersort = cibersort_barbieri)
 #mae_barbieri <- create_mae(study_name = "barbieri")
@@ -139,7 +121,6 @@ cibersort_ren <- t(cibersort_ren)
 colnames(cibersort_ren)<- cibersort_ren[1,]
 cibersort_ren<-cibersort_ren[-1,]
 cibersort_ren<-as.matrix(cibersort_ren)
-mae_ren[["cibersort"]]=NULL
 #save(cibersort_ren, file="data-raw/cibersort_ren.RData")
 mae_ren <- c(mae_ren, cibersort = cibersort_ren)
 #mae_ren <- create_mae(study_name = "ren")
@@ -152,7 +133,6 @@ cibersort_wallace <- t(cibersort_wallace)
 colnames(cibersort_wallace)<- cibersort_wallace[1,]
 cibersort_wallace<-cibersort_wallace[-1,]
 cibersort_wallace<-as.matrix(cibersort_wallace)
-mae_wallace[["cibersort"]]=NULL
 #save(cibersort_wallace, file="data-raw/cibersort_wallace.RData")
 mae_wallace <- c(mae_wallace, cibersort = cibersort_wallace)
 #mae_wallace <- create_mae(study_name = "wallace")
@@ -1192,16 +1172,14 @@ ren_mut<-rio::import("/Users/varsha/Downloads/prad_eururol_2017/data_mutations_e
 #ren_mut=cgdsr::getMutationData(mycgds, caseList="prad_eururol_2017_sequenced")
 ren_mut2<-ren_mut[,c(5:46,1:4)]
 colnames(ren_mut2)[1:4]=c("seqnames","start","end","strand")
-rownames(ren_mut2)=ren_mut2$Hugo_Symbol
+
+GRL <- makeGRangesListFromDataFrame(ren_mut2, split.field = "Tumor_Sample_Barcode",
+                                    names.field = "Hugo_Symbol",keep.extra.columns = TRUE)
+
+ragexp_ren=RaggedExperiment::RaggedExperiment(GRL)
 
 
-X<-split(ren_mut2, ren_mut2$Tumor_Sample_Barcode)
-
-b=GRangesList(X)
-
-ragexp_ren=RaggedExperiment::RaggedExperiment(b)
-rownames(ragexp_ren)<-NULL
-
+mae_ren[["mut_ragex"]]<-NULL
 mae_ren <- c(mae_ren, mut_ragex = ragexp_ren)
 usethis::use_data(mae_ren, overwrite = TRUE)
 
@@ -1214,43 +1192,74 @@ barbieri_mut2<-barbieri_mut[,c(5:113,1:4)]
 colnames(barbieri_mut2)[1:4]=c("seqnames","start","end","strand")
 barbieri_mut2$Tumor_Sample_Barcode<-gsub("-", ".", barbieri_mut2$Tumor_Sample_Barcode, fixed=TRUE)
 
-X<-split(barbieri_mut2, barbieri_mut2$Tumor_Sample_Barcode)
+GRL <- makeGRangesListFromDataFrame(barbieri_mut2, split.field = "Tumor_Sample_Barcode",
+                                    names.field = "Hugo_Symbol",keep.extra.columns = TRUE)
 
-b=GRangesList(X)
+ragexp_barbieri=RaggedExperiment::RaggedExperiment(GRL)
 
-ragexp_barbieri=RaggedExperiment::RaggedExperiment(b)
-
+mae_barbieri[["mut_ragex"]]<-NULL
 mae_barbieri <- c(mae_barbieri, mut_ragex = ragexp_barbieri)
 usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 #Abida et al
 
 abida_mut<-rio::import("/Users/varsha/Downloads/prad_su2c_2019/data_mutations_extended.txt")
+# mycancerstudy = cgdsr::getCancerStudies(mycgds)
+# mycaselistren = cgdsr::getCaseLists(mycgds,"prad_su2c_2019")
+# gp = cgdsr::getGeneticProfiles(mycgds,"prad_su2c_2019")
+# 
+# 
+# u<-cgdsr::getMutationData(mycgds,"prad_su2c_2019","prad_su2c_2019_mutations",c(d))
+
 abida_mut2<-abida_mut[,c(5:46,1:4)]
 colnames(abida_mut2)[1:4]=c("seqnames","start","end","strand")
 abida_mut2$Tumor_Sample_Barcode<-gsub("-", ".", abida_mut2$Tumor_Sample_Barcode, fixed=TRUE)
 
-X<-split(abida_mut2, abida_mut2$Tumor_Sample_Barcode)
+GRL <- makeGRangesListFromDataFrame(abida_mut2, split.field = "Tumor_Sample_Barcode",
+                                    names.field = "Hugo_Symbol",keep.extra.columns = TRUE)
 
-b=GRangesList(X)
+ragexp_abida=RaggedExperiment::RaggedExperiment(GRL)
 
-ragexp_abida=RaggedExperiment::RaggedExperiment(b)
-
+mae_abida[["mut_ragex"]]<-NULL
 mae_abida <- c(mae_abida, mut_ragex = ragexp_abida)
 usethis::use_data(mae_abida, overwrite = TRUE)
 
 #Taylor et al
 
+#mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+#prad_mskcc_mutations
+#uncurated_cbio <- cgdsr::getMutationData(mycgds, caseList = "prad_mskcc",geneticProfile="prad_mskcc_mutations",genes=c("CHD1","MAP3K7"))
+
 taylor_mut<-rio::import("/Users/varsha/Downloads/prad_mskcc/data_mutations_extended.txt")
-taylor_mut2<-taylor_mut[,c(5:160,1:4)]
-colnames(taylor_mut2)[1:4]=c("seqnames","start","end","strand")
-same_barcode=taylor_mut2[grepl("PCA", taylor_mut2$Tumor_Sample_Barcode),]
-X<-split(same_barcode, same_barcode$Tumor_Sample_Barcode)
+#taylor_mut2<-taylor_mut[,c(17,5:16,18:160,1:4)]
+#taylor_mut2<-taylor_mut[,c(5:160,1:4)]
+colnames(taylor_mut)[5:8]=c("seqnames","start","end","strand")
 
-b=GRangesList(X)
+same_barcode=taylor_mut[grepl("PCA", taylor_mut$Tumor_Sample_Barcode),]
+same_barcode=same_barcode[,c(5:8,1,9,2:4,10:160)]
 
-ragexp_taylor=RaggedExperiment::RaggedExperiment(b)
+GRL <- makeGRangesListFromDataFrame(same_barcode, split.field = "Tumor_Sample_Barcode",
+                                    names.field = "Hugo_Symbol",keep.extra.columns = TRUE)
+ragexp_taylor=RaggedExperiment(GRL)
+#X<-split(same_barcode, same_barcode$Tumor_Sample_Barcode)
 
+#Y<-split(same_barcode, same_barcode$Hugo_Symbol)
+# count=1:92
+# for (i in count){
+# grl <- GRangesList(same_barcode$Hugo_Symbol[i] = X[[i]])
+# }
+#X$gene=as.list(same_barcode$Hugo_Symbol)
+# count=1:43
+# 
+# for (i in count){
+#   rownames(X[[i]])=make.names(X[[i]]$Hugo_Symbol, unique=TRUE)
+# }
+# 
+# 
+# b=GRangesList(X)
+# ragexp_taylor2=RaggedExperiment::RaggedExperiment(b)
+
+mae_taylor[["mut_ragex"]]<-NULL
 mae_taylor <- c(mae_taylor, mut_ragex = ragexp_taylor)
 usethis::use_data(mae_taylor, overwrite = TRUE)
 
