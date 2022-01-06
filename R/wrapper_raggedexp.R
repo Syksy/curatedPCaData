@@ -7,8 +7,8 @@ I$gene=gsub("\\..*","",I$gene)
 
 
 v=I %>% 
-  group_by(gene) %>% 
-  summarise_all(toString)
+  dplyr::group_by(gene) %>% 
+  dplyr::summarise_all(toString)
 
 v=as.data.frame(v)
 
