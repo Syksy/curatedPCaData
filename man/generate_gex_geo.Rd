@@ -6,7 +6,7 @@
 \usage{
 generate_gex_geo(
   geo_code = c("GSE18655", "GSE6919", "GSE134051", "GSE119616", "GSE14206", "GSE2109",
-    "GSE25136", "GSE21032", "GSE5132", "GSE8218", "GSE6956"),
+    "GSE25136", "GSE21032", "GSE5132", "GSE8218", "GSE6956", "GSE157548"),
   pckg = "oligo",
   file_directory,
   cleanup = TRUE,

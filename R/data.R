@@ -2,11 +2,12 @@
 #'
 #' MultiAssayExperiment object for Abida et al.
 #'
-#' @format A MAE object with clinical data for 444 tumors and 11 different aassays based on author supplied data (the CNA and two expression datasets), together with 8 immune deconvolution analyses for the expression data.  The two different gene expression datasets are partially overlappy, hence why they sum to 474 samples.
+#' @format A MAE object spanning prostate cancer samples.
 #' \describe{
 #'    \item{cna.gistic}{a matrix with 20264 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
 #'    \item{gex.relz}{a matrix with 18823 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
 #'    \item{mut}{matrix with 30357 rows and 444 columns, genetic aberration calls.}
+#' }
 #' @details the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
 #' @references Abida, W., Cyrta, J., Heller, G., et al. (2019). Genomic correlates of clinical outcome in advanced prostate cancer. Proceedings of the National Academy of Sciences of the United States of America, 116, 11428 - 11436.
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/31061129/}{PubMed})
@@ -88,9 +89,11 @@
 #' Hieronymus et al. MAE-object
 #' 
 #' MultiAssayExperiment object for Hieronymus et al.
+#'
 #' @format A MAE object spanning 104 tumor samples
 #' \describe{
 #'   \item{cna.logr}{matrix with 22895 rows and 104 columns, for the log-ratios for copy number alteration data}
+#' }
 #' @details The data comprises of 104 samples, for which are available clinical data and Copy Number Alteration, but no gene expression data -- thus no deconvolution results are available.
 #' @references Hieronymus, H., Schultz, N., Gopalan, A., et al. (2014). Copy number alteration burden predicts prostate cancer relapse. Proceedings of the National Academy of Sciences of the United States of America, 111(30), 11139–11144. https://doi.org/10.1073/pnas.1411446111
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/25024180/}{PubMed})
@@ -179,7 +182,7 @@
 #'   \item{cibersort}{matrix with 25 rows and 79 columns, of cibersort based deconvolution data}
 #'   \item{scores}{matrix with 2 rows and 79 columns, genomic risk and AR scores}
 #' }
-#' @details 
+#'
 #' @references Sun, Y., & Goodison, S. (2009). Optimizing molecular signatures for predicting prostate cancer recurrence. The Prostate, 69(10), 1119–1127. https://doi.org/10.1002/pros.20961
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/19343730/}{PubMed}) 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
@@ -201,7 +204,7 @@
 #'   \item{cibersort}{matrix with 25 rows and 300 columns, }
 #'   \item{scores}{matrix with 2 rows and 300 columns, genomic risk and AR scores}
 #' }
-#' @details 
+#'
 #' @references Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/20579941/}{PubMed}) 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21035}
@@ -224,7 +227,7 @@
 #'   \item{scores}{matrix with 2 rows and 333 columns, genomic risk and AR scores}
 #'   
 #' }
-#' @details
+#' 
 #' @references Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/26544944/}{PubMed}) 
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_tcga_pub}
@@ -255,7 +258,7 @@
 #'   \item{cibersort}{matrix with 25 rows and 83 columns}
 #'   \item{scores}{matrix with 2 rows and 83 columns, genomic risk and AR scores}
 #'}
-#' @details The data contains 69 samples. For all 69 sample the dataset contains tumor data, and for 14 individual there is a matched healthy prostate tissue sample (the clinical data 
+#' 
 #' @references Wallace, T. A., Prueitt, R. L., Yi, M., Howe, T. M., Gillespie, J. W., Yfantis, H. G., Stephens, R. M., Caporaso, N. E., Loffredo, C. A., & Ambs, S. (2008). Tumor immunobiological differences in prostate cancer between African-American and European-American men. Cancer research, 68(3), 927–936. https://doi.org/10.1158/0008-5472.CAN-07-2608
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/18245496/}{PubMed}) 
 #'
@@ -263,8 +266,9 @@
 "mae_wallace"
 
 
-#' MultiAssayExperiment object containing gene expression (gex), 
-#' @format A MAE oject spanning 838 samples of two cohorts
+#' Weiner et al. MAE-object
+#'
+#' A MAE oject spanning 838 samples of two cohorts
 #' \describe{
 #'  \item{gex}{matrix of 17324 rows and 838 columns of gene expression data}
 #'  \item{mcp){matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
@@ -272,11 +276,10 @@
 #'  \item{xcell){matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
 #'  \item{epic){matrix with 8 rows and 837 columns, the epic deconvolution of the expression data}
 #' } 
-#' @details clinical features
+#' 
 #' @references Weiner, A.B., Vidotto, T., Liu, Y. et al. Plasma cells are enriched in localized prostate cancer in Black men and are associated with improved outcomes. Nat Commun 12, 935 (2021). https://doi.org/10.1038/s41467-021-21245-w
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/33568675/}{PubMed}) 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE157548}
-#' @examples
 "mae_weiner"
 
 

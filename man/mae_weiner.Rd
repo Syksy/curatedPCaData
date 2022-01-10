@@ -3,9 +3,9 @@
 \docType{data}
 \name{mae_weiner}
 \alias{mae_weiner}
-\title{MultiAssayExperiment object containing gene expression (gex),}
+\title{Weiner et al. MAE-object}
 \format{
-
+An object of class \code{MultiAssayExperiment} of length 1.
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE157548}
@@ -14,10 +14,7 @@
 mae_weiner
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex),
-}
-\details{
-clinical features
+
 }
 \references{
 Weiner, A.B., Vidotto, T., Liu, Y. et al. Plasma cells are enriched in localized prostate cancer in Black men and are associated with improved outcomes. Nat Commun 12, 935 (2021). https://doi.org/10.1038/s41467-021-21245-w

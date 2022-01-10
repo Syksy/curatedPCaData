@@ -5,7 +5,10 @@
 \alias{mae_hieronymus}
 \title{Hieronymus et al. MAE-object}
 \format{
-
+A MAE object spanning 104 tumor samples
+\describe{
+  \item{cna.logr}{matrix with 22895 rows and 104 columns, for the log-ratios for copy number alteration data}
+}
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE54691}

@@ -68,39 +68,7 @@ curatedPCaData_genes <- biomaRt::getBM(
 			# Description
 			'description'
 		),
-	mart = mart)
-)
-# Annotations based on specific array platforms
-curatedPCaData_genes_affy_hg_u133a <- biomaRt::getBM(
-	attributes = 
-		c(
-			# Hugo
-			'hgnc_symbol',
-			# Array specific probe identifiers needed by processed studies
-			"affy_hg_u133a"	# Used by: Sun et al., ...
-		),
-	mart = mart)
-)
-curatedPCaData_genes_affy_hg_u133a_2 <- biomaRt::getBM(
-	attributes = 
-		c(
-			# Hugo
-			'hgnc_symbol',
-			# Array specific probe identifiers needed by processed studies
-			"affy_hg_u133a_2"	# Used by: Wallace et al., IGC... 
-		),
-	mart = mart)
-)
-# Timing out
-curatedPCaData_genes_affy_huex_1_0_st_v2 <- biomaRt::getBM(
-	attributes = 
-		c(
-			# Hugo
-			'hgnc_symbol',
-			# Array specific probe identifiers needed by processed studies
-			"affy_huex_1_0_st_v2"	# Used by: Taylor et al., ...
-		),
-	mart = mart)
+	mart = mart
 )
 
 # Sort the generic list first using chromosomes and then bp locations
@@ -121,10 +89,10 @@ curatedPCaData_genes[,"Aliases"] <- unlist(lapply(curatedPCaData_genes$hgnc_symb
 rownames(curatedPCaData_genes) <- NULL
 # Save gene information extraction date as an attribute 'date'
 attr(curatedPCaData_genes, 'date') <- Sys.time()
-# Save the data frame of various gene annotations for package's internal use
+# Save the time stamped gene level data
 usethis::use_data(
-	# Unquoted names for objects to save
-	curatedPCaData_genes, curatedPCaData_genes_affy_hg_u133a, curatedPCaData_genes_affy_hg_u133a_2,
-	## Timeout issues: curatedPCaData_genes_affy_huex_1_0_st_v2
+	# Save the list of genes
+	curatedPCaData_genes,
 	# Saving parameters
-	internal = TRUE, overwrite = TRUE)
+	internal = TRUE, overwrite = TRUE
+)

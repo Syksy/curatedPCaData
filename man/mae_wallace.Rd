@@ -23,9 +23,6 @@ mae_wallace
 \description{
 MultiAssayExperiment object containing GEX from Wallace et al.
 }
-\details{
-The data contains 69 samples. For all 69 sample the dataset contains tumor data, and for 14 individual there is a matched healthy prostate tissue sample (the clinical data
-}
 \references{
 Wallace, T. A., Prueitt, R. L., Yi, M., Howe, T. M., Gillespie, J. W., Yfantis, H. G., Stephens, R. M., Caporaso, N. E., Loffredo, C. A., & Ambs, S. (2008). Tumor immunobiological differences in prostate cancer between African-American and European-American men. Cancer research, 68(3), 927–936. https://doi.org/10.1158/0008-5472.CAN-07-2608
  (\href{https://pubmed.ncbi.nlm.nih.gov/18245496/}{PubMed})
