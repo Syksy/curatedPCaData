@@ -14,8 +14,8 @@ gex2 <- gex2[,c(181,1:180)]
 write.table(gex2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_barwick.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 
-load("data-raw/gex_kunderfranco.RData")
-gex_kunderfranco2 <- gex_kunderfranco
+load("data-raw/gex.logr_kunderfranco.RData")
+gex_kunderfranco2 <- gex.logr_kunderfranco
 gex_kunderfranco2 <- as.data.frame(gex_kunderfranco2)
 gex_kunderfranco2<- gex_kunderfranco2[complete.cases(gex_kunderfranco2), ]
 #gex_kunderfranco_chandran2 <- gex_kunderfranco_chandran2[-9561,]
@@ -27,7 +27,7 @@ gex_kunderfranco2 <- gex_kunderfranco2[,c(68,1:67)]
 write.table(gex_kunderfranco2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_kunderfranco.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 
-load("data-raw/gex_true.RData")
+load("data-raw/gex.logr_true.RData")
 gex_true2 <- gex
 gex_true2 <- as.data.frame(gex_true2)
 gex_true2<- gex_true2[complete.cases(gex_true2), ]
@@ -100,15 +100,15 @@ gex_taylor2 <- gex_taylor2[,c(180,1:179)]
 write.table(gex_taylor2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_taylor.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 load("data-raw/gex.rma_wallace.RData")
-gex.rma_wallace<-mae_wallace[["gex.rma"]]
+#gex.rma_wallace<-mae_wallace[["gex.rma"]]
 gex_wallace2 <- gex.rma_wallace
 gex_wallace2 <- as.data.frame(gex_wallace2)
 gex_wallace2<- gex_wallace2[complete.cases(gex_wallace2), ]
 #gex_wallace2 <- gex_wallace2[-9561,]
-gex_wallace2[,84]<-rownames(gex_wallace2)
+gex_wallace2[,90]<-rownames(gex_wallace2)
 #View(gex_wallace2)
 rownames(gex_wallace2) <- NULL
-gex_wallace2 <- gex_wallace2[,c(84,1:83)]
+gex_wallace2 <- gex_wallace2[,c(90,1:89)]
 #gex_wallace2 <- gex_wallace2[-6860,]
 write.table(gex_wallace2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_wallace.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
@@ -161,108 +161,54 @@ write.table(gex_abida2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_abi
 
 
 
-######################################################################################################################
-
-load("data-raw/gex_sun.RData")
-gex_sun2 <- gex_sun
-gex_sun2 <- as.data.frame(gex_sun2)
-#gex_sun2 <- gex_sun2[-9561,]
-gex_sun2[,80]<-rownames(gex_sun2)
-#View(gex_sun2)
-rownames(gex_sun2) <- NULL
-gex_sun2 <- gex_sun2[,c(80,1:79)]
-gex_sun2 <- gex_sun2[-9534,]
-write.table(gex_sun2,"gex_sun.txt",sep="\t",row.names = FALSE,col.names = TRUE)
-
-load("data-raw/gex_chandran.RData")
-gex_chandran2 <- gex_chandran
+load("data-raw/gex.rma_chandran.RData")
+gex_chandran2 <- gex.rma_chandran
 gex_chandran2 <- as.data.frame(gex_chandran2)
 gex_chandran2<- gex_chandran2[complete.cases(gex_chandran2), ]
 #gex_chandran2 <- gex_chandran2[-9561,]
-gex_chandran2[,504]<-rownames(gex_chandran2)
+gex_chandran2[,172]<-rownames(gex_chandran2)
 #View(gex_chandran2)
 rownames(gex_chandran2) <- NULL
-gex_chandran2 <- gex_chandran2[,c(504,1:503)]
+gex_chandran2 <- gex_chandran2[,c(172,1:171)]
 #gex_chandran2 <- gex_chandran2[-9534,]
-write.table(gex_chandran2,"gex_chandran.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_chandran2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_chandran.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex_weiner.RData")
-gex_weiner2 <- gex_weiner
+load("data-raw/gex.rma_weiner.RData")
+gex_weiner2 <- gex.rma_weiner
 gex_weiner2 <- as.data.frame(gex_weiner2)
+gex_weiner2<- gex_weiner2[complete.cases(gex_weiner2), ]
 #gex_weiner2 <- gex_weiner2[-9561,]
 gex_weiner2[,839]<-rownames(gex_weiner2)
 #View(gex_weiner2)
 rownames(gex_weiner2) <- NULL
 gex_weiner2 <- gex_weiner2[,c(839,1:838)]
 #gex_weiner2 <- gex_weiner2[-9534,]
-write.table(gex_weiner2,"gex_weiner.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_weiner2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_weiner.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex.logr_true.RData")
-gex_true2 <- gex_true
-#gex_true2 <- as.data.frame(gex_true2)
-gex_true2<- gex_true2[complete.cases(gex_true2), ]
-#gex_true2 <- gex_true2[-9561,]
-gex_true2[,33]<-rownames(gex_true2)
-#View(gex_true2)
-rownames(gex_true2) <- NULL
-gex_true2 <- gex_true2[,c(33,1:32)]
-#gex_true2 <- gex_true2[-9534,]
-write.table(gex_true2,"gex_true.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex_igc.RData")
-gex_igc2 <- gex_igc
-gex_igc2 <- as.data.frame(gex_igc2)
-#gex_igc2 <- gex_igc2[-9561,]
-gex_igc2[,84]<-rownames(gex_igc2)
-#View(gex_igc2)
-rownames(gex_igc2) <- NULL
-gex_igc2 <- gex_igc2[,c(84,1:83)]
-gex_igc2 <- gex_igc2[-6860,]
-write.table(gex_igc2,"gex_igc.txt",sep="\t",row.names = FALSE,col.names = TRUE)
-
-load("data-raw/gex_capture_abida.RData")
-gex_capture_abida2 <- gex_capture_abida
-gex_capture_abida2 <- as.data.frame(gex_capture_abida2)
-#gex_capture_abida2 <- gex_capture_abida2[-9561,]
-gex_capture_abida2[,209]<-rownames(gex_capture_abida2)
-#View(gex_capture_abida2)
-rownames(gex_capture_abida2) <- NULL
-gex_capture_abida2 <- gex_capture_abida2[,c(209,1:208)]
-#gex_capture_abida2 <- gex_capture_abida2[-6860,]
-write.table(gex_capture_abida2,"gex_capture_abida.txt",sep="\t",row.names = FALSE,col.names = TRUE)
-
-load("data-raw/gex.relz_abida.RData")
-gex_polyA_abida2 <- gex_polyA_abida
-gex_polyA_abida2 <- as.data.frame(gex_polyA_abida2)
-#gex_polyA_abida2 <- gex_polyA_abida2[-9561,]
-gex_polyA_abida2[,267]<-rownames(gex_polyA_abida2)
-#View(gex_polyA_abida2)
-rownames(gex_polyA_abida2) <- NULL
-gex_polyA_abida2 <- gex_polyA_abida2[,c(267,1:266)]
-#gex_polyA_abida2 <- gex_polyA_abida2[-6860,]
-write.table(gex_polyA_abida2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_polyA_abida.txt",sep="\t",row.names = FALSE,col.names = TRUE)
-
-load("data-raw/gex_icgcca.RData")
+load("data-raw/gex.rma_icgcca.RData")
 gex_icgcca2 <- gex_icgcca
 gex_icgcca2 <- as.data.frame(gex_icgcca2)
+gex_icgcca2<- gex_icgcca2[complete.cases(gex_icgcca2), ]
 #gex_icgcca2 <- gex_icgcca2[-9561,]
 gex_icgcca2[,214]<-rownames(gex_icgcca2)
 #View(gex_icgcca2)
 rownames(gex_icgcca2) <- NULL
 gex_icgcca2 <- gex_icgcca2[,c(214,1:213)]
 #gex_icgcca2 <- gex_icgcca2[-6860,]
-write.table(gex_icgcca2,"gex_icgcca.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_icgcca2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_icgcca.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex.logq_friedrich.RData")
-gex_friedrich2 <- gex.logq_friedrich
-gex_friedrich2 <- as.data.frame(gex_friedrich2)
-#gex_friedrich2 <- gex_friedrich2[-9561,]
-gex_friedrich2[,256]<-rownames(gex_friedrich2)
-#View(gex_friedrich2)
-rownames(gex_friedrich2) <- NULL
-gex_friedrich2 <- gex_friedrich2[,c(256,1:255)]
-#gex_friedrich2 <- gex_friedrich2[-6860,]
-write.table(gex_friedrich2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_friedrich.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+load("data-raw/gex.tpm_tcga.RData")
+gex_tcga2 <- osf_gex_rounded
+gex_tcga2 <- as.data.frame(gex_tcga2)
+gex_tcga2<- gex_tcga2[complete.cases(gex_tcga2), ]
+#gex_tcga2 <- gex_tcga2[-9561,]
+gex_tcga2[,323]<-rownames(gex_tcga2)
+#View(gex_tcga2)
+rownames(gex_tcga2) <- NULL
+gex_tcga2 <- gex_tcga2[,c(323,1:322)]
+#gex_tcga2 <- gex_tcga2[-9534,]
+write.table(gex_tcga2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_tcga.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 
 
