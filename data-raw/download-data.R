@@ -214,7 +214,7 @@ save(gex_icgcfr, file="data-raw/gex_icgcfr.RData")
 # GEX: [HG-U133_Plus_2] Affymetrix Human Genome U133 Plus 2.0 Array
 gex.rma_igc <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE2109",
-	cleanup = FALSE
+	cleanup = FALSE,
 	# Do not download the batch files, filter the raw dump and filter down to prostate specific samples afterwards
 	filter_regex = "_RAW",
 )
@@ -230,7 +230,7 @@ usethis::use_data(mae_igc, overwrite = TRUE)
 ## - Kim et al. -
 # GEX: [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
 gex.rma_kim <- curatedPCaData:::generate_gex_geo(
-	geo_code = "GSE119616"
+	geo_code = "GSE119616",
 	pckg = "oligo",
 	cleanup = FALSE
   
