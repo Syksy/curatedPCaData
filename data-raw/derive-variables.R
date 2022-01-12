@@ -470,7 +470,7 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_barbieri <- c(mae_barbieri, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_barbieri, overwrite = TRUE,internal = TRUE)
+usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Barwick et al.
 
