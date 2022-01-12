@@ -23,14 +23,16 @@ colnames(tcga_mut)[1:3]=c("seqnames","start","end")
 tcga_mut$sample<-gsub("-",".",tcga_mut$sample)
 names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
 
-GRL <- makeGRangesListFromDataFrame(tcga_mut, split.field = "sample",
+a=subset(tcga_mut, sample %in% colnames(mae_tcga[["gex.tpm"]]))
+
+GRL <- makeGRangesListFromDataFrame(a, split.field = "sample",
                                     names.field = "gene",keep.extra.columns = TRUE)
 
 ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
 
 
-mae_tcga[["mut_ragex"]]<-NULL
-mae_tcga <- c(mae_tcga, mut_ragex = ragexp_tcga)
+#mae_tcga[["mut"]]<-NULL
+mae_tcga <- c(mae_tcga, mut = ragexp_tcga)
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
 
@@ -47,8 +49,8 @@ GRL <- makeGRangesListFromDataFrame(ren_mut2, split.field = "Tumor_Sample_Barcod
 ragexp_ren=RaggedExperiment::RaggedExperiment(GRL)
 
 
-mae_ren[["mut_ragex"]]<-NULL
-mae_ren <- c(mae_ren, mut_ragex = ragexp_ren)
+#mae_ren[["mut_ragex"]]<-NULL
+mae_ren <- c(mae_ren, mut = ragexp_ren)
 usethis::use_data(mae_ren, overwrite = TRUE)
 
 #as(ragexp_ren, "GRangesList")
@@ -65,8 +67,8 @@ GRL <- makeGRangesListFromDataFrame(barbieri_mut2, split.field = "Tumor_Sample_B
 
 ragexp_barbieri=RaggedExperiment::RaggedExperiment(GRL)
 
-mae_barbieri[["mut_ragex"]]<-NULL
-mae_barbieri <- c(mae_barbieri, mut_ragex = ragexp_barbieri)
+#mae_barbieri[["mut_ragex"]]<-NULL
+mae_barbieri <- c(mae_barbieri, mut = ragexp_barbieri)
 usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 #Abida et al
@@ -88,8 +90,8 @@ GRL <- makeGRangesListFromDataFrame(abida_mut2, split.field = "Tumor_Sample_Barc
 
 ragexp_abida=RaggedExperiment::RaggedExperiment(GRL)
 
-mae_abida[["mut_ragex"]]<-NULL
-mae_abida <- c(mae_abida, mut_ragex = ragexp_abida)
+#mae_abida[["mut"]]<-NULL
+mae_abida <- c(mae_abida, mut = ragexp_abida)
 usethis::use_data(mae_abida, overwrite = TRUE)
 
 #Taylor et al
@@ -127,6 +129,6 @@ ragexp_taylor=RaggedExperiment(GRL)
 # b=GRangesList(X)
 # ragexp_taylor2=RaggedExperiment::RaggedExperiment(b)
 
-mae_taylor[["mut_ragex"]]<-NULL
-mae_taylor <- c(mae_taylor, mut_ragex = ragexp_taylor)
+#mae_taylor[["mut_ragex"]]<-NULL
+mae_taylor <- c(mae_taylor, mut = ragexp_taylor)
 usethis::use_data(mae_taylor, overwrite = TRUE)

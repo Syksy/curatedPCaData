@@ -65,6 +65,7 @@ colnames(cibersort_icgcca)<- cibersort_icgcca[1,]
 cibersort_icgcca<-cibersort_icgcca[-1,]
 cibersort_icgcca<-as.matrix(cibersort_icgcca)
 #save(cibersort_icgcca, file="data-raw/cibersort_icgcca.RData")
+#mae_icgcca[["cibersort"]]<-NULL
 mae_icgcca <- c(mae_icgcca, cibersort = cibersort_icgcca)
 #mae_icgcca <- create_mae(study_name = "icgcca")
 usethis::use_data(mae_icgcca, overwrite = TRUE)
