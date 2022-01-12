@@ -5,7 +5,7 @@
 #' @details https://bjui-journals.onlinelibrary.wiley.com/doi/10.1111/bju.14452 https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-14-690 https://www.nature.com/articles/s41391-019-0167-9
 #'
 genomic_risk <- function(mae, 
-                         object = "gex",
+                         slot = "gex",
                          test = c("Prolaris", "Oncotype DX", "Decipher"),
                          log = TRUE # Should log-transformation be applied to the data for genomic risk score calculations; should not be utilized if data transformed already
 ){
@@ -30,7 +30,7 @@ genomic_risk <- function(mae,
   # PCAT-32 -> PCAT1
   
   
-  dat <- mae@ExperimentList[[object]]
+  dat <- mae@ExperimentList[[slot]]
   dat <- t(dat) 
   dat <- as.data.frame(dat)
   
@@ -132,9 +132,10 @@ genomic_risk <- function(mae,
 #' Various genomic scores
 #'
 #' AR score by Hieronymus et al 2006 as used by TCGA 2015
-genomic_score <- function(mae,
-			object = "gex",
-			test = "AR",
+genomic_score <- function(
+			mae, # MultiAssayExperiment object
+			slot = "gex", # Slot inside MAE object to use as the gene expression
+			test = "AR", # Test/score to calculate; by default Androgen Receptor (AR) score is calculated
 			verbose = TRUE # Warnings for not found symbols etc
 ){
 	# TCGA methodology for AR output score analysis: (Section 6 in supplementary of https://www.cell.com/cms/10.1016/j.cell.2015.10.025/attachment/70a60372-cdaf-4c72-aa6d-ded4b33ce5a0/mmc1.pdf )
@@ -209,8 +210,8 @@ genomic_score <- function(mae,
 	
 		missing <- 0
 
-		# Pooled normalization - pooling within sample over all genes as per TCGA
-		gex <- mae[[object]]
+		# Pooled normalization - pooling within sample over all genes as done in TCGA
+		gex <- mae[[slot]]
 		gez <- t(apply(gex, MARGIN=1, FUN=function(z) { 
 			scale(z, center=TRUE, scale=TRUE)
 		}))
