@@ -348,7 +348,7 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 
 # Sun et al.
 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -916,7 +916,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_sun <- c(curatedPCaData::mae_sun, mcp = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_sun, overwrite = TRUE,internal=TRUE)
+usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
 
