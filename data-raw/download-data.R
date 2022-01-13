@@ -351,38 +351,43 @@ usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
 ## - TCGA - 
 library(magrittr) # For pipe
 library(osfr) # For functions such as osf_retrieve_file
-source("./data-raw/format_osf_data.R") # For format_osf_data-function
+## TDL: Outdated
+#source("./data-raw/format_osf_data.R") # For format_osf_data-function
 
 #Download OSF GEX data
-osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
-R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
-osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
+#osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
+#R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
+#osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
 
 #Download the mapping file 
-osf <- format_osf_data(osf_data)
-osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
+#osf <- format_osf_data(osf_data)
+#osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
 
 # Re-format the OSF data
-osf_t <- t(osf)
-osf_t <- as.data.frame(osf_t)
-colnames(osf_t) <- osf_t[1,]
-osf <- osf_t[-1,]
+#osf_t <- t(osf)
+#osf_t <- as.data.frame(osf_t)
+#colnames(osf_t) <- osf_t[1,]
+#osf <- osf_t[-1,]
 
-colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
-colnames(osf) <- paste(colnames(osf), '01', sep='.')
+#colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
+#colnames(osf) <- paste(colnames(osf), '01', sep='.')
 #usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
 ## TDL: No need for saving intermediate files
 #save(osf, file="data-raw/osfgex_tcga.RData")
 
 #load("data-raw/osfgex_tcga.RData")
-osf<-as.matrix(osf)
-storage.mode(osf) <- "numeric"
-osf_gex_rounded<-round(osf,digits = 1)
+#osf<-as.matrix(osf)
+#storage.mode(osf) <- "numeric"
+#osf_gex_rounded<-round(osf,digits = 1)
 # Alphebetic gene name ordering
-osf_gex_rounded <- osf_gex_rounded[order(rownames(osf_gex_rounded)),]
+#osf_gex_rounded <- osf_gex_rounded[order(rownames(osf_gex_rounded)),]
 
 #save(osf_gex_rounded, file="data-raw/osfgex_rounded_tcga.RData")
 #unlink("data-raw/osfgex_tcga.RData")
+
+## GDC version of TCGA
+
+
 
 ## TDL:
 # Subset to TCGA provisional (N=333), which had gone through QC for pathology review and RNA degradation

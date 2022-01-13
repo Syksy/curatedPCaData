@@ -1435,4 +1435,98 @@ generate_icgc <- function(
 	ret 
 }
 
-		
+#' Download GDC processed data via xenabrowser.net Santa-Cruz interface
+#'
+#'
+generate_xenabrowser <- function(
+	id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
+	type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
+	# Function for collapsing rows for identical gene symbols
+	collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
+	# If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
+	truncate = TRUE,
+	...
+){
+	# Small internal function to assist with the downloads from xenabrowser.net
+	.xenabrowserDownload <- function(url, gz=TRUE){
+		# Pick the filename from the end of the URL
+		filename <- strsplit(url, "/")
+		filename <- filename[[1]][[length(filename[[1]])]]
+		# Download file into parsed *.tsv.gz 
+		utils::download.file(url=url, destfile=filename)
+		# if .gz, gunzip the files open
+		if(gz) GEOquery::gunzip(filename, overwrite=TRUE)
+		gsub(".gz", "", filename)
+	}
+	# Cases (typically TCGA-PRAD)
+	if(id == "TCGA-PRAD"){
+		# Release Mid 2019ish
+		urls = list(
+			"htseq.fpkm" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.htseq_fpkm-uq.tsv.gz",
+			"gistic" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.gistic.tsv.gz",
+			"mutect2" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.mutect2_snv.tsv.gz",
+			"phenotype" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.GDC_phenotype.tsv.gz",
+			"os" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.survival.tsv",
+			"genemap" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap"
+		)
+		# Gene expression
+		if(type == "gex"){
+			# Download the FPKM-UQ values processed via HTSeq
+			file <- .xenabrowserDownload(urls[["htseq.fpkm"]])
+			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+			# Download the gene mapping file
+			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
+			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+			# Rearrange to match the ordering of the data matrix
+			map <- map[match(rownames(dat), rownames(map)),]
+			#> all(rownames(map) == rownames(dat))
+			#[1] TRUE
+			# Reassign gene names from ENSEMBL gene ids to gene symbols collapsing identical names and arranging to alphabetic order
+			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun))
+			dat <- dat[order(rownames(dat)),]
+			#> dim(dat)
+			#[1] 58387   551
+			#
+			# If column names should truncate last segment (sample -> patient id level truncation)
+			if(truncate) colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+		# Copy number alterations (discretized by GISTIC)
+		}else if(type == "cna"){
+			# Download the copy number alteration values processed via GISTIC
+			file <- .xenabrowserDownload(urls[["gistic"]])
+			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+			# Download the gene mapping file
+			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
+			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+			# Rearrange to match the ordering of the data matrix
+			map <- map[match(rownames(dat), rownames(map)),]
+			# > all(rownames(map) == rownames(dat))
+			#[1] TRUE
+			#> dim(dat)
+			#[1] 19729   502
+			#
+			## Smaller dimension than for gex as expected
+			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun))
+			dat <- dat[order(rownames(dat)),]
+			# If column names should truncate last segment (sample -> patient id level truncation)
+			if(truncate) colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+		# Small mutations (SNV / INDELs called by Mutect2)
+		}else if(type == "mut"){
+			# Download the MuTect2 somatic mutation calls
+			file <- .xenabrowserDownload(urls[["mutect2"]])
+			# Suitable for RaggedExperiment style data storage
+			dat <- read.table(file, sep="\t", header=TRUE)			
+		# Clinical data matrix construction
+		}else if(type == "clinical"){
+			# Generic phenotype information
+			file <- .xenabrowserDownload(urls[["phenotype"]])
+			phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1)
+			# Overall Survival
+			file <- .xenabrowserDownload(urls[["os"]])
+			os <- read.table(file, sep="\t", header=TRUE, row.names=1)
+			
+		}
+	}
+	# Return the processed dat
+	dat
+}
+	
