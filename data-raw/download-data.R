@@ -349,75 +349,18 @@ usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
 
 
 ## - TCGA - 
-library(magrittr) # For pipe
-library(osfr) # For functions such as osf_retrieve_file
-## TDL: Outdated
-#source("./data-raw/format_osf_data.R") # For format_osf_data-function
-
-#Download OSF GEX data
-#osf_download <- osf_retrieve_file("https://osf.io/m5nh6/") %>% osf_download("./data-raw")
-#R.utils::gunzip("data-raw/TCGA_PRAD_tpm.tsv.gz")
-#osf_data <- rio::import("data-raw/TCGA_PRAD_tpm.tsv")
-
-#Download the mapping file 
-#osf <- format_osf_data(osf_data)
-#osf_retrieve_file("https://osf.io/7qpsg/")%>% osf_download("./data-raw")
-
-# Re-format the OSF data
-#osf_t <- t(osf)
-#osf_t <- as.data.frame(osf_t)
-#colnames(osf_t) <- osf_t[1,]
-#osf <- osf_t[-1,]
-
-#colnames(osf) <- gsub(x = colnames(osf), pattern = "-", replacement = ".")  
-#colnames(osf) <- paste(colnames(osf), '01', sep='.')
-#usethis::use_data(osf, internal = TRUE, overwrite = TRUE)
-## TDL: No need for saving intermediate files
-#save(osf, file="data-raw/osfgex_tcga.RData")
-
-#load("data-raw/osfgex_tcga.RData")
-#osf<-as.matrix(osf)
-#storage.mode(osf) <- "numeric"
-#osf_gex_rounded<-round(osf,digits = 1)
-# Alphebetic gene name ordering
-#osf_gex_rounded <- osf_gex_rounded[order(rownames(osf_gex_rounded)),]
-
-#save(osf_gex_rounded, file="data-raw/osfgex_rounded_tcga.RData")
-#unlink("data-raw/osfgex_tcga.RData")
-
-## GDC version of TCGA
-
-
-
-## TDL:
-# Subset to TCGA provisional (N=333), which had gone through QC for pathology review and RNA degradation
-# Extract cBioPortal's provisional subset IDs
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-cases <- cgdsr::getCaseLists(mycgds, "prad_tcga_pub")
-cases <- gsub("-", ".", strsplit(cases[which(cases$case_list_id=="prad_tcga_pub_sequenced"),]$case_ids, " ")[[1]])
-
-# Intersect to IDs found from the TCGA provisional in cBioPortal (original N=333, N=322 found processed in OSF)
-osf_gex_rounded <- osf_gex_rounded[,intersect(cases, colnames(osf_gex_rounded))]
-save(osf_gex_rounded, file="./data-raw/gex.tpm_tcga.RData")
-
-#file.rename("data-raw/osfgex_rounded_tcga.RData","data-raw/gex.tpm_tcga.RData")
-
-
-
 # GEX
-# gex_tcga <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-#   geneticProfiles = "prad_tcga_pub_rna_seq_v2_mrna", # Omics profile
-#   caseList = "prad_tcga_pub_sequenced" # Case list
-# )
-# save(gex_tcga, file="data-raw/gex_tcga.RData")
+gex.fpkm_tcga <- curatedPCaData:::generate_xenabrowser(
+	id = "TCGA-PRAD",
+	type = "gex",
+	digits = 4
+)
+save(gex.fpkm_tcga, file="data-raw/gex.fpkm_tcga.RData")
 
-# CNA
-cna.gistic_tcga <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  #geneticProfiles="prad_tcga_pub_linear_CNA", # changed from GISTIC to linear values to be comparable to log2 FCs from other datasets
-  geneticProfiles="prad_tcga_pub_gistic", # changed back to GISTIC for interpretability in oncoprints
-  caseList="prad_tcga_pub_sequenced"
+# CNA (GISTIC)
+cna.gistic_tcga <- curatedPCaData:::generate_xenabrowser(
+	id = "TCGA-PRAD",
+	type = "cna"
 )
 save(cna.gistic_tcga, file="data-raw/cna.gistic_tcga.RData")
 

@@ -1445,6 +1445,8 @@ generate_xenabrowser <- function(
 	collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
 	# If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
 	truncate = TRUE,
+	# Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
+	digits,
 	...
 ){
 	# Small internal function to assist with the downloads from xenabrowser.net
@@ -1526,6 +1528,8 @@ generate_xenabrowser <- function(
 			
 		}
 	}
+	# Round to certain digits if requested
+	if(!missing(digits)) dat <- round(dat, digits)
 	# Return the processed dat
 	dat
 }
