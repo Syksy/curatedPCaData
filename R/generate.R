@@ -1490,7 +1490,16 @@ generate_xenabrowser <- function(
 			#[1] 58387   551
 			#
 			# If column names should truncate last segment (sample -> patient id level truncation)
-			if(truncate) colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+			if(truncate>=1){
+				print("Truncating to 3 dot-separated names...")
+				# Remove fourth element separated by '.'
+				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
+			}else if(truncate>=0){
+				print("Substituting '.01A' with '.01' ...")
+				# Sub '.01A" with the default ".01"
+				colnames(dat) <- gsub(".01A", ".01", colnames(dat))
+			}
 		# Copy number alterations (discretized by GISTIC)
 		}else if(type == "cna"){
 			# Download the copy number alteration values processed via GISTIC
@@ -1510,7 +1519,16 @@ generate_xenabrowser <- function(
 			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun))
 			dat <- dat[order(rownames(dat)),]
 			# If column names should truncate last segment (sample -> patient id level truncation)
-			if(truncate) colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+			if(truncate>=1){
+				print("Truncating to 3 dot-separated names...")
+				# Remove fourth element separated by '.'
+				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
+			}else if(truncate>=0){
+				print("Substituting '.01A' with '.01' ...")
+				# Sub '.01A" with the default ".01"
+				colnames(dat) <- gsub(".01A", ".01", colnames(dat))
+			}
 		# Small mutations (SNV / INDELs called by Mutect2)
 		}else if(type == "mut"){
 			# Download the MuTect2 somatic mutation calls
