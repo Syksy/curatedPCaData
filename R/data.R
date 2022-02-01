@@ -6,7 +6,13 @@
 #' \describe{
 #'    \item{cna.gistic}{a matrix with 20264 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
 #'    \item{gex.relz}{a matrix with 18823 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
-#'    \item{mut}{matrix with 30357 rows and 444 columns, genetic aberration calls.}
+#'    \item{mut}{RaggedExperiment with 64566 rows and 444 columns, mutation data from cbioportal}
+#'    \item{xcell}{matrix with 39 rows and 266 columns, of xcell based deconvolution data}
+#'    \item{epic}{matrix with 8 rows and 266 columns, of epic based deconvolution data}
+#'    \item{quantiseq}{matrix with 11 rows and 266 columns, of quantiseq based deconvolution data}
+#'    \item{mcp}{matrix with 11 rows and 266 columns, of mcp-counter based deconvolution data}
+#'    \item{cibersort}{matrix with 22 rows and 266 columns, of cibersort based deconvolution data}
+#'    
 #' }
 #' @details the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
 #' @references Abida, W., Cyrta, J., Heller, G., et al. (2019). Genomic correlates of clinical outcome in advanced prostate cancer. Proceedings of the National Academy of Sciences of the United States of America, 116, 11428 - 11436.
@@ -22,7 +28,12 @@
 #' \describe{
 #'   \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
 #'   \item{gex.relz}{matrix with 18193 rows and 20 columns, from z-score normalized expression in relative to paired normals.}
-#'   \item{mut}{matrix with 29009 rows and 112 columns, genetic aberration calls.}
+#'   \item{mut}{RaggedExperiment with 5764 rows and 112 columns, mutation data from cbioportal}
+#'   \item{cibersort}{matrix with 22 rows and 20 columns, of cibersort based deconvolution data}
+#'   \item{xcell}{matrix with 39 rows and 20 columns, of xcell based deconvolution data}
+#'   \item{mcp}{matrix with 11 rows and 20 columns, of mcp-counter based deconvolution data}
+#'   \item{quantiseq}{matrix with 11 rows and 20 columns, of quantiseq based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 20 columns, of epic based deconvolution data}
 #' }
 #' @details The data comprises of primary localised prostate tumors from two cohorts, the Weill Cornell Medical College (WCMC; New York, NY), and the Uropath (Perth, Australia), which commercially provides banked urological tissues. None of the samples comes from patients who had received prior treatment for prostate cancer.  
 #' @references Barbieri, C. E., Baca, S. C., Lawrence, M. S., et al. (2012). Exome sequencing identifies recurrent SPOP, FOXA1 and MED12 mutations in prostate cancer. Nature genetics, 44(6), 685–689. https://doi.org/10.1038/ng.2279
@@ -36,9 +47,9 @@
 #' 
 #' @format A MAE object spanning prostate cancer samples.
 #' \describe{
-#'   \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
+#'   \item{cna.gistic}{matrix with 19661 rows and 56 columns, from GISTIC discretized copy number alteration calls.}
 #' }
-#' @source \url{...}
+#' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad_2013}
 "mae_baca"
 
 #' Barwick et al. MAE-object
@@ -61,7 +72,12 @@
 #'
 #' @format An MAE object spanning 112 men with prostate cancer
 #' \describe{
-#'   \item{gex}{matrix with 15681 rows and 503 columns, for the gene expression data}
+#'   \item{gex.rma}{matrix with 9007 rows and 171 columns, for the gene expression data}
+#'   \item{cibersort}{matrix with 22 rows and 171 columns, of cibersort based deconvolution data}
+#'   \item{xcell}{matrix with 39 rows and 171 columns, of xcell based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 171 columns, of epic based deconvolution data}
+#'   \item{quantiseq}{matrix with 11 rows and 171 columns, of quantiseq based deconvolution data}
+#'   \item{mcp}{matrix with 11 rows and 171 columns, of mcp-counter based deconvolution data}
 #' }
 #' @details .  
 #' @references Chandran, U. R., Ma, C., Dhir, R., et al. (2007). Gene expression profiles of prostate cancer reveal involvement of multiple molecular pathways in the metastatic process. BMC cancer, 7, 64. https://doi.org/10.1186/1471-2407-7-64
@@ -77,6 +93,11 @@
 #' @format An MAE object spanning 112 men with prostate cancer
 #' \describe{
 #'   \item{gex.logq}{matrix with 23097 rows and 255 columns, for the log-quantile normalized gene expression data}
+#'   \item{cibersort}{matrix with 22 rows and 255 columns, of cibersort based deconvolution data}
+#'   \item{xcell}{matrix with 39 rows and 255 columns, of xcell based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 255 columns, of epic based deconvolution data}
+#'   \item{quantiseq}{matrix with 11 rows and 255 columns, of quantiseq based deconvolution data}
+#'   \item{mcp}{matrix with 11 rows and 255 columns, of mcp-counter based deconvolution data}
 #' }
 #' @details The data comprises of 255 samples, with 164 primary tumors samples, 52 adjacent normal samples, and 39 benign prostate hyperplasia samples.  This dataset includes in its totality the 164 samples analysed in Kreutz et al. 2020.
 #' @references Friedrich, M., Wiedemann, K., Reiche, K., et al. (2020). The Role of lncRNAs TAPIR-1 and -2 as Diagnostic Markers and Potential Therapeutic Targets in Prostate Cancer. Cancers, 12(5), 1122. https://doi.org/10.3390/cancers12051122
@@ -106,13 +127,12 @@
 #'
 #' @format An MAE object spanning 112 men with prostate cancer
 #' \describe{
-#'   \item{gex}{matrix with 17208 rows and 213 columns, for the gene expression data}
+#'   \item{gex.rma}{matrix with 17208 rows and 213 columns, for the gene expression data}
 #'   \item{xcell}{matrix with 39 rows and 213 columns, of xcell based deconvolution data}
 #'   \item{epic}{matrix with 8 rows and 213 columns, of epic based deconvolution data}
 #'   \item{quantiseq}{matrix with 11 rows and 213 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 11 rows and 213 columns, of mcp-counter based deconvolution data}
-#'   \item{cibersort}{matrix with 25 rows and 213 columns, of cibersort based deconvolution data}
-#'   \item{scores}{matrix with 2 rows and 213 columns, genomic risk and AR scores}
+#'   \item{cibersort}{matrix with 22 rows and 213 columns, of cibersort based deconvolution data}
 #' }
 #' @details The data refers to samples from the ICGC Canadian Prostate Cancer Genome Network (ICGC-PRAD-CA) 
 #' @references Fraser, M., Sabelnykova, V.Y., Yamaguchi, T.N., et al. (2017). Genomic hallmarks of localized, non-indolent prostate cancer. Nature, 541, 359-364.
@@ -133,13 +153,12 @@
 #'
 #' @format An MAE object spanning 67 samples of normal prostate samples and prostate cancer samples
 #' \describe{
-#'   \item{gex}{matrix with 16546 rows and 67 columns, for the gene expression data}
-#'   \item{xcell}{matrix with 39 rows and 67 columns, of xcell based deconvolution data}
-#'   \item{epic}{matrix with 8 rows and 67 columns, of epic based deconvolution data}
-#'   \item{quantiseq}{matrix with 11 rows and 67 columns, of quantiseq based deconvolution data}
-#'   \item{mcp}{matrix with 11 rows and 67 columns, of mcp-counter based deconvolution data}
-#'   \item{cibersort}{matrix with 25 rows and 67 columns, of cibersort based deconvolution data}
-#'   \item{scores}{matrix with 2 rows and 67 columns, genomic risk and AR scores}
+#'   \item{gex.rma}{matrix with 12798 rows and 83 columns, for the gene expression data}
+#'   \item{xcell}{matrix with 39 rows and 83 columns, of xcell based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 83 columns, of epic based deconvolution data}
+#'   \item{quantiseq}{matrix with 11 rows and 83 columns, of quantiseq based deconvolution data}
+#'   \item{mcp}{matrix with 11 rows and 83 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 22 rows and 83 columns, of cibersort based deconvolution data}
 #' }
 #' @details The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples. 
 #' @references Kunderfranco, P., Mello-Grand, M., Cangemi, R., et al.  (2010). ETS transcription factors control transcription of EZH2 and epigenetic silencing of the tumor suppressor gene Nkx3.1 in prostate cancer. PloS one, 5(5), e10547. https://doi.org/10.1371/journal.pone.0010547
@@ -154,15 +173,14 @@
 #' 
 #' @format An MAE object spanning 112 men with prostate cancer
 #' \describe{
-#'   \item{gex}{matrix with 21589 rows and 65 columns}
-#'   \item{cna_gistic}{matrix with 20873 rows and 65 columns}
-#'   \item{mut}{matrix with 27291 rows and 63 columns, of mutation data}
+#'   \item{gex.relz}{matrix with 21589 rows and 65 columns}
+#'   \item{cna.gistic}{matrix with 20873 rows and 65 columns}
+#'   \item{mut}{RaggedExperiment with 50803 rows and 65 columns, of mutation data from cbioportal}
 #'   \item{xcell}{matrix with 39 rows and 65 columns, of xcell based deconvolution data}
 #'   \item{epic}{matrix with 8 rows and 65 columns, of epic based deconvolution data}
 #'   \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
-#'   \item{cibersort}{matrix with 25 rows and 65 columns, of cibersort based deconvolution data}
-#'   \item{scores}{matrix with 2 rows and 65 columns, genomic risk and AR scores}
+#'   \item{cibersort}{matrix with 22 rows and 65 columns, of cibersort based deconvolution data}
 #' }
 #' @details The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples. 
 #' @references Ren, S., Wei, G. H., Liu, D., et al.  (2018). Whole-genome and Transcriptome Sequencing of Prostate Cancer Identify New Genetic Alterations Driving Disease Progression. European urology, 73(3), 322–339. https://doi.org/10.1016/j.eururo.2017.08.027
@@ -176,11 +194,12 @@
 #' 
 #' @format An MAE object spanning 79 men 
 #' \describe{
-#'   \item{gex}{matrix with 12057 rows and 79 columns}
-#'   \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
-#'   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
-#'   \item{cibersort}{matrix with 25 rows and 79 columns, of cibersort based deconvolution data}
-#'   \item{scores}{matrix with 2 rows and 79 columns, genomic risk and AR scores}
+#'   \item{gex.rma}{matrix with 12798 rows and 79 columns}
+#'   \item{quantiseq}{matrix with 11 rows and 79 columns, of quantiseq based deconvolution data}
+#'   \item{mcp}{matrix with 11 rows and 79 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 22 rows and 79 columns, of cibersort based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 79 columns, of epic based deconvolution data}
+#'   \item{xcell}{matrix with 39 rows and 79 columns, of xcell based deconvolution data}
 #' }
 #'
 #' @references Sun, Y., & Goodison, S. (2009). Optimizing molecular signatures for predicting prostate cancer recurrence. The Prostate, 69(10), 1119–1127. https://doi.org/10.1002/pros.20961
@@ -194,15 +213,14 @@
 #'
 #' @format An MAE object spanning 79 men 
 #' \describe{
-#'   \item{gex}{matrix with 17638 rows and 300 columns}
-#'   \item{cna_log}{matrix with 22431 rows and 65 columns}
-#'   \item{mut}{a matrix with 6847 rows and 43 columns, of mutation data}
-#'   \item{xcell}{matrix with 39 rows and 300 columns, of xcell based deconvolution data}
-#'   \item{epic}{matrix with 8 rows and 300 columns, of epic based deconvolution data}
-#'   \item{quantiseq}{matrix with 11 rows and 300 columns, of quantiseq based deconvolution data}
-#'   \item{mcp}{matrix with 11 rows and 300 columns, of mcp-counter based deconvolution data}
-#'   \item{cibersort}{matrix with 25 rows and 300 columns, }
-#'   \item{scores}{matrix with 2 rows and 300 columns, genomic risk and AR scores}
+#'   \item{gex.rma}{matrix with 17410 rows and 179 columns}
+#'   \item{cna.logr}{matrix with 22419 rows and 218 columns}
+#'   \item{mut}{RaggedExperiment with 320 rows and 43 columns, of mutation data}
+#'   \item{xcell}{matrix with 39 rows and 179 columns, of xcell based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 179 columns, of epic based deconvolution data}
+#'   \item{quantiseq}{matrix with 11 rows and 179 columns, of quantiseq based deconvolution data}
+#'   \item{mcp}{matrix with 11 rows and 179 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 22 rows and 179 columns, of cibersort based deconvolution data}
 #' }
 #'
 #' @references Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026
@@ -217,15 +235,14 @@
 #' 
 #' @format An MAE object spanning 333 men with prostate cancer
 #' \describe{
-#'   \item{cna_log}{matrix with 21735 rows and 333 columns}
-#'   \item{mut}{matrix with 29707 rows and 333 columns,of mutation data}
-#'   \item{gex}{matrix with 58684 rows and 483 columns}
-#'   \item{xcell}{matrix with 39 rows and 483 columns}
-#'   \item{epic}{matrix with 8 rows and 483 columns}
-#'   \item{quantiseq}{matrix with 11 rows and 483 columns}
-#'   \item{mcp}{matrix with 11 rows and 483 columns}
-#'   \item{scores}{matrix with 2 rows and 333 columns, genomic risk and AR scores}
-#'   
+#'   \item{cna.gistic}{matrix with 21720 rows and 333 columns}
+#'   \item{mut}{RaggedExperiment with 13205 rows and 320 columns,of mutation data}
+#'   \item{gex.tpm}{matrix with 58684 rows and 322 columns}
+#'   \item{xcell}{matrix with 39 rows and 322 columns, of xcell based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 322 columns, of epic based deconvolution data}
+#'   \item{quantiseq}{matrix with 11 rows and 322 columns, of quantiseq based deconvolution data}
+#'   \item{mcp}{matrix with 11 rows and 322 columns, of mcp-counter based deconvolution data}
+#'   \item{cibersort}{matrix with 22 rows and 322 columns, of cibersort based deconvolution data}
 #' }
 #' 
 #' @references Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025
@@ -238,8 +255,11 @@
 #' MultiAssayExperiment object containing GEX from True et al.
 #' @format An MAE object spanning 333 men with prostate cancer
 #' \describe{
-#'   \item{gex}{matrix with 3398 rows and 32 columns}
-#'   \item{scores}{matrix with 2 rows and 32 columns, genomic risk and AR scores}
+#'   \item{gex.logr}{matrix with 3615 rows and 32 columns}
+#'   \item{cibersort}{matrix with 22 rows and 32 columns, of cibersort based deconvolution data}
+#'   \item{epic}{matrix with 8 rows and 32 columns, of epic based deconvolution data}
+#'   \item{quantiseq}{matrix with 11 rows and 32 columns, of quantiseq based deconvolution data}
+#'   \item{mcp}{matrix with 7 rows and 32 columns, of mcp-counter based deconvolution data}
 #'}
 #' @details The expression data for this dataset has been produced by a two colour chip that provides the relative expression levels for each tumor rather than its absolute value as in all other dataset.  Thus it is not possible to provide immune deconvolution for this dataset.  This dataset also has a rich clinical data.  In this dataset the Gleason grade group follows the grading described in \url{https://www.cancerresearchuk.org/about-cancer/prostate-cancer/stages/grades}. The clinical data also includes an extra column named 'gleason_group' where the the samples are grouped based on their primary and secondary greason scores as <=6|3+4|4+3|>=8.
 #' @references True, L., Coleman, I., Hawley, S., et al. (2006). A molecular correlate to the Gleason grading system for prostate adenocarcinoma. Proceedings of the National Academy of Sciences of the United States of America, 103(29), 10991–10996. https://doi.org/10.1073/pnas.0603678103
@@ -252,11 +272,10 @@
 #' MultiAssayExperiment object containing GEX from Wallace et al.
 #' @format An MAE object spanning 333 men with prostate cancer
 #' \describe{
-#'   \item{gex}{matrix with 12048 rows and 83 columns}
+#'   \item{gex.rma}{matrix with 12798 rows and 83 columns}
 #'   \item{mcp}{matrix with 11 rows and 83 columns}
 #'   \item{quantiseq}{matrix with 4 rows and 83 columns}
-#'   \item{cibersort}{matrix with 25 rows and 83 columns}
-#'   \item{scores}{matrix with 2 rows and 83 columns, genomic risk and AR scores}
+#'   \item{cibersort}{matrix with 22 rows and 83 columns}
 #'}
 #' 
 #' @references Wallace, T. A., Prueitt, R. L., Yi, M., Howe, T. M., Gillespie, J. W., Yfantis, H. G., Stephens, R. M., Caporaso, N. E., Loffredo, C. A., & Ambs, S. (2008). Tumor immunobiological differences in prostate cancer between African-American and European-American men. Cancer research, 68(3), 927–936. https://doi.org/10.1158/0008-5472.CAN-07-2608
@@ -270,7 +289,7 @@
 #'
 #' A MAE oject spanning 838 samples of two cohorts
 #' \describe{
-#'  \item{gex}{matrix of 17324 rows and 838 columns of gene expression data}
+#'  \item{gex.rma}{matrix of 17410 rows and 838 columns of gene expression data}
 #'  \item{mcp){matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
 #'  \item{quantiseq){matrix with 11 rows and 838 columns, the quantiseq deconvolution of the expression data}
 #'  \item{xcell){matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
