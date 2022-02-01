@@ -1261,6 +1261,91 @@ generate_cbioportal_oncoprint <- function(
 	}
 }
 
+#' Download mutation data from cBioPortal using cgsdr package
+#'
+#' @param study_id TODO
+#' @param genes TODO
+#' @param delay TODO
+#' @param splitsize TODO
+#' @param verb TODO
+#' @examples
+#' ren_mut=generate_cgdsr_mut("ren",genes=curatedPCaData::curatedPCaData_genes$hgnc_symbol)
+#' barbieri_mut=generate_cgdsr_mut("barbieri",genes=curatedPCaData::curatedPCaData_genes$hgnc_symbol)
+
+generate_cgdsr_mut <- function(
+  study_id, # tcga, taylor, barbieri, ren, or abida
+  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  delay = 0.05,
+  splitsize = 100,
+  verb = TRUE
+){
+  study_id <- tolower(study_id)
+  # Remember cBioPortal genetic profile names and query according to study id
+  # Mutations
+  geneticProfileMutations = c(
+    tcga = "prad_tcga_pub_mutations", # TCGA mutations
+    taylor = "prad_mskcc_mutations", # Taylor et al. mutations
+    barbieri = "prad_broad_mutations", # Barbieri et al. mutations
+    ren = "prad_eururol_2017_mutations", # Ren et al. mutations
+    abida = "prad_su2c_2019_mutations" # Abida et al. mutations
+  )
+  # CNA listings for GISTIC
+  geneticProfileCNA = c( # Gistic-level mutation info, {-2,-1,0,1,2}
+    tcga = "prad_tcga_pub_gistic", # TCGA (GISTIC instead of capped relative linear copy numbers)
+    taylor = "prad_mskcc_cna", # Taylor et al., GISTIC
+    barbieri = "prad_broad_cna", # Barbieri et al., GISTIC
+    ren = "prad_eururol_2017_cna", # Ren et al. (GISTIC instead of capped relative linear copy numbers)
+    abida = "prad_su2c_2019_gistic" # Abida et al., GISTIC
+  )
+  # Sample ID list
+  caseList = c(
+    tcga = "prad_tcga_pub_sequenced", # TCGA samples
+    taylor = "prad_mskcc_sequenced", # Taylor et al. samples
+    barbieri = "prad_broad_sequenced", # Barbieri et al. samples
+    ren = "prad_eururol_2017_sequenced", # Ren et al. samples
+    abida = "prad_su2c_2019_sequenced" # Abida et al. samples 		
+  )
+  
+  # If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
+  if(class(genes)=="list"){
+    genes <- genes$hgnc_symbol
+  }
+  # Establisigh connection to cBioPortal
+  mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+  # Split gene name vector into suitable lengths
+  genesplit <- rep(1:ceiling(length(genes)/splitsize), each = splitsize)[1:length(genes)]
+  splitgenes <- split(genes, f = genesplit)
+  # Fetch split gene name lists as separate calls
+  pb <- progress::progress_bar$new(total = length(splitgenes))
+  # Bind the API calls as per columns
+  if(verb) print("Downloading mutation data...")
+  mut <- do.call("rbind", lapply(1:length(splitgenes), FUN = function(z){
+    # Sleep if necessary to avoid API call overflow
+    Sys.sleep(delay)
+    # Fetch each split gene name list from the URL-based API, essentially a wrapper for cgdsr's own function
+    cgdsr::getMutationData(mycgds, 
+                           genes = splitgenes[[z]], # 
+                           geneticProfile = geneticProfileMutations[study_id], 
+                           caseList = caseList[study_id]
+    )
+  }))
+  
+  list(mut)
+  #}
+}
+
+#' Download mutation data from cBioPortal using cbioportaldata package
+#'
+#' @param caselist TODO
+#' @examples
+#' ren_mut=generate_cbioportaldata_mut("prad_eururol_2017")
+#' barbieri_mut=generate_cbioportaldata_mut("prad_broad")
+
+generate_cbioportaldata_mut<-function(caselist){
+  mut=cBioPortalData::cBioDataPack(caselist,ask = FALSE)
+  return(mut)
+}
+
 #' Download and generate omics from the ICGC
 #'
 #' @param icgc_id character string indicating name of ICGC dataset
