@@ -1343,7 +1343,22 @@ generate_cgdsr_mut <- function(
 
 generate_cbioportaldata_mut<-function(caselist){
   mut=cBioPortalData::cBioDataPack(caselist,ask = FALSE)
-  return(mut)
+  ragexp=mut[["mutations"]]
+  if(caselist=="prad_eururol_2017"){
+    return(ragexp)
+    
+  }else if (caselist == "prad_broad" || caselist=="prad_su2c_2019"){
+    colnames(ragexp)<-gsub("-",".",colnames(ragexp))
+    return(ragexp)
+    
+  }else if (caselist=="prad_mskcc"){
+    same_barcode=colnames(ragexp)[grepl("PCA", colnames(ragexp))]
+    ind=which(colnames(ragexp) %in% same_barcode=="TRUE")
+    ragexp2<-ragexp[, c(ind)]
+    return(ragexp2)
+    
+  }
+  
 }
 
 #' Download and generate omics from the ICGC
@@ -1619,7 +1634,18 @@ generate_xenabrowser <- function(
 			# Download the MuTect2 somatic mutation calls
 			file <- .xenabrowserDownload(urls[["mutect2"]])
 			# Suitable for RaggedExperiment style data storage
-			dat <- read.table(file, sep="\t", header=TRUE)			
+			dat <- read.table(file, sep="\t", header=TRUE)
+
+			tcga_mut<-dat[,c(3:5,1,2,6:11)]
+			colnames(tcga_mut)[1:3]=c("seqnames","start","end")
+			tcga_mut$Sample_ID<-gsub("-",".",tcga_mut$Sample_ID)
+			tcga_mut$Sample_ID<-gsub("01A","01",tcga_mut$Sample_ID)
+			names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
+			#a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
+			GRL <- makeGRangesListFromDataFrame(tcga_mut, split.field = "Sample_ID",
+			                                    names.field = "gene",keep.extra.columns = TRUE)
+			ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
+			return(ragexp_tcga)
 		# Clinical data matrix construction
 		}else if(type == "clinical"){
 			# Generic phenotype information
