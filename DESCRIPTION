@@ -69,4 +69,6 @@ Suggests:
     VennDiagram,
     org.Hs.eg.db,
     DBI,
-    UCSCXenaTools
+    UCSCXenaTools,
+    cBioPortalData,
+    AnVIL
