@@ -37,12 +37,16 @@ initial_curated_df <- function(
 mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_tcga_sequenced")
 
-
-# create the curated object
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
 
+## Note: 
+#
+# Clinical data obtained from the N=501 in https://www.cbioportal.org/study/clinicalData?id=prad_tcga,
+# then supplemented by additional information available for N=334 in https://www.cbioportal.org/study/clinicalData?id=prad_tcga_pub
+# then subset to samples we ultimately accept.
+#
 curated <- curated %>% 
   # Not just TCGA provisional with TCGA firehose brought in for GEX
   dplyr::mutate(study_name = "TCGA") %>%
@@ -141,6 +145,51 @@ curated <- curated %>%
 		N_stage == "N1" ~ 1,
 		N_stage == "" ~ NA_real_
 	))
+
+# cgdsr::getGeneticProfiles(mycgds,'tcga_prad')
+
+# Append additional information from Firehose Legacy; loop over all 'omics profiles
+uncurated2 <- do.call("rbind", lapply(cgdsr::getGeneticProfiles(mycgds,'prad_tcga_pub')[,1], FUN=function(x){
+	cgdsr::getClinicalData(mycgds, caseList=x)
+}))
+# Differences in reported fields (already based on GEX)
+# > length(uncurated)
+# [1] 80
+# > length(uncurated2)
+# [1] 91
+#
+curated2 <- initial_curated_df(
+  df_rownames = rownames(uncurated2),
+  template_name="data-raw/template_prad.csv")
+
+curated2 <- uncurated2 %>% 
+	# ERG fusions were determined using gene expression
+	dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
+		ERG_STATUS == "fusion" ~ 1,
+		ERG_STATUS == "none" ~ 0,
+		is.na(ERG_STATUS) ~ NA_real_
+	)) %>%
+	# Purity estimates from TCGA Firehose legacy
+	dplyr::mutate(tumor_purity_absolute = uncurated2$ABSOLUTE_EXTRACT_PURITY) %>%
+	dplyr::mutate(tumor_purity_demixt = uncurated2$DEMIX_PURITY) %>%
+	dplyr::mutate(tumor_purity_pathology = uncurated2$TUMOR_CELLULARITY_PATHOLOGY_REVIEW) %>%
+	# Precomputed AR-scores
+	dplyr::mutate(AR_activity = uncurated2$AR_SCORE) %>%
+	# Ethnicity
+	dplyr::mutate(race = dplyr::case_when(
+		RACE == "ASIAN" ~ "asian",
+		RACE == "BLACK OR AFRICAN AMERICAN" ~ "african_american",
+		RACE == "WHITE" ~ "caucasian",
+		is.na(RACE) ~ NA_character_
+	))
+
+# Copy additional curated field from Firehose legacy
+curated[,"ERG_fusion_GEX"] <- curated2[,"ERG_fusion_GEX"]
+curated[,"tumor_purity_absolute"] <- curated2[,"tumor_purity_absolute"]
+curated[,"tumor_purity_demixt"] <- curated2[,"tumor_purity_demixt"]
+curated[,"tumor_purity_pathology"] <- curated2[,"tumor_purity_pathology"]
+curated[,"AR_activity"] <- curated2[,"AR_activity"]
+curated[,"race"] <- curated2[,"race"]
 
 clinical_tcga <- curated
 
