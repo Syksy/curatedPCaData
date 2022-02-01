@@ -58,9 +58,9 @@ save(cna.gistic_abida, file="data-raw/cna.gistic_abida.RData")
 #   caseList="prad_su2c_2019_sequenced"
 # )
 # mut_abida[which(mut_abida=="NaN")] <- NA
-abida_mut=curatedPCaData:::generate_cbioportaldata_mut("prad_su2c_2019")
-ragexp_abida=abida_mut[["mutations"]]
-colnames(ragexp_abida)<-gsub("-",".",colnames(ragexp_abida))
+abida_mut=curatedPCaData:::generate_cbioportaldata_mut(
+  caselist = "prad_su2c_2019"
+  )
 
 save(ragexp_abida, file="data-raw/mut_abida.RData")
 # To check: Fusions separately?
@@ -113,9 +113,9 @@ save(cna.gistic_barbieri, file="data-raw/cna.gistic_barbieri.RData")
 # )
 # mut_barbieri[which(mut_barbieri=="NaN")] <- NA
 
-barbieri_mut=curatedPCaData:::generate_cbioportaldata_mut("prad_broad")
-ragexp_barbieri=barbieri_mut[["mutations"]]
-colnames(ragexp_barbieri)<-gsub("-",".",colnames(ragexp_barbieri))
+barbieri_mut=curatedPCaData:::generate_cbioportaldata_mut(
+  caselist = "prad_broad"
+  )
 
 save(ragexp_barbieri, file="data-raw/mut_barbieri.RData")
 
@@ -295,8 +295,10 @@ save(cna.gistic_ren, file="data-raw/cna.gistic_ren.RData")
 #   caseList = "prad_eururol_2017_sequenced" # Case list
 # )
 # mut_ren[which(mut_ren=="NaN")] <- NA
-ren_mut=curatedPCaData:::generate_cbioportaldata_mut("prad_eururol_2017")
-ragexp_ren=ren_mut[["mutations"]]
+ren_mut<-curatedPCaData:::generate_cbioportaldata_mut(
+  caselist = "prad_eururol_2017"
+  )
+
 save(ragexp_ren, file="data-raw/mut_ren.RData")
 
 # Create MAE object
@@ -350,12 +352,11 @@ save(cna.logr_taylor, file="data-raw/cna.logr_taylor.RData")
 # mut_taylor[which(mut_taylor=="NaN")] <- NA
 # # Grep down to using only patient samples, omitting cell lines etc
 # mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
-taylor_mut<-curatedPCaData:::generate_cbioportaldata_mut("prad_mskcc")
-ragexp_taylor<-taylor_mut[["mutations"]]
-same_barcode=colnames(ragexp_taylor)[grepl("PCA", colnames(ragexp_taylor))]
-ind=which(colnames(ragexp_taylor) %in% same_barcode=="TRUE")
-ragexp_taylor2<-ragexp_taylor[, c(ind)]
-save(ragexp_taylor2, file="data-raw/mut_taylor.RData")
+taylor_mut<-curatedPCaData:::generate_cbioportaldata_mut(
+  caselist = "prad_mskcc"
+  )
+
+save(taylor_mut, file="data-raw/mut_taylor.RData")
 
 # Create MAE object
 mae_taylor <- curatedPCaData:::create_mae(study_name = "Taylor")
@@ -383,14 +384,14 @@ cna.gistic_tcga <- curatedPCaData:::generate_xenabrowser(
 save(cna.gistic_tcga, file="data-raw/cna.gistic_tcga.RData")
 
 # Mutations
-mut_tcga <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles = "prad_tcga_pub_mutations",
-  caseList="prad_tcga_pub_sequenced"
+tcga_mut <- curatedPCaData:::generate_xenabrowser(
+  id = "TCGA-PRAD",
+  type = "mut",
+  truncate = 0 # '.01A' -> '.01' suffix
 )
 # Save NA values as truly NA instead of "NaN" even if other instances exist on column
-mut_tcga[which(mut_tcga=="NaN")] <- NA
-save(mut_tcga, file="data-raw/mut_tcga.RData")
+#mut_tcga[which(mut_tcga=="NaN")] <- NA
+save(tcga_mut, file="data-raw/mut_tcga.RData")
 
 # Create MAE object
 mae_tcga <- curatedPCaData:::create_mae(study_name = "TCGA")
