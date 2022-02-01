@@ -71,6 +71,7 @@ barbieri_mut=generate_cbioportaldata_mut("prad_broad")
 ragexp_barbieri=barbieri_mut[["mutations"]]
 colnames(ragexp_barbieri)<-gsub("-",".",colnames(ragexp_barbieri))
 
+save(ragexp_barbieri, file="data-raw/mut_barbieri.RData")
 mae_barbieri <- c(mae_barbieri, mut = ragexp_barbieri)
 usethis::use_data(mae_barbieri, overwrite = TRUE)
 
@@ -122,7 +123,7 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 #mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 #prad_mskcc_mutations
 #uncurated_cbio <- cgdsr::getMutationData.CGDS(mycgds, caseList = "prad_mskcc",geneticProfile="prad_mskcc_mutations",genes=taylor_mut$Hugo_Symbol)
-taylor_mut<-curatedPCaData::generate_cbioportaldata_mut("prad_mskcc")
+taylor_mut<-curatedPCaData:::generate_cbioportaldata_mut("prad_mskcc")
 ragexp_taylor<-taylor_mut[["mutations"]]
 same_barcode=colnames(ragexp_taylor)[grepl("PCA", colnames(ragexp_taylor))]
 ind=which(colnames(ragexp_taylor) %in% same_barcode=="TRUE")
