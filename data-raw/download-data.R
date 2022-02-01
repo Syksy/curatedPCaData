@@ -52,13 +52,17 @@ cna.gistic_abida <- curatedPCaData:::generate_cbioportal(
 save(cna.gistic_abida, file="data-raw/cna.gistic_abida.RData")
 
 # Mutations
-mut_abida <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_su2c_2019_mutations", 
-  caseList="prad_su2c_2019_sequenced"
-)
-mut_abida[which(mut_abida=="NaN")] <- NA
-save(mut_abida, file="data-raw/mut_abida.RData")
+# mut_abida <- curatedPCaData:::generate_cbioportal(
+#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+#   geneticProfiles="prad_su2c_2019_mutations", 
+#   caseList="prad_su2c_2019_sequenced"
+# )
+# mut_abida[which(mut_abida=="NaN")] <- NA
+abida_mut=curatedPCaData:::generate_cbioportaldata_mut("prad_su2c_2019")
+ragexp_abida=abida_mut[["mutations"]]
+colnames(ragexp_abida)<-gsub("-",".",colnames(ragexp_abida))
+
+save(ragexp_abida, file="data-raw/mut_abida.RData")
 # To check: Fusions separately?
 
 # Create MAE object
@@ -102,13 +106,18 @@ cna.gistic_barbieri <- curatedPCaData:::generate_cbioportal(
 save(cna.gistic_barbieri, file="data-raw/cna.gistic_barbieri.RData")
 
 # MUT
-mut_barbieri <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_broad_mutations", 
-  caseList="prad_broad_sequenced"
-)
-mut_barbieri[which(mut_barbieri=="NaN")] <- NA
-save(mut_barbieri, file="data-raw/mut_barbieri.RData")
+# mut_barbieri <- curatedPCaData:::generate_cbioportal(
+#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+#   geneticProfiles="prad_broad_mutations", 
+#   caseList="prad_broad_sequenced"
+# )
+# mut_barbieri[which(mut_barbieri=="NaN")] <- NA
+
+barbieri_mut=curatedPCaData:::generate_cbioportaldata_mut("prad_broad")
+ragexp_barbieri=barbieri_mut[["mutations"]]
+colnames(ragexp_barbieri)<-gsub("-",".",colnames(ragexp_barbieri))
+
+save(ragexp_barbieri, file="data-raw/mut_barbieri.RData")
 
 # Create MAE object
 mae_barbieri <- curatedPCaData:::create_mae(study_name = "Barbieri")
@@ -280,13 +289,15 @@ cna.gistic_ren <- curatedPCaData:::generate_cbioportal(
 save(cna.gistic_ren, file="data-raw/cna.gistic_ren.RData")
 
 # Mutations
-mut_ren <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_eururol_2017_mutations", # Omics profile
-  caseList = "prad_eururol_2017_sequenced" # Case list
-)
-mut_ren[which(mut_ren=="NaN")] <- NA
-save(mut_ren, file="data-raw/mut_ren.RData")
+# mut_ren <- curatedPCaData:::generate_cbioportal(
+#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+#   geneticProfiles = "prad_eururol_2017_mutations", # Omics profile
+#   caseList = "prad_eururol_2017_sequenced" # Case list
+# )
+# mut_ren[which(mut_ren=="NaN")] <- NA
+ren_mut=curatedPCaData:::generate_cbioportaldata_mut("prad_eururol_2017")
+ragexp_ren=ren_mut[["mutations"]]
+save(ragexp_ren, file="data-raw/mut_ren.RData")
 
 # Create MAE object
 mae_ren <- curatedPCaData:::create_mae(study_name = "ren")
@@ -330,16 +341,21 @@ cna.logr_taylor <- curatedPCaData:::generate_cna_geo(
 save(cna.logr_taylor, file="data-raw/cna.logr_taylor.RData")
 
 # Mutations - notice this is downloaded from cBioPortal rather than processed from GEO
-mut_taylor <- curatedPCaData:::generate_cbioportal(
-	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-	geneticProfiles = "prad_mskcc_mutations",
-	caseList="prad_mskcc_sequenced"
-) 
-# Save NA values as truly NA instead of "NaN" even if other instances exist on column
-mut_taylor[which(mut_taylor=="NaN")] <- NA
-# Grep down to using only patient samples, omitting cell lines etc
-mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
-save(mut_taylor, file="data-raw/mut_taylor.RData")
+# mut_taylor <- curatedPCaData:::generate_cbioportal(
+# 	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+# 	geneticProfiles = "prad_mskcc_mutations",
+# 	caseList="prad_mskcc_sequenced"
+# ) 
+# # Save NA values as truly NA instead of "NaN" even if other instances exist on column
+# mut_taylor[which(mut_taylor=="NaN")] <- NA
+# # Grep down to using only patient samples, omitting cell lines etc
+# mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
+taylor_mut<-curatedPCaData:::generate_cbioportaldata_mut("prad_mskcc")
+ragexp_taylor<-taylor_mut[["mutations"]]
+same_barcode=colnames(ragexp_taylor)[grepl("PCA", colnames(ragexp_taylor))]
+ind=which(colnames(ragexp_taylor) %in% same_barcode=="TRUE")
+ragexp_taylor2<-ragexp_taylor[, c(ind)]
+save(ragexp_taylor2, file="data-raw/mut_taylor.RData")
 
 # Create MAE object
 mae_taylor <- curatedPCaData:::create_mae(study_name = "Taylor")
