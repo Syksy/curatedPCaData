@@ -1,15 +1,15 @@
 #############################################################################################################
 # NEW CIBERSORT
 #############################################################################################################
-load("data-raw/gex.logq_barwick.RData")
+gex=mae_barwick[["gex.logq"]]
 gex2 <- gex
 gex2 <- as.data.frame(gex2)
 gex2<- gex2[complete.cases(gex2), ]
 #gex_chandran2 <- gex_chandran2[-9561,]
-gex2[,181]<-rownames(gex2)
+gex2[,147]<-rownames(gex2)
 #View(gex2)
 rownames(gex2) <- NULL
-gex2 <- gex2[,c(181,1:180)]
+gex2 <- gex2[,c(147,1:146)]
 #gex2 <- gex2[-9534,]
 write.table(gex2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_barwick.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
@@ -99,16 +99,16 @@ gex_taylor2 <- gex_taylor2[,c(180,1:179)]
 #gex_taylor2 <- gex_taylor2[-6860,]
 write.table(gex_taylor2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_taylor.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex.rma_wallace.RData")
+gex.rma_wallace=mae_wallace[["gex.rma"]]
 #gex.rma_wallace<-mae_wallace[["gex.rma"]]
 gex_wallace2 <- gex.rma_wallace
 gex_wallace2 <- as.data.frame(gex_wallace2)
 gex_wallace2<- gex_wallace2[complete.cases(gex_wallace2), ]
 #gex_wallace2 <- gex_wallace2[-9561,]
-gex_wallace2[,90]<-rownames(gex_wallace2)
+gex_wallace2[,84]<-rownames(gex_wallace2)
 #View(gex_wallace2)
 rownames(gex_wallace2) <- NULL
-gex_wallace2 <- gex_wallace2[,c(90,1:89)]
+gex_wallace2 <- gex_wallace2[,c(84,1:83)]
 #gex_wallace2 <- gex_wallace2[-6860,]
 write.table(gex_wallace2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_wallace.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
@@ -198,15 +198,15 @@ gex_icgcca2 <- gex_icgcca2[,c(214,1:213)]
 #gex_icgcca2 <- gex_icgcca2[-6860,]
 write.table(gex_icgcca2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_icgcca.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex.tpm_tcga.RData")
-gex_tcga2 <- osf_gex_rounded
+gex.fpkm_tcga=mae_tcga[["gex.fpkm"]]
+gex_tcga2 <- gex.fpkm_tcga
 gex_tcga2 <- as.data.frame(gex_tcga2)
 gex_tcga2<- gex_tcga2[complete.cases(gex_tcga2), ]
 #gex_tcga2 <- gex_tcga2[-9561,]
-gex_tcga2[,323]<-rownames(gex_tcga2)
+gex_tcga2[,482]<-rownames(gex_tcga2)
 #View(gex_tcga2)
 rownames(gex_tcga2) <- NULL
-gex_tcga2 <- gex_tcga2[,c(323,1:322)]
+gex_tcga2 <- gex_tcga2[,c(482,1:481)]
 #gex_tcga2 <- gex_tcga2[-9534,]
 write.table(gex_tcga2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_tcga.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
