@@ -336,15 +336,6 @@ mae_ren <- c(mae_ren, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_ren, overwrite = TRUE)
 
-# True et al.
-
-# tmp <- as.data.frame(immunedeconv::deconvolute(mae_true[["gex"]], method="xcell"))
-# rownames(tmp) <- tmp$cell_type
-# # Omit cell type column and store only data of cell type populations
-# tmp <- as.matrix(tmp[,-1])
-# mae_true <- c(mae_true, xcell = tmp)
-# # Save the derived new 'assay' types to the mae-object
-# usethis::use_data(mae_true, overwrite = TRUE)
 
 # Sun et al.
 
@@ -442,6 +433,8 @@ tmp <- as.matrix(tmp[,-1])
 mae_true <- c(mae_true, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_true, overwrite = TRUE)
+
+
 
 #####################################################
 #####################################################
