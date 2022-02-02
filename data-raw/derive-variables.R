@@ -370,7 +370,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.tpm"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -557,7 +557,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.tpm"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -743,7 +743,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.tpm"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -931,7 +931,7 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.tpm"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
