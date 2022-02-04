@@ -28,14 +28,7 @@ addSlotMAE <- function(mae, ...){
 	mae
 }
 
-
-#####################################################################
-#####################################################################
-##                                                                 ##
-##  The script is grouped by deconvolution method not by dataset   ##
-##                                                                 ##   
-#####################################################################
-#####################################################################
+## Load temporary MAE-objects so the whole script can be run and output saved over all iterated 
 
 
 ## IMMUNE DECONVOLUTION VARIABLES
@@ -48,37 +41,72 @@ addSlotMAE <- function(mae, ...){
 #####################################################
 #####################################################
 
-# Kunderfranco et al.
+# Abida et al.
+cibersort_polyA_abida<-rio::import("data-raw/CIBERSORTx_abida_Results.csv")
+cibersort_polyA_abida<-cibersort_polyA_abida[ , -which(names(cibersort_polyA_abida) %in% c("P-value","Correlation","RMSE"))]
+cibersort_polyA_abida <- t(cibersort_polyA_abida)
+colnames(cibersort_polyA_abida)<- cibersort_polyA_abida[1,]
+cibersort_polyA_abida<-cibersort_polyA_abida[-1,]
+cibersort_polyA_abida<-as.matrix(cibersort_polyA_abida)
+class(cibersort_polyA_abida) <- "numeric"
+#save(cibersort_polyA_abida, file="data-raw/cibersort_polyA_abida.RData")
+mae_abida <- addSlotMAE(curatedPCaData::mae_abida, cibersort = cibersort_polyA_abida)
+#mae_capture_abida <- create_mae(study_name = "capture_abida")
+usethis::use_data(mae_abida, overwrite = TRUE)
 
-cibersort_kunderfranco<-rio::import("data-raw/CIBERSORTx_kunderfranco_Results.csv")
-cibersort_kunderfranco<-cibersort_kunderfranco[ , -which(names(cibersort_kunderfranco) %in% c("P-value","Correlation","RMSE"))]
-cibersort_kunderfranco <- t(cibersort_kunderfranco)
-colnames(cibersort_kunderfranco)<- cibersort_kunderfranco[1,]
-cibersort_kunderfranco<-cibersort_kunderfranco[-1,]
+# Barbieri et al.
+cibersort_barbieri<-rio::import("data-raw/CIBERSORTx_barbieri_Results.csv")
+cibersort_barbieri<-cibersort_barbieri[ , -which(names(cibersort_barbieri) %in% c("P-value","Correlation","RMSE"))]
+cibersort_barbieri <- t(cibersort_barbieri)
+colnames(cibersort_barbieri)<- cibersort_barbieri[1,]
+cibersort_barbieri<-cibersort_barbieri[-1,]
+cibersort_barbieri<-as.matrix(cibersort_barbieri)
+class(cibersort_barbieri) <- "numeric"
+#save(cibersort_barbieri, file="data-raw/cibersort_barbieri.RData")
+mae_barbieri <- addSlotMAE(curatedPCaData::mae_barbieri, cibersort = cibersort_barbieri)
+#mae_barbieri <- create_mae(study_name = "barbieri")
+usethis::use_data(mae_barbieri, overwrite = TRUE)
 
-cibersort_kunderfranco<-as.matrix(cibersort_kunderfranco)
-class(cibersort_kunderfranco) <- "numeric"
-#save(cibersort_kunderfranco, file="data-raw/cibersort_kunderfranco.RData")
-mae_kunderfranco <- c(curatedPCaData::mae_kunderfranco, cibersort = cibersort_kunderfranco)
-#mae_kunderfranco <- create_mae(study_name = "kunderfranco")
-usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+# Barwick et al.
+cibersort_barwick<-rio::import("data-raw/CIBERSORTx_barwick_Results.csv")
+cibersort_barwick<-cibersort_barwick[ , -which(names(cibersort_barwick) %in% c("P-value","Correlation","RMSE"))]
+cibersort_barwick <- t(cibersort_barwick)
+colnames(cibersort_barwick)<- cibersort_barwick[1,]
+cibersort_barwick<-cibersort_barwick[-1,]
+cibersort_barwick<-as.matrix(cibersort_barwick)
+class(cibersort_barwick) <- "numeric"
+#save(cibersort_barwick, file="data-raw/cibersort_barwick.RData")
+mae_barwick <- addSlotMAE(curatedPCaData::mae_barwick, cibersort = cibersort_barwick)
+#mae_barwick <- create_mae(study_name = "barwick")
+usethis::use_data(mae_barwick, overwrite = TRUE)
 
-# Sun et al.
+# Chandran et al.
+cibersort_chandran<-rio::import("data-raw/CIBERSORTx_chandran_Results.csv")
+cibersort_chandran<-cibersort_chandran[ , -which(names(cibersort_chandran) %in% c("P-value","Correlation","RMSE"))]
+cibersort_chandran <- t(cibersort_chandran)
+colnames(cibersort_chandran)<- cibersort_chandran[1,]
+cibersort_chandran<-cibersort_chandran[-1,]
+cibersort_chandran<-as.matrix(cibersort_chandran)
+class(cibersort_chandran) <- "numeric"
+#save(cibersort_chandran, file="data-raw/cibersort_chandran.RData")
+mae_chandran <- addSlotMAE(curatedPCaData::mae_chandran, cibersort = cibersort_chandran)
+#mae_chandran <- create_mae(study_name = "chandran")
+usethis::use_data(mae_chandran, overwrite = TRUE)
 
-cibersort_sun<-rio::import("data-raw/CIBERSORTx_sun_Results.csv")
-cibersort_sun<-cibersort_sun[ , -which(names(cibersort_sun) %in% c("P-value","Correlation","RMSE"))]
-cibersort_sun <- t(cibersort_sun)
-colnames(cibersort_sun)<- cibersort_sun[1,]
-cibersort_sun<-cibersort_sun[-1,]
-cibersort_sun<-as.matrix(cibersort_sun)
-class(cibersort_sun) <- "numeric"
-#save(cibersort_sun, file="data-raw/cibersort_sun.RData")
-mae_sun <- c(mae_sun, cibersort = cibersort_sun)
-#mae_sun <- create_mae(study_name = "sun")
-usethis::use_data(mae_sun, overwrite = TRUE)
+# Friedrich et al.
+cibersort_friedrich<-rio::import("data-raw/CIBERSORTx_friedrich_Results.csv")
+cibersort_friedrich<-cibersort_friedrich[ , -which(names(cibersort_friedrich) %in% c("P-value","Correlation","RMSE"))]
+cibersort_friedrich <- t(cibersort_friedrich)
+colnames(cibersort_friedrich)<- cibersort_friedrich[1,]
+cibersort_friedrich<-cibersort_friedrich[-1,]
+cibersort_friedrich<-as.matrix(cibersort_friedrich)
+class(cibersort_friedrich) <- "numeric"
+#save(cibersort_friedrich, file="data-raw/cibersort_friedrich.RData")
+mae_friedrich <- addSlotMAE(curatedPCaData::mae_friedrich, cibersort = cibersort_friedrich)
+#mae_friedrich <- create_mae(study_name = "friedrich")
+usethis::use_data(mae_friedrich, overwrite = TRUE)
 
-# Icgcca et al.
-
+# ICGC Canadian set
 cibersort_icgcca<-rio::import("data-raw/CIBERSORTx_icgcca_Results.csv")
 cibersort_icgcca<-cibersort_icgcca[ , -which(names(cibersort_icgcca) %in% c("P-value","Correlation","RMSE"))]
 cibersort_icgcca <- t(cibersort_icgcca)
@@ -88,97 +116,11 @@ cibersort_icgcca<-as.matrix(cibersort_icgcca)
 class(cibersort_icgcca) <- "numeric"
 #save(cibersort_icgcca, file="data-raw/cibersort_icgcca.RData")
 #mae_icgcca[["cibersort"]]<-NULL
-mae_icgcca <- c(mae_icgcca, cibersort = cibersort_icgcca)
+mae_icgcca <- addSlotMAE(curatedPCaData::mae_icgcca, cibersort = cibersort_icgcca)
 #mae_icgcca <- create_mae(study_name = "icgcca")
 usethis::use_data(mae_icgcca, overwrite = TRUE)
 
-# Abida et al.
-
-
-cibersort_polyA_abida<-rio::import("data-raw/CIBERSORTx_abida_Results.csv")
-cibersort_polyA_abida<-cibersort_polyA_abida[ , -which(names(cibersort_polyA_abida) %in% c("P-value","Correlation","RMSE"))]
-cibersort_polyA_abida <- t(cibersort_polyA_abida)
-colnames(cibersort_polyA_abida)<- cibersort_polyA_abida[1,]
-cibersort_polyA_abida<-cibersort_polyA_abida[-1,]
-cibersort_polyA_abida<-as.matrix(cibersort_polyA_abida)
-class(cibersort_polyA_abida) <- "numeric"
-#save(cibersort_polyA_abida, file="data-raw/cibersort_polyA_abida.RData")
-mae_abida <- c(mae_abida, cibersort = cibersort_polyA_abida)
-#mae_capture_abida <- create_mae(study_name = "capture_abida")
-usethis::use_data(mae_abida, overwrite = TRUE)
-
-# Wang et al.
-
-cibersort_wang<-rio::import("data-raw/CIBERSORTx_wang_Results.csv")
-cibersort_wang<-cibersort_wang[ , -which(names(cibersort_wang) %in% c("P-value","Correlation","RMSE"))]
-cibersort_wang <- t(cibersort_wang)
-colnames(cibersort_wang)<- cibersort_wang[1,]
-cibersort_wang<-cibersort_wang[-1,]
-cibersort_wang<-as.matrix(cibersort_wang)
-class(cibersort_wang) <- "numeric"
-#save(cibersort_wang, file="data-raw/cibersort_wang.RData")
-mae_wang <- c(mae_wang, cibersort = cibersort_wang)
-#mae_wang <- create_mae(study_name = "wang")
-usethis::use_data(mae_wang, overwrite = TRUE)
-
-# Kim et al.
-
-cibersort_kim<-rio::import("data-raw/CIBERSORTx_kim_Results.csv")
-cibersort_kim<-cibersort_kim[ , -which(names(cibersort_kim) %in% c("P-value","Correlation","RMSE"))]
-cibersort_kim <- t(cibersort_kim)
-colnames(cibersort_kim)<- cibersort_kim[1,]
-cibersort_kim<-cibersort_kim[-1,]
-cibersort_kim<-as.matrix(cibersort_kim)
-class(cibersort_kim) <- "numeric"
-#save(cibersort_kim, file="data-raw/cibersort_kim.RData")
-mae_kim <- c(mae_kim, cibersort = cibersort_kim)
-#mae_kim <- create_mae(study_name = "kim")
-usethis::use_data(mae_kim, overwrite = TRUE)
-
-# Barbieri et al.
-
-cibersort_barbieri<-rio::import("data-raw/CIBERSORTx_barbieri_Results.csv")
-cibersort_barbieri<-cibersort_barbieri[ , -which(names(cibersort_barbieri) %in% c("P-value","Correlation","RMSE"))]
-cibersort_barbieri <- t(cibersort_barbieri)
-colnames(cibersort_barbieri)<- cibersort_barbieri[1,]
-cibersort_barbieri<-cibersort_barbieri[-1,]
-cibersort_barbieri<-as.matrix(cibersort_barbieri)
-class(cibersort_barbieri) <- "numeric"
-#save(cibersort_barbieri, file="data-raw/cibersort_barbieri.RData")
-mae_barbieri <- c(mae_barbieri, cibersort = cibersort_barbieri)
-#mae_barbieri <- create_mae(study_name = "barbieri")
-usethis::use_data(mae_barbieri, overwrite = TRUE)
-
-# Ren et al.
-
-cibersort_ren<-rio::import("data-raw/CIBERSORTx_ren_Results.csv")
-cibersort_ren<-cibersort_ren[ , -which(names(cibersort_ren) %in% c("P-value","Correlation","RMSE"))]
-cibersort_ren <- t(cibersort_ren)
-colnames(cibersort_ren)<- cibersort_ren[1,]
-cibersort_ren<-cibersort_ren[-1,]
-cibersort_ren<-as.matrix(cibersort_ren)
-class(cibersort_ren) <- "numeric"
-#save(cibersort_ren, file="data-raw/cibersort_ren.RData")
-mae_ren <- c(mae_ren, cibersort = cibersort_ren)
-#mae_ren <- create_mae(study_name = "ren")
-usethis::use_data(mae_ren, overwrite = TRUE)
-
-# Wallace et al.
-
-cibersort_wallace<-rio::import("data-raw/CIBERSORTx_wallace_Results.csv")
-cibersort_wallace<-cibersort_wallace[ , -which(names(cibersort_wallace) %in% c("P-value","Correlation","RMSE"))]
-cibersort_wallace <- t(cibersort_wallace)
-colnames(cibersort_wallace)<- cibersort_wallace[1,]
-cibersort_wallace<-cibersort_wallace[-1,]
-cibersort_wallace<-as.matrix(cibersort_wallace)
-class(cibersort_wallace) <- "numeric"
-#save(cibersort_wallace, file="data-raw/cibersort_wallace.RData")
-mae_wallace <- c(mae_wallace, cibersort = cibersort_wallace)
-#mae_wallace <- create_mae(study_name = "wallace")
-usethis::use_data(mae_wallace, overwrite = TRUE)
-
-# igc et al.
-
+# IGC
 cibersort_igc<-rio::import("data-raw/CIBERSORTx_igc_Results.csv")
 cibersort_igc<-cibersort_igc[ , -which(names(cibersort_igc) %in% c("P-value","Correlation","RMSE"))]
 cibersort_igc <- t(cibersort_igc)
@@ -187,26 +129,63 @@ cibersort_igc<-cibersort_igc[-1,]
 cibersort_igc<-as.matrix(cibersort_igc)
 class(cibersort_igc) <- "numeric"
 #save(cibersort_igc, file="data-raw/cibersort_igc.RData")
-mae_igc <- c(mae_igc, cibersort = cibersort_igc)
+mae_igc <- addSlotMAE(curatedPCaData::mae_igc, cibersort = cibersort_igc)
 #mae_igc <- create_mae(study_name = "igc")
 usethis::use_data(mae_igc, overwrite = TRUE)
 
-# TCGA et al.
+# Kim et al.
+cibersort_kim<-rio::import("data-raw/CIBERSORTx_kim_Results.csv")
+cibersort_kim<-cibersort_kim[ , -which(names(cibersort_kim) %in% c("P-value","Correlation","RMSE"))]
+cibersort_kim <- t(cibersort_kim)
+colnames(cibersort_kim)<- cibersort_kim[1,]
+cibersort_kim<-cibersort_kim[-1,]
+cibersort_kim<-as.matrix(cibersort_kim)
+class(cibersort_kim) <- "numeric"
+#save(cibersort_kim, file="data-raw/cibersort_kim.RData")
+mae_kim <- addSlotMAE(curatedPCaData::mae_kim, cibersort = cibersort_kim)
+#mae_kim <- create_mae(study_name = "kim")
+usethis::use_data(mae_kim, overwrite = TRUE)
 
-cibersort_tcga<-rio::import("data-raw/CIBERSORTx_tcga_Results.csv")
-cibersort_tcga<-cibersort_tcga[ , -which(names(cibersort_tcga) %in% c("P-value","Correlation","RMSE"))]
-cibersort_tcga <- t(cibersort_tcga)
-colnames(cibersort_tcga)<- cibersort_tcga[1,]
-cibersort_tcga<-cibersort_tcga[-1,]
-cibersort_tcga<-as.matrix(cibersort_tcga)
-class(cibersort_tcga) <- "numeric"
-#save(cibersort_tcga, file="data-raw/cibersort_tcga.RData")
-mae_tcga <- c(mae_tcga, cibersort = cibersort_tcga)
-#mae_tcga <- create_mae(study_name = "tcga")
-usethis::use_data(mae_tcga, overwrite = TRUE)
+# Kunderfranco et al.
+cibersort_kunderfranco<-rio::import("data-raw/CIBERSORTx_kunderfranco_Results.csv")
+cibersort_kunderfranco<-cibersort_kunderfranco[ , -which(names(cibersort_kunderfranco) %in% c("P-value","Correlation","RMSE"))]
+cibersort_kunderfranco <- t(cibersort_kunderfranco)
+colnames(cibersort_kunderfranco)<- cibersort_kunderfranco[1,]
+cibersort_kunderfranco<-cibersort_kunderfranco[-1,]
+cibersort_kunderfranco<-as.matrix(cibersort_kunderfranco)
+class(cibersort_kunderfranco) <- "numeric"
+#save(cibersort_kunderfranco, file="data-raw/cibersort_kunderfranco.RData")
+mae_kunderfranco <- addSlotMAE(curatedPCaData::mae_kunderfranco, cibersort = cibersort_kunderfranco)
+#mae_kunderfranco <- create_mae(study_name = "kunderfranco")
+usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+
+# Ren et al.
+cibersort_ren<-rio::import("data-raw/CIBERSORTx_ren_Results.csv")
+cibersort_ren<-cibersort_ren[ , -which(names(cibersort_ren) %in% c("P-value","Correlation","RMSE"))]
+cibersort_ren <- t(cibersort_ren)
+colnames(cibersort_ren)<- cibersort_ren[1,]
+cibersort_ren<-cibersort_ren[-1,]
+cibersort_ren<-as.matrix(cibersort_ren)
+class(cibersort_ren) <- "numeric"
+#save(cibersort_ren, file="data-raw/cibersort_ren.RData")
+mae_ren <- addSlotMAE(curatedPCaData::mae_ren, cibersort = cibersort_ren)
+#mae_ren <- create_mae(study_name = "ren")
+usethis::use_data(mae_ren, overwrite = TRUE)
+
+# Sun et al.
+cibersort_sun<-rio::import("data-raw/CIBERSORTx_sun_Results.csv")
+cibersort_sun<-cibersort_sun[ , -which(names(cibersort_sun) %in% c("P-value","Correlation","RMSE"))]
+cibersort_sun <- t(cibersort_sun)
+colnames(cibersort_sun)<- cibersort_sun[1,]
+cibersort_sun<-cibersort_sun[-1,]
+cibersort_sun<-as.matrix(cibersort_sun)
+class(cibersort_sun) <- "numeric"
+#save(cibersort_sun, file="data-raw/cibersort_sun.RData")
+mae_sun <- addSlotMAE(curatedPCaData::mae_sun, cibersort = cibersort_sun)
+#mae_sun <- create_mae(study_name = "sun")
+usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
-
 cibersort_taylor<-rio::import("data-raw/CIBERSORTx_taylor_Results.csv")
 cibersort_taylor<-cibersort_taylor[ , -which(names(cibersort_taylor) %in% c("P-value","Correlation","RMSE"))]
 cibersort_taylor <- t(cibersort_taylor)
@@ -215,12 +194,24 @@ cibersort_taylor<-cibersort_taylor[-1,]
 cibersort_taylor<-as.matrix(cibersort_taylor)
 class(cibersort_taylor) <- "numeric"
 #save(cibersort_taylor, file="data-raw/cibersort_taylor.RData")
-mae_taylor <- c(mae_taylor, cibersort = cibersort_taylor)
+mae_taylor <- addSlotMAE(curatedPCaData::mae_taylor, cibersort = cibersort_taylor)
 #mae_taylor <- create_mae(study_name = "taylor")
 usethis::use_data(mae_taylor, overwrite = TRUE)
 
-# True et al.
+# TCGA et al.
+cibersort_tcga<-rio::import("data-raw/CIBERSORTx_tcga_Results.csv")
+cibersort_tcga<-cibersort_tcga[ , -which(names(cibersort_tcga) %in% c("P-value","Correlation","RMSE"))]
+cibersort_tcga <- t(cibersort_tcga)
+colnames(cibersort_tcga)<- cibersort_tcga[1,]
+cibersort_tcga<-cibersort_tcga[-1,]
+cibersort_tcga<-as.matrix(cibersort_tcga)
+class(cibersort_tcga) <- "numeric"
+#save(cibersort_tcga, file="data-raw/cibersort_tcga.RData")
+mae_tcga <- addSlotMAE(curatedPCaData::mae_tcga, cibersort = cibersort_tcga)
+#mae_tcga <- create_mae(study_name = "tcga")
+usethis::use_data(mae_tcga, overwrite = TRUE)
 
+# True et al.
 cibersort_true<-rio::import("data-raw/CIBERSORTx_true_Results.csv")
 cibersort_true<-cibersort_true[ , -which(names(cibersort_true) %in% c("P-value","Correlation","RMSE"))]
 cibersort_true <- t(cibersort_true)
@@ -229,56 +220,35 @@ cibersort_true<-cibersort_true[-1,]
 cibersort_true<-as.matrix(cibersort_true)
 class(cibersort_true) <- "numeric"
 #save(cibersort_true, file="data-raw/cibersort_true.RData")
-mae_true <- c(mae_true, cibersort = cibersort_true)
+mae_true <- addSlotMAE(curatedPCaData::mae_true, cibersort = cibersort_true)
 #mae_true <- create_mae(study_name = "true")
 usethis::use_data(mae_true, overwrite = TRUE)
 
-# Barwick et al.
+# Wallace et al.
+cibersort_wallace<-rio::import("data-raw/CIBERSORTx_wallace_Results.csv")
+cibersort_wallace<-cibersort_wallace[ , -which(names(cibersort_wallace) %in% c("P-value","Correlation","RMSE"))]
+cibersort_wallace <- t(cibersort_wallace)
+colnames(cibersort_wallace)<- cibersort_wallace[1,]
+cibersort_wallace<-cibersort_wallace[-1,]
+cibersort_wallace<-as.matrix(cibersort_wallace)
+class(cibersort_wallace) <- "numeric"
+#save(cibersort_wallace, file="data-raw/cibersort_wallace.RData")
+mae_wallace <- addSlotMAE(curatedPCaData::mae_wallace, cibersort = cibersort_wallace)
+#mae_wallace <- create_mae(study_name = "wallace")
+usethis::use_data(mae_wallace, overwrite = TRUE)
 
-cibersort_barwick<-rio::import("data-raw/CIBERSORTx_barwick_Results.csv")
-cibersort_barwick<-cibersort_barwick[ , -which(names(cibersort_barwick) %in% c("P-value","Correlation","RMSE"))]
-cibersort_barwick <- t(cibersort_barwick)
-colnames(cibersort_barwick)<- cibersort_barwick[1,]
-cibersort_barwick<-cibersort_barwick[-1,]
-cibersort_barwick<-as.matrix(cibersort_barwick)
-class(cibersort_barwick) <- "numeric"
-#save(cibersort_barwick, file="data-raw/cibersort_barwick.RData")
-mae_barwick <- c(mae_barwick, cibersort = cibersort_barwick)
-#mae_barwick <- create_mae(study_name = "barwick")
-usethis::use_data(mae_barwick, overwrite = TRUE)
-
-
-# Chandran et al.
-
-cibersort_chandran<-rio::import("data-raw/CIBERSORTx_chandran_Results.csv")
-cibersort_chandran<-cibersort_chandran[ , -which(names(cibersort_chandran) %in% c("P-value","Correlation","RMSE"))]
-cibersort_chandran <- t(cibersort_chandran)
-colnames(cibersort_chandran)<- cibersort_chandran[1,]
-cibersort_chandran<-cibersort_chandran[-1,]
-cibersort_chandran<-as.matrix(cibersort_chandran)
-class(cibersort_chandran) <- "numeric"
-#save(cibersort_chandran, file="data-raw/cibersort_chandran.RData")
-mae_chandran <- c(mae_chandran, cibersort = cibersort_chandran)
-#mae_chandran <- create_mae(study_name = "chandran")
-usethis::use_data(mae_chandran, overwrite = TRUE)
-
-# Friedrich et al.
-
-cibersort_friedrich<-rio::import("data-raw/CIBERSORTx_friedrich_Results.csv")
-cibersort_friedrich<-cibersort_friedrich[ , -which(names(cibersort_friedrich) %in% c("P-value","Correlation","RMSE"))]
-cibersort_friedrich <- t(cibersort_friedrich)
-colnames(cibersort_friedrich)<- cibersort_friedrich[1,]
-cibersort_friedrich<-cibersort_friedrich[-1,]
-cibersort_friedrich<-as.matrix(cibersort_friedrich)
-class(cibersort_friedrich) <- "numeric"
-#save(cibersort_friedrich, file="data-raw/cibersort_friedrich.RData")
-mae_friedrich <- c(mae_friedrich, cibersort = cibersort_friedrich)
-#mae_friedrich <- create_mae(study_name = "friedrich")
-usethis::use_data(mae_friedrich, overwrite = TRUE)
-
-
-
-library(immunedeconv) # NECESSARY!
+# Wang et al.
+cibersort_wang<-rio::import("data-raw/CIBERSORTx_wang_Results.csv")
+cibersort_wang<-cibersort_wang[ , -which(names(cibersort_wang) %in% c("P-value","Correlation","RMSE"))]
+cibersort_wang <- t(cibersort_wang)
+colnames(cibersort_wang)<- cibersort_wang[1,]
+cibersort_wang<-cibersort_wang[-1,]
+cibersort_wang<-as.matrix(cibersort_wang)
+class(cibersort_wang) <- "numeric"
+#save(cibersort_wang, file="data-raw/cibersort_wang.RData")
+mae_wang <- addSlotMAE(curatedPCaData::mae_wang, cibersort = cibersort_wang)
+#mae_wang <- create_mae(study_name = "wang")
+usethis::use_data(mae_wang, overwrite = TRUE)
 
 #####################################################
 #####################################################
@@ -290,182 +260,160 @@ library(immunedeconv) # NECESSARY!
 
 
 # Abida et al.
-
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex.relz"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_abida <- c(mae_abida, xcell = tmp)
-
+mae_abida <- addSlotMAE(curatedPCaData::mae_abida, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Barbieri et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex.relz"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_barbieri <- c(mae_barbieri, xcell = tmp)
+mae_barbieri <- addSlotMAE(curatedPCaData::mae_barbieri, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Barwick et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barwick[["gex.logq"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_barwick <- c(mae_barwick, xcell = tmp)
+mae_barwick <- addSlotMAE(curatedPCaData::mae_barwick, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_barwick, overwrite = TRUE)
 
 # Chandran et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_chandran <- c(mae_chandran, xcell = tmp)
+mae_chandran <- addSlotMAE(curatedPCaData::mae_chandran, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_chandran, overwrite = TRUE)
 
 # Friedrich et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex.logq"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_friedrich <- c(mae_friedrich, xcell = tmp)
+mae_friedrich <- addSlotMAE(curatedPCaData::mae_friedrich, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 # ICGCCA
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_icgcca[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_icgcca <- c(mae_icgcca, xcell = tmp)
+mae_icgcca <- addSlotMAE(curatedPCaData::mae_icgcca, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Kunderfranco et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kunderfranco[["gex.logr"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_kunderfranco <- c(mae_kunderfranco, xcell = tmp)
+mae_kunderfranco <- addSlotMAE(curatedPCaData::mae_kunderfranco, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 # Ren et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex.relz"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_ren <- c(mae_ren, xcell = tmp)
+mae_ren <- addSlotMAE(curatedPCaData::mae_ren, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_ren, overwrite = TRUE)
 
-
 # Sun et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_sun[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
-mae_sun <- c(curatedPCaData::mae_sun, xcell = tmp)
+mae_sun <- addSlotMAE(curatedPCaData::mae_sun, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_taylor[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
-mae_taylor <- c(curatedPCaData::mae_taylor, xcell = tmp)
+mae_taylor <- addSlotMAE(curatedPCaData::mae_taylor, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_tcga[["gex.fpkm"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
-mae_tcga <- c(curatedPCaData::mae_tcga, xcell = tmp)
+mae_tcga <- addSlotMAE(curatedPCaData::mae_tcga, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_tcga, overwrite = TRUE)
 
-
-
 # Wang et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
-mae_wang <- c(curatedPCaData::mae_wang, xcell = tmp)
+mae_wang <- addSlotMAE(curatedPCaData::mae_wang, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_wang, overwrite = TRUE)
 
 # Kim et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
-mae_kim <- c(curatedPCaData::mae_kim, xcell = tmp)
+mae_kim <- addSlotMAE(curatedPCaData::mae_kim, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_kim, overwrite = TRUE)
 
 # Wallace et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_wallace <- c(mae_wallace, xcell = tmp)
+mae_wallace <- addSlotMAE(curatedPCaData::mae_wallace, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # Igc 
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_igc[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_igc <- c(mae_igc, xcell = tmp)
+mae_igc <- addSlotMAE(curatedPCaData::mae_igc, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_igc, overwrite = TRUE)
 
 # Weiner et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex.rma"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_weiner <- c(mae_weiner, xcell = tmp)
+mae_weiner <- addSlotMAE(curatedPCaData::mae_weiner, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_weiner, overwrite = TRUE)
 
 # True et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_true[["gex.logr"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_true <- c(mae_true, xcell = tmp)
+mae_true <- addSlotMAE(curatedPCaData::mae_true, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_true, overwrite = TRUE)
 
@@ -1228,42 +1176,4 @@ mae_weiner <- c(curatedPCaData::mae_weiner,
 )
 # Save the derived new 'assay' types to the mae-object
 usethis::use_data(mae_weiner, overwrite = TRUE)
-
-
-####
-##
-## Tumor purity estimation - DeMix(T) (DeMix is deprecated, DeMixT is the up-to-date version)
-##
-###
-
-# devtools::install_github("wwylab/DeMixT")
-
-library(DeMixT)
-
-
-####
-##
-## Tumor purity estimation - ABSOLUTE
-##
-###
-
-# Unclear as to how it's available, i.e.
-
-# https://software.broadinstitute.org/cancer/cga/absolute
-# (lacking download in https://software.broadinstitute.org/cancer/cga/absolute_run )
-# https://software.broadinstitute.org/cancer/cga/absolute_download
-# -> Requires separate registration & license agreement, then 'ABSOLUTE_1.0.6.tar.gz' is available
-
-# install.packages("ABSOLUTE_1.0.6.tar.gz", repo=NULL)
-
-# or possibly
-# https://www.genepattern.org/modules/docs/ABSOLUTE
-
-library(ABSOLUTE)
-
-# Read in TCGA segmentation file required as ABSOLUTE input
-# downloaded from https://www.cbioportal.org/study/cnSegments?id=prad_tcga_pub > "Download a copy number segment file for the selected samples"
-TCGA_seg <- read.table("..\\temp\\prad_tcga_pub_segments.seg", sep="\t", header=TRUE)
-# ABSOLUTE requires pre-specified column names "Chromosome", "Start", "End", "Num_Probes", and "Segment_Mean";
-# replacing default column names with these
 
