@@ -9,6 +9,25 @@
 
 library(immunedeconv) # NECESSARY!
 
+## Assistance function for adding a new slot in case it doesn't exist, or to avoid existing slot name overlap
+addSlotMAE <- function(mae, ...){
+	# Transform to a list
+	vals <- list(...)
+	nams <- names(vals)
+	# Iterate over ellipsis slot additions
+	for(nam in nams){
+		# New slot
+		if(!nam %in% names(mae)){
+			eval(parse(text=paste("mae <- c(mae,", nam,"=vals[[nam]])", collapse="")))
+		# Replace existing slot
+		}else{
+			mae[[nam]] <- vals[[nam]]
+		}
+	}
+	# Return the MultiAssayExperiment object
+	mae
+}
+
 
 #####################################################################
 #####################################################################
