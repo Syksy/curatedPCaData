@@ -1188,6 +1188,3 @@ usethis::use_data(mae_wang, overwrite = TRUE)
 # - Weiner et al.
 usethis::use_data(mae_weiner, overwrite = TRUE)
 
-
-
-
