@@ -485,23 +485,17 @@ mae_abida <- addSlotMAE(mae_abida, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
 #usethis::use_data(mae_abida, overwrite = TRUE)
 
-# Barbieri et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex.relz"]], method="epic"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_barbieri <- addSlotMAE(mae_barbieri, epic = tmp)
-# Save the derived new 'assay' types to the mae-object
-#usethis::use_data(mae_barbieri, overwrite = TRUE)
-
-# Barwick et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barwick[["gex.logq"]], method="epic"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_barwick <- addSlotMAE(mae_barwick, epic = tmp)
-# Save the derived new 'assay' types to the mae-object
-#usethis::use_data(mae_barwick, overwrite = TRUE)
+# FAILS DUE TO OVERLAP OF GENES
+if(FALSE){
+	# Barwick et al.
+	tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barwick[["gex.logq"]], method="epic"))
+	rownames(tmp) <- tmp$cell_type
+	# Omit cell type column and store only data of cell type populations
+	tmp <- as.matrix(tmp[,-1])
+	mae_barwick <- addSlotMAE(mae_barwick, epic = tmp)
+	# Save the derived new 'assay' types to the mae-object
+	#usethis::use_data(mae_barwick, overwrite = TRUE)
+}
 
 # Chandran et al.
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex.rma"]], method="epic"))
@@ -538,7 +532,6 @@ tmp <- as.matrix(tmp[,-1])
 mae_kunderfranco <- addSlotMAE(mae_kunderfranco, epic = tmp)
 # Save the derived new 'assay' types to the mae-object
 #usethis::use_data(mae_kunderfranco, overwrite = TRUE)
-
 
 # Ren et al.
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex.relz"]], method="epic"))
@@ -580,7 +573,7 @@ mae_tcga <- addSlotMAE(mae_tcga, epic = tmp)
 #usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # Wang et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::curatedPCaData::mae_wang[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -590,7 +583,7 @@ mae_wang <- addSlotMAE(mae_wang, epic = tmp)
 #usethis::use_data(mae_wang, overwrite = TRUE)
 
 # Kim et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::curatedPCaData::mae_kim[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -645,7 +638,6 @@ mae_true <- addSlotMAE(mae_true, epic = tmp)
 #####################################################
 
 # Abida et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex.relz"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -655,7 +647,6 @@ mae_abida <- addSlotMAE(mae_abida, quantiseq = tmp)
 #usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Barbieri et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex.relz"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -665,7 +656,6 @@ mae_barbieri <- addSlotMAE(mae_barbieri, quantiseq = tmp)
 #usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Barwick et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barwick[["gex.logq"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -675,8 +665,6 @@ mae_barwick <- addSlotMAE(mae_barwick, quantiseq = tmp)
 #usethis::use_data(mae_barwick, overwrite = TRUE)
 
 # Chandran et al.  
-
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -686,7 +674,6 @@ mae_chandran <- addSlotMAE(mae_chandran, quantiseq = tmp)
 #usethis::use_data(mae_chandran, overwrite = TRUE)
 
 # Friedrich et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex.logq"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -696,7 +683,6 @@ mae_friedrich <- addSlotMAE(mae_friedrich, quantiseq = tmp)
 #usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 # ICGCCA
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_icgcca[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -706,7 +692,6 @@ mae_icgcca <- addSlotMAE(mae_icgcca, quantiseq = tmp)
 #usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Kunderfranco et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kunderfranco[["gex.logr"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -716,7 +701,6 @@ mae_kunderfranco <- addSlotMAE(mae_kunderfranco, quantiseq = tmp)
 #usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 # Ren et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex.relz"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -726,7 +710,6 @@ mae_ren <- addSlotMAE(mae_ren, quantiseq = tmp)
 #usethis::use_data(mae_ren, overwrite = TRUE)
 
 # Sun et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_sun[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -737,7 +720,6 @@ mae_sun <- addSlotMAE(mae_sun, quantiseq = tmp)
 #usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_taylor[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -748,7 +730,6 @@ mae_taylor <- addSlotMAE(mae_taylor, quantiseq = tmp)
 #usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_tcga[["gex.fpkm"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -759,7 +740,6 @@ mae_tcga <- addSlotMAE(mae_tcga, quantiseq = tmp)
 #usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # Wang et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -770,7 +750,6 @@ mae_wang <- addSlotMAE(mae_wang, quantiseq = tmp)
 #usethis::use_data(mae_wang, overwrite = TRUE)
 
 # Kim et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -781,7 +760,6 @@ mae_kim <- addSlotMAE(mae_kim, quantiseq = tmp)
 #usethis::use_data(mae_kim, overwrite = TRUE)
 
 # Wallace et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -791,7 +769,6 @@ mae_wallace <- addSlotMAE(mae_wallace, quantiseq = tmp)
 #usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # IGC
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_igc[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -801,7 +778,6 @@ mae_igc <- addSlotMAE(mae_igc, quantiseq = tmp)
 #usethis::use_data(mae_igc, overwrite = TRUE)
 
 # Weiner et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex.rma"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -811,7 +787,6 @@ mae_weiner <- addSlotMAE(mae_weiner, quantiseq = tmp)
 #usethis::use_data(mae_weiner, overwrite = TRUE)
 
 # True et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_true[["gex.logr"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -831,7 +806,6 @@ mae_true <- addSlotMAE(mae_true, quantiseq = tmp)
 #####################################################
 
 # Abida et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_abida[["gex.relz"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -841,7 +815,6 @@ mae_abida <- addSlotMAE(mae_abida, mcp = tmp)
 #usethis::use_data(mae_abida, overwrite = TRUE)
 
 # Barbieri et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barbieri[["gex.relz"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -851,7 +824,6 @@ mae_barbieri <- addSlotMAE(mae_barbieri, mcp = tmp)
 #usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 # Barwick et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_barwick[["gex.logq"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -861,7 +833,6 @@ mae_barwick <- addSlotMAE(mae_barwick, mcp = tmp)
 #usethis::use_data(mae_barwick, overwrite = TRUE)
 
 # Chandran et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_chandran[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -871,7 +842,6 @@ mae_chandran <- addSlotMAE(mae_chandran, mcp = tmp)
 #usethis::use_data(mae_chandran, overwrite = TRUE)
 
 # Friedrich et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_friedrich[["gex.logq"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -881,7 +851,6 @@ mae_friedrich <- addSlotMAE(mae_friedrich, mcp = tmp)
 #usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 # ICGCCA
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_icgcca[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -891,7 +860,6 @@ mae_icgcca <- addSlotMAE(mae_icgcca, mcp = tmp)
 #usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 # Kunderfranco et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kunderfranco[["gex.logr"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -903,7 +871,6 @@ mae_kunderfranco <- addSlotMAE(mae_kunderfranco, mcp = tmp)
 #usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 # Ren et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_ren[["gex.relz"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -913,7 +880,6 @@ mae_ren <- addSlotMAE(mae_ren, mcp = tmp)
 #usethis::use_data(mae_ren, overwrite = TRUE)
 
 # Sun et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_sun[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -924,7 +890,6 @@ mae_sun <- addSlotMAE(mae_sun, mcp = tmp)
 #usethis::use_data(mae_sun, overwrite = TRUE)
 
 # Taylor et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_taylor[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -935,7 +900,6 @@ mae_taylor <- addSlotMAE(mae_taylor, mcp = tmp)
 #usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_tcga[["gex.fpkm"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -946,7 +910,6 @@ mae_tcga <- addSlotMAE(mae_tcga, mcp = tmp)
 #usethis::use_data(mae_tcga, overwrite = TRUE)
 
 # Wang et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wang[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -957,7 +920,6 @@ mae_wang <- addSlotMAE(mae_wang, mcp = tmp)
 #usethis::use_data(mae_wang, overwrite = TRUE)
 
 # Kim et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_kim[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -968,7 +930,6 @@ mae_kim <- addSlotMAE(mae_kim, mcp = tmp)
 #usethis::use_data(mae_kim, overwrite = TRUE)
 
 # Wallace et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_wallace[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -978,7 +939,6 @@ mae_wallace <- addSlotMAE(mae_wallace, mcp = tmp)
 #usethis::use_data(mae_wallace, overwrite = TRUE)
 
 # IGC
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_igc[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -988,7 +948,6 @@ mae_igc <- addSlotMAE(mae_igc, mcp = tmp)
 #usethis::use_data(mae_igc, overwrite = TRUE)
 
 # Weiner et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_weiner[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -998,7 +957,6 @@ mae_weiner <- addSlotMAE(mae_weiner, mcp = tmp)
 #usethis::use_data(mae_weiner, overwrite = TRUE)
 
 # True et al.
-
 tmp <- as.data.frame(immunedeconv::deconvolute(curatedPCaData::mae_true[["gex.logr"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
@@ -1018,191 +976,174 @@ mae_true <- addSlotMAE(mae_true, mcp = tmp)
 
 
 ## Abida
-
 mae_abida <- addSlotMAE(mae_abida,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_abida, object = "gex_polyA", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_abida, object = "gex_polyA", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_abida, slot = "gex.relz", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_abida, slot = "gex.relz", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_abida, overwrite = TRUE)
+#usethis::use_data(mae_abida, overwrite = TRUE)
 
 ## Barbieri
-
 mae_barbieri <- addSlotMAE(mae_barbieri,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_barbieri, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_barbieri, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_barbieri, slot = "gex.relz", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_barbieri, slot = "gex.relz", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_barbieri, overwrite = TRUE)
+#usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 ## Chandran
-
 mae_chandran <- addSlotMAE(mae_chandran,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_chandran, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_chandran, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_chandran, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_chandran, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_chandran, overwrite = TRUE)
+#usethis::use_data(mae_chandran, overwrite = TRUE)
 
 ## Friedrich
-
 mae_friedrich <- addSlotMAE(mae_friedrich,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_friedrich, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_friedrich, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_friedrich, slot = "gex.logq", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_friedrich, slot = "gex.logq", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_friedrich, overwrite = TRUE)
+#usethis::use_data(mae_friedrich, overwrite = TRUE)
 
 ## ICGC-CA
-
 mae_icgcca <- addSlotMAE(mae_icgcca,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_icgcca, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_icgcca, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_icgcca, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_icgcca, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_icgcca, overwrite = TRUE)
+#usethis::use_data(mae_icgcca, overwrite = TRUE)
 
 ## IGC
-
 mae_igc <- addSlotMAE(mae_igc,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_igc, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_igc, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_igc, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_igc, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_igc, overwrite = TRUE)
+#usethis::use_data(mae_igc, overwrite = TRUE)
 
 ## Kim
-
 mae_kim <- addSlotMAE(mae_kim,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_kim, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_kim, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_kim, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_kim, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_kim, overwrite = TRUE)
+#usethis::use_data(mae_kim, overwrite = TRUE)
 
 ## Kunderfranco
-
 mae_kunderfranco <- addSlotMAE(mae_kunderfranco,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_kunderfranco, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_kunderfranco, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_kunderfranco, slot = "gex.logr", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_kunderfranco, slot = "gex.logr", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_kunderfranco, overwrite = TRUE)
+#usethis::use_data(mae_kunderfranco, overwrite = TRUE)
 
 ## Ren
-
 mae_ren <- addSlotMAE(mae_ren,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_ren, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_ren, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_ren, slot = "gex.relz", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_ren, slot = "gex.relz", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_ren, overwrite = TRUE)
+#usethis::use_data(mae_ren, overwrite = TRUE)
 
 ## Sun
-
 mae_sun <- addSlotMAE(mae_sun,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_sun, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_sun, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_sun, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_sun, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_sun, overwrite = TRUE)
+#usethis::use_data(mae_sun, overwrite = TRUE)
 
 ## Taylor
-
 mae_taylor <- addSlotMAE(mae_taylor,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_taylor, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_taylor, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_taylor, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_taylor, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_taylor, overwrite = TRUE)
+#usethis::use_data(mae_taylor, overwrite = TRUE)
 
 ## TCGA 
-
 mae_tcga <- addSlotMAE(mae_tcga,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_tcga, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_tcga, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_tcga, slot = "gex.fpkm", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_tcga, overwrite = TRUE,internal=TRUE)
+#usethis::use_data(mae_tcga, overwrite = TRUE,internal=TRUE)
 
 ## True
-
 mae_true <- addSlotMAE(mae_true,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_true, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_true, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_true, slot = "gex.logr", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_true, slot = "gex.logr", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_true, overwrite = TRUE)
+#usethis::use_data(mae_true, overwrite = TRUE)
 
 ## Wallace
-
 mae_wallace <- addSlotMAE(mae_wallace,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_wallace, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_wallace, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_wallace, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_wallace, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_wallace, overwrite = TRUE)
+#usethis::use_data(mae_wallace, overwrite = TRUE)
 
 ## IGC
-
 mae_igc <- addSlotMAE(mae_igc,
                  scores = rbind(
-                   Prolaris = curatedPCaData:::genomic_risk(mae_igc, object = "gex", test = "Prolaris"),
-                   AR_score = curatedPCaData:::genomic_score(mae_igc, object = "gex", test = "AR")
+                   Prolaris = curatedPCaData:::genomic_risk(mae_igc, slot = "gex.rma", test = "Prolaris"),
+                   AR_score = curatedPCaData:::genomic_score(mae_igc, slot = "gex.rma", test = "AR")
                  )
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_igc, overwrite = TRUE)
+#usethis::use_data(mae_igc, overwrite = TRUE)
 
 ## Wang
-
 mae_wang <- addSlotMAE(mae_wang,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_wang, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_wang, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_wang, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_wang, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_wang, overwrite = TRUE)
+#usethis::use_data(mae_wang, overwrite = TRUE)
 
 ## Weiner
-
 mae_weiner <- addSlotMAE(mae_weiner,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_weiner, object = "gex", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_weiner, object = "gex", test = "AR")
+		Prolaris = curatedPCaData:::genomic_risk(mae_weiner, slot = "gex.rma", test = "Prolaris"),
+		AR_score = curatedPCaData:::genomic_score(mae_weiner, slot = "gex.rma", test = "AR")
 	)
 )
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_weiner, overwrite = TRUE)
+#usethis::use_data(mae_weiner, overwrite = TRUE)
 
 
 ## ----
@@ -1245,7 +1186,7 @@ usethis::use_data(mae_wallace, overwrite = TRUE)
 # - Wang et al.
 usethis::use_data(mae_wang, overwrite = TRUE)
 # - Weiner et al.
-usethis::use_data(mae_wang, overwrite = TRUE)
+usethis::use_data(mae_weiner, overwrite = TRUE)
 
 
 
