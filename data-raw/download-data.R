@@ -32,8 +32,6 @@
 ## - Wang et al.
 ## (to be updated)
 
-
-
 ## - Abida et al. -
 # GEX PolyA (FPKM) z-score normalized relative to paired normal
 gex.relz_abida <- curatedPCaData:::generate_cbioportal(
@@ -60,8 +58,8 @@ save(cna.gistic_abida, file="data-raw/cna.gistic_abida.RData")
 # mut_abida[which(mut_abida=="NaN")] <- NA
 abida_mut=curatedPCaData:::generate_cbioportaldata_mut(
   caselist = "prad_su2c_2019"
-  )
-
+)
+## TDL: Typo?? abida_mut <-> ragexp_abida
 save(ragexp_abida, file="data-raw/mut_abida.RData")
 # To check: Fusions separately?
 
@@ -116,7 +114,7 @@ save(cna.gistic_barbieri, file="data-raw/cna.gistic_barbieri.RData")
 barbieri_mut=curatedPCaData:::generate_cbioportaldata_mut(
   caselist = "prad_broad"
   )
-
+## TDL: Missing ragexp_barbieri
 save(ragexp_barbieri, file="data-raw/mut_barbieri.RData")
 
 # Create MAE object
@@ -202,6 +200,8 @@ save(gex.rma_icgcca, file="data-raw/gex.rma_icgcca.RData")
 # Create MAE object
 mae_icgcca <- curatedPCaData:::create_mae(study_name = "icgcca")
 usethis::use_data(mae_icgcca, internal = FALSE, overwrite = TRUE)
+
+
 
 # PRAD-FR
 gex_icgcfr <- curatedPCaData::generate_icgc("PRAD_FR", "gex")
@@ -298,7 +298,7 @@ save(cna.gistic_ren, file="data-raw/cna.gistic_ren.RData")
 ren_mut<-curatedPCaData:::generate_cbioportaldata_mut(
   caselist = "prad_eururol_2017"
   )
-
+## TDL: ren_mut <-> ragexp_ren ?
 save(ragexp_ren, file="data-raw/mut_ren.RData")
 
 # Create MAE object
@@ -354,7 +354,7 @@ save(cna.logr_taylor, file="data-raw/cna.logr_taylor.RData")
 # mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
 taylor_mut<-curatedPCaData:::generate_cbioportaldata_mut(
   caselist = "prad_mskcc"
-  )
+)
 
 save(taylor_mut, file="data-raw/mut_taylor.RData")
 
