@@ -3,7 +3,7 @@
 #' MultiAssayExperiment object containing gene expression (gex), copy 
 #' number alteration (cna), mutations and immune cell estimates for Abida et al.
 #'
-#' @format A MAE object spanning prostate cancer samples.
+#' @format A MAE object spanning 444 castrate resistant prostate cancer samples.
 #' \describe{
 #'    \item{cna.gistic}{a matrix with 20264 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
 #'    \item{gex.relz}{a matrix with 18823 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
@@ -26,7 +26,7 @@
 #' MultiAssayExperiment object containing gene expression (gex), copy 
 #' number alteration (cna), mutations and immune cell estimates for Barbieri et al. 
 #' 
-#' @format A MAE object spanning prostate cancer samples.
+#' @format A MAE object spanning prostate adenocarcinomas from Barbieri et. al
 #' \describe{
 #'   \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
 #'   \item{gex.relz}{matrix with 18193 rows and 20 columns, from z-score normalized expression in relative to paired normals.}
@@ -208,7 +208,7 @@
 #' MultiAssayExperiment object containing gene expression (gex), copy 
 #' number alteration (cna), mutations and immune cell estimates from Ren et al.
 #' 
-#' @format An MAE object spanning 112 men with prostate cancer
+#' @format An MAE object spanning 65 men with prostate cancer
 #' \describe{
 #'   \item{gex.relz}{matrix with 21589 rows and 65 columns}
 #'   \item{cna.gistic}{matrix with 20873 rows and 65 columns}
@@ -249,7 +249,7 @@
 #' MultiAssayExperiment object containing gene expression (gex), copy 
 #' number alteration (cna), mutations and immune cell estimates from Taylor et al.
 #'
-#' @format An MAE object spanning 79 men 
+#' @format An MAE object spanning 218 men with prostate cancer
 #' \describe{
 #'   \item{gex.rma}{matrix with 17410 rows and 179 columns}
 #'   \item{cna.logr}{matrix with 22419 rows and 218 columns}
@@ -347,7 +347,7 @@
 #' Weiner et al. MAE-object
 #'
 #' A MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for Weiner et al.
-#' @format An MAE spanning 838 samples of two cohorts
+#' @format An MAE spanning 838 prostate cancer samples of two cohorts
 #' \describe{
 #'  \item{gex.rma}{matrix of 17410 rows and 838 columns of gene expression data}
 #'  \item{mcp){matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
