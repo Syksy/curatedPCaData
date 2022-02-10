@@ -1,0 +1,186 @@
+---
+title: "overview"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Overview to curatedPCaData}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  cache = TRUE
+)
+library(tidyverse)
+library(viridis)
+```
+# Intro
+
+This vignette introduces `curatedPCaData` and provides an overview for the package and the various datasets and the corresponding raw and processed data there-in. 
+
+***
+
+3 different raw data types are currently available (stored in `/data-raw/` and not exported by the package namespace): 
+
+1. `gex_*.RData` contains gene expression values
+2. `cna_*.RData` contains copy number values
+3. `clinical_*.RData` contains clinical/phenotype information
+    
+These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune deconvolution results and risk scores. 
+Not all datasets will contain each of these elements but at minimum will contain `clinical_*.rda` and either `gex_*.rda` or `cna_*.rda`.
+These individual elements are combined into a `MultiAssayExperiment object` (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda`. These `MAE` objects are then exported by `curatedPCaData`.
+
+For a comprehensive guide on how to neatly handle such `MAE` objects, refer to the MutliAssayExperiment user guide (or cheat-sheets): [MAE User Guide](https://www.bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/MultiAssayExperiment.html) .
+
+# R-package
+
+The `curatedPCaData` package contains a collection of manually curated datasets concerning patients diagnosed with prostate cancer. The datasets within this package have followed uniform processing and naming conventions to allow users to more easily reproduce similar analyses between datasets and spend less time concerned with harmonzing data from different resources. 
+
+# Importing data
+
+The individual elements are housed within the `data-raw/` folder of the package [github repo](https://github.com/Syksy/curatedPCaData) and follows a simple naming convention of `data type` and `first author` separated by a `_` (see dataset types above). 
+Each individual element for creating the final `MAE` were created using internal functions (accessible with `:::`).
+A `MAE` for each study is provided to the users. 
+
+To get a full list of available datasets use the `data` function:
+```{r importing}
+library(curatedPCaData)
+data(package="curatedPCaData")$results[,3:4]
+```
+
+Individual datasets can also be imported by using the `data` function
+
+```{r data-import}
+data("mae_tcga")
+mae_tcga
+```
+
+# Overview of available datasets
+
+## Datasets
+
+The datasets were manually selected based on various criteria, such as:
+
+- Primary data availability
+- Data types (gene expression, copy number alteration, mutation data, ...)
+- End points (e.g. recurrence, Gleason, ...)
+- Clinical data availability and reliability
+- Design of the study
+
+### Accessing primary data
+
+The primary data types slots in the MAE objects for gene expression and copy number alteration will constist of two parts:
+
+- Prefix indicating data type, either "gex_" or "cna_".
+- Suffix indicating unit and processing for the data; for example, a gene expression dataset (gex) may have a suffix of "rma" for RMA-processed data, "FPKM" for processed RNA-seq data, "relz" for relative z-score normalized expression values for tumor-normal gene expression pairs, or "logq" for logarithmic quantile-normalized data. The main suffix for copy number alteration is the discretized GISTIC alteration calls with values {-2,-1,0,1,2}, although earlier version also provided log-ratios ("logr")
+- Mutation data is provided as `RaggedExperiment` objects as "mut_".
+
+The standard way for accessing a data slot in MAE could be done for example via:
+
+```{r access}
+mae_taylor[["gex.rma"]][1:5,1:5]
+```
+The corresponding clinical variables have an accessor function:
+
+```{r clinical}
+head(MultiAssayExperiment::colData(mae_taylor))
+```
+
+While it is ideal to make sure user is using the correct namespaces, the `pckgName::` can be omitted as `curatedPCaData` imports necessary packages such as `MultiAssayExperiment` and their functions should be available in the workspace.
+
+## Data types
+
+A simple way to list available 
+
+# Derived variables
+
+In `curatedPCaData` we refer to derived variables as further downstream variables, which have been computed based on primarily data. For most cases, this was done by extracting key gene information from the `gex_*` slots and pre-computing informative downstream markers as described in their primary publications.
+
+## Immune deconvolution
+
+Tumor progression depends on the immune cell composition in the tumor microenvironment. The '[immunedeconv](https://github.com/icbi-lab/immunedeconv)' package consists of different computational methods to computationally estimate immune cell content using gene expression data. In addition, CIBERTSORTx is provided externally, as this method required registered access. For user convenience, it has been run separately and provided as a slot in the MAE objects.
+
+In this package, we provide estimates of immune cell content from the following deconvolution methods:
+
+1. quantiseq
+2. xcell
+3. epic
+4. mcp (counter)
+5. cibersort(x)
+
+The estimates from each of these methods are stored in the MAE object as a seperate assay as shown for example in the Taylor dataset
+```{r}
+mae_taylor
+```
+
+To access the quantiseq results for the Taylor et. al dataset, the following command can be used
+```{r}
+head(mae_taylor[["quantiseq"]])[,1:5]
+```
+
+Similarly to access results from the other methods, the following can be run
+```{r}
+head(mae_taylor[["xcell"]])[,1:5]
+head(mae_taylor[["epic"]])[,1:5]
+head(mae_taylor[["mcp"]])[,1:5]
+```
+
+Each row of the deconvolution matrix represents the content of a certain immune cell type and the columns represent the patient sample IDs.
+
+## Sample purity estimates
+
+_TODO_
+
+## Risk scores and other metrics
+
+The slot ```scores``` is used to provide key risk scores or other informative metrics based on the primary data. These scores are stored in slot ```scores``` and can be accessed as a matrix as if they were variables on such platform:
+
+```{r scores}
+mae_tcga[["scores"]][,1:5]
+```
+
+The following Prostate Cancer risk scores are offered:
+
+- ```Prolaris``` [ref]
+- ```OncotypeDX```[ref]
+- ```Decypher``` [ref]
+
+Further, the Androgen Receptor (AR) score is calculated similar to [ref] and provided in this slot:
+
+- ```AR_score```
+
+# Citations
+
+_TODO_
+
+# Session info
+
+```{r session}
+sessionInfo()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
