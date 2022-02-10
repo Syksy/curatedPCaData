@@ -1709,8 +1709,6 @@ gset <- getGEO("GSE157548", GSEMatrix =TRUE, getGPL=TRUE)
 
 uncurated <- Biobase::pData(gset[[1]]) 
 
-
-
 curated <- initial_curated_df(
   df_rownames = rownames(uncurated),
   template_name="data-raw/template_prad.csv")
@@ -1779,10 +1777,14 @@ curated <- curated %>%
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
   dplyr::mutate(sample_paired = 0) %>%
   dplyr::mutate(sample_type = "primary") %>%
-  dplyr::mutate(Percentage_of_Atrophic_Gland = uncurated$`Percentage of Atrophic Gland:ch1`) %>%
-  dplyr::mutate(Percentage_of_BPH = uncurated$`Percentage of BPH:ch1`) %>%
-  dplyr::mutate(Percentage_of_Stroma = uncurated$`Percentage of Stroma:ch1`) %>%
-  dplyr::mutate(Percentage_of_Tumor = uncurated$`Percentage of Tumor:ch1`)
+  ## TDL: Tumor purity of percentage is a key field rather than specific subsets
+  # From GEO description: "The percentage of different cell types vary considerably among samples and were determined by pathologist."
+  # Despite reported as 'prostate cancer sample(s)' in GEO, the samples are quite mixed.
+  dplyr::mutate(tumor_purity_pathology = as.numeric(gsub("%", "", uncurated$"Percentage of Tumor:ch1"))/100)
+  #dplyr::mutate(Percentage_of_Atrophic_Gland = uncurated$`Percentage of Atrophic Gland:ch1`) %>%
+  #dplyr::mutate(Percentage_of_BPH = uncurated$`Percentage of BPH:ch1`) %>%
+  #dplyr::mutate(Percentage_of_Stroma = uncurated$`Percentage of Stroma:ch1`) %>%
+  #dplyr::mutate(Percentage_of_Tumor = uncurated$`Percentage of Tumor:ch1`)
   
 clinical_wang <- curated
 
