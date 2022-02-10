@@ -17,7 +17,7 @@ A MAE object spanning 104 tumor samples
 mae_hieronymus
 }
 \description{
-MultiAssayExperiment object for Hieronymus et al.
+MultiAssayExperiment object containing copy number alteration (cna) for Hieronymus et al.
 }
 \details{
 The data comprises of 104 samples, for which are available clinical data and Copy Number Alteration, but no gene expression data -- thus no deconvolution results are available.

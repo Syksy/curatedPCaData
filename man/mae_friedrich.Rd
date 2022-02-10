@@ -5,9 +5,14 @@
 \alias{mae_friedrich}
 \title{Friedrich et al. MAE-object}
 \format{
-An MAE object spanning 112 men with prostate cancer
+An MAE object spanning 255 men with prostate cancer
 \describe{
   \item{gex.logq}{matrix with 23097 rows and 255 columns, for the log-quantile normalized gene expression data}
+  \item{cibersort}{matrix with 22 rows and 255 columns, of cibersort based deconvolution data}
+  \item{xcell}{matrix with 39 rows and 255 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 255 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 255 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 255 columns, of mcp-counter based deconvolution data}
 }
 }
 \source{
@@ -17,7 +22,7 @@ An MAE object spanning 112 men with prostate cancer
 mae_friedrich
 }
 \description{
-MultiAssayExperiment object for Friedrich et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for Friedrich et al.
 }
 \details{
 The data comprises of 255 samples, with 164 primary tumors samples, 52 adjacent normal samples, and 39 benign prostate hyperplasia samples.  This dataset includes in its totality the 164 samples analysed in Kreutz et al. 2020.

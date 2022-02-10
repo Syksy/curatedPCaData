@@ -5,17 +5,16 @@
 \alias{mae_taylor}
 \title{Taylor et al. MAE-object}
 \format{
-An MAE object spanning 79 men 
+An MAE object spanning 218 men with prostate cancer
 \describe{
-  \item{gex}{matrix with 17638 rows and 300 columns}
-  \item{cna_log}{matrix with 22431 rows and 65 columns}
-  \item{mut}{a matrix with 6847 rows and 43 columns, of mutation data}
-  \item{xcell}{matrix with 39 rows and 300 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 300 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 300 columns, of quantiseq based deconvolution data}
-  \item{mcp}{matrix with 11 rows and 300 columns, of mcp-counter based deconvolution data}
-  \item{cibersort}{matrix with 25 rows and 300 columns, }
-  \item{scores}{matrix with 2 rows and 300 columns, genomic risk and AR scores}
+  \item{gex.rma}{matrix with 17410 rows and 179 columns}
+  \item{cna.logr}{matrix with 22419 rows and 218 columns}
+  \item{mut}{RaggedExperiment with 320 rows and 43 columns, of mutation data}
+  \item{xcell}{matrix with 39 rows and 179 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 179 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 179 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 179 columns, of mcp-counter based deconvolution data}
+  \item{cibersort}{matrix with 22 rows and 179 columns, of cibersort based deconvolution data}
 }
 }
 \source{
@@ -25,7 +24,8 @@ An MAE object spanning 79 men
 mae_taylor
 }
 \description{
-MultiAssayExperiment object containing GEX (exon and transcript) and CNA from Taylor et al.
+MultiAssayExperiment object containing gene expression (gex), copy 
+number alteration (cna), mutations and immune cell estimates from Taylor et al.
 }
 \references{
 Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026

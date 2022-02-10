@@ -5,13 +5,14 @@
 \alias{mae_sun}
 \title{Sun et al. MAE-object}
 \format{
-An MAE object spanning 79 men 
+An MAE object spanning 79 men with prostate cancer
 \describe{
-  \item{gex}{matrix with 12057 rows and 79 columns}
-  \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
-  \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
-  \item{cibersort}{matrix with 25 rows and 79 columns, of cibersort based deconvolution data}
-  \item{scores}{matrix with 2 rows and 79 columns, genomic risk and AR scores}
+  \item{gex.rma}{matrix with 12798 rows and 79 columns}
+  \item{quantiseq}{matrix with 11 rows and 79 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 79 columns, of mcp-counter based deconvolution data}
+  \item{cibersort}{matrix with 22 rows and 79 columns, of cibersort based deconvolution data}
+  \item{epic}{matrix with 8 rows and 79 columns, of epic based deconvolution data}
+  \item{xcell}{matrix with 39 rows and 79 columns, of xcell based deconvolution data}
 }
 }
 \source{
@@ -21,7 +22,7 @@ An MAE object spanning 79 men
 mae_sun
 }
 \description{
-MultiAssayExperiment object containing GEX from Sun et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from Sun et al.
 }
 \references{
 Sun, Y., & Goodison, S. (2009). Optimizing molecular signatures for predicting prostate cancer recurrence. The Prostate, 69(10), 1119–1127. https://doi.org/10.1002/pros.20961

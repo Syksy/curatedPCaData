@@ -5,9 +5,12 @@
 \alias{mae_barwick}
 \title{Barwick et al. MAE-object}
 \format{
-A MAE object spanning prostate cancer samples.
+A MAE object spanning 146 prostate cancer samples.
 \describe{
   \item{gex.logq}{matrix with 482 rows and 146 columns, for the log-quantile normalized gene expression data}
+  \item{cibersort}{matrix with 22 rows and 146 columns, of cibersort based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 146 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 4 rows and 146 columns, of mcp-counter based deconvolution data}
 }
 }
 \source{
@@ -17,7 +20,7 @@ A MAE object spanning prostate cancer samples.
 mae_barwick
 }
 \description{
-MultiAssayExperiment object for Barwick et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for Barwick et al.
 }
 \details{
 NA
