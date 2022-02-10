@@ -5,15 +5,14 @@
 \alias{mae_icgcca}
 \title{ICGC CA MAE-object}
 \format{
-An MAE object spanning 112 men with prostate cancer
+An MAE object spanning 213 men with prostate cancer
 \describe{
-  \item{gex}{matrix with 17208 rows and 213 columns, for the gene expression data}
+  \item{gex.rma}{matrix with 17208 rows and 213 columns, of gene expression data}
   \item{xcell}{matrix with 39 rows and 213 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 213 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 213 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 213 columns, of mcp-counter based deconvolution data}
-  \item{cibersort}{matrix with 25 rows and 213 columns, of cibersort based deconvolution data}
-  \item{scores}{matrix with 2 rows and 213 columns, genomic risk and AR scores}
+  \item{cibersort}{matrix with 22 rows and 213 columns, of cibersort based deconvolution data}
 }
 }
 \source{
@@ -23,7 +22,7 @@ An MAE object spanning 112 men with prostate cancer
 mae_icgcca
 }
 \description{
-MultiAssayExperiment object for the ICGC CA (Canadian) cohort.
+MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for the ICGC CA (Canadian) cohort.
 }
 \details{
 The data refers to samples from the ICGC Canadian Prostate Cancer Genome Network (ICGC-PRAD-CA)

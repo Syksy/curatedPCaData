@@ -5,11 +5,16 @@
 \alias{mae_barbieri}
 \title{Barbieri et al. MAE-object}
 \format{
-A MAE object spanning prostate cancer samples.
+A MAE object spanning prostate adenocarcinomas from Barbieri et. al
 \describe{
   \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
   \item{gex.relz}{matrix with 18193 rows and 20 columns, from z-score normalized expression in relative to paired normals.}
-  \item{mut}{matrix with 29009 rows and 112 columns, genetic aberration calls.}
+  \item{mut}{RaggedExperiment with 5764 rows and 112 columns, mutation data from cbioportal}
+  \item{cibersort}{matrix with 22 rows and 20 columns, of cibersort based deconvolution data}
+  \item{xcell}{matrix with 39 rows and 20 columns, of xcell based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 20 columns, of mcp-counter based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 20 columns, of quantiseq based deconvolution data}
+  \item{epic}{matrix with 8 rows and 20 columns, of epic based deconvolution data}
 }
 }
 \source{
@@ -19,7 +24,8 @@ A MAE object spanning prostate cancer samples.
 mae_barbieri
 }
 \description{
-MultiAssayExperiment object for Barbieri et al.
+MultiAssayExperiment object containing gene expression (gex), copy 
+number alteration (cna), mutations and immune cell estimates for Barbieri et al.
 }
 \details{
 The data comprises of primary localised prostate tumors from two cohorts, the Weill Cornell Medical College (WCMC; New York, NY), and the Uropath (Perth, Australia), which commercially provides banked urological tissues. None of the samples comes from patients who had received prior treatment for prostate cancer.

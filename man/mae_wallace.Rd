@@ -5,13 +5,14 @@
 \alias{mae_wallace}
 \title{Wallace et al. MAE-object}
 \format{
-An MAE object spanning 333 men with prostate cancer
+An MAE object spanning 83 men with prostate cancer
 \describe{
-  \item{gex}{matrix with 12048 rows and 83 columns}
-  \item{mcp}{matrix with 11 rows and 83 columns}
-  \item{quantiseq}{matrix with 4 rows and 83 columns}
-  \item{cibersort}{matrix with 25 rows and 83 columns}
-  \item{scores}{matrix with 2 rows and 83 columns, genomic risk and AR scores}
+  \item{gex.rma}{matrix with 12798 rows and 83 columns}
+  \item{mcp}{matrix with 11 rows and 83 columns, of mcp-counter based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 83 columns, of quantiseq based deconvolution data}
+  \item{cibersort}{matrix with 22 rows and 83 columns, of cibersort based deconvolution data}
+  \item{xcell}{matrix with 39 rows and 83 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 83 columns, of epic based deconvolution data}
 }
 }
 \source{
@@ -21,7 +22,7 @@ An MAE object spanning 333 men with prostate cancer
 mae_wallace
 }
 \description{
-MultiAssayExperiment object containing GEX from Wallace et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from Wallace et al.
 }
 \references{
 Wallace, T. A., Prueitt, R. L., Yi, M., Howe, T. M., Gillespie, J. W., Yfantis, H. G., Stephens, R. M., Caporaso, N. E., Loffredo, C. A., & Ambs, S. (2008). Tumor immunobiological differences in prostate cancer between African-American and European-American men. Cancer research, 68(3), 927–936. https://doi.org/10.1158/0008-5472.CAN-07-2608

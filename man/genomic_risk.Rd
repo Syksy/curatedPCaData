@@ -6,7 +6,7 @@
 \usage{
 genomic_risk(
   mae,
-  object = "gex",
+  slot = "gex",
   test = c("Prolaris", "Oncotype DX", "Decipher"),
   log = TRUE
 )

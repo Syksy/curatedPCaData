@@ -5,17 +5,16 @@
 \alias{mae_ren}
 \title{Ren et al. MAE-object}
 \format{
-An MAE object spanning 112 men with prostate cancer
+An MAE object spanning 65 men with prostate cancer
 \describe{
-  \item{gex}{matrix with 21589 rows and 65 columns}
-  \item{cna_gistic}{matrix with 20873 rows and 65 columns}
-  \item{mut}{matrix with 27291 rows and 63 columns, of mutation data}
+  \item{gex.relz}{matrix with 21589 rows and 65 columns}
+  \item{cna.gistic}{matrix with 20873 rows and 65 columns}
+  \item{mut}{RaggedExperiment with 50803 rows and 65 columns, of mutation data from cbioportal}
   \item{xcell}{matrix with 39 rows and 65 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 65 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
-  \item{cibersort}{matrix with 25 rows and 65 columns, of cibersort based deconvolution data}
-  \item{scores}{matrix with 2 rows and 65 columns, genomic risk and AR scores}
+  \item{cibersort}{matrix with 22 rows and 65 columns, of cibersort based deconvolution data}
 }
 }
 \source{
@@ -25,8 +24,8 @@ An MAE object spanning 112 men with prostate cancer
 mae_ren
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and copy 
-number alteration (cna).
+MultiAssayExperiment object containing gene expression (gex), copy 
+number alteration (cna), mutations and immune cell estimates from Ren et al.
 }
 \details{
 The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples.

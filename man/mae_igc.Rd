@@ -5,15 +5,24 @@
 \alias{mae_igc}
 \title{IGC}
 \format{
-An object of class \code{MultiAssayExperiment} of length 1.
+An MAE object spanning 83 men with prostate cancer
+\describe{
+\item{gex.rma}{matrix with 12798 rows and 83 columns, of gene expression data}
+\item{cibersort}{matrix with 22 rows and 83 columns, of cibersort based deconvolution data}
+\item{xcell}{matrix with 39 rows and 83 columns, of xcell based deconvolution data}
+\item{epic}{matrix with 8 rows and 83 columns, of epic based deconvolution data}
+\item{mcp}{matrix with 11 rows and 83 columns, of mcp-counter based deconvolution data}
+\item{quantiseq}{matrix with 11 rows and 83 columns, of quantiseq based deconvolution data}
+
+}
 }
 \source{
-\url{...}
+\url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse2109}
 }
 \usage{
 mae_igc
 }
 \description{
-MAE ...
+MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from IGC's Expression Project for Oncology (expO)
 }
 \keyword{datasets}

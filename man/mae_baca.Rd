@@ -5,18 +5,18 @@
 \alias{mae_baca}
 \title{Baca et al. MAE-object}
 \format{
-A MAE object spanning prostate cancer samples.
+A MAE object spanning 56 prostate cancer samples.
 \describe{
-  \item{cna.gistic}{matrix with 21723 rows and 109 columns, from GISTIC discretized copy number alteration calls.}
+  \item{cna.gistic}{matrix with 19661 rows and 56 columns, from GISTIC discretized copy number alteration calls.}
 }
 }
 \source{
-\url{...}
+\url{https://www.cbioportal.org/study/summary?id=prad_broad_2013}
 }
 \usage{
 mae_baca
 }
 \description{
-MultiAssayExperiment object for Baca et al.
+MultiAssayExperiment object containing copy number alteration (cna) for Baca et al.
 }
 \keyword{datasets}

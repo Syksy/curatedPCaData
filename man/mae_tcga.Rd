@@ -5,28 +5,27 @@
 \alias{mae_tcga}
 \title{TCGA MAE-object}
 \format{
-An MAE object spanning 333 men with prostate cancer
+An MAE object spanning 481 men with prostate cancer
 \describe{
-  \item{cna_log}{matrix with 21735 rows and 333 columns}
-  \item{mut}{matrix with 29707 rows and 333 columns,of mutation data}
-  \item{gex}{matrix with 58684 rows and 483 columns}
-  \item{xcell}{matrix with 39 rows and 483 columns}
-  \item{epic}{matrix with 8 rows and 483 columns}
-  \item{quantiseq}{matrix with 11 rows and 483 columns}
-  \item{mcp}{matrix with 11 rows and 483 columns}
-  \item{scores}{matrix with 2 rows and 333 columns, genomic risk and AR scores}
-  
+  \item{cna.gistic}{matrix with 19645 rows and 481 columns}
+  \item{mut}{RaggedExperiment with 29286 rows and 495 columns,of mutation data}
+  \item{gex.fpkm}{matrix with 58387 rows and 481 columns}
+  \item{xcell}{matrix with 39 rows and 481 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 481 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 481 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 481 columns, of mcp-counter based deconvolution data}
+  \item{cibersort}{matrix with 22 rows and 481 columns, of cibersort based deconvolution data}
 }
 }
 \source{
-\url{https://www.cbioportal.org/study/summary?id=prad_tcga_pub}
+
 }
 \usage{
 mae_tcga
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and copy 
-number alteration (cna) from TCGA and the Open Science Framework datasets.
+MultiAssayExperiment object containing gene expression (gex), copy 
+number alteration (cna), mutations and immune cell estimates from GDC TCGA.
 }
 \references{
 Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025
