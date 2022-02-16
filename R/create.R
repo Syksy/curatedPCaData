@@ -6,7 +6,8 @@
 #' @return An MAE object containing clinical and multi-'omics data
 #' 
 #' @importFrom rlang .data
-#'
+#' @noRd
+#' @keywords internal
 create_mae <- function(
   # Valid study_name-parameters: tcga, taylor, sun, hieronymus, friedrich, barbieri, ren, chandran,igc,wang,kim,abida
  #study_name = c("TCGA", "Taylor", "Sun", "Hieronymus", "Barbieri", "Ren","kim","abida","igc","wang"),

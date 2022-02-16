@@ -25,6 +25,7 @@ Other contributors:
   \item Christelle Colin Leitzinger \email{christelle.colinleitzinger@moffitt.org} [contributor]
   \item Varsha Sreekanth \email{varsha.sreekanth@cuanschutz.edu} [contributor]
   \item Federico Calboli \email{federico.calboli@utu.fi} [contributor]
+  \item Kalaimathy Singaravelu \email{kalsin@utu.fi} [contributor]
 }
 
 }

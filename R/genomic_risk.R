@@ -4,6 +4,8 @@
 #'
 #' @details https://bjui-journals.onlinelibrary.wiley.com/doi/10.1111/bju.14452 https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-14-690 https://www.nature.com/articles/s41391-019-0167-9
 #'
+#' @noRd
+#' @keywords internal
 genomic_risk <- function(mae, 
                          slot = "gex",
                          test = c("Prolaris", "Oncotype DX", "Decipher"),
@@ -132,6 +134,8 @@ genomic_risk <- function(mae,
 #' Various genomic scores
 #'
 #' AR score by Hieronymus et al 2006 as used by TCGA 2015
+#' @noRd
+#' @keywords internal
 genomic_score <- function(
 			mae, # MultiAssayExperiment object
 			slot = "gex", # Slot inside MAE object to use as the gene expression
