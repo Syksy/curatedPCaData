@@ -7,6 +7,8 @@
 #' @param collapse_fun function to collapse probe(s) or select a probe, 
 #' e.g. mean, median, or function that picks a probe with high variance
 #' @param ... additional arguments
+#' @noRd
+#' @keywords internal
 generate_gex_geo <- function(
 	# Unique GEO identifier
 	geo_code = c(
@@ -891,6 +893,8 @@ generate_gex_geo <- function(
 #' GEO data
 #' @param cleanup logical value to remove intermediate files 
 #' @param ... additional arguments
+#' @noRd
+#' @keywords internal
 generate_cna_geo <- function(
 	geo_code = c(
 		"GSE54691",	# Hieronymus et al.
@@ -1065,6 +1069,8 @@ generate_cna_geo <- function(
 #' @param delay numberic value for delay time between querying gene sets
 #' @param splitsize number of genes in each query
 #' @param verb logical value for displaying progress bar 
+#' @noRd
+#' @keywords internal
 generate_cbioportal <- function(
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), 
   geneticProfiles = c("prad_tcga_pub_rna_seq_v2_mrna", #TCGA GEX 
@@ -1137,6 +1143,8 @@ generate_cbioportal <- function(
 #' oncop_ren <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="ren", oncoprintify=TRUE)
 #' # TODO
 #' # oncop_abida <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="abida", oncoprintify=TRUE)
+#' @noRd
+#' @keywords internal
 generate_cbioportal_oncoprint <- function(
 	study_id, # tcga, taylor, barbieri, ren, or abida
 	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
@@ -1271,7 +1279,8 @@ generate_cbioportal_oncoprint <- function(
 #' @examples
 #' ren_mut=generate_cgdsr_mut("ren",genes=curatedPCaData::curatedPCaData_genes$hgnc_symbol)
 #' barbieri_mut=generate_cgdsr_mut("barbieri",genes=curatedPCaData::curatedPCaData_genes$hgnc_symbol)
-
+#' @noRd
+#' @keywords internal
 generate_cgdsr_mut <- function(
   study_id, # tcga, taylor, barbieri, ren, or abida
   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
@@ -1340,7 +1349,8 @@ generate_cgdsr_mut <- function(
 #' @examples
 #' ren_mut=generate_cbioportaldata_mut("prad_eururol_2017")
 #' barbieri_mut=generate_cbioportaldata_mut("prad_broad")
-
+#' @noRd
+#' @keywords internal
 generate_cbioportaldata_mut<-function(caselist){
   mut=cBioPortalData::cBioDataPack(caselist,ask = FALSE)
   ragexp=mut[["mutations"]]
@@ -1379,6 +1389,8 @@ generate_cbioportaldata_mut<-function(caselist){
 #' "EOPC-DE: No Embargo. Data available without limitations" (Need to verify biological applicability) 
 #'
 #' NOTE: Sometimes the downloads seem to fail randomly; perhaps a fixed amount of retries ought to be allowed?
+#' @noRd
+#' @keywords internal
 generate_icgc <- function(
 	icgc_id = "PRAD_CA", # Study which ought to be downloaded; Canadian Prostate Adenocarcima study as default; note ICGC uses format 'PRAD-CA' but '_' is used for R-friendliness
 	set = "gex", # Which dataset (patient or sample data / omics platform) to try to extract from the data; valid values: 'clinical', 'gex', 'cna', ...
@@ -1537,7 +1549,8 @@ generate_icgc <- function(
 
 #' Download GDC processed data via xenabrowser.net Santa-Cruz interface
 #'
-#'
+#' @noRd
+#' @keywords internal
 generate_xenabrowser <- function(
 	id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
 	type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted

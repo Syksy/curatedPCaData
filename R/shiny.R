@@ -20,7 +20,8 @@ shiny <- function(){
 #'
 #' Description
 #'
-#' @rdname shiny
+#' @noRd
+#' @keywords internal
 ui <- shiny::navbarPage(
 	# Title appended by current package version, sanitized from R
 	paste0("curatedPCaData v", utils::packageVersion("curatedPCaData")),
@@ -70,7 +71,8 @@ ui <- shiny::navbarPage(
 #'
 #' Description
 #'
-#' @rdname shiny
+#' @noRd
+#' @keywords internal
 server <- function(input, output, session){
 	# Need to load select options on the run
 	updateSelectInput(session, "dat",

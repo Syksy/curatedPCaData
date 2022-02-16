@@ -1,9 +1,9 @@
 ---
-title: "overview"
+title: "Overview to curatedPCaData"
 output: 
   rmarkdown::html_vignette:
     toc: true
-    number_sections: true
+    number_sections: false
 vignette: >
   %\VignetteIndexEntry{Overview to curatedPCaData}
   %\VignetteEngine{knitr::rmarkdown}
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 library(tidyverse)
 library(viridis)
 ```
-# Intro
+# Package overview
 
 This vignette introduces `curatedPCaData` and provides an overview for the package and the various datasets and the corresponding raw and processed data there-in. 
 
@@ -136,7 +136,7 @@ Each row of the deconvolution matrix represents the content of a certain immune 
 
 ## Sample purity estimates
 
-_TODO_
+__TODO__
 
 ## Risk scores and other metrics
 
@@ -149,7 +149,6 @@ mae_tcga[["scores"]][,1:5]
 The following Prostate Cancer risk scores are offered:
 
 - ```Prolaris``` [ref]
-- ```OncotypeDX```[ref]
 - ```Decypher``` [ref]
 
 Further, the Androgen Receptor (AR) score is calculated similar to [ref] and provided in this slot:
@@ -158,29 +157,11 @@ Further, the Androgen Receptor (AR) score is calculated similar to [ref] and pro
 
 # Citations
 
-_TODO_
+__TODO__
 
 # Session info
 
 ```{r session}
 sessionInfo()
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
