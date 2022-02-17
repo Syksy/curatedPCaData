@@ -162,6 +162,9 @@ curated2 <- initial_curated_df(
   df_rownames = rownames(uncurated2),
   template_name="data-raw/template_prad.csv")
 
+# Match rownames between subsets
+uncurated2 <- uncurated2[match(rownames(uncurated), rownames(uncurated2)),]
+
 curated2 <- uncurated2 %>% 
 	# ERG fusions were determined using gene expression
 	dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
@@ -190,6 +193,19 @@ curated[,"tumor_purity_demixt"] <- curated2[,"tumor_purity_demixt"]
 curated[,"tumor_purity_pathology"] <- curated2[,"tumor_purity_pathology"]
 curated[,"AR_activity"] <- curated2[,"AR_activity"]
 curated[,"race"] <- curated2[,"race"]
+
+# Subset to analytical subset of 333 samples prior to removing low quality samples
+curated <- curated[which(curated$sample_name %in% intersect(rownames(uncurated), rownames(uncurated2))),]
+rownames(curated) <- curated$sample_name
+
+# Append information for the normal samples from GDC (XenaBrowser) as well as other potentially interesting fields
+uncurated3 <- curatedPCaData:::generate_xenabrowser(id="TCGA-PRAD", type="clinical")
+curated3 <- initial_curated_df(
+  df_rownames = rownames(uncurated3),
+  template_name="data-raw/template_prad.csv")
+
+
+
 
 clinical_tcga <- curated
 
