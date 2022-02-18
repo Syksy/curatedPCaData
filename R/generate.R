@@ -1613,9 +1613,9 @@ generate_xenabrowser <- function(
 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
 			}else if(truncate>=0){
-				print("Substituting '.01A' with '.01' ...")
+				print("Substituting '.01A|.01B' with '.01' ...")
 				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A", ".01", colnames(dat))
+				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
 			}
 		# Copy number alterations (discretized by GISTIC)
 		}else if(type == "cna"){
@@ -1644,9 +1644,9 @@ generate_xenabrowser <- function(
 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
 			}else if(truncate>=0){
-				print("Substituting '.01A' with '.01' ...")
+				print("Substituting '.01A|.01B' with '.01' ...")
 				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A", ".01", colnames(dat))
+				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
 			}
 		# Small mutations (SNV / INDELs called by Mutect2)
 		}else if(type == "mut"){
@@ -1677,6 +1677,7 @@ generate_xenabrowser <- function(
 			if(cleanup) file.remove(file)
 			# Combine the two			
 			dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
+			# .11A are healthy samples (GEX)
 			#rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
 		# Unknown data type
 		}else{
