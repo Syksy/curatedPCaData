@@ -278,6 +278,112 @@ curated3 <- curated3 %>%
 # Append normal samples with GDC metadata to curated data from cBio's metadata
 curated <- rbind(curated, curated3[which(curated3$sample_type == "healthy"),])
 
+# Utilize additional information of low quality samples from pathology review and RNA degradation
+# Samples excluded in pathology review
+PathReview <- c(
+	"TCGA-G9-6332",
+	"TCGA-HC-7738",
+	"TCGA-HC-7745",
+	"TCGA-HC-7819",
+	"TCGA-HC-8259",
+	"TCGA-EJ-A46B",
+	"TCGA-EJ-A46E",
+	"TCGA-EJ-A46H",
+	"TCGA-H9-A6BX",
+	"TCGA-HC-7817",
+	"TCGA-KK-A8IM",
+	"TCGA-V1-A8MK",
+	"TCGA-EJ-A8FO",
+	"TCGA-EJ-A8FP",
+	"TCGA-J4-A83J",
+	"TCGA-KK-A8I7"
+)
+# Samples indicated to suffer from RNA degradation
+RNAdegrade <- c(
+	"TCGA-J4-A67O-01A-11R-A30B-07",
+	"TCGA-QU-A6IM-01A-11R-A31N-07",
+	"TCGA-QU-A6IL-01A-11R-A31N-07",
+	"TCGA-KK-A7AW-01A-11R-A32O-07",
+	"TCGA-G9-6347-01A-11R-A31N-07",
+	"TCGA-EJ-A46F-01A-31R-A250-07",
+	"TCGA-QU-A6IO-01A-11R-A31N-07",
+	"TCGA-J4-A67Q-01A-21R-A30B-07",
+	"TCGA-QU-A6IN-01A-11R-A31N-07",
+	"TCGA-G9-6379-01A-11R-A31N-07",
+	"TCGA-KK-A59V-01A-11R-A29R-07",
+	"TCGA-EJ-7325-01B-11R-A32O-07",
+	"TCGA-HC-A6HX-01A-11R-A31N-07",
+	"TCGA-G9-6362-01A-11R-1789-07",
+	"TCGA-J4-A67N-01A-11R-A30B-07",
+	"TCGA-FC-A6HD-01A-11R-A31N-07",
+	"TCGA-KK-A7AY-01A-11R-A33R-07",
+	"TCGA-G9-6498-01A-12R-A311-07",
+	"TCGA-KK-A7B0-01A-11R-A32O-07",
+	"TCGA-V1-A9OT-01A-11R-A41O-07",
+	"TCGA-HC-A6AQ-01A-11R-A30B-07",
+	"TCGA-EJ-A65D-01A-11R-A30B-07",
+	"TCGA-J4-A67R-01A-21R-A30B-07",
+	"TCGA-J4-A67M-01A-11R-A30B-07",
+	"TCGA-EJ-A65M-01A-11R-A29R-07",
+	"TCGA-MG-AAMC-01A-11R-A41O-07",
+	"TCGA-M7-A723-01A-12R-A32O-07",
+	"TCGA-EJ-A65B-01A-12R-A30B-07",
+	"TCGA-KK-A6E3-01A-21R-A30B-07",
+	"TCGA-H9-A6BY-01A-11R-A30B-07",
+	"TCGA-EJ-AB20-01A-12R-A41O-07",
+	"TCGA-J4-A67S-01A-11R-A30B-07",
+	"TCGA-HC-A6AP-01A-11R-A30B-07",
+	"TCGA-X4-A8KQ-01A-12R-A36G-07",
+	"TCGA-HC-7752-01A-11R-2118-07",
+	"TCGA-G9-6496-01A-11R-1789-07",
+	"TCGA-HC-A6AN-01A-11R-A30B-07",
+	"TCGA-FC-A66V-01A-21R-A30B-07",
+	"TCGA-HC-A6AS-01A-11R-A30B-07",
+	"TCGA-HC-A6AO-01A-11R-A30B-07",
+	"TCGA-HI-7169-01A-11R-2118-07",
+	"TCGA-J4-A67L-01A-11R-A30B-07",
+	"TCGA-HC-A6HY-01A-11R-A31N-07",
+	"TCGA-G9-6354-01A-11R-A311-07",
+	"TCGA-J4-A67K-01A-21R-A30B-07",
+	"TCGA-G9-6369-01A-21R-1965-07",
+	"TCGA-KK-A6E4-01A-11R-A30B-07",
+	"TCGA-KK-A6E7-01A-11R-A31N-07",
+	"TCGA-G9-6339-01A-12R-A311-07",
+	"TCGA-G9-6373-01A-11R-1789-07",
+	"TCGA-KK-A7AQ-01A-11R-A33R-07",
+	"TCGA-HC-A6AL-01A-11R-A30B-07",
+	"TCGA-ZG-A9L9-01A-11R-A41O-07",
+	"TCGA-KK-A6E8-01A-11R-A31N-07",
+	"TCGA-2A-A8VX-01A-11R-A37L-07",
+	"TCGA-G9-6343-01A-21R-1965-07",
+	"TCGA-KC-A7F5-01A-11R-A33R-07",
+	"TCGA-J9-A52E-01A-11R-A26U-07",
+	"TCGA-J9-A52C-01A-11R-A26U-07",
+	"TCGA-XJ-A9DX-01A-11R-A37L-07",
+	"TCGA-G9-6338-01A-12R-1965-07",
+	"TCGA-M7-A724-01A-12R-A32O-07",
+	"TCGA-KK-A7B2-01A-12R-A32O-07",
+	"TCGA-ZG-A9LB-01A-11R-A41O-07",
+	"TCGA-V1-A8MM-01A-11R-A37L-07",
+	"TCGA-M7-A71Z-01A-12R-A32O-07",
+	"TCGA-XK-AAK1-01A-11R-A41O-07",
+	"TCGA-VN-A88M-01A-11R-A352-07",
+	"TCGA-KK-A7AZ-01A-12R-A32O-07",
+	"TCGA-ZG-A9LM-01A-11R-A41O-07",
+	"TCGA-XJ-A83F-01A-11R-A352-07",
+	"TCGA-XJ-A9DQ-01A-11R-A37L-07",
+	"TCGA-ZG-A9LU-01A-11R-A41O-07",
+	"TCGA-G9-7525-01A-31R-2263-07",
+	"TCGA-G9-6496-11A-01R-1789-07", # Normal sample
+	"TCGA-G9-6362-11A-01R-1789-07", # Normal sample
+	"TCGA-G9-6348-11A-01R-1789-07" # Normal sample
+)
+PathReview <- paste(gsub("-", ".", PathReview), ".01", sep="")
+RNAdegrade <- gsub("-", ".", RNAdegrade)
+RNAdegrade <- gsub(".01A", ".01", substr(RNAdegrade, start=0, stop=16))
+# Exclusion of low quality samples (3 normals, after the larger data was subset to provisional tumor samples)
+curated <- curated[which(!curated$sample_name %in% c(PathReview, RNAdegrade)),]
+
 clinical_tcga <- curated
 
 save(clinical_tcga, file = "data-raw/clinical_tcga.RData")
