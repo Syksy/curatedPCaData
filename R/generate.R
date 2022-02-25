@@ -1659,6 +1659,8 @@ generate_xenabrowser <- function(
 	truncate = TRUE,
 	# Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
 	digits,
+	# If intermediate files ought to be removed
+	cleanup = TRUE,
 	...
 ){
 	# Small internal function to assist with the downloads from xenabrowser.net
@@ -1688,9 +1690,11 @@ generate_xenabrowser <- function(
 			# Download the FPKM-UQ values processed via HTSeq
 			file <- .xenabrowserDownload(urls[["htseq.fpkm"]])
 			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+			if(cleanup) file.remove(file)
 			# Download the gene mapping file
 			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
 			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+			if(cleanup) file.remove(file)
 			# Rearrange to match the ordering of the data matrix
 			map <- map[match(rownames(dat), rownames(map)),]
 			#> all(rownames(map) == rownames(dat))
@@ -1708,18 +1712,20 @@ generate_xenabrowser <- function(
 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
 			}else if(truncate>=0){
-				print("Substituting '.01A' with '.01' ...")
+				print("Substituting '.01A|.01B' with '.01' ...")
 				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A", ".01", colnames(dat))
+				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
 			}
 		# Copy number alterations (discretized by GISTIC)
 		}else if(type == "cna"){
 			# Download the copy number alteration values processed via GISTIC
 			file <- .xenabrowserDownload(urls[["gistic"]])
 			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+			if(cleanup) file.remove(file)
 			# Download the gene mapping file
 			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
 			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+			if(cleanup) file.remove(file)
 			# Rearrange to match the ordering of the data matrix
 			map <- map[match(rownames(dat), rownames(map)),]
 			# > all(rownames(map) == rownames(dat))
@@ -1737,9 +1743,9 @@ generate_xenabrowser <- function(
 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
 			}else if(truncate>=0){
-				print("Substituting '.01A' with '.01' ...")
+				print("Substituting '.01A|.01B' with '.01' ...")
 				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A", ".01", colnames(dat))
+				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
 			}
 		# Small mutations (SNV / INDELs called by Mutect2)
 		}else if(type == "mut"){
@@ -1747,7 +1753,7 @@ generate_xenabrowser <- function(
 			file <- .xenabrowserDownload(urls[["mutect2"]])
 			# Suitable for RaggedExperiment style data storage
 			dat <- read.table(file, sep="\t", header=TRUE)
-
+			if(cleanup) file.remove(file)
 			tcga_mut<-dat[,c(3:5,1,2,6:11)]
 			colnames(tcga_mut)[1:3]=c("seqnames","start","end")
 			tcga_mut$Sample_ID<-gsub("-",".",tcga_mut$Sample_ID)
@@ -1762,11 +1768,19 @@ generate_xenabrowser <- function(
 		}else if(type == "clinical"){
 			# Generic phenotype information
 			file <- .xenabrowserDownload(urls[["phenotype"]])
-			phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1)
+			phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+			if(cleanup) file.remove(file)
 			# Overall Survival
-			file <- .xenabrowserDownload(urls[["os"]])
-			os <- read.table(file, sep="\t", header=TRUE, row.names=1)
-			
+			file <- .xenabrowserDownload(urls[["os"]], gz=FALSE)
+			os <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+			if(cleanup) file.remove(file)
+			# Combine the two			
+			dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
+			# .11A are healthy samples (GEX)
+			#rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
+		# Unknown data type
+		}else{
+			stop(paste("Invalid query type for xenabrowser:", type))
 		}
 	}
 	# Round to certain digits if requested
@@ -1774,4 +1788,4 @@ generate_xenabrowser <- function(
 	# Return the processed dat
 	dat
 }
-	
+

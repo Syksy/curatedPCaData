@@ -162,6 +162,9 @@ curated2 <- initial_curated_df(
   df_rownames = rownames(uncurated2),
   template_name="data-raw/template_prad.csv")
 
+# Match rownames between subsets
+uncurated2 <- uncurated2[match(rownames(uncurated), rownames(uncurated2)),]
+
 curated2 <- uncurated2 %>% 
 	# ERG fusions were determined using gene expression
 	dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
@@ -190,6 +193,196 @@ curated[,"tumor_purity_demixt"] <- curated2[,"tumor_purity_demixt"]
 curated[,"tumor_purity_pathology"] <- curated2[,"tumor_purity_pathology"]
 curated[,"AR_activity"] <- curated2[,"AR_activity"]
 curated[,"race"] <- curated2[,"race"]
+
+# Subset to analytical subset of 333 samples prior to removing low quality samples
+curated <- curated[which(curated$sample_name %in% intersect(rownames(uncurated), rownames(uncurated2))),]
+rownames(curated) <- curated$sample_name
+
+# Append information for the normal samples from GDC (XenaBrowser) as well as other potentially interesting fields
+uncurated3 <- curatedPCaData:::generate_xenabrowser(id="TCGA-PRAD", type="clinical")
+curated3 <- initial_curated_df(
+  df_rownames = rownames(uncurated3),
+  template_name="data-raw/template_prad.csv")
+
+# GDC portion of clinical metadata (especially normal samples)
+curated3 <- curated3 %>%
+	dplyr::mutate(study_name = "TCGA") %>%
+	dplyr::mutate(patient_id = gsub("-", ".", uncurated3$X_PATIENT)) %>%
+	dplyr::mutate(sample_name = gsub(".01A", ".01", gsub("-", ".", sample_name))) %>%
+	dplyr::mutate(alt_sample_name = uncurated3$file_uuid) %>%
+	dplyr::mutate(age_at_initial_diagnosis = uncurated3$age_at_initial_pathologic_diagnosis) %>%
+	dplyr::mutate(gleason_grade = uncurated3$gleason_score) %>%
+	dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
+		uncurated3$biochemical_recurrence == "YES" ~ 1,
+		uncurated3$biochemical_recurrence == "NO" ~ 0,
+		is.na(uncurated3$biochemical_recurrence) | uncurated3$biochemical_recurrence == "" ~ NA_real_
+	)) %>%
+	dplyr::mutate(days_to_disease_specific_recurrence = uncurated3$days_to_first_biochemical_recurrence) %>%
+	dplyr::mutate(psa = uncurated3$psa_value) %>%
+	dplyr::mutate(overall_survival_status = uncurated3$OS) %>%
+	dplyr::mutate(days_to_overall_survival = uncurated3$OS.time) %>%
+	dplyr::mutate(gleason_major = uncurated3$primary_pattern) %>%
+	dplyr::mutate(gleason_minor = uncurated3$secondary_pattern) %>%
+	dplyr::mutate(grade_group = dplyr::case_when(
+		uncurated3$primary_pattern + uncurated3$secondary_pattern <= 6 ~ "<=6",
+		uncurated3$primary_pattern == 3 & uncurated3$secondary_pattern == 4 ~ "3+4",
+		uncurated3$primary_pattern == 4 & uncurated3$secondary_pattern == 3 ~ "4+3",
+		uncurated3$primary_pattern + uncurated3$secondary_pattern >= 8 ~ ">=8"
+	)) %>%
+	dplyr::mutate(sample_type = dplyr::case_when(
+		uncurated3$sample_type.samples == "Metastatic" ~ "metastatic",
+		uncurated3$sample_type.samples == "Primary Tumor" ~ "primary",
+		uncurated3$sample_type.samples == "Solid Tissue Normal" ~ "healthy",
+		is.na(uncurated3$sample_type.samples) | uncurated3$sample_type.samples == "" ~ NA_character_
+	)) %>%
+	dplyr::mutate(year_diagnosis = uncurated3$year_of_diagnosis.diagnoses) %>%
+	dplyr::mutate(T_pathological = as.numeric(substr(uncurated3$pathologic_T, 2, 2))) %>%
+	dplyr::mutate(T_substage_pathological = substr(uncurated3$pathologic_T, 3, 3)) %>%
+	dplyr::mutate(zone_of_origin = dplyr::case_when(
+		uncurated3$zone_of_origin == "Central Zone" ~ "central",
+		uncurated3$zone_of_origin == "Overlapping / Multiple Zones" ~ "mixed",
+		uncurated3$zone_of_origin == "Peripheral Zone" ~ "peripheral",
+		uncurated3$zone_of_origin == "Transition Zone" ~ "transition",
+		is.na(uncurated3$zone_of_origin) | uncurated3$zone_of_origin == "" ~ NA_character_
+	)) %>%
+	dplyr::mutate(frozen_ffpe = ifelse(uncurated3$is_ffpe.samples == "True", "FFPE", "frozen")) %>%
+	dplyr::mutate(N_stage = as.numeric(substr(uncurated3$pathologic_N,2,2))) %>%
+	dplyr::mutate(race = dplyr::case_when(
+		uncurated3$race.demographic == "asian" ~ "asian",
+		uncurated3$race.demographic == "american indian or alaska native" ~ "other",
+		uncurated3$race.demographic == "black or african american" ~ "african_american",		
+		uncurated3$race.demographic == "white" ~ "caucasian",
+		is.na(uncurated3$race.demographic) | uncurated3$race.demographic == "not reported" ~ NA_character_
+	)) %>%
+	dplyr::mutate(therapy_radiation_initial = dplyr::case_when(
+		uncurated3$radiation_therapy == "NO" ~ 0,
+		uncurated3$radiation_therapy == "YES" ~ 0,
+		is.na(uncurated3$radiation_therapy) | uncurated3$radiation_therapy == "" ~ NA_real_
+	)) %>%
+	dplyr::mutate(therapy_hormonal_initial = dplyr::case_when(
+		uncurated3$additional_pharmaceutical_therapy == "YES" ~ 1,
+		uncurated3$additional_pharmaceutical_therapy == "NO" ~ 0,
+		is.na(uncurated3$additional_pharmaceutical_therapy) | uncurated3$additional_pharmaceutical_therapy == "" ~ NA_real_
+	)) %>%
+	dplyr::mutate(batch = uncurated3$batch_number) %>%
+	# Append custom features of interest
+	dplyr::mutate(other_feature = 
+		paste(
+			paste("primary_therapy_outcome_success=", uncurated3$primary_therapy_outcome_success, sep=""), 
+			paste("additional_radiation_therapy=", uncurated3$additional_radiation_therapy, sep=""), 
+		sep=";")
+	)
+# Note regarding BCR: sometimes patient has "biochemical_recurrence" == "NO" but has das to first/second_biochemical_recurrence (?)
+# uncurated3[,c("biochemical_recurrence", "days_to_first_biochemical_recurrence", "days_to_second_biochemical_recurrence")]
+
+# Append normal samples with GDC metadata to curated data from cBio's metadata
+curated <- rbind(curated, curated3[which(curated3$sample_type == "healthy"),])
+
+# Utilize additional information of low quality samples from pathology review and RNA degradation
+# Samples excluded in pathology review
+PathReview <- c(
+	"TCGA-G9-6332",
+	"TCGA-HC-7738",
+	"TCGA-HC-7745",
+	"TCGA-HC-7819",
+	"TCGA-HC-8259",
+	"TCGA-EJ-A46B",
+	"TCGA-EJ-A46E",
+	"TCGA-EJ-A46H",
+	"TCGA-H9-A6BX",
+	"TCGA-HC-7817",
+	"TCGA-KK-A8IM",
+	"TCGA-V1-A8MK",
+	"TCGA-EJ-A8FO",
+	"TCGA-EJ-A8FP",
+	"TCGA-J4-A83J",
+	"TCGA-KK-A8I7"
+)
+# Samples indicated to suffer from RNA degradation
+RNAdegrade <- c(
+	"TCGA-J4-A67O-01A-11R-A30B-07",
+	"TCGA-QU-A6IM-01A-11R-A31N-07",
+	"TCGA-QU-A6IL-01A-11R-A31N-07",
+	"TCGA-KK-A7AW-01A-11R-A32O-07",
+	"TCGA-G9-6347-01A-11R-A31N-07",
+	"TCGA-EJ-A46F-01A-31R-A250-07",
+	"TCGA-QU-A6IO-01A-11R-A31N-07",
+	"TCGA-J4-A67Q-01A-21R-A30B-07",
+	"TCGA-QU-A6IN-01A-11R-A31N-07",
+	"TCGA-G9-6379-01A-11R-A31N-07",
+	"TCGA-KK-A59V-01A-11R-A29R-07",
+	"TCGA-EJ-7325-01B-11R-A32O-07",
+	"TCGA-HC-A6HX-01A-11R-A31N-07",
+	"TCGA-G9-6362-01A-11R-1789-07",
+	"TCGA-J4-A67N-01A-11R-A30B-07",
+	"TCGA-FC-A6HD-01A-11R-A31N-07",
+	"TCGA-KK-A7AY-01A-11R-A33R-07",
+	"TCGA-G9-6498-01A-12R-A311-07",
+	"TCGA-KK-A7B0-01A-11R-A32O-07",
+	"TCGA-V1-A9OT-01A-11R-A41O-07",
+	"TCGA-HC-A6AQ-01A-11R-A30B-07",
+	"TCGA-EJ-A65D-01A-11R-A30B-07",
+	"TCGA-J4-A67R-01A-21R-A30B-07",
+	"TCGA-J4-A67M-01A-11R-A30B-07",
+	"TCGA-EJ-A65M-01A-11R-A29R-07",
+	"TCGA-MG-AAMC-01A-11R-A41O-07",
+	"TCGA-M7-A723-01A-12R-A32O-07",
+	"TCGA-EJ-A65B-01A-12R-A30B-07",
+	"TCGA-KK-A6E3-01A-21R-A30B-07",
+	"TCGA-H9-A6BY-01A-11R-A30B-07",
+	"TCGA-EJ-AB20-01A-12R-A41O-07",
+	"TCGA-J4-A67S-01A-11R-A30B-07",
+	"TCGA-HC-A6AP-01A-11R-A30B-07",
+	"TCGA-X4-A8KQ-01A-12R-A36G-07",
+	"TCGA-HC-7752-01A-11R-2118-07",
+	"TCGA-G9-6496-01A-11R-1789-07",
+	"TCGA-HC-A6AN-01A-11R-A30B-07",
+	"TCGA-FC-A66V-01A-21R-A30B-07",
+	"TCGA-HC-A6AS-01A-11R-A30B-07",
+	"TCGA-HC-A6AO-01A-11R-A30B-07",
+	"TCGA-HI-7169-01A-11R-2118-07",
+	"TCGA-J4-A67L-01A-11R-A30B-07",
+	"TCGA-HC-A6HY-01A-11R-A31N-07",
+	"TCGA-G9-6354-01A-11R-A311-07",
+	"TCGA-J4-A67K-01A-21R-A30B-07",
+	"TCGA-G9-6369-01A-21R-1965-07",
+	"TCGA-KK-A6E4-01A-11R-A30B-07",
+	"TCGA-KK-A6E7-01A-11R-A31N-07",
+	"TCGA-G9-6339-01A-12R-A311-07",
+	"TCGA-G9-6373-01A-11R-1789-07",
+	"TCGA-KK-A7AQ-01A-11R-A33R-07",
+	"TCGA-HC-A6AL-01A-11R-A30B-07",
+	"TCGA-ZG-A9L9-01A-11R-A41O-07",
+	"TCGA-KK-A6E8-01A-11R-A31N-07",
+	"TCGA-2A-A8VX-01A-11R-A37L-07",
+	"TCGA-G9-6343-01A-21R-1965-07",
+	"TCGA-KC-A7F5-01A-11R-A33R-07",
+	"TCGA-J9-A52E-01A-11R-A26U-07",
+	"TCGA-J9-A52C-01A-11R-A26U-07",
+	"TCGA-XJ-A9DX-01A-11R-A37L-07",
+	"TCGA-G9-6338-01A-12R-1965-07",
+	"TCGA-M7-A724-01A-12R-A32O-07",
+	"TCGA-KK-A7B2-01A-12R-A32O-07",
+	"TCGA-ZG-A9LB-01A-11R-A41O-07",
+	"TCGA-V1-A8MM-01A-11R-A37L-07",
+	"TCGA-M7-A71Z-01A-12R-A32O-07",
+	"TCGA-XK-AAK1-01A-11R-A41O-07",
+	"TCGA-VN-A88M-01A-11R-A352-07",
+	"TCGA-KK-A7AZ-01A-12R-A32O-07",
+	"TCGA-ZG-A9LM-01A-11R-A41O-07",
+	"TCGA-XJ-A83F-01A-11R-A352-07",
+	"TCGA-XJ-A9DQ-01A-11R-A37L-07",
+	"TCGA-ZG-A9LU-01A-11R-A41O-07",
+	"TCGA-G9-7525-01A-31R-2263-07",
+	"TCGA-G9-6496-11A-01R-1789-07", # Normal sample
+	"TCGA-G9-6362-11A-01R-1789-07", # Normal sample
+	"TCGA-G9-6348-11A-01R-1789-07" # Normal sample
+)
+PathReview <- paste(gsub("-", ".", PathReview), ".01", sep="")
+RNAdegrade <- gsub("-", ".", RNAdegrade)
+RNAdegrade <- gsub(".01A", ".01", substr(RNAdegrade, start=0, stop=16))
+# Exclusion of low quality samples (3 normals, after the larger data was subset to provisional tumor samples)
+curated <- curated[which(!curated$sample_name %in% c(PathReview, RNAdegrade)),]
 
 clinical_tcga <- curated
 
