@@ -1395,6 +1395,7 @@ generate_cbioportaldata <- function(caselist,profile){
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
+      colnames(res2)<-gsub("-",".",colnames(res2))
       return(res2)
     }
   }
@@ -1463,6 +1464,7 @@ generate_cbioportaldata <- function(caselist,profile){
       gex2 <- gex2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(gex2) <- symbols
+      colnames(gex2)<-gsub("-",".",colnames(gex2))
       
       return(gex2)
     }
