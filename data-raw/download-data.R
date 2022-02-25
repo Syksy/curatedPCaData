@@ -59,7 +59,6 @@ save(cna.gistic_abida, file="data-raw/cna.gistic_abida.RData")
 # )
 # mut_abida[which(mut_abida=="NaN")] <- NA
 abida_mut <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","mut")
-## TDL: Typo?? abida_mut <-> ragexp_abida
 save(abida_mut, file="data-raw/mut_abida.RData")
 # To check: Fusions separately?
 
