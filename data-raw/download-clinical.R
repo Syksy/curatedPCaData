@@ -1111,12 +1111,13 @@ uncurated=as.data.frame(uncurated)
 
 # create the curated object
 curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
+  df_rownames = uncurated$SAMPLE_ID,
   template_name="data-raw/template_prad.csv")
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Ren et al.") %>%
-  dplyr::mutate(sample_name = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = uncurated$PATIENT_ID) %>%
+  dplyr::mutate(sample_name = uncurated$SAMPLE_ID) %>%
   # From the publication: "The study sequenced whole-genome and transcriptome of tumor-benign paired tissues from 65 treatment-naive Chinese PCa patients"
   dplyr::mutate(sample_paired = 1) %>%
   dplyr::mutate(sample_type = "primary") %>%

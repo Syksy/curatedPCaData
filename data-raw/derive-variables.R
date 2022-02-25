@@ -399,7 +399,7 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_taylor <- addSlotMAE(curatedPCaData::mae_taylor, xcell = tmp)
 # Save the derived new 'assay' types to the mae-object
-usethis::use_data(mae_taylor, overwrite = TRUE)
+#usethis::use_data(mae_taylor, overwrite = TRUE)
 
 # TCGA
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="xcell"))
