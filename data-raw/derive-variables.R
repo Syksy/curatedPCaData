@@ -287,7 +287,16 @@ mae_wang <- addSlotMAE(mae_wang, cibersort = cibersort_wang)
 #mae_wang <- create_mae(study_name = "wang")
 #usethis::use_data(mae_wang, overwrite = TRUE)
 
-## WEINER ET AL MISSING
+# Weiner et al.
+cibersort_weiner<-rio::import("data-raw/CIBERSORTx_weiner_Results.csv")
+cibersort_weiner<-cibersort_weiner[ , -which(names(cibersort_weiner) %in% c("P-value","Pearson Correlation","RMSE","Absolute score"))]
+cibersort_weiner <- t(cibersort_weiner)
+colnames(cibersort_weiner)<- cibersort_weiner[1,]
+cibersort_weiner<-cibersort_weiner[-1,]
+cibersort_weiner<-as.matrix(cibersort_weiner)
+class(cibersort_weiner) <- "numeric"
+#save(cibersort_weiner, file="data-raw/cibersort_weiner.RData")
+mae_weiner <- addSlotMAE(mae_weiner, cibersort = cibersort_weiner)
 
 #####################################################
 #####################################################
