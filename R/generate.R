@@ -1343,30 +1343,129 @@ generate_cgdsr_mut <- function(
   #}
 }
 
-#' Download mutation data from cBioPortal using cbioportaldata package
-#'
-#' @param caselist TODO
+
+#' Download generic 'omics data from cBioPortal using the cbioportaldata package
+#' 
+#' @param profile character string of variable
+#' @param caseList character string of patient IDs for that genetic profile
 #' @examples
-#' ren_mut=generate_cbioportaldata_mut("prad_eururol_2017")
-#' barbieri_mut=generate_cbioportaldata_mut("prad_broad")
+#' cna.gistic_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","cna")
+#' gex.relz_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","gex")
 #' @noRd
 #' @keywords internal
-generate_cbioportaldata_mut<-function(caselist){
-  mut=cBioPortalData::cBioDataPack(caselist,ask = FALSE)
-  ragexp=mut[["mutations"]]
-  if(caselist=="prad_eururol_2017"){
-    return(ragexp)
+generate_cbioportaldata <- function(caselist,profile){
+  prof=cBioPortalData::cBioDataPack(caselist,ask = FALSE)
+  
+  if(profile=="cna"){
+    if (caselist == "prad_broad"){
+      res=prof[["cna"]]
+      a=rowData(res)[match(rownames(res),rownames(rowData(res))),"Hugo_Symbol"]
+      res2=assay(res)
+      res2<-res2[!is.na(a),]
+      a=a[!is.na(a)]
+      rownames(res2) <- a
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      res2 <- res2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(res2) <- symbols
+      colnames(res2)<-gsub("-",".",colnames(res2))
+      return(res2)}
     
-  }else if (caselist == "prad_broad" || caselist=="prad_su2c_2019"){
-    colnames(ragexp)<-gsub("-",".",colnames(ragexp))
-    return(ragexp)
+    else if(caselist=="prad_eururol_2017"){
+      res=prof[["cna"]]
+      res2=assay(res)
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      res2 <- res2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(res2) <- symbols
+      
+      return(res2)
+      
+    }
     
-  }else if (caselist=="prad_mskcc"){
-    same_barcode=colnames(ragexp)[grepl("PCA", colnames(ragexp))]
-    ind=which(colnames(ragexp) %in% same_barcode=="TRUE")
-    ragexp2<-ragexp[, c(ind)]
-    return(ragexp2)
-    
+    else if(caselist=="prad_su2c_2019"){
+      res=metadata(prof)$cna
+      res=as.data.frame(res)
+      res2=res[!(duplicated(res$Hugo_Symbol)|duplicated(res$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
+      res2=res2[!grepl("-AS1", res2$Hugo_Symbol),]
+      rownames(res2)<-res2$Hugo_Symbol
+      res2<-res2[,-1]
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      
+      res2 <- res2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(res2) <- symbols
+      return(res2)
+    }
+  }
+  
+  if(profile=="mut"){
+    ragexp=prof[["mutations"]]
+    if(caselist=="prad_eururol_2017"){
+      return(ragexp)
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      ragexp2 <- ragexp[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(ragexp2) <- symbols
+      return(ragexp2)
+      
+    }else if (caselist == "prad_broad" || caselist=="prad_su2c_2019"){
+      colnames(ragexp)<-gsub("-",".",colnames(ragexp))
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      ragexp2 <- ragexp[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(ragexp2) <- symbols
+      colnames(ragexp2)<-gsub("-",".",colnames(ragexp2))
+      return(ragexp2)
+      
+    }else if (caselist=="prad_mskcc"){
+      same_barcode=colnames(ragexp)[grepl("PCA", colnames(ragexp))]
+      ind=which(colnames(ragexp) %in% same_barcode=="TRUE")
+      ragexp2<-ragexp[, c(ind)]
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      ragexp3 <- ragexp2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(ragexp3) <- symbols
+      
+      return(ragexp3)
+      
+    }
+  }
+  if(profile=="gex"){
+    if(caselist=="prad_eururol_2017"){
+      gex=prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
+      gex2=assay(gex)
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      gex2 <- gex2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(gex2) <- symbols
+      
+      return(gex2)
+    }else if(caselist=="prad_broad"){
+      gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
+      gex2=assay(gex)
+      gex2=gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      gex2 <- gex2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(gex2) <- symbols
+      colnames(gex2)<-gsub("-",".",colnames(gex2))
+      return(gex2)
+    }else if(caselist=="prad_su2c_2019"){
+      gex=metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
+      gex=as.data.frame(gex)
+      gex2=gex[!(duplicated(gex$Hugo_Symbol)|duplicated(gex$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
+      gex2=gex2[!grepl("-AS1", gex2$Hugo_Symbol),]
+      rownames(gex2)<-gex2$Hugo_Symbol
+      gex2<-gex2[,-1]
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      
+      gex2 <- gex2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(gex2) <- symbols
+      
+      return(gex2)
+    }
   }
   
 }
