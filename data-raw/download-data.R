@@ -116,7 +116,6 @@ save(cna.gistic_barbieri, file="data-raw/cna.gistic_barbieri.RData")
 #   caselist = "prad_broad"
 #   )
 barbieri_mut <- curatedPCaData:::generate_cbioportaldata("prad_broad","mut")
-## TDL: Missing ragexp_barbieri
 save(barbieri_mut, file="data-raw/mut_barbieri.RData")
 
 # Create MAE object
@@ -275,19 +274,21 @@ usethis::use_data(mae_kunderfranco, internal = FALSE, overwrite = TRUE)
 
 ## - Ren et al. -
 # GEX
-gex.relz_ren <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-  geneticProfiles = "prad_eururol_2017_rna_seq_mrna", # Omics profile
-  caseList = "prad_eururol_2017_sequenced" # Case list
-)
+# gex.relz_ren <- curatedPCaData:::generate_cbioportal(
+#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
+#   geneticProfiles = "prad_eururol_2017_rna_seq_mrna", # Omics profile
+#   caseList = "prad_eururol_2017_sequenced" # Case list
+# )
+gex.relz_ren <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","gex")
 save(gex.relz_ren, file="data-raw/gex.relz_ren.RData")
 
 # CNA
-cna.gistic_ren <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_eururol_2017_cna", 
-  caseList="prad_eururol_2017_sequenced"
-)
+# cna.gistic_ren <- curatedPCaData:::generate_cbioportal(
+#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+#   geneticProfiles="prad_eururol_2017_cna", 
+#   caseList="prad_eururol_2017_sequenced"
+# )
+cna.gistic_ren <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","cna")
 save(cna.gistic_ren, file="data-raw/cna.gistic_ren.RData")
 
 # Mutations
@@ -297,10 +298,10 @@ save(cna.gistic_ren, file="data-raw/cna.gistic_ren.RData")
 #   caseList = "prad_eururol_2017_sequenced" # Case list
 # )
 # mut_ren[which(mut_ren=="NaN")] <- NA
-ren_mut<-curatedPCaData:::generate_cbioportaldata_mut(
-  caselist = "prad_eururol_2017"
-  )
-## TDL: ren_mut <-> ragexp_ren ?
+# ren_mut<-curatedPCaData:::generate_cbioportaldata_mut(
+#   caselist = "prad_eururol_2017"
+#   )
+ren_mut <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","mut")
 save(ren_mut, file="data-raw/mut_ren.RData")
 
 # Create MAE object
@@ -354,9 +355,7 @@ save(cna.logr_taylor, file="data-raw/cna.logr_taylor.RData")
 # mut_taylor[which(mut_taylor=="NaN")] <- NA
 # # Grep down to using only patient samples, omitting cell lines etc
 # mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
-taylor_mut<-curatedPCaData:::generate_cbioportaldata_mut(
-  caselist = "prad_mskcc"
-)
+taylor_mut<- curatedPCaData:::generate_cbioportaldata("prad_mskcc","mut")
 
 save(taylor_mut, file="data-raw/mut_taylor.RData")
 
