@@ -468,8 +468,12 @@ gse <- rbind(
 #gse_mrna <- GEOquery::getGEO("GSE21036", GSEMatrix = TRUE)
 #uncurated_mrna <- Biobase::pData(gse_mrna[[1]])
 
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-uncurated_cbio <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
+# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+# uncurated_cbio <- cgdsr::getClinicalData(mycgds, caseList = "prad_mskcc_all")
+mae <-cBioPortalData::cBioDataPack("prad_mskcc",ask = FALSE)
+uncurated=colData(mae)
+uncurated_cbio=as.data.frame(uncurated)
+#rownames(uncurated)<-gsub("-",".",rownames(uncurated))
 
 # Outdated names no longer in use (GSM######)
 if(FALSE){
@@ -1047,9 +1051,12 @@ save(clinical_chandran, file = "data-raw/clinical_chandran.RData")
 ######################################################################
 #cBioportal Barbieri Broad/Cornell Data
 #####################################################################
-
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_sequenced")
+mae <-cBioPortalData::cBioDataPack("prad_broad",ask = FALSE)
+uncurated=colData(mae)
+uncurated=as.data.frame(uncurated)
+rownames(uncurated)<-gsub("-",".",rownames(uncurated))
+# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+# uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_sequenced")
 
 # create the curated object
 curated <- initial_curated_df(
@@ -1095,8 +1102,12 @@ save(clinical_barbieri, file = "data-raw/clinical_barbieri.RData")
 #cBioportal Ren eururol 2017 Data
 #####################################################################################
 
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_eururol_2017_sequenced")
+# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+# uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_eururol_2017_sequenced")
+mae <-cBioPortalData::cBioDataPack("prad_eururol_2017",ask = FALSE)
+uncurated=colData(mae)
+uncurated=as.data.frame(uncurated)
+#rownames(uncurated)<-gsub("-",".",rownames(uncurated))
 
 # create the curated object
 curated <- initial_curated_df(
@@ -1190,21 +1201,26 @@ save(clinical_kim, file = "data-raw/clinical_kim.RData")
 # Abida et al. 2019
 #
 #######################################################################
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_su2c_2019_cnaseq")
-gp = cgdsr::getGeneticProfiles(mycgds,"prad_su2c_2019")
+mae <-cBioPortalData::cBioDataPack("prad_su2c_2019",ask = FALSE)
+uncurated=colData(mae)
+uncurated=as.data.frame(uncurated)
+uncurated$SAMPLE_ID<-gsub("-",".",uncurated$SAMPLE_ID)
+
+# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+# uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_su2c_2019_cnaseq")
+# gp = cgdsr::getGeneticProfiles(mycgds,"prad_su2c_2019")
 
 curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
+  df_rownames = uncurated$SAMPLE_ID,
   template_name="data-raw/template_prad.csv")
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Abida et al.") %>%
   dplyr::mutate(alt_sample_name = uncurated$OTHER_SAMPLE_ID) %>%
-  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(patient_id = uncurated$PATIENT_ID) %>%
   # Samples were paired for analyses
   dplyr::mutate(sample_paired = 1) %>%
-  dplyr::mutate(sample_name = row.names(uncurated)) %>%
+  dplyr::mutate(sample_name = uncurated$SAMPLE_ID) %>%
   ## TDL: See template_prad.csv, tissue_source does not mean tissue extraction site but rather method of extraction - follow template_prad.csv instructions for all fields
   #dplyr::mutate(tissue_source = uncurated$TISSUE_SITE) %>%
   dplyr::mutate(age_at_initial_diagnosis = floor(uncurated$AGE_AT_DIAGNOSIS)) %>%
