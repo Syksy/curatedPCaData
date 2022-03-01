@@ -203,10 +203,10 @@ gex_tcga2 <- gex.fpkm_tcga
 gex_tcga2 <- as.data.frame(gex_tcga2)
 gex_tcga2<- gex_tcga2[complete.cases(gex_tcga2), ]
 #gex_tcga2 <- gex_tcga2[-9561,]
-gex_tcga2[,482]<-rownames(gex_tcga2)
+gex_tcga2[,370]<-rownames(gex_tcga2)
 #View(gex_tcga2)
 rownames(gex_tcga2) <- NULL
-gex_tcga2 <- gex_tcga2[,c(482,1:481)]
+gex_tcga2 <- gex_tcga2[,c(370,1:369)]
 #gex_tcga2 <- gex_tcga2[-9534,]
 write.table(gex_tcga2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_tcga.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
