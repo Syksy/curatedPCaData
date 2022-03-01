@@ -1369,6 +1369,7 @@ generate_cbioportaldata <- function(caselist,profile){
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
       colnames(res2)<-gsub("-",".",colnames(res2))
+      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
       return(res2)}
     
     else if(caselist=="prad_eururol_2017"){
@@ -1378,7 +1379,7 @@ generate_cbioportaldata <- function(caselist,profile){
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
-      
+      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
       return(res2)
       
     }
@@ -1396,6 +1397,7 @@ generate_cbioportaldata <- function(caselist,profile){
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
       colnames(res2)<-gsub("-",".",colnames(res2))
+      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
       return(res2)
     }
   }
@@ -1440,7 +1442,7 @@ generate_cbioportaldata <- function(caselist,profile){
       gex2 <- gex2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(gex2) <- symbols
-      
+      gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
       return(gex2)
     }else if(caselist=="prad_broad"){
       gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
@@ -1451,6 +1453,7 @@ generate_cbioportaldata <- function(caselist,profile){
       symbols <- symbols[!is.na(symbols)]
       rownames(gex2) <- symbols
       colnames(gex2)<-gsub("-",".",colnames(gex2))
+      gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
       return(gex2)
     }else if(caselist=="prad_su2c_2019"){
       gex=metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
@@ -1465,7 +1468,7 @@ generate_cbioportaldata <- function(caselist,profile){
       symbols <- symbols[!is.na(symbols)]
       rownames(gex2) <- symbols
       colnames(gex2)<-gsub("-",".",colnames(gex2))
-      
+      gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
       return(gex2)
     }
   }
