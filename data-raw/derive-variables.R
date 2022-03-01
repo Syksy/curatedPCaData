@@ -499,6 +499,12 @@ if(FALSE){
 	# Save the derived new 'assay' types to the mae-object
 	#usethis::use_data(mae_barwick, overwrite = TRUE)
 }
+# barbieri et al.
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_barbieri[["gex.relz"]], method="epic"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+mae_barbieri <- addSlotMAE(mae_barbieri, epic = tmp)
 
 # Chandran et al.
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_chandran[["gex.rma"]], method="epic"))
