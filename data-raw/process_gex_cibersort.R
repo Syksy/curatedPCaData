@@ -39,19 +39,19 @@ gex_true2 <- gex_true2[,c(33,1:32)]
 #gex_true2 <- gex_true2[-9534,]
 write.table(gex_true2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_true.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex.relz_barbieri.RData")
+gex_Barbieri<-mae_barbieri[["gex.relz"]]
 gex_barbieri2 <- gex_Barbieri
 gex_barbieri2 <- as.data.frame(gex_barbieri2)
 gex_barbieri2<- gex_barbieri2[complete.cases(gex_barbieri2), ]
 #gex_barbieri2 <- gex_barbieri2[-9561,]
-gex_barbieri2[,21]<-rownames(gex_barbieri2)
+gex_barbieri2[,32]<-rownames(gex_barbieri2)
 #View(gex_barbieri2)
 rownames(gex_barbieri2) <- NULL
-gex_barbieri2 <- gex_barbieri2[,c(21,1:20)]
+gex_barbieri2 <- gex_barbieri2[,c(32,1:31)]
 #gex_barbieri2 <- gex_barbieri2[-9534,]
 write.table(gex_barbieri2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_barbieri.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex.relz_ren.RData")
+gex_eururol<-mae_ren[["gex.relz"]]
 gex_ren2 <- gex_eururol
 gex_ren2 <- as.data.frame(gex_ren2)
 gex_ren2<- gex_ren2[complete.cases(gex_ren2), ]
@@ -147,7 +147,7 @@ gex_friedrich2 <- gex_friedrich2[,c(256,1:255)]
 #gex_friedrich2 <- gex_friedrich2[-6860,]
 write.table(gex_friedrich2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_friedrich.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-load("data-raw/gex.relz_abida.RData")
+gex_polyA_abida=mae_abida[["gex.relz"]]
 gex_abida2 <- gex_polyA_abida
 gex_abida2 <- as.data.frame(gex_abida2)
 gex_abida2<- gex_abida2[complete.cases(gex_abida2), ]
