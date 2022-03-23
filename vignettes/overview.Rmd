@@ -20,10 +20,202 @@ knitr::opts_chunk$set(
 )
 library(tidyverse)
 library(viridis)
+
+####
+#
+# Create overview tables
+#
+###
+
+# List of MAE objects
+maes <- utils::data(package="curatedPCaData")$result[,"Item"]
+
+# Currently used .csv template for clinical features
+template <- read.csv("template_prad.csv")
+# Only loop through the optional fields
+fields <- template[which(template$requiredness=="optional" & !template$col.name=="alt_sample_name"),"col.name"]
+
+# Create a template matrix for data per study
+mat <- matrix(NA, nrow=length(fields), ncol=2)
+colnames(mat) <- c("Instances", "Missingness")
+rownames(mat) <- fields
+
+# Create functions for summarizing MAE-object fields
+summarize_feature <- function(mae, feature){
+	x <- MultiAssayExperiment::colData(mae)[,feature]
+	# Summarizing character-fields
+	if(all(is.na(x))){
+		"N/A"
+	}
+	else if(template[which(template$col.name == feature),"var.class"] %in% c("character", "string")){
+		# Tabulate and order tabulation
+		tab <- table(x, useNA="ifany")
+		tab <- sort(tab, decreasing=TRUE)
+		# If there are only 3 or less unique character string entries summarize them
+		if(length(unique(x))<=3){
+			return(paste0(paste0(paste0(names(tab), ": ", tab), " (", round(tab/sum(tab)*100,0), "%)"), collapse=";"))
+		}
+		# Else summarize top 3 common entries and NAs
+		else{
+			return(paste0(paste0(paste0(paste0(names(tab)[1:3], ": ", tab[1:3]), " (", round(tab[1:3]/sum(tab)*100,0), "%)"), collapse=";"), "; ..."))
+		}		
+	# Summarizing numeric fields
+	}else if(template[which(template$col.name == feature),"var.class"] %in% c("integer", "numeric")){
+		# Cast to numeric; for example, an error entry may be psa value ">2000" causing string value
+		x <- as.numeric(x)
+		# If there are only 3 or less unique numeric entries summarize them tabulated
+		if(length(unique(x))<=3){
+			# Tabulate and order tabulation
+			tab <- table(x, useNA="ifany")
+			tab <- sort(tab, decreasing=TRUE)
+			return(paste0(paste0(paste0(names(tab), ": ", tab), " (", round(tab/sum(tab)*100,0), "%)"), collapse=";"))
+		}
+		# For 4 or more unique values, use quantiles
+		else{
+			# Contains missing values
+			if(any(is.na(x))){
+				return(paste0("[",paste0(round(quantile(x, na.rm=TRUE),2), collapse=","),"], NA n=", sum(is.na(x))))
+			# No missing values
+			}else{ 
+				return(paste0("[",paste0(round(quantile(x),2), collapse=", "),"]"))
+			}
+		}		
+	}else{
+		return("Unidentified var.class")
+	}
+}
+missingness_feature <- function(mae, feature){
+	x <- MultiAssayExperiment::colData(mae)[,feature]
+	if(sum(is.na(x))>0){
+		paste0("n=", sum(is.na(x)), " (", round(100*sum(is.na(x))/length(x),0), "%)")
+	}else{
+		"-"
+	}
+}
+
+###
+#
+# Gleason grading tables
+#
+###
+
+# Create a Gleason grade end-point availability table; NA-value in addition to Gleason sums of 5-10; Other-values for debugging
+gleasons <- matrix(NA, nrow=length(maes), ncol=length(5:10)+1+1)
+rownames(gleasons) <- paste(gsub("mae_", "", maes))
+colnames(gleasons) <- c(5:10, "Other", "N/A")
+for(i in 1:nrow(gleasons)){
+	eval(parse(text=paste0("gl <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$gleason_grade")))
+	# Iterate through gleasons 5-10
+	gls <- 5:10
+	for(j in 1:(ncol(gleasons)-2)){
+		if(!sum(gl==gls[j], na.rm=T)==0){
+			gleasons[i,j] <- paste0(sum(gl==gls[j], na.rm=T), " (", round(100*sum(gl==gls[j], na.rm=T)/length(gl),0), "%)")	
+		}else{
+			gleasons[i,j] <- "-"
+		}
+	}
+	# Other values
+	vals <- c(5:10, NA)
+	gleasons[i,ncol(gleasons)-1] <- paste0(sum(!gl %in% vals, na.rm=T), " (", round(100*sum(!gl %in% vals, na.rm=T)/length(gl),0), "%)")
+	# NA-values
+	gleasons[i,ncol(gleasons)] <- paste0(sum(is.na(gl), na.rm=T), " (", round(100*sum(is.na(gl), na.rm=T)/length(gl),0), "%)")
+}
+
+###
+#
+# Survival/recurrence quantiles
+#
+###
+
+survivals <- matrix(NA, nrow=length(maes), ncol=5)
+rownames(survivals) <- paste(gsub("mae_", "", maes))
+colnames(survivals) <- c("0 (no event)", "1 (event)", "N/A (event)", "Time (d)", "N/A (time)")
+for(i in 1:nrow(survivals)){
+	eval(parse(text=paste0("surv_time <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$days_to_overall_survival")))
+	eval(parse(text=paste0("surv_event <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$overall_survival_status")))
+	ifelse(all(is.na(surv_event)),
+		survivals[i,1] <- "-",
+		survivals[i,1] <- paste0(sum(surv_event == 0, na.rm=TRUE), " (", round(100*sum(surv_event == 0, na.rm=TRUE)/length(surv_event),0), "%)")
+	)
+	ifelse(all(is.na(surv_event)),
+		survivals[i,2] <- "-",
+		survivals[i,2] <- paste0(sum(surv_event == 1, na.rm=TRUE), " (", round(100*sum(surv_event == 1, na.rm=TRUE)/length(surv_event),0), "%)")
+	)
+	survivals[i,3] <- paste0(sum(is.na(surv_event)), " (", round(100*sum(is.na(surv_event))/length(surv_event),0), "%)")
+	qs <- round(quantile(surv_time, na.rm=TRUE),0)
+	ifelse(all(is.na(qs)),
+		survivals[i,4] <- "-",
+		survivals[i,4] <- paste0("[", qs[1], ",", qs[2], ",", qs[3], ",", qs[4], ",", qs[5], "]")
+	)
+	survivals[i,5] <- paste0(sum(is.na(surv_time)), " (", round(100*sum(is.na(surv_time))/length(surv_time),0), "%)")
+}
+
+recurrences <- matrix(NA, nrow=length(maes), ncol=5)
+rownames(recurrences) <- paste(gsub("mae_", "", maes))
+colnames(recurrences) <- c("0 (no event)", "1 (event)", "N/A (event)", "Time (d)", "N/A (time)")
+for(i in 1:nrow(recurrences)){
+	eval(parse(text=paste0("recur_time <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$days_to_disease_specific_recurrence")))
+	eval(parse(text=paste0("recur_event <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$disease_specific_recurrence_status")))
+	ifelse(all(is.na(recur_event)),
+		recurrences[i,1] <- "-",
+		recurrences[i,1] <- paste0(sum(recur_event == 0, na.rm=TRUE), " (", round(100*sum(recur_event == 0, na.rm=TRUE)/length(recur_event),0), "%)")
+	)
+	ifelse(all(is.na(recur_event)),
+		recurrences[i,2] <- "-",
+		recurrences[i,2] <- paste0(sum(recur_event == 1, na.rm=TRUE), " (", round(100*sum(recur_event == 1, na.rm=TRUE)/length(recur_event),0), "%)")
+	)
+	recurrences[i,3] <- paste0(sum(is.na(recur_event)), " (", round(100*sum(is.na(recur_event))/length(recur_event),0), "%)")
+	qs <- round(quantile(recur_time, na.rm=TRUE),0)
+	ifelse(all(is.na(qs)),
+		recurrences[i,4] <- "-",
+		recurrences[i,4] <- paste0("[", qs[1], ",", qs[2], ",", qs[3], ",", qs[4], ",", qs[5], "]")
+	)
+	recurrences[i,5] <- paste0(sum(is.na(recur_time)), " (", round(100*sum(is.na(recur_time))/length(recur_time),0), "%)")
+
+}
+
+
+###
+#
+# 'omics slot names in each MAE object
+#
+###
+
+# Extract up-to-date slotnames over all MAE-objects
+slotnames <- c()
+for(mae in maes){
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))
+	slotnames <- c(slotnames, names(mae_obj))
+}
+# Unique slot names
+slotnames <- unique(slotnames)
+# Remove osf_* as a special case in TCGA; most likely to be separated as its own dataset
+if(length(grep("osf", slotnames))>0) slotnames <- slotnames[-grep("osf", slotnames)]
+# Create present ('x') or absent ('') matrix to be printed out as xtable
+slotmat <- matrix("", nrow=length(slotnames), ncol=length(maes))
+rownames(slotmat) <- sort(slotnames) # Alphabetic ordering
+colnames(slotmat) <- maes
+for(col in 1:length(maes)){
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", maes[col])))
+	for(row in 1:nrow(slotmat)){
+		if(rownames(slotmat)[row] %in% names(mae_obj)){
+			slotmat[row,col] <- "x"
+		}
+	}
+}
+
+###
+#
+# 'omics overlap Venn or similar
+#
+###
+
+#TODO
+
 ```
 # Package overview
 
-This vignette introduces `curatedPCaData` and provides an overview for the package and the various datasets and the corresponding raw and processed data there-in. 
+This vignette introduces `curatedPCaData` and provides an overview for the package and the various datasets and the corresponding raw and processed data there-in. This overview provides insight into the available datasets (R package version ```utils::packageVersion("curatedPCaData")```) and provides basic example analyses there-in. 
 
 ***
 
@@ -73,6 +265,10 @@ The datasets were manually selected based on various criteria, such as:
 - End points (e.g. recurrence, Gleason, ...)
 - Clinical data availability and reliability
 - Design of the study
+
+### Dataset listing
+
+
 
 ### Accessing primary data
 
