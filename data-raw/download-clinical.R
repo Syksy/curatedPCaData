@@ -20,6 +20,13 @@ initial_curated_df <- function(
   return(output)
 }
 
+## Prostate cancer clinical fields latest template
+# v0.7.13:
+# Store template_prad.csv as a data frame inside the package instead of a hidden .csv file
+template_prad <- read.csv("data-raw/template_prad.csv", as.is=TRUE)
+usethis::use_data(template_prad, overwrite = TRUE)
+
+
 ###############################################################################
 #  _________  ________  ________  ________     
 # |\___   ___\\   ____\|\   ____\|\   __  \    

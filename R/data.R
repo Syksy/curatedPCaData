@@ -1,3 +1,10 @@
+#' Template for curatedPCaData clinical fields
+#'
+#' This data frame contains the clinical fields which were the aim for extraction when gathering metadata for each dataset. Variable types, ranges, and description is reported.
+#'
+"template_prad"
+
+
 #' Abida et al. MAE-object
 #'
 #' MultiAssayExperiment object containing gene expression (gex), copy 
@@ -366,7 +373,6 @@
 #' @format An MAE spanning 838 prostate cancer samples of two cohorts
 #' \describe{
 #'  \item{gex.rma}{matrix of 17410 rows and 838 columns of gene expression data}
-#'  \item{cibersort}{matrix with 22 rows and 838 columns, of cibersort based deconvolution data}
 #'  \item{mcp){matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
 #'  \item{quantiseq){matrix with 11 rows and 838 columns, the quantiseq deconvolution of the expression data}
 #'  \item{xcell){matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
