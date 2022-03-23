@@ -28,10 +28,12 @@ library(viridis)
 ###
 
 # List of MAE objects
-maes <- utils::data(package="curatedPCaData")$result[,"Item"]
+maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
 
-# Currently used .csv template for clinical features
-template <- read.csv("template_prad.csv")
+# Currently used .csv template for clinical features to extract in all datasets (not possible but the ideal aim)
+#template <- utils::read.csv("data-raw/template_prad.csv")
+# Updated to be public exported for ease of use for authors and end-users
+template <- curatedPCaData::template_prad
 # Only loop through the optional fields
 fields <- template[which(template$requiredness=="optional" & !template$col.name=="alt_sample_name"),"col.name"]
 
@@ -254,7 +256,7 @@ data("mae_tcga")
 mae_tcga
 ```
 
-# Overview of available datasets
+# Overview to the available datasets
 
 ## Datasets
 
