@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 library(tidyverse)
 library(viridis)
 
-####
+###
 #
 # Create overview tables
 #
@@ -241,10 +241,10 @@ The individual elements are housed within the `data-raw/` folder of the package 
 Each individual element for creating the final `MAE` were created using internal functions (accessible with `:::`).
 A `MAE` for each study is provided to the users. 
 
-To get a full list of available datasets use the `data` function:
-```{r importing}
+To get a full list of available datasets use the `data` function (i.e. ```data(package="curatedPCaData")```):
+```{r importing, results = 'asis', echo=FALSE}
 library(curatedPCaData)
-data(package="curatedPCaData")$results[,3:4]
+knitr::kable(data(package="curatedPCaData")$results[,3:4], caption="List of datasets in curatedPCaData")
 ```
 
 Individual datasets can also be imported by using the `data` function
