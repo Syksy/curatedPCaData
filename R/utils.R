@@ -1,11 +1,15 @@
 ###
 #
-# Utility functions:
-# - for updating gene annotations (based one unexported object curatedPCaData:::curatedPCaData_genes with biomaRt)
+# Various utility functions
 #
 ###
 
 #' Update gene annotations and resolve ambiguity
+#' 
+#' A function that helps update gene annotations in ambiguous cases
+#'
+#' @noRd
+#' @keywords internal
 updateAnno <- function(
 	# Matrix of gene expression, with rownames corresponding to mappable entities
 	x,
@@ -69,3 +73,13 @@ updateAnno <- function(
 	
 	x
 }
+
+#' Pipe operator
+#'
+#' See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
+#'
+#' @rdname pipe
+#' @keywords internal
+#' @noRd
+#' @importFrom magrittr %>%
+NULL

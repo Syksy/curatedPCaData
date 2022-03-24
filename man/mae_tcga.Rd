@@ -5,20 +5,21 @@
 \alias{mae_tcga}
 \title{TCGA MAE-object}
 \format{
-An MAE object spanning 481 men with prostate cancer
+An MAE object spanning 369 men with prostate cancer
 \describe{
-  \item{cna.gistic}{matrix with 19645 rows and 481 columns}
-  \item{mut}{RaggedExperiment with 29286 rows and 495 columns,of mutation data}
-  \item{gex.fpkm}{matrix with 58387 rows and 481 columns}
-  \item{xcell}{matrix with 39 rows and 481 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 481 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 481 columns, of quantiseq based deconvolution data}
-  \item{mcp}{matrix with 11 rows and 481 columns, of mcp-counter based deconvolution data}
-  \item{cibersort}{matrix with 22 rows and 481 columns, of cibersort based deconvolution data}
+  \item{cna.gistic}{matrix with 19645 rows and 322 columns, from GISTIC discretized copy number alteration calls}
+  \item{gex.fpkm}{matrix with 58387 rows and 369 columns, of gene expression data}
+  \item{mut}{RaggedExperiment with 29286 rows and 320 columns, of mutation data}
+  \item{cibersort}{matrix with 22 rows and 369 columns, of cibersort based deconvolution data}
+  \item{xcell}{matrix with 39 rows and 369 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 369 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 369 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 369 columns, of mcp-counter based deconvolution data}
+  \item{scores}{matrix with 2 rows and 369 columns, of Prolaris risk scores and AR scores}
 }
 }
 \source{
-
+\url{https://xenabrowser.net/datapages/?cohort=GDC\%20TCGA\%20Prostate\%20Cancer\%20(PRAD)}
 }
 \usage{
 mae_tcga
@@ -27,8 +28,11 @@ mae_tcga
 MultiAssayExperiment object containing gene expression (gex), copy 
 number alteration (cna), mutations and immune cell estimates from GDC TCGA.
 }
+\details{
+TCGA data was obtained from the latest GDC's XenaBrowser release.
+}
 \references{
-Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025
+Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011-1025. https://doi.org/10.1016/j.cell.2015.10.025
  (\href{https://pubmed.ncbi.nlm.nih.gov/26544944/}{PubMed})
 }
 \keyword{datasets}

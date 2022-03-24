@@ -290,11 +290,11 @@
 #' MultiAssayExperiment object containing gene expression (gex), copy 
 #' number alteration (cna), mutations and immune cell estimates from GDC TCGA.
 #' 
-#' @format An MAE object spanning 481 men with prostate cancer
+#' @format An MAE object spanning 369 men with prostate cancer
 #' \describe{
 #'   \item{cna.gistic}{matrix with 19645 rows and 322 columns, from GISTIC discretized copy number alteration calls}
 #'   \item{gex.fpkm}{matrix with 58387 rows and 369 columns, of gene expression data}
-#'   \item{mut}{RaggedExperiment with 29286 rows and 320 columns,of mutation data}
+#'   \item{mut}{RaggedExperiment with 29286 rows and 320 columns, of mutation data}
 #'   \item{cibersort}{matrix with 22 rows and 369 columns, of cibersort based deconvolution data}
 #'   \item{xcell}{matrix with 39 rows and 369 columns, of xcell based deconvolution data}
 #'   \item{epic}{matrix with 8 rows and 369 columns, of epic based deconvolution data}
@@ -303,9 +303,10 @@
 #'   \item{scores}{matrix with 2 rows and 369 columns, of Prolaris risk scores and AR scores}
 #' }
 #' 
-#' @references Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025
+#' @details TCGA data was obtained from the latest GDC's XenaBrowser release.
+#' @references Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011-1025. https://doi.org/10.1016/j.cell.2015.10.025
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/26544944/}{PubMed}) 
-#' @source \url{https://xenabrowser.net/datapages/?cohort=GDC%20TCGA%20Prostate%20Cancer%20(PRAD)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443}
+#' @source \url{https://xenabrowser.net/datapages/?cohort=GDC\%20TCGA\%20Prostate\%20Cancer\%20(PRAD)}
 "mae_tcga"
 
 #' True et al. MAE-object
@@ -319,7 +320,7 @@
 #'   \item{quantiseq}{matrix with 11 rows and 32 columns, of quantiseq based deconvolution data}
 #'   \item{mcp}{matrix with 7 rows and 32 columns, of mcp-counter based deconvolution data}
 #'   \item{scores}{matrix with 2 rows and 32 columns, of Prolaris risk scores and AR scores}
-#'}
+#' }
 #' @details The expression data for this dataset was produced by an older two colour chip that provides the relative expression levels for between tumor and normal.  Due to the chip type, there was a lack of gene overlap with some of the downstream methods, thus some downstream methods are missing. 
 #' @references True, L., Coleman, I., Hawley, S., et al. (2006). A molecular correlate to the Gleason grading system for prostate adenocarcinoma. Proceedings of the National Academy of Sciences of the United States of America, 103(29), 10991–10996. https://doi.org/10.1073/pnas.0603678103
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/16829574/}{PubMed}) 
@@ -373,10 +374,10 @@
 #' @format An MAE spanning 838 prostate cancer samples of two cohorts
 #' \describe{
 #'  \item{gex.rma}{matrix of 17410 rows and 838 columns of gene expression data}
-#'  \item{mcp){matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
-#'  \item{quantiseq){matrix with 11 rows and 838 columns, the quantiseq deconvolution of the expression data}
-#'  \item{xcell){matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
-#'  \item{epic){matrix with 8 rows and 838 columns, the epic deconvolution of the expression data}
+#'  \item{mcp}{matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
+#'  \item{quantiseq}{matrix with 11 rows and 838 columns, the quantiseq deconvolution of the expression data}
+#'  \item{xcell}{matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
+#'  \item{epic}{matrix with 8 rows and 838 columns, the epic deconvolution of the expression data}
 #'  \item{scores}{matrix with 2 rows and 838 columns, of Prolaris risk scores and AR scores}
 #' } 
 #' 

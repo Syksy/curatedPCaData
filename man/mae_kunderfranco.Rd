@@ -7,12 +7,13 @@
 \format{
 An MAE object spanning 67 samples of normal prostate samples and prostate cancer samples
 \describe{
-  \item{gex.logr}{matrix with 16546 rows and 67 columns, for the gene expression data}
+  \item{gex.logr}{matrix with 16546 rows and 67 columns, of gene expression data}
+  \item{cibersort}{matrix with 22 rows and 67 columns, of cibersort based deconvolution data}
   \item{xcell}{matrix with 39 rows and 67 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 67 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 67 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 67 columns, of mcp-counter based deconvolution data}
-  \item{cibersort}{matrix with 22 rows and 67 columns, of cibersort based deconvolution data}
+  \item{scores}{matrix with 2 rows and 67 columns, of Prolaris risk scores and AR scores}
 }
 }
 \source{
