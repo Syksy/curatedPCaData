@@ -1,6 +1,6 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.7.14
+Version: 0.8.0
 Date: 2022-03-24
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
@@ -9,7 +9,7 @@ Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c
              person("Federico", "Calboli", email = "federico.calboli@utu.fi", role = "ctb"),
              person("Kalaimathy", "Singaravelu", email = "kalsin@utu.fi", role = "ctb")
            )
-Description: A selection of annotated prostate cancer datasets featuring multiple omics and derived downstream variables
+Description: The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables.
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
