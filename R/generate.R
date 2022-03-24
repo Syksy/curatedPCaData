@@ -566,7 +566,7 @@ generate_gex_geo <- function(
 			# Omit duplicated entries that are replicated columns
 			gex <- gex[,!duplicated(colnames(gex))]
 		}
-		else if(pcgk == "affy"){
+		else if(pckg == "affy"){
 			# Read in the CEL files - note: requires a substantial amount of RAM for all 370 samples
 			CELs <- oligo::read.celfiles(affy::list.celfiles())
 

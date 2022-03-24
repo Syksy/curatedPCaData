@@ -18,8 +18,8 @@ knitr::opts_chunk$set(
   message = FALSE,
   cache = TRUE
 )
-library(tidyverse)
-library(viridis)
+#library(tidyverse)
+#library(viridis)
 
 ###
 #
@@ -246,7 +246,9 @@ A `MAE` for each study is provided to the users.
 To get a full list of available datasets use the `data` function (i.e. ```data(package="curatedPCaData")```):
 ```{r importing, results = 'asis', echo=FALSE}
 library(curatedPCaData)
-knitr::kable(data(package="curatedPCaData")$results[,3:4], caption="List of datasets in curatedPCaData")
+dats <- data(package="curatedPCaData")$results[,3:4]
+dats <- dats[grep("mae_", dats[,1]),]
+knitr::kable(dats, caption="List of datasets in curatedPCaData")
 ```
 
 Individual datasets can also be imported by using the `data` function
@@ -268,17 +270,45 @@ The datasets were manually selected based on various criteria, such as:
 - Clinical data availability and reliability
 - Design of the study
 
-### Dataset listing
+### Curated clinical variables
 
+The ```curatedPCaData```-package has been curated with an emphasis on the following primary clinical metadata, which were extracted and cleaned up always when available:
 
+```{r template_prad, results='asis', echo=FALSE}
+template <- curatedPCaData::template_prad
+# Add spaces to |-dividers for linechanges
+template <- do.call("cbind", lapply(template, FUN=function(x) { gsub("|", " | ", x, fixed=TRUE) }))
+knitr::kable(template, caption="Template for Prostate Adecarcinoma clinical metadata")
+```
+
+### Clinical end points
+
+Three primary clinical end points were utilized:
+- Gleason grade
+- Recurrence
+- Overall survival (OS)
+
+Below are summaries for each of these endpoints for each study. Of note, OS had very few events, thus survival modelling for this end-point may be considered unreliable.
+
+```{r gleasons, results = 'asis', echo=FALSE}
+knitr::kable(gleasons, caption="Gleason grades in curatedPCaData")
+```
+
+```{r recurrences, results = 'asis', echo=FALSE}
+knitr::kable(recurrences, caption="Disease recurrence end point in curatedPCaData")
+```
+
+```{r os, results = 'asis', echo=FALSE}
+knitr::kable(survivals, caption="Overall survival end point in curatedPCaData")
+```
 
 ### Accessing primary data
 
-The primary data types slots in the MAE objects for gene expression and copy number alteration will constist of two parts:
+The primary data types slots in the MAE objects for gene expression and copy number alteration will constist of two parts. Mutation data is provided as a ```RaggedExperiment``` object.
 
 - Prefix indicating data type, either "gex_" or "cna_".
 - Suffix indicating unit and processing for the data; for example, a gene expression dataset (gex) may have a suffix of "rma" for RMA-processed data, "FPKM" for processed RNA-seq data, "relz" for relative z-score normalized expression values for tumor-normal gene expression pairs, or "logq" for logarithmic quantile-normalized data. The main suffix for copy number alteration is the discretized GISTIC alteration calls with values {-2,-1,0,1,2}, although earlier version also provided log-ratios ("logr")
-- Mutation data is provided as `RaggedExperiment` objects as "mut_".
+- Mutation data is provided as `RaggedExperiment` objects as "mut".
 
 The standard way for accessing a data slot in MAE could be done for example via:
 
@@ -293,9 +323,10 @@ head(MultiAssayExperiment::colData(mae_taylor))
 
 While it is ideal to make sure user is using the correct namespaces, the `pckgName::` can be omitted as `curatedPCaData` imports necessary packages such as `MultiAssayExperiment` and their functions should be available in the workspace.
 
-## Data types
+## Omics overlap
 
-A simple way to list available 
+
+
 
 # Derived variables
 
@@ -320,17 +351,18 @@ mae_taylor
 
 To access the quantiseq results for the Taylor et. al dataset, the following command can be used
 ```{r}
-head(mae_taylor[["quantiseq"]])[,1:5]
+head(mae_taylor[["cibersort"]])[1:5,1:5]
 ```
 
 Similarly to access results from the other methods, the following can be run
 ```{r}
-head(mae_taylor[["xcell"]])[,1:5]
-head(mae_taylor[["epic"]])[,1:5]
-head(mae_taylor[["mcp"]])[,1:5]
+head(mae_taylor[["quantiseq"]])[1:5,1:5]
+head(mae_taylor[["xcell"]])[1:5,1:5]
+head(mae_taylor[["epic"]])[1:5,1:5]
+head(mae_taylor[["mcp"]])[1:5,1:5]
 ```
 
-Each row of the deconvolution matrix represents the content of a certain immune cell type and the columns represent the patient sample IDs.
+Each row of the deconvolution matrix represents the content of a certain immune cell type and the columns represent the patient sample IDs. The variables on the rows are specific for each method. Further, it should be noted that not all methods could be run on all datasets due to lack of overlap in genes of interest.
 
 ## Sample purity estimates
 
