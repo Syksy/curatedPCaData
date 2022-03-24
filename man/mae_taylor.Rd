@@ -7,14 +7,15 @@
 \format{
 An MAE object spanning 218 men with prostate cancer
 \describe{
-  \item{gex.rma}{matrix with 17410 rows and 179 columns}
-  \item{cna.logr}{matrix with 22419 rows and 218 columns}
+  \item{cna.logr}{matrix with 22419 rows and 218 columns, for the log-ratios for copy number alteration data}
+  \item{gex.rma}{matrix with 17410 rows and 179 columns, of gene expression data}
   \item{mut}{RaggedExperiment with 320 rows and 43 columns, of mutation data}
   \item{xcell}{matrix with 39 rows and 179 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 179 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 179 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 179 columns, of mcp-counter based deconvolution data}
   \item{cibersort}{matrix with 22 rows and 179 columns, of cibersort based deconvolution data}
+  \item{scores}{matrix with 2 rows and 179 columns, of Prolaris risk scores and AR scores}
 }
 }
 \source{
@@ -26,6 +27,9 @@ mae_taylor
 \description{
 MultiAssayExperiment object containing gene expression (gex), copy 
 number alteration (cna), mutations and immune cell estimates from Taylor et al.
+}
+\details{
+Note that there is lack of overlap between the omics provided for each sample.
 }
 \references{
 Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026

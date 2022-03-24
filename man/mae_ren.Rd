@@ -7,14 +7,15 @@
 \format{
 An MAE object spanning 65 men with prostate cancer
 \describe{
-  \item{gex.relz}{matrix with 21589 rows and 65 columns}
-  \item{cna.gistic}{matrix with 20873 rows and 65 columns}
+  \item{cna.gistic}{matrix with 20873 rows and 65 columns, from GISTIC discretized copy number alteration calls}
+  \item{gex.relz}{matrix with 21589 rows and 65 columns, of gene expression data}
   \item{mut}{RaggedExperiment with 50803 rows and 65 columns, of mutation data from cbioportal}
+  \item{cibersort}{matrix with 22 rows and 65 columns, of cibersort based deconvolution data}
   \item{xcell}{matrix with 39 rows and 65 columns, of xcell based deconvolution data}
   \item{epic}{matrix with 8 rows and 65 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 65 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 65 columns, of mcp-counter based deconvolution data}
-  \item{cibersort}{matrix with 22 rows and 65 columns, of cibersort based deconvolution data}
+  \item{scores}{matrix with 2 rows and 65 columns, of Prolaris risk scores and AR scores}
 }
 }
 \source{

@@ -13,6 +13,7 @@ An MAE object spanning 83 men with prostate cancer
 \item{epic}{matrix with 8 rows and 83 columns, of epic based deconvolution data}
 \item{mcp}{matrix with 11 rows and 83 columns, of mcp-counter based deconvolution data}
 \item{quantiseq}{matrix with 11 rows and 83 columns, of quantiseq based deconvolution data}
+\item{scores}{matrix with 2 rows and 83 columns, of Prolaris risk scores and AR scores}
 
 }
 }

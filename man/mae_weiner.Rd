@@ -5,7 +5,15 @@
 \alias{mae_weiner}
 \title{Weiner et al. MAE-object}
 \format{
-
+An MAE spanning 838 prostate cancer samples of two cohorts
+\describe{
+ \item{gex.rma}{matrix of 17410 rows and 838 columns of gene expression data}
+ \item{mcp}{matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
+ \item{quantiseq}{matrix with 11 rows and 838 columns, the quantiseq deconvolution of the expression data}
+ \item{xcell}{matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
+ \item{epic}{matrix with 8 rows and 838 columns, the epic deconvolution of the expression data}
+ \item{scores}{matrix with 2 rows and 838 columns, of Prolaris risk scores and AR scores}
+}
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE157548}

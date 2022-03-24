@@ -7,11 +7,12 @@
 \format{
 An MAE object spanning 32 men with prostate cancer
 \describe{
-  \item{gex.logr}{matrix with 3615 rows and 32 columns}
+  \item{gex.logr}{matrix with 3615 rows and 32 columns, of gene expression data}
   \item{cibersort}{matrix with 22 rows and 32 columns, of cibersort based deconvolution data}
   \item{epic}{matrix with 8 rows and 32 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 32 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 7 rows and 32 columns, of mcp-counter based deconvolution data}
+  \item{scores}{matrix with 2 rows and 32 columns, of Prolaris risk scores and AR scores}
 }
 }
 \source{
@@ -24,7 +25,7 @@ mae_true
 MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from True et al.
 }
 \details{
-The expression data for this dataset has been produced by a two colour chip that provides the relative expression levels for each tumor rather than its absolute value as in all other dataset.  Thus it is not possible to provide immune deconvolution for this dataset.  This dataset also has a rich clinical data.  In this dataset the Gleason grade group follows the grading described in \url{https://www.cancerresearchuk.org/about-cancer/prostate-cancer/stages/grades}. The clinical data also includes an extra column named 'gleason_group' where the the samples are grouped based on their primary and secondary greason scores as <=6|3+4|4+3|>=8.
+The expression data for this dataset was produced by an older two colour chip that provides the relative expression levels for between tumor and normal.  Due to the chip type, there was a lack of gene overlap with some of the downstream methods, thus some downstream methods are missing.
 }
 \references{
 True, L., Coleman, I., Hawley, S., et al. (2006). A molecular correlate to the Gleason grading system for prostate adenocarcinoma. Proceedings of the National Academy of Sciences of the United States of America, 103(29), 10991–10996. https://doi.org/10.1073/pnas.0603678103

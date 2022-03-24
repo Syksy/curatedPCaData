@@ -9,14 +9,13 @@
 #' @noRd
 #' @keywords internal
 create_mae <- function(
-  # Valid study_name-parameters: tcga, taylor, sun, hieronymus, friedrich, barbieri, ren, chandran,igc,wang,kim,abida
- #study_name = c("TCGA", "Taylor", "Sun", "Hieronymus", "Barbieri", "Ren","kim","abida","igc","wang"),
+  # Valid study_name-parameters: <list latest valid study names>
   study_name,
   # Level of verbosity
   verb = TRUE,
   ...
 ){
-  if(verb == TRUE) print(paste("Starting to process:", study_name))
+  if(verb) print(paste("Starting to process:", study_name))
   data_sets <- list.files("data-raw/",pattern=tolower(study_name))
   if(length(data_sets) == 0){
     stop(paste0("Data for study name ", study_name, " not found; please check spelling"))
@@ -44,7 +43,7 @@ create_mae <- function(
   }
   # Give correct name for each omics list member
   names(omics) <- omics_names
-  if(verb == TRUE) print(paste0("Omics: ", paste(omics_names, collapse = ", ")))
+  if(verb) print(paste0("Omics: ", paste(omics_names, collapse = ", ")))
   rm(f, omic, omics_names, omics_sets)
   
   ## Construct whole path to data sets
@@ -63,38 +62,37 @@ create_mae <- function(
   sample_num <- stringr::str_count(pheno_object$sample_name[[1]], "\\|") + 1
   sample_num_names <- paste0("X",1:sample_num)
   
-  map <- map %>% 
-    dplyr::left_join(pheno_object %>% 
+  map <- map %>%
+    dplyr::left_join(pheno_object %>%
                        dplyr::select(primary = .data$patient_id, .data$sample_name) %>%
                        tidyr::separate(.data$sample_name, sample_num_names, 
-                                       sep = "\\|") %>% 
+                                       sep = "\\|") %>%
                        dplyr::mutate_at(sample_num_names, 
-                                        ~ gsub(".*: ", "", .)) %>% 
+                                        ~ gsub(".*: ", "", .)) %>%
                        dplyr::mutate_at(sample_num_names, 
                                         ~dplyr::na_if(., "NA")) %>%
                        tidyr::pivot_longer(!.data$primary, names_to = "omic",
-                                           values_to = "sample_name") %>% 
+                                           values_to = "sample_name") %>%
                        dplyr::select(-omic), 
                      by = c("colname" = "sample_name")) 
   
-  # suggest we also pull the sample_name - MAE object doesnt want it here anyways 
   clinical_object <- pheno_object %>%
     dplyr::distinct(.data$patient_id, .keep_all = TRUE)
   
-  clinical_object <- clinical_object %>% 
+  clinical_object <- clinical_object %>%
     dplyr::filter(.data$patient_id %in% map$primary)
   
   row.names(clinical_object) <- clinical_object$patient_id
   
   # Generate a MAE-object, generalization to various data compositions done above
-  if(verb == TRUE) print("Final reformatting")  
+  if(verb) print("Final reformatting")  
   mae_object <- MultiAssayExperiment::MultiAssayExperiment(
     experiments = MultiAssayExperiment::ExperimentList(omics),
     colData = as.data.frame(clinical_object),
     sampleMap = as.data.frame(map)
   )
 
-  if(verb == TRUE) print(paste("MAE-object successfully created for", study_name))
+  if(verb) print(paste("MAE-object successfully created for", study_name))
   
   return(mae_object)
 }
