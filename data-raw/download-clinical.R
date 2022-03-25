@@ -24,6 +24,8 @@ initial_curated_df <- function(
 # v0.7.13:
 # Store template_prad.csv as a data frame inside the package instead of a hidden .csv file
 template_prad <- read.csv("data-raw/template_prad.csv", as.is=TRUE)
+# Omit two extra (empty) columns
+template_prad <- template_prad[,-c(7:8)]
 usethis::use_data(template_prad, overwrite = TRUE)
 
 
