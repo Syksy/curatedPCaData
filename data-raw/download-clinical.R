@@ -19,6 +19,20 @@ initial_curated_df <- function(
   output$sample_name <- df_rownames
   return(output)
 }
+initial_curated_internal <- function(
+	df_rownames
+){
+	template <- curatedPCaData::template_prad
+	output <- matrix(NA, ncol=nrow(template), nrow=length(df_rownames))
+	colnames(output) <- template$col.name
+	rownames(output) <- df_rownames
+	output <- data.frame(output)
+	for(i in 1:ncol(output)){
+		class(output[,i]) <- template[i,"var.class"]
+	}
+	output$sample_name <- df_rownames
+	output
+}
 
 ## Prostate cancer clinical fields latest template
 # v0.7.13:
@@ -46,9 +60,10 @@ usethis::use_data(template_prad, overwrite = TRUE)
 mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_tcga_sequenced")
 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+#curated <- initial_curated_df(
+#  df_rownames = rownames(uncurated),
+#  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(df_rownames = rownames(uncurated))
 
 ## Note: 
 #
@@ -167,9 +182,10 @@ uncurated2 <- do.call("rbind", lapply(cgdsr::getGeneticProfiles(mycgds,'prad_tcg
 # > length(uncurated2)
 # [1] 91
 #
-curated2 <- initial_curated_df(
-  df_rownames = rownames(uncurated2),
-  template_name="data-raw/template_prad.csv")
+#curated2 <- initial_curated_df(
+#  df_rownames = rownames(uncurated2),
+#  template_name="data-raw/template_prad.csv")
+curated2 <- initial_curated_internal(df_rownames = rownames(uncurated2))
 
 # Match rownames between subsets
 uncurated2 <- uncurated2[match(rownames(uncurated), rownames(uncurated2)),]
@@ -209,9 +225,10 @@ rownames(curated) <- curated$sample_name
 
 # Append information for the normal samples from GDC (XenaBrowser) as well as other potentially interesting fields
 uncurated3 <- curatedPCaData:::generate_xenabrowser(id="TCGA-PRAD", type="clinical")
-curated3 <- initial_curated_df(
-  df_rownames = rownames(uncurated3),
-  template_name="data-raw/template_prad.csv")
+#curated3 <- initial_curated_df(
+#  df_rownames = rownames(uncurated3),
+#  template_name="data-raw/template_prad.csv")
+curated3 <- initial_curated_internal(df_rownames = rownames(uncurated3))
 
 # GDC portion of clinical metadata (especially normal samples)
 curated3 <- curated3 %>%
