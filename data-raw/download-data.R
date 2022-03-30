@@ -346,6 +346,11 @@ cna.logr_taylor <- curatedPCaData:::generate_cna_geo(
 )
 save(cna.logr_taylor, file="data-raw/cna.logr_taylor.RData")
 
+cna.gistic_taylor <- curatedPCaData:::generate_cbioportaldata(
+  "prad_mskcc","cna"
+)
+save(cna.gistic_taylor, file="data-raw/cna.gistic_taylor.RData")
+
 # Mutations - notice this is downloaded from cBioPortal rather than processed from GEO
 # mut_taylor <- curatedPCaData:::generate_cbioportal(
 # 	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
@@ -362,7 +367,7 @@ save(taylor_mut, file="data-raw/mut_taylor.RData")
 
 # Create MAE object
 mae_taylor <- curatedPCaData:::create_mae(study_name = "Taylor")
-usethis::use_data(mae_taylor, internal = FALSE, overwrite = TRUE)
+usethis::use_data(mae_taylor, overwrite = TRUE)
 
 ## - end Taylor et al. (MSKCC) -
 
