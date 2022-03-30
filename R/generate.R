@@ -1400,6 +1400,25 @@ generate_cbioportaldata <- function(caselist,profile){
       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
       return(res2)
     }
+    
+    else if (caselist=="prad_mskcc"){
+      study=downloadStudy("prad_mskcc")
+      ut <- untarStudy(study[[1]])
+      res2=rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
+      res2<-res2[,-2]
+      rownames(res2)<-make.names(res2$Hugo_Symbol,unique = TRUE)
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      res2 <- res2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(res2) <- symbols
+      res2<-res2[,-1]
+      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
+      
+      same_barcode=colnames(res2)[grepl("PCA", colnames(res2))]
+      ind=which(colnames(res2) %in% same_barcode=="TRUE")
+      res3<-res2[, c(ind)]
+      
+      return(res3)}
   }
   
   if(profile=="mut"){
