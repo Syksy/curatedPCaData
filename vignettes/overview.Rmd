@@ -179,7 +179,7 @@ for(i in 1:nrow(recurrences)){
 
 ###
 #
-# 'omics slot names in each MAE object
+# 'omics slot name and N counts in each MAE object
 #
 ###
 
@@ -193,26 +193,50 @@ for(mae in maes){
 slotnames <- unique(slotnames)
 # Remove osf_* as a special case in TCGA; most likely to be separated as its own dataset
 if(length(grep("osf", slotnames))>0) slotnames <- slotnames[-grep("osf", slotnames)]
-# Create present ('x') or absent ('') matrix to be printed out as xtable
+# Create n count or absent (NA) matrix to be printed out
 slotmat <- matrix("", nrow=length(slotnames), ncol=length(maes))
+# Create a list of lists for sample names in different omics
+sampnames <- list()
 rownames(slotmat) <- sort(slotnames) # Alphabetic ordering
 colnames(slotmat) <- maes
 for(col in 1:length(maes)){
+	sampnames[[length(sampnames)+1]] <- list()
 	eval(parse(text=paste0("mae_obj <- curatedPCaData::", maes[col])))
 	for(row in 1:nrow(slotmat)){
 		if(rownames(slotmat)[row] %in% names(mae_obj)){
-			slotmat[row,col] <- "x"
+			slotmat[row,col] <- length(colnames(mae_obj[[rownames(slotmat)[row]]]))
+			sampnames[[length(sampnames)]][[length(sampnames[[length(sampnames)]])+1]] <- colnames(mae_obj[[rownames(slotmat)[row]]])
+			names(sampnames[[length(sampnames)]])[length(sampnames[[length(sampnames)]])] <- rownames(slotmat)[row]
+			#slotmat[row,col] <- "x"
 		}
 	}
 }
 
-###
-#
-# 'omics overlap Venn or similar
-#
-###
+# Give MAE names
+names(sampnames) <- maes
 
-#TODO
+# Transpose for more user-friendly printing in rmarkdown
+slotmat <- t(slotmat)
+
+# Which MAEs had 2 or more omics
+multiomics <- names(which(unlist(lapply(sampnames, FUN=function(x) { length(names(x))>1 }))))
+# Create an overlap N count matrix for GEX & CNA, CNA & MUT, GEX & CNA & MUT based on sample names
+overmat <- matrix("", ncol=4, nrow=length(multiomics))
+colnames(overmat) <- c("GEX & CNA", "GEX & MUT", "CNA & MUT", "GEX & CNA & MUT")
+rownames(overmat) <- multiomics
+
+for(mult in multiomics){
+	samps <- sampnames[[mult]]
+	gex <- samps[[grep("gex", names(samps))[1]]]
+	cna <- samps[[grep("cna", names(samps))[1]]]
+	mut <- samps[[grep("mut", names(samps))[1]]]
+	gex_cna <- length(intersect(gex, cna))
+	gex_mut <- length(intersect(gex, mut))
+	cna_mut <- length(intersect(cna, mut))
+	gex_cna_mut <- length(intersect(intersect(gex, cna), mut))
+	overmat[mult,] <- c(gex_cna, gex_mut, cna_mut, gex_cna_mut)
+}
+
 
 ```
 # Package overview
@@ -315,18 +339,27 @@ The standard way for accessing a data slot in MAE could be done for example via:
 ```{r access}
 mae_taylor[["gex.rma"]][1:5,1:5]
 ```
-The corresponding clinical variables have an accessor function:
+The corresponding clinical variables have an accessor function ```colData``` provided by the ```MultiAssayExperiment```-package:
 
 ```{r clinical}
-head(MultiAssayExperiment::colData(mae_taylor))
+MultiAssayExperiment::colData(mae_tcga)[1:2,]
 ```
 
 While it is ideal to make sure user is using the correct namespaces, the `pckgName::` can be omitted as `curatedPCaData` imports necessary packages such as `MultiAssayExperiment` and their functions should be available in the workspace.
 
-## Omics overlap
+## Omics sample count and overlap
 
+The sample counts in each 'omics separately is listed below:
 
+```{r samplecounts, results='asis', echo=FALSE}
+knitr::kable(slotmat, caption="Sample N counts in each omics for every MAE object")
+```
 
+However, taking intersections between different omics shows that different samples were analyzed on different platforms - therefore the effective N counts for analyzing multiple 'omics platforms simultaneously is smaller. The overlaps between gene expression (GEX), copy number alteration (CNA), and mutations (MUT) are shown below:
+
+```{r overlap, results='asis', echo=FALSE}
+knitr::kable(overmat, caption="Sample N counts for intersections between different omics")
+```
 
 # Derived variables
 
