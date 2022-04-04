@@ -72,12 +72,17 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 
 ## - Baca et al. -
 # CNA
-cna.gistic_baca <- curatedPCaData:::generate_cbioportal(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-  geneticProfiles="prad_broad_2013_cna", 
-  caseList="prad_broad_2013_sequenced"
-)
+# cna.gistic_baca <- curatedPCaData:::generate_cbioportal(
+#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+#   geneticProfiles="prad_broad_2013_cna", 
+#   caseList="prad_broad_2013_sequenced"
+# )
+cna.gistic_baca <-curatedPCaData:::generate_cbioportaldata("prad_broad_2013","cna")
 save(cna.gistic_baca, file="data-raw/cna.gistic_baca.RData")
+
+# Mutations
+baca_mut <- curatedPCaData:::generate_cbioportaldata("prad_broad_2013","mut")
+save(baca_mut, file="data-raw/mut_baca.RData")
 
 # Create MAE object
 mae_baca <- curatedPCaData:::create_mae(study_name = "baca")
