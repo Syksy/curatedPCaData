@@ -1419,12 +1419,24 @@ generate_cbioportaldata <- function(caselist,profile){
       res3<-res2[, c(ind)]
       
       return(res3)}
+    
+    else if (caselist == "prad_broad_2013"){
+      res=prof[["cna"]]
+      res2=assay(res)
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      res2 <- res2[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(res2) <- symbols
+      colnames(res2)<-gsub("-",".",colnames(res2))
+      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
+      return(res2)
+      
+    }
   }
   
   if(profile=="mut"){
     ragexp=prof[["mutations"]]
     if(caselist=="prad_eururol_2017"){
-      return(ragexp)
       symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       ragexp2 <- ragexp[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
@@ -1450,6 +1462,14 @@ generate_cbioportaldata <- function(caselist,profile){
       rownames(ragexp3) <- symbols
       
       return(ragexp3)
+      
+    }else if (caselist=="prad_broad_2013"){
+      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      ragexp2 <- ragexp[!is.na(symbols),]
+      symbols <- symbols[!is.na(symbols)]
+      rownames(ragexp2) <- symbols
+      colnames(ragexp2)<-gsub("-",".",colnames(ragexp2))
+      return(ragexp2)
       
     }
   }
