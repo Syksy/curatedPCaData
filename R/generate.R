@@ -1804,7 +1804,7 @@ generate_xenabrowser <- function(
 			tcga_mut$Sample_ID<-gsub("01A","01",tcga_mut$Sample_ID)
 			names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
 			#a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
-			GRL <- makeGRangesListFromDataFrame(tcga_mut, split.field = "Sample_ID",
+			GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "Sample_ID",
 			                                    names.field = "gene",keep.extra.columns = TRUE)
 			ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
 			return(ragexp_tcga)

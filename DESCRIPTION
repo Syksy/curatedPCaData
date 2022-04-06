@@ -68,4 +68,5 @@ Suggests:
     DBI,
     UCSCXenaTools,
     cBioPortalData,
-    AnVIL
+    AnVIL,
+    GenomicRanges
