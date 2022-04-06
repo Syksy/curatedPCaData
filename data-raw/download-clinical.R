@@ -2285,19 +2285,23 @@ save(clinical_igc, file = "data-raw/clinical_igc.RData")
 #cBioportal BACA
 #####################################################################################
 
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_2013_all")
-#mycancerstudy = cgdsr::getCancerStudies(mycgds)
-mycaselistren = cgdsr::getCaseLists(mycgds,"prad_broad_2013")
+mae <-cBioPortalData::cBioDataPack("prad_broad_2013",ask = FALSE)
+uncurated=colData(mae)
+uncurated=as.data.frame(uncurated)
+
+# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+# uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_2013_all")
+# #mycancerstudy = cgdsr::getCancerStudies(mycgds)
+# mycaselistren = cgdsr::getCaseLists(mycgds,"prad_broad_2013")
 
 # create the curated object
 curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
+  df_rownames = gsub("-",".",rownames(uncurated)),
   template_name="data-raw/template_prad.csv")
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Baca et al.") %>%
-  dplyr::mutate(patient_id = rownames(uncurated)) %>%
+  dplyr::mutate(patient_id = gsub("-",".",rownames(uncurated))) %>%
   dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
   ## TDL: Should follow allowed values assigned in 'template_prad.csv'
   #dplyr::mutate(sample_type=uncurated$SAMPLE_TYPE)%>%
