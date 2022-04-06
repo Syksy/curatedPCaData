@@ -1359,8 +1359,8 @@ generate_cbioportaldata <- function(caselist,profile){
   if(profile=="cna"){
     if (caselist == "prad_broad"){
       res=prof[["cna"]]
-      a=rowData(res)[match(rownames(res),rownames(rowData(res))),"Hugo_Symbol"]
-      res2=assay(res)
+      a=RaggedExperiment::rowData(res)[match(rownames(res),rownames(RaggedExperiment::rowData(res))),"Hugo_Symbol"]
+      res2=RaggedExperiment::assay(res)
       res2<-res2[!is.na(a),]
       a=a[!is.na(a)]
       rownames(res2) <- a
@@ -1374,7 +1374,7 @@ generate_cbioportaldata <- function(caselist,profile){
     
     else if(caselist=="prad_eururol_2017"){
       res=prof[["cna"]]
-      res2=assay(res)
+      res2=RaggedExperiment::assay(res)
       symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
@@ -1402,8 +1402,8 @@ generate_cbioportaldata <- function(caselist,profile){
     }
     
     else if (caselist=="prad_mskcc"){
-      study=downloadStudy("prad_mskcc")
-      ut <- untarStudy(study[[1]])
+      study=cBioPortalData::downloadStudy("prad_mskcc")
+      ut <- cBioPortalData::untarStudy(study[[1]])
       res2=rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
       res2<-res2[,-2]
       rownames(res2)<-make.names(res2$Hugo_Symbol,unique = TRUE)
@@ -1422,7 +1422,7 @@ generate_cbioportaldata <- function(caselist,profile){
     
     else if (caselist == "prad_broad_2013"){
       res=prof[["cna"]]
-      res2=assay(res)
+      res2=RaggedExperiment::assay(res)
       symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
@@ -1476,7 +1476,7 @@ generate_cbioportaldata <- function(caselist,profile){
   if(profile=="gex"){
     if(caselist=="prad_eururol_2017"){
       gex=prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
-      gex2=assay(gex)
+      gex2=RaggedExperiment::assay(gex)
       symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       gex2 <- gex2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
@@ -1485,7 +1485,7 @@ generate_cbioportaldata <- function(caselist,profile){
       return(gex2)
     }else if(caselist=="prad_broad"){
       gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
-      gex2=assay(gex)
+      gex2=RaggedExperiment::assay(gex)
       gex2=gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
       symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       gex2 <- gex2[!is.na(symbols),]
