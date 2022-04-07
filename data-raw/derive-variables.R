@@ -829,6 +829,14 @@ mae_barbieri <- addSlotMAE(mae_barbieri,
 	)
 )
 
+## Barwick
+mae_barwick <- addSlotMAE(mae_barwick,
+    scores = rbind(
+    Prolaris = curatedPCaData:::genomic_risk(mae_barwick, slot = "gex.logq", test = "Prolaris"),
+    AR_score = curatedPCaData:::genomic_score(mae_barwick, slot = "gex.logq", test = "AR")
+    )
+)
+
 ## Chandran
 mae_chandran <- addSlotMAE(mae_chandran,
 	scores = rbind(
