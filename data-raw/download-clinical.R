@@ -1299,9 +1299,8 @@ gse <- GEOquery::getGEO("GSE18655", GSEMatrix = TRUE)
 
 uncurated <- Biobase::pData(gse[[1]])
 
-curated <- initial_curated_df(
-	df_rownames = rownames(uncurated),
-	template_name="data-raw/template_prad.csv"
+curated <- initial_curated_internal(
+	df_rownames = rownames(uncurated)
 )
 
 curated <- curated %>% 
