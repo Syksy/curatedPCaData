@@ -29,6 +29,18 @@
 #' @source  \url{https://www.cbioportal.org/study/summary?id=prad_su2c_2019}
 "mae_abida"
 
+#' Baca et al. MAE-object
+#' 
+#' MultiAssayExperiment object containing copy number alteration (cna) and mutations for Baca et al. 
+#' 
+#' @format A MAE object spanning 56 prostate cancer samples.
+#' \describe{
+#'   \item{cna.gistic}{matrix with 17387 rows and 56 columns, from GISTIC discretized copy number alteration calls.}
+#'   \item{mut}{RaggedExperiment with 2622 rows and 57 columns, mutation data from cbioportal}
+#' }
+#' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad_2013}
+"mae_baca"
+
 #' Barbieri et al. MAE-object
 #'
 #' MultiAssayExperiment object containing gene expression (gex), copy 
@@ -51,18 +63,6 @@
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad}
 "mae_barbieri"
-
-#' Baca et al. MAE-object
-#' 
-#' MultiAssayExperiment object containing copy number alteration (cna) and mutations for Baca et al. 
-#' 
-#' @format A MAE object spanning 56 prostate cancer samples.
-#' \describe{
-#'   \item{cna.gistic}{matrix with 17387 rows and 56 columns, from GISTIC discretized copy number alteration calls.}
-#'   \item{mut}{RaggedExperiment with 2622 rows and 57 columns, mutation data from cbioportal}
-#' }
-#' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad_2013}
-"mae_baca"
 
 #' Barwick et al. MAE-object
 #'
