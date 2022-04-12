@@ -18,9 +18,22 @@ genomic_risk <- function(mae,
                          log = TRUE, # Should log-transformation be applied to the data for genomic risk score calculations; should not be utilized if data transformed already
                          summarize = median
 ){
-	# Addition of gene aliases; aliases sought from https://www.genecards.org/
+	# Internal function for automatically extracting the latest curatedPCaData::curatedPCaData_genes[,"Aliases"] for a specific hugo symbol
+	expandAliases <- function(gene){
+		if(length(which(curatedPCaData:::curatedPCaData_genes$hgnc_symbol == gene))>0){
+			unique(c(gene, 
+				unlist(
+					strsplit(curatedPCaData:::curatedPCaData_genes[which(curatedPCaData:::curatedPCaData_genes$hgnc_symbol == gene),"Aliases"],";")[[1]]
+				)
+			))
+		}else{
+			gene
+		}
+	}
+
+	# Prolaris
 	prolaris_genes <- list(
-		"FOXM1" = c("FOXM1", "HFH-11", "MPP2", "MPHOSPH2", "FKHL16", "HNF-3", "INS-1", "HFH11", "TGT3", "TRIDENT", "FOXM1A", "FOXM1B", "FOXM1C", "MPP-2", "PIG29", "WIN"), 
+		"FOXM1" = c("FOXM1"), 
 		"CDC20" = c("CDC20"), 
 		"CDKN3" = c("CDKN3"), 
 		"CDC2" = c("CDC2"), 
@@ -55,7 +68,9 @@ genomic_risk <- function(mae,
 		"ORC6" = c("ORC6"), 
 		"CDK1" = c("CDK1")
 	)
-  
+	prolaris_genes <- lapply(prolaris_genes, FUN=expandAliases)
+	
+  	# Oncotype DX
 	oncotype_genes <- list(
 		"AZGP1" = c("AZGP1"), 
 		"KLK2" = c("KLK2"), 
@@ -70,6 +85,8 @@ genomic_risk <- function(mae,
 		"COL1A1" = c("COL1A1"), 
 		"SFRP4" = c("SFRP4")
 	)
+	oncotype_genes <- lapply(oncotype_genes, FUN=expandAliases)
+
 	# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3691249/
 	# Table 2
 	decipher_genes_over <- list(
@@ -85,6 +102,7 @@ genomic_risk <- function(mae,
 		"UBE2C" = c("UBE2C"), 
 		"ZWILCH" = c("ZWILCH")
 	)
+	decipher_genes_over <- lapply(decipher_genes_over, FUN=expandAliases)
 	decipher_genes_under <- list(		
 		"ANO7" = c("ANO7"), 
 		"C6orf10" = c("C6orf10", "TSBP1"),
@@ -96,6 +114,7 @@ genomic_risk <- function(mae,
 		"PCAT-80" = c("PCAT-80", "GLYATL1P4"), 
 		"TNFRSF19" = c("TNFRSF19")
 	)
+	decipher_genes_under <- lapply(decipher_genes_under, FUN=expandAliases)
 	# Gene name annotations / changes from original publication
 	# C6orf10 -> TSBP1
 	# PCAT-32 -> PCAT1
