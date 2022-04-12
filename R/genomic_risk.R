@@ -1,6 +1,12 @@
 #' Genomic risk scores
 #'
-#' Prolaris, Oncotype DX, Decipher genomic panels for prostate cancer risk
+#' Prolaris, Oncotype DX, Decipher transcriptome panels for prostate cancer risk
+#'
+#' @param mae MultiAssayExperiment object with gene expression available
+#' @param slot Name of the Gene Expression slot
+#' @param test Type of test; available: "Prolaris", "Oncotype DX", and "Decypher"
+#' @param log Should data be log(x+1)-transformed prior to calculating the risk score
+#' @param summarize Summarization function if multiple aliases are found from the GEX matrix; By default: median
 #'
 #' @details https://bjui-journals.onlinelibrary.wiley.com/doi/10.1111/bju.14452 https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-14-690 https://www.nature.com/articles/s41391-019-0167-9
 #'
@@ -9,125 +15,179 @@
 genomic_risk <- function(mae, 
                          slot = "gex",
                          test = c("Prolaris", "Oncotype DX", "Decipher"),
-                         log = TRUE # Should log-transformation be applied to the data for genomic risk score calculations; should not be utilized if data transformed already
+                         log = TRUE, # Should log-transformation be applied to the data for genomic risk score calculations; should not be utilized if data transformed already
+                         summarize = median
 ){
+	# Addition of gene aliases; aliases sought from https://www.genecards.org/
+	prolaris_genes <- list(
+		"FOXM1" = c("FOXM1", "HFH-11", "MPP2", "MPHOSPH2", "FKHL16", "HNF-3", "INS-1", "HFH11", "TGT3", "TRIDENT", "FOXM1A", "FOXM1B", "FOXM1C", "MPP-2", "PIG29", "WIN"), 
+		"CDC20" = c("CDC20"), 
+		"CDKN3" = c("CDKN3"), 
+		"CDC2" = c("CDC2"), 
+		"KIF11" = c("KIF11"), 
+		"KIAA0101" = c("KIAA0101"),
+		"NUSAP1" = c("NUSAP1"), 
+		"CENPF" = c("CENPF"), 
+		"ASPM" = c("ASPM"), 
+		"BUB1B" = c("BUB1B"), 
+		"RRM2" = c("RRM2"), 
+		"DLGAP5" = c("DLGAP5"),
+		"BIRC5" = c("BIRC5"), 
+		"KIF20A" = c("KIF20A"), 
+		"PLK1" = c("PLK1"), 
+		"TOP2A" = c("TOP2A"), 
+		"TK1" = c("TK1"), 
+		"PBK" = c("PBK"), 
+		"ASF1B" = c("ASF1B"),
+		"C18orf24" = c("C18orf24"), 
+		"RAD54L" = c("RAD54L"), 
+		"PTTG1" = c("PTTG1"), 
+		"CDCA3" = c("CDCA3"), 
+		"MCM10" = c("MCM10"), 
+		"PRC1" = c("PRC1"),
+		"DTL" = c("DTL"), 
+		"CEP55" = c("CEP55"), 
+		"RAD51" = c("RAD51"), 
+		"CENPM" = c("CENPM"), 
+		"CDCA8" = c("CDCA8"),
+		"ORC6L" = c("ORC6L"), 
+		"SKA1" = c("SKA1"),
+		"ORC6" = c("ORC6"), 
+		"CDK1" = c("CDK1")
+	)
   
-  prolaris_genes <- c("FOXM1", "CDC20", "CDKN3", "CDC2", "KIF11", "KIAA0101",
-                      "NUSAP1", "CENPF", "ASPM", "BUB1B", "RRM2", "DLGAP5",
-                      "BIRC5", "KIF20A", "PLK1", "TOP2A", "TK1", "PBK", "ASF1B",
-                      "C18orf24", "RAD54L", "PTTG1", "CDCA3", "MCM10", "PRC1",
-                      "DTL", "CEP55", "RAD51", "CENPM", "CDCA8", "ORC6L", "SKA1",
-                      "ORC6", "CDK1")
-  
-  oncotype_genes <- c("AZGP1", "KLK2", "SRD5A2", "FAM13C", "FLNC", "GSN", "TPM2",
-                      "GSTM2", "TPX2", "BGN", "COL1A1", "SFRP4")
-  # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3691249/
-  # Table 2
-  decipher_genes <- c("LASP1", "IQGAP3", "NFIB", "S1PR4", "THBS2", "ANO7", 
-                      "PCDH7", "MYBPC1", "EPPK1", "TSBP", "PBX1", "NUSAP1",
-                      "ZWILCH", "UBE2C", "CAMK2N1", "RABGAP1", "PCAT-32", 
-                      "PCAT-80", "TNFRSF19", "C6orf10")
-  # Gene name annotations / changes from original publication
-  # C6orf10 -> TSBP1
-  # PCAT-32 -> PCAT1
-  
-  
-  dat <- mae@ExperimentList[[slot]]
-  dat <- t(dat) 
-  dat <- as.data.frame(dat)
-  
-  if(base::tolower(test) == "prolaris"){
-    
-    if(length(intersect(colnames(dat), prolaris_genes)) != 31){
-      warning("Prolaris risk score based off of ",
-              length(intersect(colnames(dat), prolaris_genes)),
-              " out of 31 genes")
-    }
-    
-    risk <- dat[, colnames(dat) %in% prolaris_genes]
-    gene_med <- apply(risk, 2, stats::median)
-    risk_centered <- risk - gene_med
-    risk_centered <- risk_centered^2 # squaring the median centered expression values 
-    
-    risk_score <- apply(risk_centered, 1, mean)
-    risk_score <- log2(risk_score)
-    return(risk_score)
-    
-  } else if (base::tolower(test) %in% c("oncotype dx", "oncotypedx", "oncotype")){
-    
-    if(length(intersect(colnames(dat), oncotype_genes)) == 12){
-      
-      if(log){
-      	dat <- log2(dat)
-      }
-      
-      dat$TPX2_bounded <- ifelse(dat$TPX2 < 5, 5, dat$TPX2)
-      dat$SRD5A2_bounded <- ifelse(dat$SRD5A2 < 5.5, 5.5, dat$SRD5A2)
-      
-      # cellular_organization_module = dat$FLNC + dat$GSN + dat$TPM2 + dat$GSTM2
-      # stromal_module = dat$BGN + dat$COL1A1 + dat$SFRP4
-      # androgen_module = dat$FAM13C + dat$KLK2 + dat$SRD5A2_bounded + dat$AZGP1
-      
-      cellular_organization_module = (0.163*dat$FLNC) + 
-        (0.504*dat$GSN) + (0.421*dat$TPM2) + (0.394*dat$GSTM2)
-      stromal_module = (0.527*dat$BGN) + (0.457*dat$COL1A1) + (0.156*dat$SFRP4)
-      androgen_module = (0.634*dat$FAM13C) + (1.079*dat$KLK2) + 
-        (0.997*dat$SRD5A2_bounded) + (0.642*dat$AZGP1)
-      proliferation_module = dat$TPX2_bounded
-      
-      risk_score = 0.735*stromal_module - 0.368*cellular_organization_module -
-        0.352*androgen_module + 0.095*proliferation_module
-      
-      return(risk_score)
-      
-    } else {
-      
-      stop("The following required Oncotype DX genes: ", 
-           paste(setdiff(oncotype_genes, colnames(dat)), collapse = ", "),
-           " are not present in colnames of the data")
-    }
-    
-  } else if (base::tolower(test) %in% "decipher") {
-    
-    if(length(intersect(colnames(dat), decipher_genes)) != 19){
-      
-      #stop("Only ",
-      #     length(intersect(colnames(dat), decipher_genes)),
-      #     " out of 19 required genes for Decipher risk score were found")
-      warning("The following required Decipher genes: ", 
-           paste(setdiff(decipher_genes, colnames(dat)), collapse = ", "),
-           " are not present in colnames of the GEX data")
-    }
-    
-    # Overrepresented genes (increase the risk value)
-    over <- c("CAMK2N1","EPPK1","IQGAP3","LASP1","NFIB","NUSAP1","PBX1","S1PR4","THBS2","UBE2C","ZWILCH")
-    
-    # Underrepresented genes (decrease the risk value)
-    under <- c("ANO7",
-    	"C6orf10","TSBP1", # Aliases
-    	"MYBPC1","PCDH7","RABGAP1","TNFRSF19")
+	oncotype_genes <- list(
+		"AZGP1" = c("AZGP1"), 
+		"KLK2" = c("KLK2"), 
+		"SRD5A2" = c("SRD5A2"), 
+		"FAM13C" = c("FAM13C"), 
+		"FLNC" = c("FLNC"), 
+		"GSN" = c("GSN"), 
+		"TPM2" = c("TPM2"),
+		"GSTM2" = c("GSTM2"), 
+		"TPX2" = c("TPX2"), 
+		"BGN" = c("BGN"), 
+		"COL1A1" = c("COL1A1"), 
+		"SFRP4" = c("SFRP4")
+	)
+	# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3691249/
+	# Table 2
+	decipher_genes_over <- list(
+		"CAMK2N1" = c("CAMK2N1"), 
+		"EPPK1" = c("EPPK1"), 
+		"IQGAP3" = c("IQGAP3"), 
+		"LASP1" = c("LASP1"), 		
+		"NFIB" = c("NFIB"), 
+		"NUSAP1" = c("NUSAP1"),
+		"PBX1" = c("PBX1"), 		
+		"S1PR4" = c("S1PR4"), 		
+		"THBS2" = c("THBS2"), 
+		"UBE2C" = c("UBE2C"), 
+		"ZWILCH" = c("ZWILCH")
+	)
+	decipher_genes_under <- list(		
+		"ANO7" = c("ANO7"), 
+		"C6orf10" = c("C6orf10", "TSBP1"),
+		"PCDH7" = c("PCDH7"), 
+		"MYBPC1" = c("MYBPC1"), 
+		"TSBP" = c("TSBP"), 
+		"RABGAP1" = c("RABGAP1"), 
+		"PCAT-32" = c("PCAT-32", "PCAT1"), 
+		"PCAT-80" = c("PCAT-80", "GLYATL1P4"), 
+		"TNFRSF19" = c("TNFRSF19")
+	)
+	# Gene name annotations / changes from original publication
+	# C6orf10 -> TSBP1
+	# PCAT-32 -> PCAT1
 
-    # Intersect between Decipher risk score genes ideally available and current data matrix    
-    risk <- dat[,intersect(colnames(dat),c(over, under))]
 
-    # Median centering    
-    gene_med <- apply(risk, 2, median)
-    risk_centered <- risk - gene_med
+	dat <- mae@ExperimentList[[slot]]
+	dat <- t(dat) 
+	dat <- as.data.frame(dat)
+	# Log-transformation
+	if(log){
+		dat <- log2(dat+1)
+	}
+  	
+  	# Prolaris
+	if(base::tolower(test) == "prolaris"){
     
-    # average of the log2 normalized values for the 9 over-expressed targets
-    c1 <- apply(risk[,over], MARGIN=1, FUN=function(x) { mean(x, na.rm=TRUE) })
+		if(length(intersect(colnames(dat), unlist(prolaris_genes))) != 31){
+			warning("Prolaris risk score based off of ",
+			      length(intersect(colnames(dat), unlist(prolaris_genes))),
+			      " out of 31 genes")
+		}
     
-    # average of the log2 normalized values for the 9 under-expressed targets
-    c2 <- apply(risk[,under], MARGIN=1, FUN=function(x) { mean(x, na.rm=TRUE) })
+		risk <- dat[, colnames(dat) %in% unlist(prolaris_genes)]
+		gene_med <- apply(risk, 2, stats::median)
+		risk_centered <- risk - gene_med
+		risk_centered <- risk_centered^2 # squaring the median centered expression values 
 
-    # Risk score as the difference between over- and underrepresented genes    
-    risk_score <- c1-c2
+		risk_score <- apply(risk_centered, 1, mean)
+		risk_score <- log2(risk_score)
+		return(risk_score)
     
-    return(risk_score)
+    	# Oncotype DX
+	} else if (base::tolower(test) %in% c("oncotype dx", "oncotypedx", "oncotype")){
     
-  } else {
-  	stop(paste("Invalid genomic risk score name:", test))
-  }
+		if(!length(intersect(colnames(dat), unlist(oncotype_genes))) == 12){
+			warning("The following required Oncotype DX genes: ", 
+				paste(setdiff(names(oncotype_genes), colnames(dat)), collapse = ", "),
+				" are not present in colnames of the data")
+		}            
+		dat$TPX2_bounded <- ifelse(dat$TPX2 < 5, 5, dat$TPX2)
+		dat$SRD5A2_bounded <- ifelse(dat$SRD5A2 < 5.5, 5.5, dat$SRD5A2)
+
+		# cellular_organization_module = dat$FLNC + dat$GSN + dat$TPM2 + dat$GSTM2
+		# stromal_module = dat$BGN + dat$COL1A1 + dat$SFRP4
+		# androgen_module = dat$FAM13C + dat$KLK2 + dat$SRD5A2_bounded + dat$AZGP1
+
+		cellular_organization_module = (0.163*dat$FLNC) + 
+		(0.504*dat$GSN) + (0.421*dat$TPM2) + (0.394*dat$GSTM2)
+		stromal_module = (0.527*dat$BGN) + (0.457*dat$COL1A1) + (0.156*dat$SFRP4)
+		androgen_module = (0.634*dat$FAM13C) + (1.079*dat$KLK2) + 
+		(0.997*dat$SRD5A2_bounded) + (0.642*dat$AZGP1)
+		proliferation_module = dat$TPX2_bounded
+
+		risk_score = 0.735*stromal_module - 0.368*cellular_organization_module -
+		0.352*androgen_module + 0.095*proliferation_module
+
+		return(risk_score)
+    
+    	# Decipher
+	} else if (base::tolower(test) %in% "decipher") {
+    
+		if(length(intersect(colnames(dat), unlist(decipher_genes))) != 19){
+			warning("The following required Decipher genes: ", 
+				paste(setdiff(decipher_genes, colnames(dat)), collapse = ", "),
+				" are not present in colnames of the GEX data")
+		}
+    
+    		# Take intersection of available gene names and over and under expressed gene symbols and their aliases 
+    		over <- intersect(colnames(dat), unlist(decipher_genes_over))
+    		under <- intersect(colnames(dat), unlist(decipher_genes_under))
+    
+		# Intersect between Decipher risk score genes ideally available and current data matrix    
+		risk <- dat[,intersect(colnames(dat),c(over, under))]
+
+		# Median centering    
+		gene_med <- apply(risk, 2, median)
+		risk_centered <- risk - gene_med
+    
+		# average of the log2 normalized values for the 9 over-expressed targets
+		c1 <- apply(risk_centered[,over], MARGIN=1, FUN=function(x) { mean(x, na.rm=TRUE) })
+    
+		# average of the log2 normalized values for the 9 under-expressed targets
+		c2 <- apply(risk_centered[,under], MARGIN=1, FUN=function(x) { mean(x, na.rm=TRUE) })
+
+		# Risk score as the difference between over- and underrepresented genes    
+		risk_score <- c1-c2
+    
+		return(risk_score)
+    
+	} else {
+		stop(paste("Invalid genomic risk score name:", test))
+	}
 }
 
 
