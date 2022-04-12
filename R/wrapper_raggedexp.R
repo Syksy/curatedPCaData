@@ -41,5 +41,21 @@ G<-data.frame(lapply(E, function(x) {
 rownames(G)=G$gene
 G <- G[ , ! names(G) %in% "gene"]
 
-return(G)
+j=as.data.frame(apply(G,2,function(x)gsub('\\s+', '',x)))
+j=as.data.frame(j)
+j$gene<-rownames(j)
+
+h<-data.frame(lapply(j, function(x) {
+  gsub(",NA", "", x)
+}))
+
+i<-data.frame(lapply(h, function(x) {
+  gsub(";", ",", x)
+}))
+
+rownames(i)<-i$gene
+
+i<-i[,-321]
+
+return(i)
 }
