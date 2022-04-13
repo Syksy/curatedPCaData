@@ -1,0 +1,68 @@
+---
+title: "Analysis examples in curatedPCaData"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{Analysis examples in curatedPCaData}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  cache = TRUE
+)
+```
+
+```{r packages}
+library(curatedPCaData)
+library(survival)
+library(survminer)
+```
+
+# Example analyses with curatedPCaData
+
+## Brief overview to MultiAssayExperiment functions
+
+## Survival analysis
+
+### Kaplan-Meiers
+
+#### Gleason-score
+
+#### Genomic risk
+
+### Cox proportional hazard models
+
+## Risk scores
+
+### Decipher vs. BCR
+
+### Oncotype DX vs. BCR
+
+### Prolaris vs. BCR
+
+## Purity scores
+
+### Pathology purity vs. DeMixT
+
+## Multi-omics
+
+### Copy number deletion and mutation combined
+
+### Multivariable regression from multiple assay types
+
+
+
+# Session info
+
+```{r session}
+sessionInfo()
+```
+
