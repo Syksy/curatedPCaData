@@ -3,20 +3,18 @@
 #' Prolaris, Oncotype DX, Decipher transcriptome panels for prostate cancer risk
 #'
 #' @param mae MultiAssayExperiment object with gene expression available
-#' @param slot Name of the Gene Expression slot
+#' @param slot Name of the Gene Expression slot, by default grepping for 'gex' prefix and picking the hit
 #' @param test Type of test; available: "Prolaris", "Oncotype DX", and "Decypher"
 #' @param log Should data be log(x+1)-transformed prior to calculating the risk score
-#' @param summarize Summarization function if multiple aliases are found from the GEX matrix; By default: median
 #'
 #' @details https://bjui-journals.onlinelibrary.wiley.com/doi/10.1111/bju.14452 https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-14-690 https://www.nature.com/articles/s41391-019-0167-9
 #'
 #' @noRd
 #' @keywords internal
 genomic_risk <- function(mae, 
-                         slot = "gex",
+                         slot = grep("gex", names(mae), value=TRUE),
                          test = c("Prolaris", "Oncotype DX", "Decipher"),
-                         log = TRUE, # Should log-transformation be applied to the data for genomic risk score calculations; should not be utilized if data transformed already
-                         summarize = median
+                         log = FALSE # Should log-transformation be applied to the data for genomic risk score calculations; should not be utilized if data is transformed already
 ){
 	# Internal function for automatically extracting the latest curatedPCaData::curatedPCaData_genes[,"Aliases"] for a specific hugo symbol
 	expandAliases <- function(gene){
@@ -28,6 +26,17 @@ genomic_risk <- function(mae,
 			))
 		}else{
 			gene
+		}
+	}
+	# Internal function that extract expression value if it is present in matrix; otherwise imputes defined value, and gives a warning
+	# List of aliases, and data matrix x with columns as genes
+	extractGene <- function(genelist, x, impute = NA){
+		if(any(genelist %in% colnames(x))){
+			# Take the most recent alias hit
+			x[,intersect(colnames(x), genelist)[1]]
+		}else{
+			warning(paste("Gene list", paste(genelist, collapse=";"), "not found from data matrix"))
+			rep(impute, times=nrow(x))	
 		}
 	}
 
@@ -154,31 +163,54 @@ genomic_risk <- function(mae,
 				paste(setdiff(names(oncotype_genes), colnames(dat)), collapse = ", "),
 				" are not present in colnames of the data")
 		}            
-		dat$TPX2_bounded <- ifelse(dat$TPX2 < 5, 5, dat$TPX2)
-		dat$SRD5A2_bounded <- ifelse(dat$SRD5A2 < 5.5, 5.5, dat$SRD5A2)
+		#dat$TPX2_bounded <- ifelse(dat$TPX2 < 5, 5, dat$TPX2)
+		#dat$SRD5A2_bounded <- ifelse(dat$SRD5A2 < 5.5, 5.5, dat$SRD5A2)
 
 		# cellular_organization_module = dat$FLNC + dat$GSN + dat$TPM2 + dat$GSTM2
 		# stromal_module = dat$BGN + dat$COL1A1 + dat$SFRP4
 		# androgen_module = dat$FAM13C + dat$KLK2 + dat$SRD5A2_bounded + dat$AZGP1
 
-		cellular_organization_module = (0.163*dat$FLNC) + 
-		(0.504*dat$GSN) + (0.421*dat$TPM2) + (0.394*dat$GSTM2)
-		stromal_module = (0.527*dat$BGN) + (0.457*dat$COL1A1) + (0.156*dat$SFRP4)
-		androgen_module = (0.634*dat$FAM13C) + (1.079*dat$KLK2) + 
-		(0.997*dat$SRD5A2_bounded) + (0.642*dat$AZGP1)
-		proliferation_module = dat$TPX2_bounded
+		cellular_organization_module = 
+			#(0.163*dat$FLNC) + 
+			(0.163 * extractGene(genelist = oncotype_genes[["FLNC"]], x = dat, impute = 0)) + 
+			#(0.504*dat$GSN) + 
+			(0.504 * extractGene(genelist = oncotype_genes[["GSN"]], x = dat, impute = 0)) + 
+			#(0.421*dat$TPM2) + 
+			(0.421 * extractGene(genelist = oncotype_genes[["TPM2"]], x = dat, impute = 0)) + 
+			#(0.394*dat$GSTM2)
+			(0.394 * extractGene(genelist = oncotype_genes[["GSTM2"]], x = dat, impute = 0))
+		stromal_module = 
+			#(0.527*dat$BGN) + 
+			(0.527 * extractGene(genelist = oncotype_genes[["BGN"]], x = dat, impute = 0)) + 
+			#(0.457*dat$COL1A1) + 
+			(0.457 * extractGene(genelist = oncotype_genes[["COL1A1"]], x = dat, impute = 0)) + 
+			#(0.156*dat$SFRP4)
+			(0.156 * extractGene(genelist = oncotype_genes[["SFRP4"]], x = dat, impute = 0))
+		androgen_module = 
+			#(0.634*dat$FAM13C) + 
+			(0.634 * extractGene(genelist = oncotype_genes[["FAM13C"]], x = dat, impute = 0)) + 
+			#(1.079*dat$KLK2) + 
+			(1.079 * extractGene(genelist = oncotype_genes[["KLK2"]], x = dat, impute = 0)) + 
+			#(0.997*dat$SRD5A2_bounded) + 
+			# Lower bound 5.5
+			(0.997 * unlist(lapply(extractGene(genelist = oncotype_genes[["SRD5A2"]], x = dat, impute = 0), FUN=function(x) {max(5.5, x) }))) + 
+			#(0.642*dat$AZGP1)
+			(0.642 * extractGene(genelist = oncotype_genes[["AZGP1"]], x = dat, impute = 0))
+		proliferation_module = #dat$TPX2_bounded
+			# Lower bound 5
+			unlist(lapply(extractGene(genelist = oncotype_genes[["TPX2"]], x = dat, impute = 0), FUN=function(x) { max(5, x) }))
 
-		risk_score = 0.735*stromal_module - 0.368*cellular_organization_module -
-		0.352*androgen_module + 0.095*proliferation_module
-
+		risk_score = 0.735*stromal_module - 0.368*cellular_organization_module - 0.352*androgen_module + 0.095*proliferation_module
+		names(risk_score) <- rownames(dat)	
+			
 		return(risk_score)
     
     	# Decipher
-	} else if (base::tolower(test) %in% "decipher") {
+	} else if (base::tolower(test) %in% c("decipher", "decypher")) {
     
-		if(length(intersect(colnames(dat), unlist(decipher_genes))) != 19){
+		if(length(intersect(colnames(dat), c(unlist(decipher_genes_over), unlist(decipher_genes_under)))) != 19){
 			warning("The following required Decipher genes: ", 
-				paste(setdiff(decipher_genes, colnames(dat)), collapse = ", "),
+				paste(setdiff(c(unlist(decipher_genes_over), unlist(decipher_genes_under)), colnames(dat)), collapse = ", "),
 				" are not present in colnames of the GEX data")
 		}
     
@@ -323,3 +355,4 @@ genomic_score <- function(
 		res		
 	}
 }
+

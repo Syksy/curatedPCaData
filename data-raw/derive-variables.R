@@ -10,7 +10,10 @@
 library(immunedeconv) # NECESSARY!
 
 ## Assistance function for adding a new slot in case it doesn't exist, or to avoid existing slot name overlap
-addSlotMAE <- function(mae, ...){
+addSlotMAE <- function(
+	mae,	# MultiAssayExperiment object
+	...	# Added slots
+){
 	# Transform to a list
 	vals <- list(...)
 	nams <- names(vals)
@@ -329,7 +332,7 @@ tmp <- as.data.frame(immunedeconv::deconvolute(mae_taylor[["gex.rma"]], method="
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
-mae_taylor <- addSlotMAE(curatedPCaData::mae_taylor, xcell = tmp)
+mae_taylor <- addSlotMAE(mae_taylor, xcell = tmp)
 
 # TCGA
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="xcell"))
@@ -817,136 +820,172 @@ mae_true <- addSlotMAE(mae_true, mcp = tmp)
 ## Abida
 mae_abida <- addSlotMAE(mae_abida,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_abida, slot = "gex.relz", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_abida, slot = "gex.relz", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_abida, slot = "gex.relz", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_abida, slot = "gex.relz", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_abida, slot = "gex.relz", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_abida, slot = "gex.relz", test = "AR")
 	)
 )
 
 ## Barbieri
 mae_barbieri <- addSlotMAE(mae_barbieri,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_barbieri, slot = "gex.relz", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_barbieri, slot = "gex.relz", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_barbieri, slot = "gex.relz", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_barbieri, slot = "gex.relz", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_barbieri, slot = "gex.relz", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_barbieri, slot = "gex.relz", test = "AR")
 	)
 )
 
 ## Barwick
 mae_barwick <- addSlotMAE(mae_barwick,
-    scores = rbind(
-    Prolaris = curatedPCaData:::genomic_risk(mae_barwick, slot = "gex.logq", test = "Prolaris"),
-    AR_score = curatedPCaData:::genomic_score(mae_barwick, slot = "gex.logq", test = "AR")
-    )
+	scores = rbind(
+		# Lack of gene overlap
+		#decipher = curatedPCaData:::genomic_risk(mae_barwick, slot = "gex.logq", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_barwick, slot = "gex.logq", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_barwick, slot = "gex.logq", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_barwick, slot = "gex.logq", test = "AR")
+	)
 )
 
 ## Chandran
 mae_chandran <- addSlotMAE(mae_chandran,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_chandran, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_chandran, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_chandran, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_chandran, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_chandran, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_chandran, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## Friedrich
 mae_friedrich <- addSlotMAE(mae_friedrich,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_friedrich, slot = "gex.logq", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_friedrich, slot = "gex.logq", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_friedrich, slot = "gex.logq", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_friedrich, slot = "gex.logq", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_friedrich, slot = "gex.logq", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_friedrich, slot = "gex.logq", test = "AR")
 	)
 )
 
 ## ICGC-CA
 mae_icgcca <- addSlotMAE(mae_icgcca,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_icgcca, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_icgcca, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_icgcca, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_icgcca, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_icgcca, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_icgcca, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## IGC
 mae_igc <- addSlotMAE(mae_igc,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_igc, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_igc, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_igc, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_igc, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_igc, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_igc, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## Kim
 mae_kim <- addSlotMAE(mae_kim,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_kim, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_kim, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_kim, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_kim, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_kim, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_kim, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## Kunderfranco
 mae_kunderfranco <- addSlotMAE(mae_kunderfranco,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_kunderfranco, slot = "gex.logr", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_kunderfranco, slot = "gex.logr", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_kunderfranco, slot = "gex.logr", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_kunderfranco, slot = "gex.logr", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_kunderfranco, slot = "gex.logr", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_kunderfranco, slot = "gex.logr", test = "AR")
 	)
 )
 
 ## Ren
 mae_ren <- addSlotMAE(mae_ren,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_ren, slot = "gex.relz", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_ren, slot = "gex.relz", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_ren, slot = "gex.relz", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_ren, slot = "gex.relz", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_ren, slot = "gex.relz", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_ren, slot = "gex.relz", test = "AR")
 	)
 )
 
 ## Sun
 mae_sun <- addSlotMAE(mae_sun,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_sun, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_sun, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_sun, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_sun, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_sun, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_sun, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## Taylor
 mae_taylor <- addSlotMAE(mae_taylor,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_taylor, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_taylor, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_taylor, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_taylor, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_taylor, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_taylor, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## TCGA 
 mae_tcga <- addSlotMAE(mae_tcga,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_tcga, slot = "gex.fpkm", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "decipher", log=TRUE),
+		oncotype = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "oncotype", log=TRUE),
+		prolaris = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "prolaris", log=TRUE),
+		ar_score = curatedPCaData:::genomic_score(mae_tcga, slot = "gex.fpkm", test = "AR")
 	)
 )
 
 ## True
 mae_true <- addSlotMAE(mae_true,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_true, slot = "gex.logr", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_true, slot = "gex.logr", test = "AR")
+		# Lack of gene overlap
+		#decipher = curatedPCaData:::genomic_risk(mae_true, slot = "gex.logr", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_true, slot = "gex.logr", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_true, slot = "gex.logr", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_true, slot = "gex.logr", test = "AR")
 	)
 )
 
 ## Wallace
 mae_wallace <- addSlotMAE(mae_wallace,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_wallace, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_wallace, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_wallace, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_wallace, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_wallace, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_wallace, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## Wang
 mae_wang <- addSlotMAE(mae_wang,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_wang, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_wang, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_wang, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_wang, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_wang, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_wang, slot = "gex.rma", test = "AR")
 	)
 )
 
 ## Weiner
 mae_weiner <- addSlotMAE(mae_weiner,
 	scores = rbind(
-		Prolaris = curatedPCaData:::genomic_risk(mae_weiner, slot = "gex.rma", test = "Prolaris"),
-		AR_score = curatedPCaData:::genomic_score(mae_weiner, slot = "gex.rma", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_weiner, slot = "gex.rma", test = "decipher", log=FALSE),
+		oncotype = curatedPCaData:::genomic_risk(mae_weiner, slot = "gex.rma", test = "oncotype", log=FALSE),
+		prolaris = curatedPCaData:::genomic_risk(mae_weiner, slot = "gex.rma", test = "prolaris", log=FALSE),
+		ar_score = curatedPCaData:::genomic_score(mae_weiner, slot = "gex.rma", test = "AR")
 	)
 )
 
