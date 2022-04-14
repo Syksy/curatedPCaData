@@ -161,9 +161,9 @@
 #' @source \url{https://dcc.icgc.org/projects/PRAD-CA}
 "mae_icgcca"
 
-#' IGC
+#' International Genomics Consortium (IGC) MAE-object
 #' 
-#' MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from IGC's Expression Project for Oncology (expO)
+#' MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from IGC's Expression Project for Oncology (expO) with a subset for prostate cancer
 #' 
 #' @format An MAE object spanning 83 men with prostate cancer
 #' \describe{
@@ -180,7 +180,7 @@
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse2109}
 "mae_igc"
 
-#' Kim et al.
+#' Kim et al. MAE-object
 #' 
 #' MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from Kim et al.
 #' 

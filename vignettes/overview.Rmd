@@ -399,7 +399,21 @@ Each row of the deconvolution matrix represents the content of a certain immune 
 
 ## Sample purity estimates
 
-__TODO__
+Tumor sample purities were run for studies which had separate normal samples (and their gene expression) available.
+
+The purity scores were calculated using DeMixT [ref], and was available for the studies:
+- ```mae_chandran```
+- ```mae_friedrich```
+- ```mae_kunderfranco```
+- ```mae_taylor```
+- ```mae_tcga```
+- ```mae_wallace```
+
+The purity scores are stored in slot ```purity``` and can be accessed via:
+
+```{r purities}
+head(mae_tcga[["purity"]])
+```
 
 ## Risk scores and other metrics
 
@@ -411,9 +425,9 @@ mae_tcga[["scores"]][,1:4]
 
 The following Prostate Cancer risk scores are offered:
 
-- ```Prolaris``` [NICE Advice]
-- ```Oncotype DX``` [Knezevic et al.]
 - ```Decipher``` [Herlemann et al.]
+- ```Oncotype DX``` [Knezevic et al.]
+- ```Prolaris``` [NICE Advice]
 
 Further, the 12-gene Androgen Receptor (AR) score is calculated similar to [ref] and provided in this slot:
 
@@ -421,9 +435,9 @@ Further, the 12-gene Androgen Receptor (AR) score is calculated similar to [ref]
 
 # Citations
 
-- Herlemann, A., Huang, H. C., Alam, R., Tosoian, J. J., Kim, H. L., Klein, E. A., Simko, J. P., Chan, J. M., Lane, B. R., Davis, J. W., Davicioni, E., Feng, F. Y., McCue, P., Kim, H., Den, R. B., Bismar, T. A., Carroll, P. R., & Cooperberg, M. R. (2020). Decipher identifies men with otherwise clinically favorable-intermediate risk disease who may not be good candidates for active surveillance. Prostate cancer and prostatic diseases, 23(1), 136–143. https://doi.org/10.1038/s41391-019-0167-9
+- Herlemann, A., Huang, H. C., Alam, R., Tosoian, J. J., Kim, H. L., Klein, E. A., Simko, J. P., Chan, J. M., Lane, B. R., Davis, J. W., Davicioni, E., Feng, F. Y., McCue, P., Kim, H., Den, R. B., Bismar, T. A., Carroll, P. R., & Cooperberg, M. R. (2020). Decipher identifies men with otherwise clinically favorable-intermediate risk disease who may not be good candidates for active surveillance. Prostate cancer and prostatic diseases, 23(1), 136â€“143. https://doi.org/10.1038/s41391-019-0167-9
 - Knezevic, D., Goddard, A. D., Natraj, N., Cherbavaz, D. B., Clark-Langone, K. M., Snable, J., Watson, D., Falzarano, S. M., Magi-Galluzzi, C., Klein, E. A., & Quale, C. (2013). Analytical validation of the Oncotype DX prostate cancer assay - a clinical RT-PCR assay optimized for prostate needle biopsies. BMC genomics, 14, 690. https://doi.org/10.1186/1471-2164-14-690
-- NICE Advice - Prolaris gene expression assay for assessing long-term risk of prostate cancer progression: © NICE (2016) Prolaris gene expression assay for assessing long-term risk of prostate cancer progression. (2018). BJU international, 122(2), 173–180. https://doi.org/10.1111/bju.14452
+- NICE Advice - Prolaris gene expression assay for assessing long-term risk of prostate cancer progression: (C) NICE (2016) Prolaris gene expression assay for assessing long-term risk of prostate cancer progression. (2018). BJU international, 122(2), 173â€“180. https://doi.org/10.1111/bju.14452
 
 # Session info
 
