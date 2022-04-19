@@ -16,7 +16,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   warning = FALSE,
   message = FALSE,
-  cache = TRUE
+  cache = TRUE,
+  tidy = FALSE
 )
 #library(tidyverse)
 #library(viridis)
@@ -221,8 +222,8 @@ slotmat <- t(slotmat)
 # Which MAEs had 2 or more omics
 multiomics <- names(which(unlist(lapply(sampnames, FUN=function(x) { length(names(x))>1 }))))
 # Create an overlap N count matrix for GEX & CNA, CNA & MUT, GEX & CNA & MUT based on sample names
-overmat <- matrix("", ncol=4, nrow=length(multiomics))
-colnames(overmat) <- c("GEX & CNA", "GEX & MUT", "CNA & MUT", "GEX & CNA & MUT")
+overmat <- matrix("", ncol=7, nrow=length(multiomics))
+colnames(overmat) <- c("GEX", "CNA", "MUT", "GEX & CNA", "GEX & MUT", "CNA & MUT", "GEX & CNA & MUT")
 rownames(overmat) <- multiomics
 
 for(mult in multiomics){
@@ -234,7 +235,7 @@ for(mult in multiomics){
 	gex_mut <- length(intersect(gex, mut))
 	cna_mut <- length(intersect(cna, mut))
 	gex_cna_mut <- length(intersect(intersect(gex, cna), mut))
-	overmat[mult,] <- c(gex_cna, gex_mut, cna_mut, gex_cna_mut)
+	overmat[mult,] <- c(length(gex), length(cna), length(mut), gex_cna, gex_mut, cna_mut, gex_cna_mut)
 }
 
 
@@ -412,7 +413,14 @@ The purity scores were calculated using DeMixT [ref], and was available for the 
 The purity scores are stored in slot ```purity``` and can be accessed via:
 
 ```{r purities}
-head(mae_tcga[["purity"]])
+mae_tcga[["purity"]][,1:10]
+```
+
+The metadata slot provides the original purity values as estimated by the original authors, if they provided these pre-calculated values. For example in TCGA, our estimated DeMixT values vs. the original values:
+
+```{r demixt_own_vs_authors, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="DeMixT from curatedPCaData vs. directly from TCGA"}
+tcga_demixts <- wideFormat(mae_tcga[c("demixt"),,"purity"], colDataCols="tumor_purity_demixt")
+plot(as.matrix(tcga_demixts[,2:3]), pch=16, xlab="DeMixT from curatedPCaData's GDC processed FPKM-UQ", ylab="Original DeMixT from TCGA")
 ```
 
 ## Risk scores and other metrics
