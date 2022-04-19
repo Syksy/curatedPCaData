@@ -1033,6 +1033,64 @@ rownames(wallace_demixt) <- "demixt"
 mae_wallace <- addSlotMAE(mae_wallace, purity = wallace_demixt)
 
 
+##
+## Run real-time DeMixT locally
+##
+## Instructions according to https://bioinformatics.mdanderson.org/public-software/demixt/
+library(DeMixT)
+
+## TCGA
+#tmp_tumor <- 1+log2(1+mae_tcga[["gex.fpkm"]][,match(colData(mae_tcga)[which(colData(mae_tcga)$sample_type=="primary"),"sample_name"], colnames(mae_tcga[["gex.fpkm"]]))])
+tmp_tumor <- 1+mae_tcga[["gex.fpkm"]][,match(colData(mae_tcga)[which(colData(mae_tcga)$sample_type=="primary"),"sample_name"], colnames(mae_tcga[["gex.fpkm"]]))]
+tmp_tumor <- tmp_tumor[intersect(rownames(tmp_tumor), unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+# Omit the NA fields
+tmp_tumor <- tmp_tumor[,-which(is.na(colnames(tmp_tumor)))]
+row_tumor <- DataFrame(gene = rownames(tmp_tumor), row.names = rownames(tmp_tumor))
+#tmp_normal <- 1+log2(1+mae_tcga[["gex.fpkm"]][,match(colData(mae_tcga)[which(colData(mae_tcga)$sample_type=="healthy"),"sample_name"], colnames(mae_tcga[["gex.fpkm"]]))])
+tmp_normal <- 1+mae_tcga[["gex.fpkm"]][,match(colData(mae_tcga)[which(colData(mae_tcga)$sample_type=="healthy"),"sample_name"], colnames(mae_tcga[["gex.fpkm"]]))]
+tmp_normal <- tmp_normal[intersect(rownames(tmp_normal), unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+row_normal <- DataFrame(gene = rownames(tmp_normal), row.names = rownames(tmp_normal))
+demixt_tcga <- DeMixT(
+	# Tumor samples
+	data.Y = SummarizedExperiment(
+		assays = list(gex = tmp_tumor),
+		rowData = row_tumor
+	), 
+	# Normal samples
+	data.N1 = SummarizedExperiment(
+		assays = list(gex = tmp_normal),
+		rowData = row_normal
+	),
+	# Default accuracy in estimating likelihood
+	nbin = 50
+)	
+
+## Taylor et al.
+tmp_tumor <- mae_taylor[["gex.rma"]][,match(colData(mae_taylor)[which(colData(mae_taylor)$sample_type=="primary"),"sample_name"], colnames(mae_taylor[["gex.rma"]]))]
+tmp_tumor <- tmp_tumor[intersect(rownames(tmp_tumor), unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+# Omit the NA fields
+tmp_tumor <- tmp_tumor[,-which(is.na(colnames(tmp_tumor)))]
+row_tumor <- DataFrame(gene = rownames(tmp_tumor), row.names = rownames(tmp_tumor))
+tmp_normal <- mae_taylor[["gex.rma"]][,match(colData(mae_taylor)[which(colData(mae_taylor)$sample_type=="normal"),"sample_name"], colnames(mae_taylor[["gex.rma"]]))]
+tmp_normal <- tmp_normal[intersect(rownames(tmp_normal), unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+row_normal <- DataFrame(gene = rownames(tmp_normal), row.names = rownames(tmp_normal))
+demixt_taylor <- DeMixT(
+	# Tumor samples
+	data.Y = SummarizedExperiment(
+		assays = list(gex = tmp_tumor),
+		rowData = row_tumor
+	), 
+	# Normal samples
+	data.N1 = SummarizedExperiment(
+		assays = list(gex = tmp_normal),
+		rowData = row_normal
+	),
+	# Default accuracy in estimating likelihood
+	nbin = 50
+)	
+
+
+
 
 ## ----
 
