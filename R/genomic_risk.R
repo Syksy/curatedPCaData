@@ -245,6 +245,10 @@ genomic_risk <- function(mae,
 #' Various genomic scores
 #'
 #' AR score by Hieronymus et al 2006 as used by TCGA 2015
+#' Quote: "To address these questions, we sought to infer the AR output of tumors 
+#' by calculating an AR activity score from the expression pattern of 20 genes that 
+#' are experimentally validated AR transcriptional targets (Hieronymus et al., 2006)."
+#'
 #' @noRd
 #' @keywords internal
 genomic_score <- function(
@@ -304,6 +308,7 @@ genomic_score <- function(
 		ar_genes <- list(
 			"KLK3" = c("KLK3", "PSA", "APS", "KLK2A1"), # Possibly HK3; ambiguous
 			"KLK2" = c("KLK2", "HGK-1", "HGK.1", "KLK2A2"), # Possibly HK2; ambiguous
+			"PMEPA1" = c("PMEPA1", "STAG1", "TMEPAI")
 			"ABCC4" = c("ABCC4", "MRP4", "MOATB", "MOAT-B", "MOAT.B"),
 			"NKX3-1" = c("NKX3-1", "NKX3.1", "BAPX2", "NKX3A"),
 			"C1orf116" = c("C1orf116", "SARG", "FLJ36507", "MGC2742", "MGC4309"),
