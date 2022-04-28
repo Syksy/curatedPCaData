@@ -303,12 +303,12 @@ genomic_score <- function(
 	}
 	# TCGA version of AR score supporting gene aliases and different naming conventions
 	
-	if(base::tolower(test) == "ar"){		
+	if(base::tolower(test) %in%  c("ar", "ar score", "ar-score")){		
 		# Aliases queried using https://www.genecards.org/
 		ar_genes <- list(
 			"KLK3" = c("KLK3", "PSA", "APS", "KLK2A1"), # Possibly HK3; ambiguous
 			"KLK2" = c("KLK2", "HGK-1", "HGK.1", "KLK2A2"), # Possibly HK2; ambiguous
-			"PMEPA1" = c("PMEPA1", "STAG1", "TMEPAI")
+			"PMEPA1" = c("PMEPA1", "STAG1", "TMEPAI"),
 			"ABCC4" = c("ABCC4", "MRP4", "MOATB", "MOAT-B", "MOAT.B"),
 			"NKX3-1" = c("NKX3-1", "NKX3.1", "BAPX2", "NKX3A"),
 			"C1orf116" = c("C1orf116", "SARG", "FLJ36507", "MGC2742", "MGC4309"),
@@ -358,6 +358,8 @@ genomic_score <- function(
 		}))
 		names(res) <- colnames(gex)
 		res		
+	}else{
+		stop(paste("Unknown genomic score parameter:", type))
 	}
 }
 
