@@ -295,6 +295,18 @@ The datasets were manually selected based on various criteria, such as:
 - Clinical data availability and reliability
 - Design of the study
 
+### Studies
+
+```{r studies}
+
+studies <- matrix(NA, nrow=nrow(dats), ncol=5)
+colnames(studies) <- c("MAE-object", "Study name(s)", "GEX/CNA/MUT platform(s)", "Notes", "Reference(s)")
+	
+knitr::kable(studies, caption="Study characteristics")
+
+```
+
+
 ### Curated clinical variables
 
 The ```curatedPCaData```-package has been curated with an emphasis on the following primary clinical metadata, which were extracted and cleaned up always when available:
