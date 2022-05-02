@@ -208,7 +208,6 @@ for(col in 1:length(maes)){
 			slotmat[row,col] <- length(colnames(mae_obj[[rownames(slotmat)[row]]]))
 			sampnames[[length(sampnames)]][[length(sampnames[[length(sampnames)]])+1]] <- colnames(mae_obj[[rownames(slotmat)[row]]])
 			names(sampnames[[length(sampnames)]])[length(sampnames[[length(sampnames)]])] <- rownames(slotmat)[row]
-			#slotmat[row,col] <- "x"
 		}
 	}
 }
@@ -297,13 +296,78 @@ The datasets were manually selected based on various criteria, such as:
 
 ### Studies
 
-```{r studies}
+```{r studies, results = 'asis', echo=FALSE}
 
-studies <- matrix(NA, nrow=nrow(dats), ncol=5)
-colnames(studies) <- c("MAE-object", "Study name(s)", "GEX/CNA/MUT platform(s)", "Notes", "Reference(s)")
-	
-knitr::kable(studies, caption="Study characteristics")
+studies <- matrix("", nrow=nrow(dats), ncol=7)
+colnames(studies) <- c("MAE-object", "Study short name(s)", "Sample types", "GEX/CNA/MUT platform(s)", "Notes", "Data source", "Reference(s)")
+studies[,"MAE-object"] <- dats[,"Item"]
+studies[,2] <- gsub(" MAE-object", "", dats[,2])
+for(mae in studies[,"MAE-object"]){
+	w <- which(mae == studies[,"MAE-object"])
+	eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))	
+	samptypes <- table(colData(mae_obj)$sample_type)
+	sampnames <- names(samptypes)
+	studies[w,"Sample types"] <- paste(paste(sampnames, samptypes, sep=": "), collapse=", ")
+	# Annotate additional useful information and append to correct positions
+	if(mae == "mae_abida"){
+		studies[w,"Data source"] <- "cBioPortal"
+	}else if(mae == "mae_baca"){
+		studies[w,"Data source"] <- "cBioPortal"
+		studies[w,"Notes"] <- "CNA only"
+	}else if(mae == "mae_barbieri"){
+		studies[w,"Data source"] <- "cBioPortal"
+	}else if(mae == "mae_barwick"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "Custom DASL"
+	}else if(mae == "mae_chandran"){
+		studies[w,"Data source"] <- "GEO"	
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL8300 [HG_U95Av2]"
+	}else if(mae == "mae_friedrich"){
+		studies[w,"Data source"] <- "GEO"	
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "Custom Agilent array"
+	}else if(mae == "mae_hieronymus"){
+		studies[w,"Data source"] <- "GEO"	
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL8737 Agilent-021529 Human CGH"
+		studies[w,"Notes"] <- "CNA only"
+	}else if(mae == "mae_icgcca"){
+		studies[w,"Data source"] <- "ICGC Data Portal (PRAD-CA)"	
+		studies[w,"Notes"] <- "Canadian data from International Cancer Genome Collaboratory"
+	}else if(mae == "mae_igc"){
+		studies[w,"Data source"] <- "GEO"	
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL570 [HG-U133_Plus_2]"
+	}else if(mae == "mae_kim"){
+		studies[w,"Data source"] <- "GEO"	
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL5188 [HuEx-1_0-st]"
+	}else if(mae == "mae_kunderfranco"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL887 Agilent-012097 Human 1A Microarray (V2)"		
+	}else if(mae == "mae_ren"){
+		studies[w,"Data source"] <- "cBioPortal"
+	}else if(mae == "mae_sun"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL96 [HG-U133A]"		
+	}else if(mae == "mae_taylor"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"Notes"] <- "Also known as MSKCC"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GEX: GPL5188 [HuEx-1_0-st], CNA: GPL4091 Agilent CGH"		
+	}else if(mae == "mae_tcga"){
+		studies[w,"Data source"] <- "Genomics Data Commons (GDC)"
+	}else if(mae == "mae_true"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL3834 FHCRC Human Prostate PEDB cDNA v3 / v4"		
+	}else if(mae == "mae_wallace"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL571 [HG-U133A_2]"
+	}else if(mae == "mae_wang"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL96 [HG-U133A]"	
+	}else if(mae == "mae_weiner"){
+		studies[w,"Data source"] <- "GEO"
+		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL5175 [HuEx-1_0-st]"	
+	}
 
+}
+knitr::kable(studies, caption="Key study characteristics")
 ```
 
 
