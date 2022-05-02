@@ -15,6 +15,9 @@ GDCdata/
 MANIFEST.TXT
 inst/doc
 
+# Possible temporary files by DeMixT runs
+Hessian_Matrix/
+
 # ignore random scripts
 R/clinical_recoding.R
 R/load_data.R
