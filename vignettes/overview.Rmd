@@ -370,6 +370,21 @@ for(mae in studies[,"MAE-object"]){
 knitr::kable(studies, caption="Key study characteristics")
 ```
 
+### PCA plots 
+
+Studies that have been generated using the same array platform, such as HG-U133A (GEO platform code GPL96) for Sun et al. and Wang et al. have same gene annotations, as these platforms have been processed using the same latest annotation information. Similarly, HuEx-1_0-st in Taylor et al. (GPL5188) has the same gene annotations as Kim et al.
+
+Unsupervised learning is a useful technique for generating a ballpark view to the datasets. For example, one can quickly inspect whether the expression values overlap greatly, or if there are consistent differences, such as batch effects between studies. Technical variation in data processing between studies has been minimized by using a harmonized processing pipeline, in this case by processing the raw CEL files using RMA in similar manner for all studies. 
+
+Let us plot Principal Component Analysis (PCA) plots for these two studies with overlapping genes, and plot the two orthogonal axes with highest variation by projecting down the whole transcriptome to just these two principal components (PC):
+
+```{r pcas}
+
+
+
+``` 
+
+
 
 ### Curated clinical variables
 
