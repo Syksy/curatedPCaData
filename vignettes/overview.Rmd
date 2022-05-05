@@ -253,7 +253,7 @@ This vignette introduces `curatedPCaData` and provides an overview for the packa
     
 These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune deconvolution results and risk scores. 
 Not all datasets will contain each of these elements but at minimum will contain `clinical_*.rda` and either `gex_*.rda` or `cna_*.rda`.
-These individual elements are combined into a `MultiAssayExperiment object` (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda`. These `MAE` objects are then exported by `curatedPCaData`.
+These individual elements are combined into a `MultiAssayExperiment object` (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda` [Ramos et al., 2017]. These `MAE` objects are then exported by `curatedPCaData`.
 
 For a comprehensive guide on how to neatly handle such `MAE` objects, refer to the MutliAssayExperiment user guide (or cheat-sheets): [MAE User Guide](https://www.bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/MultiAssayExperiment.html) .
 
@@ -288,10 +288,10 @@ mae_tcga
 
 The datasets were manually selected based on various criteria, such as:
 
-- Primary data availability
-- Data types (gene expression, copy number alteration, mutation data, ...)
+- Primary data availability (preferably raw data available)
+- Data platform types and their overlap (gene expression, copy number alteration, mutation data, ...)
 - End points (e.g. recurrence, Gleason, ...)
-- Clinical data availability and reliability
+- Clinical metadata availability and reliability
 - Design of the study
 
 ### Studies
@@ -459,32 +459,32 @@ In `curatedPCaData` we refer to derived variables as further downstream variable
 
 ## Immune deconvolution
 
-Tumor progression depends on the immune cell composition in the tumor microenvironment. The '[immunedeconv](https://github.com/icbi-lab/immunedeconv)' package consists of different computational methods to computationally estimate immune cell content using gene expression data. In addition, CIBERTSORTx is provided externally, as this method required registered access. For user convenience, it has been run separately and provided as a slot in the MAE objects.
+Tumor progression depends on the immune cell composition in the tumor microenvironment. The '[immunedeconv](https://github.com/icbi-lab/immunedeconv)' package consists of different computational methods to computationally estimate immune cell content using gene expression data. In addition, CIBERTSORTx is provided externally, as this method required registered access. For user convenience, it has been run separately and provided as a slot in the MAE objects. The other methods have been run using the ```immunedeconv``` package [Sturm et al., 2019] and code for reproducing these derived variables are provided alongside the package.
 
 In this package, we provide estimates of immune cell content from the following deconvolution methods:
 
-1. quantiseq
-2. xcell
-3. epic
-4. mcp (counter)
-5. cibersort(x)
+- quantiseq
+- xcell
+- epic
+- mcp (counter)
+- cibersort(x)
 
 The estimates from each of these methods are stored in the MAE object as a seperate assay as shown for example in the Taylor dataset
 ```{r}
 mae_taylor
 ```
 
-To access the quantiseq results for the Taylor et. al dataset, the following command can be used
+To access the quantiseq results for the Taylor et. al dataset, these pre-computed values can be obtained from the corresponding slot in the MAE-object:
 ```{r}
-head(mae_taylor[["cibersort"]])[1:5,1:5]
+head(mae_taylor[["cibersort"]])[1:5,1:3]
 ```
 
-Similarly to access results from the other methods, the following can be run
+Similarly to access results from the other immune deconvolution methods, the following slots are available:
 ```{r}
-head(mae_taylor[["quantiseq"]])[1:5,1:5]
-head(mae_taylor[["xcell"]])[1:5,1:5]
-head(mae_taylor[["epic"]])[1:5,1:5]
-head(mae_taylor[["mcp"]])[1:5,1:5]
+head(mae_taylor[["quantiseq"]])[1:5,1:3]
+head(mae_taylor[["xcell"]])[1:5,1:3]
+head(mae_taylor[["epic"]])[1:5,1:3]
+head(mae_taylor[["mcp"]])[1:5,1:3]
 ```
 
 Each row of the deconvolution matrix represents the content of a certain immune cell type and the columns represent the patient sample IDs. The variables on the rows are specific for each method. Further, it should be noted that not all methods could be run on all datasets due to lack of overlap in genes of interest.
@@ -493,7 +493,7 @@ Each row of the deconvolution matrix represents the content of a certain immune 
 
 Tumor sample purities were run for studies which had separate normal samples (and their gene expression) available.
 
-The purity scores were calculated using DeMixT [Wang et al.], and was available for the studies:
+The purity scores were calculated using DeMixT [Wang et al., 2018], and was available for the studies:
 - ```mae_chandran```
 - ```mae_friedrich```
 - ```mae_kunderfranco```
@@ -516,25 +516,27 @@ plot(as.matrix(tcga_demixts[,2:3]), pch=16, xlab="DeMixT from curatedPCaData's G
 
 ## Risk scores and other metrics
 
-The slot ```scores``` is used to provide key risk scores or other informative metrics based on the primary data. These scores are stored in slot ```scores``` and can be accessed as a matrix as if they were variables on such platform:
+The slot ```scores``` is used to provide key risk scores or other informative metrics based on the primary data. These scores can be accessed as a matrix as if they were variables on an assay with this name:
 
 ```{r scores}
 mae_tcga[["scores"]][,1:4]
 ```
 
-The following Prostate Cancer risk scores are offered:
+The following PCa risk scores are offered:
 
 - ```Decipher``` [Herlemann et al., 2020]
 - ```Oncotype DX``` [Knezevic et al., 2013]
-- ```Prolaris``` [NICE Advice, 218]
+- ```Prolaris``` [NICE Advice, 2018]
 
-Further, the 20-gene Androgen Receptor (AR) score is calculated as described in the TCGA's Cell 2015 paper and provided in the ```scores``` slot on the row:
+Further, the 20-gene Androgen Receptor (AR) score is calculated as described in the TCGA's Cell 2015 paper:
 
 - ```AR_score``` [Cancer Genome Atlas Research Network, 2015]
 
 # Citations
 
-- Cancer Genome Atlas Research Network. The Molecular Taxonomy of Primary Prostate Cancer. Cell. 2015;163(4):1011-1025. doi:10.1016/j.cell.2015.10.025
+- Ramos, M., Schiffer, L., Re, A., Azhar, R., Basunia, A., Rodriguez, C., Chan, T., Chapman, P., Davis, S. R., Gomez-Cabrero, D., Culhane, A. C., Haibe-Kains, B., Hansen, K. D., Kodali, H., Louis, M. S., Mer, A. S., Riester, M., Morgan, M., Carey, V., & Waldron, L. (2017). Software for the Integration of Multiomics Experiments in Bioconductor. Cancer research, 77(21), e39–e42. https://doi.org/10.1158/0008-5472.CAN-17-0344
+- Sturm, G., Finotello, F., Petitprez, F., Zhang, J. D., Baumbach, J., Fridman, W. H., List, M., & Aneichyk, T. (2019). Comprehensive evaluation of transcriptome-based cell-type quantification methods for immuno-oncology. Bioinformatics (Oxford, England), 35(14), i436–i445. https://doi.org/10.1093/bioinformatics/btz363
+- Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011–1025. https://doi.org/10.1016/j.cell.2015.10.025
 - Wang, Z., Cao, S., Morris, J. S., Ahn, J., Liu, R., Tyekucheva, S., Gao, F., Li, B., Lu, W., Tang, X., Wistuba, I. I., Bowden, M., Mucci, L., Loda, M., Parmigiani, G., Holmes, C. C., & Wang, W. (2018). Transcriptome Deconvolution of Heterogeneous Tumor Samples with Immune Infiltration. iScience, 9, 451–460. https://doi.org/10.1016/j.isci.2018.10.028
 - Herlemann, A., Huang, H. C., Alam, R., Tosoian, J. J., Kim, H. L., Klein, E. A., Simko, J. P., Chan, J. M., Lane, B. R., Davis, J. W., Davicioni, E., Feng, F. Y., McCue, P., Kim, H., Den, R. B., Bismar, T. A., Carroll, P. R., & Cooperberg, M. R. (2020). Decipher identifies men with otherwise clinically favorable-intermediate risk disease who may not be good candidates for active surveillance. Prostate cancer and prostatic diseases, 23(1), 136–143. https://doi.org/10.1038/s41391-019-0167-9
 - Knezevic, D., Goddard, A. D., Natraj, N., Cherbavaz, D. B., Clark-Langone, K. M., Snable, J., Watson, D., Falzarano, S. M., Magi-Galluzzi, C., Klein, E. A., & Quale, C. (2013). Analytical validation of the Oncotype DX prostate cancer assay - a clinical RT-PCR assay optimized for prostate needle biopsies. BMC genomics, 14, 690. https://doi.org/10.1186/1471-2164-14-690
