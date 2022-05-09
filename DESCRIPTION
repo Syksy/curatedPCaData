@@ -63,10 +63,11 @@ Suggests:
     hgu95b.db,
     hgu95ccdf,
     hgu95c.db,
-    VennDiagram,
     org.Hs.eg.db,
     DBI,
     UCSCXenaTools,
     cBioPortalData,
     AnVIL,
-    GenomicRanges
+    GenomicRanges,
+    corrplot,
+    ComplexHeatmap
