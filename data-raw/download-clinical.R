@@ -642,6 +642,7 @@ curated <- curated %>%
   dplyr::mutate(study_name = "Hieronymus, et al.") %>% 
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(sample_type = "primary") %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
     is.na(uncurated$`survivalevent:ch1`) ~ 0,
     TRUE ~ 1
