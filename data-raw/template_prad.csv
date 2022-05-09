@@ -44,7 +44,7 @@ metastatic_site,character,non-unique,optional,prostate|liver|lung|bone|brain|lym
 microdissected,integer,non-unique,optional,1|0,microdissected or not,,
 frozen_ffpe,character,non-unique,optional,frozen|FFPE,frozen or FFPE,,
 other_feature,character,non-unique,optional,CRPC|cribriform|neuroendocrine,other descriptions of the sample,,
-batch,character,non-unique,optional,*,An way that describes a batch if a batch effect can be modeled (can be numeric or categorigal),,
+batch,character,non-unique,optional,*,A way that describes a batch and provides an effect that can be modeled (can be numeric or categorical),,
 other_sample,string,non-unique,optional,*,"a string that captures any additional sample information, features separated by bar (e.g. feature 1|feature 2|feature 3)",,
 tumor_purity_pathology,integer,non-unique,optional,[0-100],estimate of the tumor purity according to pathological assessment,,
 tumor_purity_demixt,integer,non-unique,optional,[0-100],estimate of the tumor purity in the sample using the DeMixT method,,

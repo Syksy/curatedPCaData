@@ -26,6 +26,7 @@ library(MultiAssayExperiment)
 library(RaggedExperiment)
 library(survival)
 library(survminer)
+library(corrplot)
 ```
 
 # Example analyses with curatedPCaData
@@ -44,20 +45,20 @@ A quick cheat sheet and then be consulted: https://bioconductor.org/packages/rel
 
 Traditional Gleason grade is the sum of Gleason major and Gleason minor. This can be exemplified as being clearly associated with biochemical recurrence (BCR) via lonk-rank tests in Kaplan-Meier curves:
 
-```{r gleason_tcga, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason score vs BCR (TCGA)"}
+```{r gleason_tcga, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason grade group vs BCR (TCGA)"}
 clin_tcga <- as.data.frame(colData(mae_tcga))
 bcr_tcga <- Surv(time=clin_tcga$days_to_disease_specific_recurrence, event=clin_tcga$disease_specific_recurrence_status)
 
-fit_gleason_tcga <- survfit(bcr_tcga ~ clin_tcga$gleason_grade)
-ggsurvplot(fit_gleason_tcga, risk.table = TRUE, data = clin_tcga, pval=TRUE, title="TCGA BCR vs Gleason grades")
+fit_gleason_tcga <- survfit(bcr_tcga ~ clin_tcga$grade_group)
+ggsurvplot(fit_gleason_tcga, risk.table = TRUE, data = clin_tcga, pval=TRUE, title="TCGA BCR vs Gleason grade groups", xscale = "d_y", break.time.by = 365.25*2, xlim=365.25*c(0,10), xlab="Time (years)")
 ```
 
-```{r gleason_taylor, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason score vs BCR (Taylor et al.)"}
+```{r gleason_taylor, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason grade group vs BCR (Taylor et al.)"}
 clin_taylor <- as.data.frame(colData(mae_taylor))
 bcr_taylor <- Surv(time=clin_taylor$days_to_disease_specific_recurrence, event=clin_taylor$disease_specific_recurrence_status)
 
-fit_gleason_taylor <- survfit(bcr_taylor ~ clin_taylor$gleason_grade)
-ggsurvplot(fit_gleason_taylor, risk.table = TRUE, data = clin_taylor, pval=TRUE, title="Taylor et al. BCR vs Gleason grades")
+fit_gleason_taylor <- survfit(bcr_taylor ~ clin_taylor$grade_group)
+ggsurvplot(fit_gleason_taylor, risk.table = TRUE, data = clin_taylor, pval=TRUE, title="Taylor et al. BCR vs Gleason grade groups", xscale = "d_y",, break.time.by = 365.25*2, xlim=365.25*c(0,10), xlab="Time (years)")
 ```
 
 ```{r gleason_barwick, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason score vs BCR (Barwick et al.)"}
@@ -65,33 +66,33 @@ clin_barwick <- as.data.frame(as.matrix(colData(mae_barwick)))
 bcr_barwick <- Surv(time=as.numeric(clin_barwick$days_to_disease_specific_recurrence), event=as.integer(clin_barwick$disease_specific_recurrence_status))
 
 fit_gleason_barwick <- survfit(bcr_barwick ~ clin_barwick$gleason_grade)
-ggsurvplot(fit_gleason_barwick, risk.table = TRUE, data = clin_barwick, pval=TRUE, title="Barwick et al. BCR vs Gleason grades")
+ggsurvplot(fit_gleason_barwick, risk.table = TRUE, data = clin_barwick, pval=TRUE, title="Barwick et al. BCR vs Gleason grade groups")
 ```
 
 #### Gleason and survival
 
 One must consider the distribution of events when conducting survival modelling. One dataset which has enough end-points to model overall survival is Abida et al., which depicted enough end-points for death, while other datasets represented a more benign form of the disease and thus survival modelling for death is not really feasible.
 
-```{r gleason_abida_death, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason score vs OS (Abida et al.)"}
+```{r gleason_abida_death, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason grade vs OS (Abida et al.)"}
 clin_abida <- as.data.frame(as.matrix(colData(mae_abida)))
 os_abida <- Surv(time=as.numeric(clin_abida$days_to_overall_survival), event=as.integer(clin_abida$overall_survival_status))
 
 fit_gleason_abida <- survfit(os_abida ~ clin_abida$gleason_grade)
-ggsurvplot(fit_gleason_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs Gleason grades")
+ggsurvplot(fit_gleason_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs Gleason grade", xscale = "d_y", break.time.by = 365.25, xlim=365.25*c(0,6), xlab="Time (years)")
 ```
 
 Rather than Gleason grade in the metastatic disease, the site of metastasis maybe of more interest:
 
 ```{r metassite_abida_death, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Metastasis site vs OS (Abida et al.)"}
 fit_metassite_abida <- survfit(os_abida ~ clin_abida$metastatic_site)
-ggsurvplot(fit_metassite_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs Metastasis site")
+ggsurvplot(fit_metassite_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs Metastasis site", xscale = "d_y", break.time.by = 365.25, xlim=365.25*c(0,6), xlab="Time (years)")
 ```
 
 Further, TMPRSS2-ERG fusion status (determined using gene expression) may be of interest:
 
 ```{r erg_abida_death, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Metastasis site vs OS (Abida et al.)"}
 fit_erg_abida <- survfit(os_abida ~ clin_abida$ERG_fusion_GEX)
-ggsurvplot(fit_erg_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs ERG-fusion")
+ggsurvplot(fit_erg_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs ERG-fusion", xscale = "d_y", break.time.by = 365.25, xlim=365.25*c(0,6), xlab="Time (years)")
 ```
 
 #### Genomic risk score
@@ -233,6 +234,10 @@ coxph_example_tcga <- coxph(y ~ x)
 summary(coxph_example_tcga)
 
 ```
+
+### Oncoprints
+
+
 
 
 # Session info
