@@ -65,6 +65,8 @@ return(i)
 #'
 #' @param mae MultiAssayExperiment-object which should be collapsed
 #' @param genes If only a subset of genes should be processed, a list for their names can be provided here
+#' @param omics Which omics are collapsed together; eligible: "mut" and "cna.gistic"
+#' @param join Type of matrix collapsing; "either" will include genes and samples found in either CNA or MUT, while "both" will only include genes and samples that were found in both
 #' @param field Name of the field to extract from RaggedExperiments
 #' @param map Mapping of values to names when collapsing; e.g. GISTIC values to words indicating copy number changes. List with element corresponding to 
 #'
@@ -75,17 +77,102 @@ return(i)
 wrapper_oncoprintify <- function(
 	mae,
 	genes,
+	omics = c("mut", "cna.gistic"),
+	join = "either",
 	field = "Variant_Classification",
 	map = list(
-		"cna.gistic" = c("-2" = "Deep deletion", "-1" = "Shallow deletion", "0" = "", "1" = "Low gain", "2" = "High gain")
+		"cna.gistic" = c("-2" = "Deep deletion", "-1" = "Deletion", "0" = "", "1" = "Gain", "2" = "High gain")
 	)
 ){
-	mutmat <- as.data.frame(RaggedExperiment::sparseAssay(mae[["mut"]], field))
+	# Either a custom set of genes or the whole set of available genes
 	if(missing(genes)){
 		genes <- rownames(mutmat)
 	}
 	
+	# Mutation portion
+	if("mut" %in% omics){
+		if(!"mut" %in% names(mae)){
+			warning("No mutation data found in the MAE object")
+			mutrag <- matrix(NA, nrow=0, ncol=0)
+		}else{
+			mutrag <- as.data.frame(RaggedExperiment::sparseAssay(mae[["mut"]], field))
+			# Loop and bind same genes
+			mutrag <- do.call("rbind", 
+				# Loop over the uniquefied gene names and collapse them together into concatenated character strings
+				by(mutrag, INDICES=gsub("\\.[1-99]", "", rownames(mutrag)), FUN=function(x){ apply(x, MARGIN=2,
+					FUN=function(y){
+						paste(na.omit(y), collapse=";")
+					})
+				})
+			)
+			# Subset to desired genes (if found)
+			mutmat <- mutrag[which(rownames(mutrag) %in% genes),]		
+		}
+	}
+
+	# CNA portion; mapping 	
+	if("cna.gistic" %in% omics){
+		if(!"cna.gistic" %in% names(mae)){
+			warning("No GISTIC CNA data found in the MAE object")
+			cnamat <- matrix(NA, nrow=0, ncol=0)
+		}else{
+			# Pick selected genes and map GISTIC coding to oncoprint-names
+			cnamat <- apply(mae[["cna.gistic"]][which(rownames(mae[["cna.gistic"]]) %in% genes),], MARGIN=2, FUN=function(x){
+				map$cna.gistic[match(x, names(map$cna.gistic))]
+			})
+			rownames(cnamat) <- rownames(mae[["cna.gistic"]][which(rownames(mae[["cna.gistic"]]) %in% genes),])
+		}
+	}
 	
+	# Populate joint matrices
+	if(all(c("cna.gistic", "mut") %in% omics)){	
+		if(join == "either"){
+			cols <- unique(c(colnames(mutmat), colnames(cnamat)))
+			rows <- unique(c(rownames(mutmat), rownames(cnamat)))
+			oncomat <- matrix("", nrow=length(rows), ncol=length(cols))
+			colnames(oncomat) <- cols
+			rownames(oncomat) <- rows
+			# Need to handle with care rows and columns which might not be present in both
+			for(row in rows){
+				for(col in cols){
+					#print(paste(cnamat[cnarow,cnacol], mutmat[mutrow, mutcol], sep=";"))
+					if(!row %in% rownames(mutmat) | !col %in% colnames(mutmat)){
+						mutpart <- NA
+					}else{
+						mutpart <- mutmat[row,col]
+					}
+					if(!row %in% rownames(cnamat) | !col %in% colnames(cnamat)){
+						cnapart <- NA
+					}
+					else{
+						cnapart <- cnamat[row,col]
+					}
+					oncomat[row,col] <- gsub("^;NA|;NA$", "", paste(cnapart, mutpart, sep=";"))
+				}			
+			}
+		}else if(join == "both"){
+			# Only including intersections for rows and columns, so these can safely be called directly
+			cols <- intersect(colnames(mutmat), colnames(cnamat))
+			rows <- intersect(rownames(mutmat), rownames(cnamat))
+			oncomat <- matrix("", nrow=length(rows), ncol=length(cols))
+			colnames(oncomat) <- cols
+			rownames(oncomat) <- rows
+			for(row in rows){
+				for(col in cols){
+					oncomat[row,col] <- gsub("^;|;$", "", paste(mutmat[row,col], cnamat[row,col], sep=";"))
+				}			
+			}
+		}else{
+			stop(paste("Invalid parameter 'join':", join, "(should be 'either' or 'both')"))
+		}
+	}else if(all(omics == "cna.gistic")){
+		oncomat <- cnamat
+	}else if(all(omics == "mut")){
+		oncomat <- mutmat
+	}
+	
+	# Return the oncoprint-friendly matrix
+	oncomat
 }
 
 #' A wrapper function for sweeping over whole curatedPCaData-package over all 'omics and datasets
@@ -97,7 +184,8 @@ wrapper_oncoprintify <- function(
 #'
 #' @return A list of lists containing all hits for the queried gene
 #'
-#' 
+#' @noRd
+#' @keywords internal
 wrapper_sweep <- function(
 	gene,
 	aliases = FALSE,
@@ -116,7 +204,7 @@ wrapper_sweep <- function(
 		# Loop over omics and query rows accordingly
 		for(j in 1:length(omics)){
 			omic <- mae_obj[[omics[j]]]
-			if(exact){
+			if(!exact){
 				res[[i]][[length(res[[i]])+1]] <- omic[grep(gene, rownames(omic), value=TRUE),]
 			}else{
 				res[[i]][[length(res[[i]])+1]] <- omic[which(rownames(omic) %in% gene),,drop=drop]
@@ -130,7 +218,3 @@ wrapper_sweep <- function(
 	# Return the resulting list of lists
 	res
 }
-
-test1 <- wrapper_sweep("TP53")
-test2 <- wrapper_sweep("TP53", exact = TRUE)
-
