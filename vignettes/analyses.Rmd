@@ -168,6 +168,33 @@ boxplot(demixt_tcga ~ pathpurity_tcga, xlab="Purity assessed by pathology", ylab
 stripchart(demixt_tcga ~ pathpurity_tcga, vertical=TRUE, add=TRUE, pch=16)
 ```
 
+## Correlations between genes and derived variables
+
+### Purity, risk scores, and AR score
+
+```{r purity_risks_ar, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Correlations between DeMixT purity scores, risk scores, and AR score in TCGA"}
+correlations <- cor(as.matrix(wideFormat(mae_tcga[,,c("purity", "scores")])[,2:6]), use="na.or.complete")
+corrplot::corrplot(correlations)
+```
+
+### TP53 and immune cell infiltration
+
+```{r tp53mut_and_cibersort}
+
+tp53 <- wideFormat(mae_tcga["TP53",,"mut"])
+
+
+
+```
+
+### Derived variables vs. end-points 
+
+```{r tcellinf_bcr}
+
+
+
+```
+
 ## Multi-omics
 
 ### Copy number deletion and gene expression
@@ -237,8 +264,53 @@ summary(coxph_example_tcga)
 
 ### Oncoprints
 
+curatedPCaData offers wrapper functions to collapse over omics for creating oncoprints. ```ComplexHeatmap```-package offers convenient oncoprint functionality, which will be exemplified here. Let us define a subset of interesting genes and then query a MAE object with both gene expression and mutation data to collapse them into an oncoprint:
+
+```{r oncoprintify, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Taylor et al. oncoprint with any gene and sample hits visualized"}
+library(ComplexHeatmap)
+
+# Genes of interest
+genes <- c("TP53", "PTEN", "FGFR3", "BRCA2")
+
+# Define how the alterations are shown in the oncoprint
+alter_fun = list(
+    background = function(x, y, w, h) 
+        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "#CCCCCC", col = NA)),
+    # Amplifications
+    "Gain" = function(x, y, w, h) 
+        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "orange", col = NA)),
+    "High gain" = function(x, y, w, h) 
+        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "red", col = NA)),
+    # Deletions
+    "Deep deletion" = function(x, y, w, h) 
+        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "blue", col = NA)),
+    "Deletion" = function(x, y, w, h) 
+        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "cyan", col = NA)),
+    # Missense SNV
+    "Missense_Mutation" = function(x, y, w, h) 
+        grid.rect(x, y, w*0.7, h*0.7, gp = gpar(fill = "green", col = NA))
+)
+
+# Wrapper function helps sweep over omics in a MAE object
+taylor_oncoprint_1 <- curatedPCaData:::wrapper_oncoprintify(mae_taylor, genes=genes)
+
+# Draw the oncoprint
+ComplexHeatmap::oncoPrint(taylor_oncoprint_1, alter_fun = alter_fun)
+
+```
+
+However, it should be noted that the overlap between omics is not perfect. Therefore, if one wishes to print an oncoprint with only fully present data, parameter ```join = "both"``` should be used:
+
+```{r oncoprintify2, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Taylor et al. oncoprint with only intersection of genes and samples available on both omics visualized"}
+
+# Only samples with both CNA and mutation calls and for which all genes are present
+taylor_oncoprint_2 <- curatedPCaData:::wrapper_oncoprintify(mae_taylor, genes=genes, join = "both")
+
+# Draw the oncoprint
+ComplexHeatmap::oncoPrint(taylor_oncoprint_2, alter_fun = alter_fun)
 
 
+```
 
 # Session info
 

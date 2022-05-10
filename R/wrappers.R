@@ -147,7 +147,7 @@ wrapper_oncoprintify <- function(
 					else{
 						cnapart <- cnamat[row,col]
 					}
-					oncomat[row,col] <- gsub("^;NA|;NA$", "", paste(cnapart, mutpart, sep=";"))
+					oncomat[row,col] <- gsub("NA", "", gsub("^NA$|^;NA|;NA$|^;$|^;|;$", "", paste(cnapart, mutpart, sep=";")))
 				}			
 			}
 		}else if(join == "both"){
