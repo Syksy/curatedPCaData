@@ -1060,6 +1060,181 @@ generate_cna_geo <- function(
 	cna
 }
 
+#' Download copy number variant data from GEO using study specific id and process it to GISTIC compatible input format
+#' 
+#' @param geo_code character string indicating name of GEO dataset. Default is "GSE21035"
+#' (Taylor et al)
+#' @param file_directory character string indicating path for downloading raw 
+#' GEO data
+#' @param cleanup logical value to remove intermediate files 
+#' @param ... additional arguments
+#' @noRd
+#' @keywords internal
+generate_gistic_geo <- function(
+	geo_code = c(
+		"GSE54691",	# Hieronymus et al.
+		"GSE21035"	# Taylor et al. (aCGH only GSE-subset)
+	),
+	file_directory, 
+	filter_regex,
+	cleanup = TRUE, 
+	...
+){
+	if(!missing(file_directory)) here::set_here(file_directory)
+	# Supplementary files include the raw CEL files, possibility to use regular expression filter
+	if(missing(filter_regex)){
+		supfiles <- GEOquery::getGEOSuppFiles(geo_code)
+	}else{
+		supfiles <- GEOquery::getGEOSuppFiles(geo_code, filter_regex = filter_regex)
+	}
+  
+	# Open the tarball(s)
+	utils::untar(tarfile = rownames(supfiles))
+  
+	##
+	# same rCGH pipeline applied to datasets:
+	# Taylor et al. : GPL4091	Agilent-014693 Human Genome CGH Microarray 244A (Feature number version)
+	# Hieronymus et al. : GPL8737	Agilent-021529 Human CGH Whole Genome Microarray 1x1M (G4447A) (Probe Name version)
+	##
+	if(geo_code %in% c(
+		"GSE21035", # Taylor
+		"GSE54691" # Hieronymus
+	)){
+		# Extract sample names in Taylor et al. and format to PCA####, for this need to access GSM-level metadata
+		if(geo_code == "GSE21035"){
+			# Access metadata based on GSM####
+			samplenames <- lapply(gsub(".txt.gz", "", grep("GSM", list.files(), value=TRUE)), FUN=function(x){ GEOquery::getGEO(x, GSEMatrix=FALSE, getGPL=FALSE)@header$title })
+			# Parse to just PCA#### from the title, splitting on whitespace character ' '
+			samplenames <- unlist(lapply(samplenames, FUN=function(x) { strsplit(x, " ")[[1]][3] }))
+			# File names as they are
+			filenames <- grep("GSM", list.files(), value=TRUE)
+			# Omit cell lines
+			filenames <- filenames[grep("PCA", samplenames)]
+			samplenames <- samplenames[grep("PCA", samplenames)]
+		}
+		# Hieronymus et al names based on GSM####
+		else{
+			# File names end in suffix .txt.gz, sample names have this string replaced
+			samplenames <- gsub(".txt.gz", "", grep("GSM", list.files(), value=TRUE))
+			filenames <- grep("GSM", list.files(), value=TRUE)
+		}
+		# For now, the package 'rCGH' has to be available in the workspace,
+		require(rCGH)
+		# otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
+		# Read in Agilent 2-color data
+		cna <- lapply(1:length(filenames), FUN = function(i) { 
+			try({
+				cat("\nProcessing: ",filenames[i],"\n") 
+				rCGH::readAgilent(filenames[i], genome = "hg38", sampleName = samplenames[i]) 
+			})
+		})
+		#> list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")]
+		#[1] "GSM525755.txt" "GSM525763.txt"
+		# Some files appear broken in Taylor et al; missing columns?
+
+		# Not all files can always be successfully processed
+		tryerr <- which(lapply(cna, FUN = class) == "try-error")
+		if(length(tryerr)>0){
+			# Warn of try-errors
+			warning(paste("Error while processing files: ", 
+				# Collapse file names
+				paste(list.files()[which(unlist(lapply(cna, FUN=class))=="try-error")], collapse=", ")
+			))
+			# Omit data that could not be succcessfully read
+			cna <- cna[-tryerr]
+		}
+
+		# Signal adjustments
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::adjustSignal(z) 
+			})
+		})
+		# Segmentation
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::segmentCGH(z) 
+			})
+		})
+		# EM-algorithm normalization
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::EMnormalize(z) 
+			})
+		})
+		## Samplenames picked prior to this
+		# Remove additional suffixes from sample names
+		#cna <- lapply(cna, FUN = function(z){ 
+		#	try({
+		#		if(!"rCGH-Agilent" %in% class(z)){
+		#			stop("This function is intended for Agilent aCGH analyzed with rCGH R Package (class \'rCGH-Agilent\')")		
+		#		}
+		#		# e.g. transform "GSM525575.txt|.gz" -> "GSM525575"
+		#		z@info["sampleName"] <- gsub(pattern = ".gz|.txt", replacement = "", z@info["fileName"])
+		#		z
+		#	}) 
+		#})
+		# Save sample names separately (of 'length(cna)')
+		#samplenames <- unlist(lapply(cna, FUN = function(z) { z@info["sampleName"] }))
+		# Reformat samplenames in Hieronymus
+		if(geo_code =="GSE54691"){
+			# Pick GSM-part in GSM###_PCA###
+			samplenames <- unlist(lapply(samplenames, FUN=function(z) { strsplit(z, "_")[[1]][[1]]}))
+		}	
+		# Get segmentation table
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::getSegTable(z)
+			})
+		})
+		# Get per-gene table
+		cna <- lapply(cna, FUN = function(z){
+			try({
+				rCGH::byGeneTable(z)
+			})
+		})
+		# Extract all unique gene symbols present over all samples
+		genenames <- unique(unlist(lapply(cna, FUN = function(z) { z$symbol })))
+		# Bind genes to rows, name samples afterwards
+		cna <- do.call("cbind", lapply(cna, FUN = function(z){
+			# Return CNAs as Log2Ratios
+			z[match(genenames, z$symbol), "Log2Ratio"]
+		}))
+		# Name rows and columns to genes and sample names, respectively
+		rownames(cna) <- genenames
+		colnames(cna) <- samplenames
+		# CNA matrix is ready
+		cna <- as.matrix(cna)
+		cna <- cna[!is.na(rownames(cna)),]
+	}
+	# Other (placeholder) - should probably place this in the beginning so it 
+	# doesnt try to run through all the beginning steps 
+	else if(geo_code == ""){
+		stop("Must supply a GEO id")
+	}
+	# Unknown
+	else{
+		stop("Unknown GEO id, see allowed parameter values for geo_code")
+	}
+
+	# Remove downloaded files
+	# TODO: Make sure appropriate permissions exist for removing files
+	if(cleanup){
+		# First GEO download
+		file.remove(rownames(supfiles))
+		# TODO: Tarballs
+		#file.remove(gz_files)
+		# Remove empty folder
+		file.remove(paste0(here::here(), "/", geo_code))
+	}
+	# Sort genes to alphabetic order for consistency
+	cna <- cna[order(rownames(cna)),]
+	# Return numeric matrix
+	cna <- as.matrix(cna)
+	cna <- cna %>% janitor::remove_empty(which = c("rows", "cols"))
+	cna
+}
+
 
 #' Download generic 'omics data from cBioPortal using dataset specific query
 #' 
@@ -1697,8 +1872,9 @@ generate_icgc <- function(
 generate_xenabrowser <- function(
 	id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
 	type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
-	# Function for collapsing rows for identical gene symbols
-	collapse_fun = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
+	# Function for collapsing rows for identical gene symbols; separate for gene expression (GEX) or copy number alteration (CNA) data, as latter is rounded to integers in case of median giving out means between two mid-most samples
+	collapse_fun_gex = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
+	collapse_fun_cna = function(z) {apply(z, MARGIN = 2, FUN = function(x) { round(stats::median(x),0) })},	
 	# If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
 	truncate = TRUE,
 	# Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
@@ -1744,7 +1920,7 @@ generate_xenabrowser <- function(
 			#> all(rownames(map) == rownames(dat))
 			#[1] TRUE
 			# Reassign gene names from ENSEMBL gene ids to gene symbols collapsing identical names and arranging to alphabetic order
-			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun))
+			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_gex))
 			dat <- dat[order(rownames(dat)),]
 			#> dim(dat)
 			#[1] 58387   551
@@ -1778,7 +1954,7 @@ generate_xenabrowser <- function(
 			#[1] 19729   502
 			#
 			## Smaller dimension than for gex as expected
-			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun))
+			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_cna))
 			dat <- dat[order(rownames(dat)),]
 			# If column names should truncate last segment (sample -> patient id level truncation)
 			if(truncate>=1){
