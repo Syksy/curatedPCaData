@@ -184,9 +184,13 @@ wrapper_oncoprintify <- function(
 #'
 #' @return A list of lists containing all hits for the queried gene
 #'
+#' @examples
+#' wrapper_genesweep("hla")
+#' wrapper_genesweep("TP53", exact=TRUE)
+#'
 #' @noRd
 #' @keywords internal
-wrapper_sweep <- function(
+wrapper_genesweep <- function(
 	gene,
 	aliases = FALSE,
 	exact = FALSE,
@@ -216,5 +220,45 @@ wrapper_sweep <- function(
 	# Name the outermost nested list according to the datasets
 	names(res) <- maes
 	# Return the resulting list of lists
+	res
+}
+
+#' A wrapper function for sweeping a specific colData field over all datasets
+#'
+#' @param col Column name to query for (see template_prad for possible fields)
+#' @param exact Whether the query should be exact column name and not regular expression; defaults to FALSE
+#' @param drop Should matrices be dropped to vectors if only single hit occurs; defaults to FALSE
+#'
+#' @return A list of lists containing all hits for the queried gene
+#'
+#' @examples
+#' wrapper_metasweep("gleason")
+#' wrapper_metasweep("survival")
+#' wrapper_metasweep("sample_type", exact = TRUE)
+#'
+#' @noRd
+#' @keywords internal
+wrapper_metasweep <- function(
+	col,
+	exact = FALSE,
+	drop = FALSE
+){
+	res <- list()
+	# List of MAE objects
+	maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
+	# Query gene over omics
+	res <- lapply(maes, FUN=function(mae){
+		eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))
+		colDat <- MultiAssayExperiment::colData(mae_obj)
+		if(exact){
+			colDat[,col,drop=drop]
+		}else{
+			colDat[,grep(col, colnames(colDat)),drop=drop]
+		}
+		
+	})
+	# Name the result lists
+	names(res) <- maes	
+	# Return the resulting data frame
 	res
 }
