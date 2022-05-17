@@ -185,7 +185,7 @@ wrapper_oncoprintify <- function(
 #' @return A list of lists containing all hits for the queried gene
 #'
 #' @examples
-#' wrapper_genesweep("hla")
+#' wrapper_genesweep("HLA")
 #' wrapper_genesweep("TP53", exact=TRUE)
 #'
 #' @noRd
