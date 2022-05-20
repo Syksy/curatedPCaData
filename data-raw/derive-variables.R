@@ -1002,35 +1002,38 @@ mae_weiner <- addSlotMAE(mae_weiner,
 ## For start, DeMixT for tumor-control design
 ##
 
-## Chandran et al.
-chandran_demixt <- t(read.csv("data-raw/DeMixT_Chandran.txt", row.names=1))
-rownames(chandran_demixt) <- "demixt"
-mae_chandran <- addSlotMAE(mae_chandran, purity = chandran_demixt)
+# Remove DeMixT from current release
+if(FALSE){
+	## Chandran et al.
+	chandran_demixt <- t(read.csv("data-raw/DeMixT_Chandran.txt", row.names=1))
+	rownames(chandran_demixt) <- "demixt"
+	mae_chandran <- addSlotMAE(mae_chandran, purity = chandran_demixt)
 
-## Friedrich et al.
-friedrich_demixt <- t(read.csv("data-raw/DeMixT_Friedrich.txt", row.names=1))
-rownames(friedrich_demixt) <- "demixt"
-mae_friedrich <- addSlotMAE(mae_friedrich, purity = friedrich_demixt)
+	## Friedrich et al.
+	friedrich_demixt <- t(read.csv("data-raw/DeMixT_Friedrich.txt", row.names=1))
+	rownames(friedrich_demixt) <- "demixt"
+	mae_friedrich <- addSlotMAE(mae_friedrich, purity = friedrich_demixt)
 
-## Kunderfranco et al.
-kunderfranco_demixt <- t(read.csv("data-raw/DeMixT_Kunderfranco.txt", row.names=1))
-rownames(kunderfranco_demixt) <- "demixt"
-mae_kunderfranco <- addSlotMAE(mae_kunderfranco, purity = kunderfranco_demixt)
+	## Kunderfranco et al.
+	kunderfranco_demixt <- t(read.csv("data-raw/DeMixT_Kunderfranco.txt", row.names=1))
+	rownames(kunderfranco_demixt) <- "demixt"
+	mae_kunderfranco <- addSlotMAE(mae_kunderfranco, purity = kunderfranco_demixt)
 
-## Taylor et al.
-taylor_demixt <- t(read.csv("data-raw/DeMixT_Taylor.txt", row.names=1))
-rownames(taylor_demixt) <- "demixt"
-mae_taylor <- addSlotMAE(mae_taylor, purity = taylor_demixt)
+	## Taylor et al.
+	taylor_demixt <- t(read.csv("data-raw/DeMixT_Taylor.txt", row.names=1))
+	rownames(taylor_demixt) <- "demixt"
+	mae_taylor <- addSlotMAE(mae_taylor, purity = taylor_demixt)
 
-## TCGA
-tcga_demixt <- t(read.csv("data-raw/DeMixT_TCGA.txt", row.names=1))
-rownames(tcga_demixt) <- "demixt"
-mae_tcga <- addSlotMAE(mae_tcga, purity = tcga_demixt)
+	## TCGA
+	tcga_demixt <- t(read.csv("data-raw/DeMixT_TCGA.txt", row.names=1))
+	rownames(tcga_demixt) <- "demixt"
+	mae_tcga <- addSlotMAE(mae_tcga, purity = tcga_demixt)
 
-## Wallace et al.
-wallace_demixt <- t(read.csv("data-raw/DeMixT_Wallace.txt", row.names=1))
-rownames(wallace_demixt) <- "demixt"
-mae_wallace <- addSlotMAE(mae_wallace, purity = wallace_demixt)
+	## Wallace et al.
+	wallace_demixt <- t(read.csv("data-raw/DeMixT_Wallace.txt", row.names=1))
+	rownames(wallace_demixt) <- "demixt"
+	mae_wallace <- addSlotMAE(mae_wallace, purity = wallace_demixt)
+}
 
 ## ----
 
