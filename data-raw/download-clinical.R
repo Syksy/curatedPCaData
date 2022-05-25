@@ -1,3 +1,4 @@
+
 library(magrittr)
 library(dplyr)
 
@@ -822,9 +823,7 @@ save(clinical_icgcuk, file = "data-raw/clinical_icgcuk.RData")
 gset <- GEOquery::getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
 
 uncurated <- Biobase::pData(gset[[1]]) 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(df_rownames = rownames(uncurated))
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Friedrich et al.") %>%
@@ -889,7 +888,7 @@ save(clinical_friedrich, file = "data-raw/clinical_friedrich.RData")
 #
 ##################################################################
 
-gset <- getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
+gset <- GEOquery::getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
 
 uncurated <- Biobase::pData(gset[[1]])
 
@@ -897,9 +896,8 @@ unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 
 
 uncurated = uncurated[!is.element(uncurated$geo_accession, unmatched_healty_tissue), ]
 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+# Base curation metadat
+curated <- initial_curated_internal(df_rownames = rownames(uncurated))
 
 curated <- curated %>%
   dplyr::mutate(study_name = "Wallace et al.") %>%
@@ -955,7 +953,7 @@ curated <- curated %>%
                                                            ))) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
                                                uncurated$source_name_ch1 == "Adenocarcinoma (NOS) of the prostate" ~ 'primary',
-                                               uncurated$source_name_ch1 == "Normal prostate" ~ 'adjacentnormal'
+                                               uncurated$source_name_ch1 == "Normal prostate" ~ 'normal'
                                                ))  %>%
   dplyr::mutate(frozen_ffpe = 'frozen') %>%
   dplyr::mutate(microdissected = 0) %>%
@@ -992,23 +990,23 @@ uncurated3 <- Biobase::pData(gse[[3]]) # Batch 3
 uncurated <- rbind(uncurated1, uncurated2, uncurated3)
 
 # Base curation metadat
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 
 # Pipe through the available fields
 curated <- curated %>% 
 	dplyr::mutate(study_name = "Chandran et al.") %>%
+	
 	dplyr::mutate(patient_id = uncurated$'title') %>%
 	dplyr::mutate(sample_name = row.names(uncurated)) %>% 
 	#dplyr::mutate(alt_sample_name = uncurated$'title') %>%
-	dplyr::mutate(age_at_initial_diagnosis = uncurated$'Age:ch1') %>%
+	dplyr::mutate(age_at_initial_diagnosis = as.numeric(uncurated$'Age:ch1')) %>%
 	dplyr::mutate(race = dplyr::case_when(
 		uncurated$'Race:ch1' == 'Caucasian' ~ 'caucasian', 
 		uncurated$'Race:ch1' == 'African American' ~ 'african_american'
 	)) %>%
 	dplyr::mutate(gleason_grade = uncurated$'Gleason Grade:ch1') %>%
-	# TODO: Double-check if the T were determined at diagnosis or post-surgery
 	# T_pathological & T_substage_pathological OR T_clinical & T_substage_clinical
 	dplyr::mutate(T_pathological = dplyr::case_when(
 		uncurated$'Tumor stage:ch1' %in% c('T2a','T2b') ~ 2, 
@@ -1024,8 +1022,8 @@ curated <- curated %>%
 	)) %>%
 	dplyr::mutate(sample_type = dplyr::case_when(
 		uncurated$'Tissue:ch1' %in% c('primary prostate tumor') ~ 'primary', 
-		uncurated$'Tissue:ch1' %in% c('normal prostate tissue adjacent to tumor') ~ 'adjacentnormal', 
-		uncurated$'Tissue:ch1' %in% c('normal prostate tissue free of any pathological alteration from brain-dead organ donor') ~ 'healthy', 
+		uncurated$'Tissue:ch1' %in% c('normal prostate tissue adjacent to tumor') ~ 'normal', 
+		uncurated$'Tissue:ch1' %in% c('normal prostate tissue free of any pathological alteration from brain-dead organ donor') ~ 'normal', 
 		uncurated$'Tissue:ch1' %in% c('metastases recurrent in prostate','prostate tumor metastases in adrenal gland','prostate tumor metastases in kidney','prostate tumor metastases in left inguinal lymph node','prostate tumor metastases in liver','prostate tumor metastases in lung','prostate tumor metastases in para aortic lymph node','prostate tumor metastases in para tracheal lymph node','prostate tumor metastases in paratracheal lymph node','prostate tumor metastases in retroperitoneal lymph node') ~ 'metastatic', 
 		is.na(uncurated$'Tissue:ch1') ~ NA_character_,
 	)) %>%
