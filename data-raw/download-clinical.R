@@ -1054,9 +1054,9 @@ rownames(uncurated)<-gsub("-",".",rownames(uncurated))
 # uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_sequenced")
 
 # create the curated object
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Barbieri et al.") %>%
@@ -1097,22 +1097,23 @@ save(clinical_barbieri, file = "data-raw/clinical_barbieri.RData")
 #cBioportal Ren eururol 2017 Data
 #####################################################################################
 
-# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-# uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_eururol_2017_sequenced")
-mae <-cBioPortalData::cBioDataPack("prad_eururol_2017",ask = FALSE)
-uncurated=colData(mae)
-uncurated=as.data.frame(uncurated)
-#rownames(uncurated)<-gsub("-",".",rownames(uncurated))
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_eururol_2017_sequenced")
+# TDL: Some fields were missing from cBioDataPack but were available with cgdsr
+#mae <- cBioPortalData::cBioDataPack("prad_eururol_2017",ask = FALSE)
+#uncurated2 <- MultiAssayExperiment::colData(mae)
+#uncurated2 <- as.data.frame(uncurated)
 
-# create the curated object
-curated <- initial_curated_df(
-  df_rownames = uncurated$SAMPLE_ID,
-  template_name="data-raw/template_prad.csv")
+# Create the curated object templates (cgdsr and cBioPortalData separately, merge later)
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Ren et al.") %>%
-  dplyr::mutate(patient_id = uncurated$PATIENT_ID) %>%
-  dplyr::mutate(sample_name = uncurated$SAMPLE_ID) %>%
+  dplyr::mutate(patient_id = rownames(uncurated)) %>%
+  dplyr::mutate(age_at_initial_diagnosis = as.integer(uncurated$AGE)) %>%
+  dplyr::mutate(sample_name = rownames(uncurated)) %>%
   # From the publication: "The study sequenced whole-genome and transcriptome of tumor-benign paired tissues from 65 treatment-naive Chinese PCa patients"
   dplyr::mutate(sample_paired = 1) %>%
   dplyr::mutate(sample_type = "primary") %>%
@@ -1131,10 +1132,10 @@ curated <- curated %>%
   dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
   dplyr::mutate(T_clinical = readr::parse_number(uncurated$TNMSTAGE)) %>% 
   dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$TNMSTAGE, "[a-c]+")) %>%
-  dplyr::mutate(FPSA_PSA = uncurated$FPSA_PSA) %>%
+  #dplyr::mutate(FPSA_PSA = uncurated$FPSA_PSA) %>%
   # Tumor purity was estimated using ASCAT (Allele-Specific Copy number Analysis of Tumours)
-  dplyr::mutate(ASCAT_Tumor_Purity = uncurated$TUMOR_PURITY) %>%
-  dplyr::mutate(BLADDER_NECK_INVASION = uncurated$BLADDER_NECK_INVASION) %>%
+  dplyr::mutate(tumor_purity_ascat = uncurated$TUMOR_PURITY) %>%
+  #dplyr::mutate(BLADDER_NECK_INVASION = uncurated$BLADDER_NECK_INVASION) %>%
   dplyr::mutate(seminal_vesicle_invasion = dplyr::case_when(
   	uncurated$SEMINAL_VESICLE_INVASION == "No" ~ 0,
   	uncurated$SEMINAL_VESICLE_INVASION == "Yes" ~ 1,
@@ -1145,8 +1146,18 @@ curated <- curated %>%
   	uncurated$LYMPH_NODE_METASTASIS == "No" ~ 0,
   	uncurated$LYMPH_NODE_METASTASIS == "Yes" ~ 1,
   	uncurated$LYMPH_NODE_METASTASIS == "" ~ NA_real_
-  )) %>%
-  dplyr::mutate(MUTATION_COUNT=uncurated$MUTATION_COUNT)
+  )) #%>%
+  #dplyr::mutate(MUTATION_COUNT=uncurated$MUTATION_COUNT)
+
+# Non-standard fields should be added as 'other features' or similar fields depending on their type
+curated$other_sample <- apply(cbind(
+	paste0("FPSA_PSA=", uncurated$FPSA_PSA), 
+	paste0("BLADDER_NECK_INVASION=", uncurated$BLADDER_NECK_INVASION), 
+	paste0("MUTATION_COUNT=", uncurated$MUTATION_COUNT),
+	paste0("TMB_NONSYNONYMOUS=", round(uncurated$TMB_NONSYNONYMOUS, 4))
+	), MARGIN=1, FUN=function(x) { paste(x, collapse="|") })
+
+rownames(curated) <- curated$patient_id
 
 clinical_ren <- curated
 
@@ -1172,8 +1183,7 @@ curated <- curated %>%
                                                       "prostate_cancer_biopsy_sample_pid_")) %>%
   dplyr::mutate(tissue_source = gsub("prostate cancer biopsy", "biopsy", stringr::str_remove(uncurated$characteristics_ch1.10,"tissue:"))) %>%
   dplyr::mutate(age_at_initial_diagnosis = floor(as.numeric(uncurated$`age:ch1`))) %>%
-  dplyr::mutate(psa = stringr::str_remove(uncurated$characteristics_ch1.6,
-                                                               "psa:")) %>%
+  dplyr::mutate(psa = as.numeric(stringr::str_remove(uncurated$characteristics_ch1.6, "psa:"))) %>%
   dplyr::mutate(gleason_major = stringr::str_remove(uncurated$characteristics_ch1.8,"primary gleason grade:")) %>%
   dplyr::mutate(gleason_minor = stringr::str_remove(uncurated$characteristics_ch1.9,"secondary gleason grade:")) %>%
   dplyr::mutate(gleason_grade = gsub(" ", "", paste(gleason_major,"+",gleason_minor))) %>%
