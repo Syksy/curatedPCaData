@@ -1172,9 +1172,9 @@ gse <- GEOquery::getGEO("GSE119616", GSEMatrix = TRUE)
 
 uncurated <- Biobase::pData(gse[[1]])
 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Kim et al.") %>%
@@ -1195,7 +1195,17 @@ curated <- curated %>%
   )) %>%
   dplyr::mutate(T_clinical = readr::parse_number(uncurated$`tumor stage:ch1`)) %>% 
   dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`tumor stage:ch1`, "[a-c]+")) %>%
-  dplyr::mutate(sample_type = "primary")
+  dplyr::mutate(sample_type = "primary") %>%
+  dplyr::mutate(frozen_ffpe = "ffpe") %>%
+  dplyr::mutate(batch = uncurated$"institution:ch1") %>%
+  dplyr::mutate(tissue_source = "biopsy")
+  
+# Non-standard fields should be added as 'other features' or similar fields depending on their type
+curated$other_sample <- apply(cbind(
+	paste0("nccn=", uncurated$"nccn:ch1"), 
+	paste0("percent_positive_cores=", round(as.numeric(uncurated$"percent positive cores:ch1"),4))
+	), MARGIN=1, FUN=function(x) { paste(x, collapse="|") })
+
   
 clinical_kim <- curated
 
