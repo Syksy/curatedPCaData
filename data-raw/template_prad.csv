@@ -49,6 +49,7 @@ other_sample,string,non-unique,optional,*,"a string that captures any additional
 tumor_purity_pathology,integer,non-unique,optional,[0-100],estimate of the tumor purity according to pathological assessment,,
 tumor_purity_demixt,integer,non-unique,optional,[0-100],estimate of the tumor purity in the sample using the DeMixT method,,
 tumor_purity_absolute,integer,non-unique,optional,[0-100],estimate of the tumor purity in the sample using Absolute,,
+tumor_purity_ascat,numeric,non-unique,optional,[0-100],estimate of the tumor purity in the sample using ASCAT (Allele-Specific Copy number Analysis of Tumours),,
 zone_of_origin,character,non-unique,optional,transitional|peripheral|mixed|central,zone of origin assessed through tissue pathology,,
 zone_of_origin_estimated,character,non-unique,optional,transitional|peripheral,estimate of zone of origin using the method from Sinnott et al.,,
 mutational_signatures,string,non-unique,optional,[],estimate of mutational signatures using deconstructSigs,,
