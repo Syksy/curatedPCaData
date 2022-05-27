@@ -397,12 +397,13 @@ template <- do.call("cbind", lapply(template, FUN=function(x) { gsub("|", " | ",
 knitr::kable(template, caption="Template for Prostate Adecarcinoma clinical metadata")
 ```
 
-### Clinical end points
+### Clinical end-points
 
-Three primary clinical end points were utilized:
-- Gleason grade
-- Recurrence
-- Overall survival (OS)
+Three primary clinical end-points were utilized and are offered in colData-slots in the MAE-objects:
+
+* Gleason grade/group
+* Biochemical Recurrence (BCR)
+* Overall survival (OS)
 
 Below are summaries for each of these endpoints for each study. Of note, OS had very few events, thus survival modelling for this end-point may be considered unreliable.
 
