@@ -33,9 +33,9 @@ library(corrplot)
 
 ## Brief overview to MultiAssayExperiment functions
 
-A handy guide to use of the MAE objects is provided in: https://bioconductor.org/packages/release/bioc/vignettes/MultiAssayExperiment/inst/doc/QuickStartMultiAssay.html
+A handy guide for use of MAE objects is provided in: https://bioconductor.org/packages/release/bioc/vignettes/MultiAssayExperiment/inst/doc/QuickStartMultiAssay.html
 
-A quick cheat sheet and then be consulted: https://bioconductor.org/packages/release/bioc/vignettes/MultiAssayExperiment/inst/doc/MultiAssayExperiment_cheatsheet.pdf
+A quick cheat sheet for interacting with MAE objects: https://bioconductor.org/packages/release/bioc/vignettes/MultiAssayExperiment/inst/doc/MultiAssayExperiment_cheatsheet.pdf
 
 ## Survival analysis
 
