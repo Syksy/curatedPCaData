@@ -1217,30 +1217,38 @@ save(clinical_kim, file = "data-raw/clinical_kim.RData")
 # Abida et al. 2019
 #
 #######################################################################
-mae <-cBioPortalData::cBioDataPack("prad_su2c_2019",ask = FALSE)
-uncurated=colData(mae)
-uncurated=as.data.frame(uncurated)
-uncurated$SAMPLE_ID<-gsub("-",".",uncurated$SAMPLE_ID)
 
-# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-# uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_su2c_2019_cnaseq")
-# gp = cgdsr::getGeneticProfiles(mycgds,"prad_su2c_2019")
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_su2c_2019_cnaseq")
 
-curated <- initial_curated_df(
-  df_rownames = uncurated$SAMPLE_ID,
-  template_name="data-raw/template_prad.csv")
+# cBioPortalData's metadata pull is missing some fields available only via cgdsr
+mae <- cBioPortalData::cBioDataPack("prad_su2c_2019",ask = FALSE)
+uncurated2 <- MultiAssayExperiment::colData(mae)
+uncurated2 <- as.data.frame(uncurated2)
+uncurated2$SAMPLE_ID <- gsub("-",".",uncurated2$SAMPLE_ID)
 
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
+curated2 <- initial_curated_internal(
+  df_rownames = uncurated2$SAMPLE_ID
+)
+# Order both datasets to same order
+uncurated <- uncurated[match(uncurated2$SAMPLE_ID, rownames(uncurated)),] 
+
+# cgdsr part
 curated <- curated %>% 
   dplyr::mutate(study_name = "Abida et al.") %>%
-  dplyr::mutate(alt_sample_name = uncurated$OTHER_SAMPLE_ID) %>%
-  dplyr::mutate(patient_id = uncurated$PATIENT_ID) %>%
+  # Take patient IDs from cBioPortalData pull
+  dplyr::mutate(alt_sample_name = uncurated2$OTHER_SAMPLE_ID) %>%
+  dplyr::mutate(patient_id = uncurated2$PATIENT_ID) %>%
   # Samples were paired for analyses
   dplyr::mutate(sample_paired = 1) %>%
-  dplyr::mutate(sample_name = uncurated$SAMPLE_ID) %>%
+  dplyr::mutate(sample_name = rownames(uncurated)) %>%
   ## TDL: See template_prad.csv, tissue_source does not mean tissue extraction site but rather method of extraction - follow template_prad.csv instructions for all fields
   #dplyr::mutate(tissue_source = uncurated$TISSUE_SITE) %>%
   dplyr::mutate(age_at_initial_diagnosis = floor(uncurated$AGE_AT_DIAGNOSIS)) %>%
-  dplyr::mutate(age_at_procurement = floor(uncurated$AGE_AT_PROCUREMENT)) %>%
+  #dplyr::mutate(age_at_procurement = floor(uncurated$AGE_AT_PROCUREMENT)) %>%
   # All samples are metastatic
   dplyr::mutate(metastasis_occurrence_status = 1) %>%
   dplyr::mutate(sample_type = "metastatic") %>%
@@ -1255,14 +1263,10 @@ curated <- curated %>%
   	uncurated$TISSUE_SITE == "Prostate" ~ "prostate",
   	uncurated$TISSUE_SITE == "Unknown" ~ "other")) %>%
   dplyr::mutate(psa = uncurated$PSA) %>%
-  #dplyr::mutate(gleason_score=uncurated$GLEASON_SCORE) %>%
   dplyr::mutate(gleason_grade=as.numeric(uncurated$GLEASON_SCORE)) %>%
-  dplyr::mutate(AR_score=uncurated$AR_SCORE) %>%
+  dplyr::mutate(ar_score=uncurated$AR_SCORE) %>%
   dplyr::mutate(genome_altered = uncurated$FRACTION_GENOME_ALTERED) %>%
-  dplyr::mutate(NEPC_score=uncurated$NEPC_SCORE) %>%
-  dplyr::mutate(ABI_ENZA_exposure_status=uncurated$ABI_ENZA_EXPOSURE_STATUS) %>%
-  dplyr::mutate(ETS_FUSION_DETAILS=uncurated$ETS_FUSION_DETAILS) %>%
-  #dplyr::mutate(TMPRSS2_ERG_FUSION_STATUS = dplyr::case_when(
+  #dplyr::mutate(ABI_ENZA_exposure_status=uncurated$ABI_ENZA_EXPOSURE_STATUS) %>%
   ## Fusions were determined from gene expression
   dplyr::mutate(ERG_fusion_GEX = dplyr::case_when(
     uncurated$ETS_FUSION_DETAILS == "TMPRSS2-ERG" ~ 1,
@@ -1271,10 +1275,27 @@ curated <- curated %>%
     uncurated$OS_STATUS == "1:DECEASED" ~ 1,
     uncurated$OS_STATUS == "0:LIVING" ~ 0)) %>%
   dplyr::mutate(days_to_overall_survival=as.numeric(uncurated$OS_MONTHS)*30.5) %>%
-  ## Possibly TODO: AGE_AT_PROCUREMENT may be an indicator for time from non-metastatic to metastatic disease (difference in years)
-  dplyr::mutate(other_treatment = uncurated$CHEMO_REGIMEN_CATEGORY)
+  dplyr::mutate(other_treatment = uncurated$CHEMO_REGIMEN_CATEGORY) %>%
+  dplyr::mutate(batch = uncurated$TISSUE_SOURCE_SITE)
+
+# Other sample features collapsed
+curated[,"other_feature"] <- apply(cbind(
+	paste0("NEPC_SCORE=", uncurated$NEPC_SCORE), 
+	paste0("ETS_FUSION_DETAILS=", uncurated$ETS_FUSION_DETAILS), 
+	paste0("RAF1_BRAF_STATUS=", uncurated$RAF1_BRAF_STATUS),
+	paste0("TMB_NONSYNONYMOUS=", uncurated$TMB_NONSYNONYMOUS),
+	paste0("NEUROENDOCRINE_FEATURES=", uncurated$NEUROENDOCRINE_FEATURES),
+	paste0("PATHOLOGY_CLASSIFICATION=", uncurated$PATHOLOGY_CLASSIFICATION)
+	), MARGIN=1, FUN=function(x) { paste0(x, collapse="|") })
+# Other patient features collapsed
+curated[,"other_patient"] <- apply(cbind(
+	paste0("TAXANE_EXPOSURE_STATUS=", uncurated$TAXANE_EXPOSURE_STATUS), 
+	paste0("AGE_AT_PROCUREMENT=", uncurated$AGE_AT_PROCUREMENT),
+	paste0("CHEMO_REGIMEN_CATEGORY=", uncurated$CHEMO_REGIMEN_CATEGORY)
+	), MARGIN=1, FUN=function(x) { paste0(x, collapse="|") })
 
 clinical_abida <- curated
+
 save(clinical_abida, file = "data-raw/clinical_abida.RData")
 
 
