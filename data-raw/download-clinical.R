@@ -1348,21 +1348,19 @@ save(clinical_barwick, file = "./data-raw/clinical_barwick.RData")
 
 ##########################################################
 #
-# Kunderfranco et al. Italian data
+# Kunderfranco et al. 
 #
 #########################################################
 
 library(GEOquery)
 gset <- getGEO("GSE14206", GSEMatrix =TRUE, getGPL=TRUE)
-#labels = Biobase::fData(gset[[1]])
-
 
 # clinical
 uncurated <- Biobase::pData(gset[[1]]) 
 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Kunderfranco et al.") %>%
@@ -1382,8 +1380,11 @@ curated <- curated %>%
   dplyr::mutate(age_at_initial_diagnosis = uncurated$"age:ch1") %>%
   dplyr::mutate(sample_paired = 1) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
+                                               ## TDL: Normal samples were not BPH!
                                                uncurated$source_name_ch1 == "prostate cancer" ~ 'primary',
-                                               uncurated$source_name_ch1 == "normal prostate" ~ 'BPH')) %>%
+                                               #uncurated$source_name_ch1 == "normal prostate" ~ 'BPH')) %>%
+                                               uncurated$source_name_ch1 == "normal prostate" ~ 'normal')) %>%
+                                               
   dplyr::mutate(frozen_ffpe = 'FFPE') %>%
   dplyr::mutate(source_of_gleason = dplyr::case_when(
                                                      uncurated$source_name_ch1 == "prostate cancer" ~ 'prostatectomy',
@@ -1391,11 +1392,11 @@ curated <- curated %>%
   dplyr::mutate(microdissected = 0) %>%
   dplyr::mutate(tissue_source = dplyr::case_when(
                                                uncurated$source_name_ch1 == "prostate cancer" ~ 'prostatectomy',
-                                               uncurated$source_name_ch1 == "normal prostate" ~ 'biopsy'))
+                                               uncurated$source_name_ch1 == "normal prostate" ~ 'biopsy')) %>%
+  dplyr::mutate(other_sample = paste0("ets_group=", uncurated$"ets group:ch1")) %>%
+  dplyr::mutate(T_clinical = as.numeric(substr(uncurated$"stage:ch1", 2, 2))) %>%
+  dplyr::mutate(T_substage_clinical = base::tolower(substr(uncurated$"stage:ch1", 3, 3)))
  
-
- 
-
 clinical_kunderfranco <- curated
 
 save(clinical_kunderfranco, file = "./data-raw/clinical_kunderfranco.RData")
