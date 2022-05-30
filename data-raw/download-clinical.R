@@ -1862,13 +1862,13 @@ gset <- getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
 # clinical
 uncurated <- Biobase::pData(gset[[1]]) 
 
-unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430') # as determined by the GSE6956 metadata
+# TDL: Retain also the non-matched normal samples, just indicate them with sample_matched-field
+#unmatched_healty_tissue = c('GSM160418', 'GSM160419', 'GSM160420', 'GSM160421', 'GSM160422', 'GSM160430') # as determined by the GSE6956 metadata
+#uncurated = uncurated[!is.element(uncurated$geo_accession, unmatched_healty_tissue), ] 
 
-uncurated = uncurated[!is.element(uncurated$geo_accession, unmatched_healty_tissue), ] 
-
-curated <- initial_curated_df(
+curated <- initial_curated_internal(
   df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+)
 
 
 curated <- curated %>% 
@@ -1922,13 +1922,19 @@ curated <- curated %>%
                                                            uncurated$"are surgical margins involved:ch1" == 'Unknown' ~ NA_character_,
                                                            uncurated$"are surgical margins involved:ch1" == 'NA' ~ NA_character_
                                                            ))) %>%
-  dplyr::mutate(sample_paired = 0) %>%                                                           
+  # The generic normals are not paired, adjacents were paired
+  #dplyr::mutate(sample_paired = 0) %>%                                                           
+  dplyr::mutate(sample_paired = ifelse(substr(uncurated$title, 1, 6) == "Pooled", 0, 1)) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
                                                uncurated$source_name_ch1 == "Adenocarcinoma (NOS) of the prostate" ~ 'primary',
-                                               uncurated$source_name_ch1 == "Normal prostate" ~ 'adjacentnormal'
+                                               #uncurated$source_name_ch1 == "Normal prostate" ~ 'adjacentnormal'
+                                               uncurated$source_name_ch1 == "Normal prostate" ~ 'normal'
                                                ))  %>%
   dplyr::mutate(frozen_ffpe = 'frozen') %>%
   dplyr::mutate(microdissected = 0) %>%
+  # Pathological T stage was available without substage
+  dplyr::mutate(T_pathological = as.numeric(uncurated$"pt stage:ch1")) %>%
+  # "All tumors were resected adenocarcinomas that had not received any therapy prior to prostatectomy."
   dplyr::mutate(therapy_radiation_initial = 0) %>%
   dplyr::mutate(therapy_radiation_salvage = 0) %>%
   dplyr::mutate(therapy_surgery_initial = 0) %>%
