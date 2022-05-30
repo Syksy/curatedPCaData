@@ -1264,7 +1264,8 @@ curated <- curated %>%
   	uncurated$TISSUE_SITE == "Unknown" ~ "other")) %>%
   dplyr::mutate(psa = uncurated$PSA) %>%
   dplyr::mutate(gleason_grade=as.numeric(uncurated$GLEASON_SCORE)) %>%
-  dplyr::mutate(ar_score=uncurated$AR_SCORE) %>%
+  #dplyr::mutate(ar_score=uncurated$AR_SCORE) %>%
+  dplyr::mutate(AR_activity=uncurated$AR_SCORE) %>%
   dplyr::mutate(genome_altered = uncurated$FRACTION_GENOME_ALTERED) %>%
   #dplyr::mutate(ABI_ENZA_exposure_status=uncurated$ABI_ENZA_EXPOSURE_STATUS) %>%
   ## Fusions were determined from gene expression
@@ -1867,7 +1868,7 @@ uncurated <- Biobase::pData(gset[[1]])
 #uncurated = uncurated[!is.element(uncurated$geo_accession, unmatched_healty_tissue), ] 
 
 curated <- initial_curated_internal(
-  df_rownames = rownames(uncurated),
+  df_rownames = rownames(uncurated)
 )
 
 
@@ -1941,8 +1942,6 @@ curated <- curated %>%
   dplyr::mutate(therapy_hormonal_initial = 0)
 
 
- 
-
 clinical_wallace <- curated
 
 save(clinical_wallace, file = "data-raw/clinical_wallace.RData")
@@ -1958,12 +1957,11 @@ save(clinical_wallace, file = "data-raw/clinical_wallace.RData")
 
 gset <- getGEO("GSE157548", GSEMatrix =TRUE, getGPL=TRUE)
 
-
 uncurated <- Biobase::pData(gset[[1]]) 
 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Weiner et al.") %>%
@@ -1973,10 +1971,7 @@ curated <- curated %>%
                                         is.na(uncurated$'race:ch1') ~ NA_character_, 
                                         uncurated$'race:ch1' == 'Black' ~ 'african_american',
                                         uncurated$'race:ch1' == 'White' ~ 'caucasian')) %>% 
-  dplyr::mutate(psa = dplyr::case_when(uncurated$"psa:ch1" == "NA" ~ NA_character_,
-                                       TRUE ~ uncurated$"psa:ch1"
-                                       )) %>% 
-  dplyr::mutate(psa = as.numeric(psa)) %>%
+  dplyr::mutate(psa = round(as.numeric(uncurated$"psa:ch1"),2)) %>% 
   dplyr::mutate(tissue_source = 'prostatectomy') %>%
   dplyr::mutate(age_at_initial_diagnosis = dplyr::case_when(
                                        is.na(uncurated$'age:ch1') ~ NA_character_, 
@@ -2002,8 +1997,22 @@ curated <- curated %>%
   dplyr::mutate(sample_paired = 0) %>%
   dplyr::mutate(sample_type = 'primary') %>%
   dplyr::mutate(microdissected = 0) %>%
-  dplyr::mutate(grade_group1 = uncurated$"grade group:ch1") %>%
-  dplyr::mutate(grade_group1 = as.numeric(grade_group1))
+  dplyr::mutate(extraprostatic_extension = dplyr::case_when(
+  	uncurated$"non-organ confined:ch1" == "Yes" ~ 1,
+  	uncurated$"non-organ confined:ch1" == "No" ~ 0)) %>%
+  dplyr::mutate(other_sample = 
+  	apply(
+  		cbind(
+  			paste0("grade_group=", uncurated$"grade group:ch1"),
+  			paste0("ifng_signature=", uncurated$"ifng signature:ch1"),
+  			paste0("igg_production=", uncurated$"igg production:ch1"),
+  			paste0("inflammation_signature=", uncurated$"inflammation signature:ch1"),
+  			paste0("nk_activity=", uncurated$"nk activity:ch1"),
+  			# Typo by original authors, concatenating the two vectors together based on which vector has NA-value
+  			paste0("plasma_cell_content=", ifelse(is.na(uncurated$"plasma cell content:ch1"), uncurated$"palsma cell content:ch1", uncurated$"plasma cell content:ch1"))
+  		),
+  	MARGIN=1, FUN=function(x) { paste(x, collapse="|") })
+  )
 
 clinical_weiner <- curated
 
