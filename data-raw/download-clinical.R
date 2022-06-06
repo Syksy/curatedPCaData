@@ -2028,25 +2028,54 @@ gse <- GEOquery::getGEO("GSE8218", GSEMatrix = TRUE)
 
 uncurated <- Biobase::pData(gse[[1]])
 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 
+# Notable heterogeneity with percentages, and original publication created a multivariate classifier for purity; samples as best described by the domating subtype 
+# Allow categorized labels although exact percentages would be optimal to use 
+# Following e.g.  
+# - https://www.pathologyoutlines.com/topic/prostateatrophy.html 
+# - https://www.europeanurology.com/article/S0302-2838(06)00700-7/fulltext
+# - https://www.sciencedirect.com/science/article/pii/S0031302520309296
+#
+# ... defining atrophic glands as their own sample type as a confounder-like variable
 curated <- curated %>% 
   dplyr::mutate(study_name = "Wang et al.") %>%
   dplyr::mutate(patient_id = rownames(uncurated)) %>%
   dplyr::mutate(sample_name = row.names(uncurated)) %>% 
+  dplyr::mutate(alt_sample_name = uncurated$"title") %>%
   dplyr::mutate(sample_paired = 0) %>%
-  dplyr::mutate(sample_type = "primary") %>%
+  ## TDL: This is not true for the sample, study, and its key aims
+  #dplyr::mutate(sample_type = "primary") %>%
   ## TDL: Tumor purity of percentage is a key field rather than specific subsets
   # From GEO description: "The percentage of different cell types vary considerably among samples and were determined by pathologist."
   # Despite reported as 'prostate cancer sample(s)' in GEO, the samples are quite mixed.
-  dplyr::mutate(tumor_purity_pathology = as.numeric(gsub("%", "", uncurated$"Percentage of Tumor:ch1"))/100)
+  
+  dplyr::mutate(sample_type = c("primary", "atrophic", "BPH", "stroma")[apply(cbind(
+    "primary" = as.numeric(gsub("%", "", uncurated$"Percentage of Tumor:ch1"))/100,
+    "atrophic" = as.numeric(gsub("%", "", uncurated$"Percentage of Atrophic Gland:ch1"))/100,
+    "BPH" = as.numeric(gsub("%", "", uncurated$"Percentage of BPH:ch1"))/100,
+    "stroma" = as.numeric(gsub("%", "", uncurated$"Percentage of stroma:ch1"))/100
+  ), MARGIN=1, FUN=function(x) { ifelse(all(x == "not Known"), NA_integer_, which.max(x)) }) ]) %>%
+  
+  dplyr::mutate(tumor_purity_pathology = as.numeric(gsub("%", "", uncurated$"Percentage of Tumor:ch1"))/100) %>%
   #dplyr::mutate(Percentage_of_Atrophic_Gland = uncurated$`Percentage of Atrophic Gland:ch1`) %>%
   #dplyr::mutate(Percentage_of_BPH = uncurated$`Percentage of BPH:ch1`) %>%
   #dplyr::mutate(Percentage_of_Stroma = uncurated$`Percentage of Stroma:ch1`) %>%
   #dplyr::mutate(Percentage_of_Tumor = uncurated$`Percentage of Tumor:ch1`)
+  dplyr::mutate(other_sample = apply(cbind(
+    # All histology subtypes were reported with precision of 2 (a percentage unit)
+    "primary" = paste0("Perc_Tumor=", round(as.numeric(gsub("%", "", uncurated$"Percentage of Tumor:ch1"))/100, 2)),
+    "atrophic" = paste0("Perc_AtrophicGland=", round(as.numeric(gsub("%", "", uncurated$"Percentage of Atrophic Gland:ch1"))/100, 2)),
+    "BPH" = paste0("Perc_BPH=", round(as.numeric(gsub("%", "", uncurated$"Percentage of BPH:ch1"))/100, 2)),
+    "stroma" = paste0("Perc_Stroma=", round(as.numeric(gsub("%", "", uncurated$"Percentage of BPH:ch1"))/100,2))
+  ), MARGIN=1, FUN=function(x) { ifelse(all(x == "not Known"), NA_character_, paste0(x, collapse="|")) }))
   
+# Tabulated, the sample types discretized based on the dominant histological subtype:
+#atrophic      BPH  primary 
+#      21       55       60
+      
 clinical_wang <- curated
 
 save(clinical_wang, file = "data-raw/clinical_wang.RData")
