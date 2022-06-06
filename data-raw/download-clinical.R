@@ -2088,10 +2088,66 @@ gse <- GEOquery::getGEO("GSE2109", GSEMatrix = TRUE)
 uncurated <- Biobase::pData(gse[[1]])
 uncurated <- uncurated[grep("Prostate", uncurated$title), ]
 
-curated <- initial_curated_df(
-  df_rownames = rownames(uncurated),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = rownames(uncurated)
+)
 #uncurated <- uncurated$title
+
+uncurated_grep <- data.frame(	
+	title = uncurated$title,
+	geo = uncurated$geo_accession,
+	study = "IGC",
+	# Grep through the data row-wise; data is broken into wrong columns, but value prefixes are correct
+	ethnicity = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Ethnic Background: ", "", grep("Ethnic Background: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	tobacco_use = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Tobacco Use : ", "", grep("Tobacco Use : ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	# A range of values; e.g. 50-60, 60-70, ...
+	age = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Patient Age: ", "", grep("Patient Age: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	# Redundant, all 'Prostate' samples in this case, no metastases
+	#unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+	#	tmp <- gsub("Primary Site: ", "", grep("Primary Site: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	#}))
+	histology = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Histology: ", "", grep("Histology: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	path_T = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Pathological T: ", "", grep("Pathological T: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	path_M = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Pathological M: ", "", grep("Pathological M: ", x, value=TRUE)); ifelse(length(tmp)>0, as.numeric(tmp), NA)
+	})),
+	path_N = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Pathological N: ", "", grep("Pathological N: ", x, value=TRUE)); ifelse(length(tmp)>0, as.numeric(tmp), NA)
+	})),
+	path_stage = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Pathological Stage: ", "", grep("Pathological Stage: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	path_gleason = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Pathological Gleason Score: ", "", grep("Pathological Gleason Score: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	clin_T = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Clinical T: ", "", grep("Clinical T: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	clin_N = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Clinical N: ", "", grep("Clinical N: ", x, value=TRUE)); ifelse(length(tmp)>0, as.numeric(tmp), NA)
+	})),
+	clin_M = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Clinical M: ", "", grep("Clinical M: ", x, value=TRUE)); ifelse(length(tmp)>0, as.numeric(tmp), NA)
+	})),
+	clin_stage = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Clinical Stage: ", "", grep("Clinical Stage: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
+	clin_gleason = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("Clinical Gleason Score: ", "", grep("Clinical Gleason Score: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	}))
+)
+
+
 
 # Grep row-wise interesting fields
 uncurated$PathologicalM <- unlist(apply(uncurated, MARGIN=1, FUN=function(x) { tmp <- gsub("Pathological M: ", "", grep("Pathological M: ", x, value=TRUE)); ifelse(length(tmp)>0, tmp, NA) }))
