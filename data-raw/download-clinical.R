@@ -2108,6 +2108,9 @@ uncurated_grep <- data.frame(
 	age = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
 		tmp <- gsub("Patient Age: ", "", grep("Patient Age: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
 	})),
+	psa = unlist(apply(uncurated, MARGIN=1, FUN=function(x){
+		tmp <- gsub("PSA: ", "", grep("PSA: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
+	})),
 	# Redundant, all 'Prostate' samples in this case, no metastases
 	#unlist(apply(uncurated, MARGIN=1, FUN=function(x){
 	#	tmp <- gsub("Primary Site: ", "", grep("Primary Site: ", x, value=TRUE)); ifelse(length(tmp)>0, as.character(tmp), NA)
@@ -2147,249 +2150,51 @@ uncurated_grep <- data.frame(
 	}))
 )
 
-
-
-# Grep row-wise interesting fields
-uncurated$PathologicalM <- unlist(apply(uncurated, MARGIN=1, FUN=function(x) { tmp <- gsub("Pathological M: ", "", grep("Pathological M: ", x, value=TRUE)); ifelse(length(tmp)>0, tmp, NA) }))
-uncurated$PathologicalN <- unlist(apply(uncurated, MARGIN=1, FUN=function(x) { tmp <- gsub("Pathological N: ", "", grep("Pathological N: ", x, value=TRUE)); ifelse(length(tmp)>0, tmp, NA) }))
-uncurated$PrimarySite <- unlist(apply(uncurated, MARGIN=1, FUN=function(x) { tmp <- gsub("Primary Site: ", "", grep("Primary Site: ", x, value=TRUE)); ifelse(length(tmp)>0, tmp, NA) }))
-uncurated$Histology <- unlist(apply(uncurated, MARGIN=1, FUN=function(x) { tmp <- gsub("Histology: ", "", grep("Histology: ", x, value=TRUE)); ifelse(length(tmp)>0, tmp, NA) }))
-uncurated$PathologicalGleasonScore <- unlist(apply(uncurated, MARGIN=1, FUN=function(x) { tmp <- gsub("Pathological Gleason Score: ", "", grep("Pathological Gleason Score: ", x, value=TRUE)); ifelse(length(tmp)>0, tmp, NA) }))
-uncurated$ClinicalGleasonScore <- unlist(apply(uncurated, MARGIN=1, FUN=function(x) { tmp <- gsub("Clinical Gleason Score: ", "", grep("Clinical Gleason Score: ", x, value=TRUE)); ifelse(length(tmp)>0, tmp, NA) }))
-
-curated <- curated %>% 
-  dplyr::mutate(study_name = "igc") %>%
-  dplyr::mutate(sample_name = rownames(uncurated)) %>% 
+# Re-generate IGC based on the grep-failsafe'd data structure
+curated <- curated %>%
+  dplyr::mutate(study_name = "IGC") %>%
+  dplyr::mutate(sample_name = rownames(uncurated_grep)) %>%
   dplyr::mutate(sample_paired = 0) %>%
-  dplyr::mutate(patient_id = rownames(uncurated)) %>%
-  dplyr::mutate(age_at_initial_diagnosis = stringr::str_remove(uncurated$description.1,"Patient Age:")) %>%
-  dplyr::mutate(race = stringr::str_remove(uncurated$description.3,"Ethnic Background:")) %>%
-  dplyr::mutate(description.6 = uncurated$description.6)%>%
-  dplyr::mutate(smoking_status = dplyr::case_when(
-    description.6 %in% c('Type of Tobacco Use: Cigarettes','Type of Tobacco Use: Cigars') ~ 1,
-    TRUE ~ 0)) %>%
+  dplyr::mutate(patient_id = rownames(uncurated_grep)) %>%
+  dplyr::mutate(alt_sample_name = uncurated_grep$title) %>%
+  dplyr::mutate(race = dplyr::case_when(
+    uncurated_grep$ethnicity == "Caucasian" ~ "caucasian",
+    uncurated_grep$ethnicity == "African-American" ~ "african-american",
+    uncurated_grep$ethnicity == "American Indian" ~ "other",
+    uncurated_grep$ethnicity == "Asian" ~ "asian",    
+    TRUE ~ NA_character_
+  )) %>%
+  dplyr::mutate(smoking_status = as.numeric(uncurated_grep$tobacco_use == "Yes")) %>%
+  # Take the middle value of age range as the representative integer
+  dplyr::mutate(age_at_initial_diagnosis = round(unlist(lapply(uncurated_grep$age, FUN=function(x) {mean(as.numeric(strsplit(x, "-")[[1]])) } )),0)) %>%
+  # Save histological subgroup
+  dplyr::mutate(other_sample = paste0("histology=", gsub("Adenocarcinoma, ", "", uncurated_grep$histology))) %>%
+  # Clinical info
+  dplyr::mutate(T_clinical = as.numeric(substr(uncurated_grep$clin_T, 1,1))) %>%
+  dplyr::mutate(T_substage_clinical = as.character(substr(uncurated_grep$clin_T, 2, 2))) %>%
+  # Pathological info
+  dplyr::mutate(T_pathological = as.numeric(substr(uncurated_grep$path_T, 1,1))) %>%
+  dplyr::mutate(T_substage_pathological = as.character(substr(uncurated_grep$path_T, 2, 2))) %>%
+  # Only clinical or pathological grade group was available; pick the one that was available for a patient
+  dplyr::mutate(grade_group = ifelse(is.na(uncurated_grep$path_gleason), uncurated_grep$clin_gleason, uncurated_grep$path_gleason)) %>%
+  # Change representation
+  dplyr::mutate(grade_group = dplyr::case_when(
+    grade_group == "5-6" ~ "<=6",
+    grade_group == "7" ~ "7", # Unfortunately 4+3 and 3+4 collapsed to a single value
+    grade_group == "8-10" ~ ">=8",  	
+    TRUE ~ NA_character_
+  )) %>%
+  # Metastases from either pathology or clinical field
+  dplyr::mutate(M_stage = ifelse(is.na(uncurated_grep$path_M), uncurated_grep$clin_M, uncurated_grep$path_M)) %>%
+  # Lymph nodes from either pathology or clinical field
+  dplyr::mutate(N_stage = ifelse(is.na(uncurated_grep$path_N), uncurated_grep$clin_N, uncurated_grep$path_N)) %>%
+  # PSA was only reported as within 'Normal' range or 'Elevated'  
+  dplyr::mutate(psa_category = uncurated_grep$psa)
   
-  dplyr::mutate(psa_category = dplyr::case_when(
-    uncurated$description.6 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.6 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.7 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.7 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.8 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.8 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.9 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.9 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.10 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.10 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.11 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.11 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.12 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.12 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.13 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.13 %in% 'PSA: Elevated' ~ 'Elevated',
-    uncurated$description.15 %in% 'PSA: Normal' ~ 'Normal',
-    uncurated$description.15 %in% 'PSA: Elevated' ~ 'Elevated'
-    )) %>%
-  dplyr::mutate(T_pathological = dplyr::case_when(
-    uncurated$description.7 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2, 
-    uncurated$description.7 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.7 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.8 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.8 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.8 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.9 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.9 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.9 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.10 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.10 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.10 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.11 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.11 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.11 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.12 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.12 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.12 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.13 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.13 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.13 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.14 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.14 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.14 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.15 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.15 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.15 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.17 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.17 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.17 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4,
-    uncurated$description.19 %in% c('Pathological T: 2a','Pathological T: 2b', 'Pathological T: 2c') ~ 2,
-    uncurated$description.19 %in% c('Pathological T: 3a','Pathological T: 3b', 'Pathological T: 3c') ~ 3,
-    uncurated$description.19 %in% c('Pathological T: 4', 'Pathological T: 4a') ~ 4 )) %>%
-  
-  dplyr::mutate(T_substage_pathological = dplyr::case_when(
-    uncurated$description.7 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.8 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.9 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.10 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.11 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.12 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.13 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.14 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.15 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.17 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.19 %in% c('Pathological T: 2a','Pathological T: 3a', 'Pathological T: 4a') ~ 'a',
-    uncurated$description.7 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.8 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.9 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.10 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.11 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.12 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.13 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.14 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.15 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.17 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.19 %in% c('Pathological T: 2b','Pathological T: 3b', 'Pathological T: 4b') ~ 'b',
-    uncurated$description.7 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.8 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.9 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.10 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.11 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.12 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.13 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.14 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.15 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.17 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c',
-    uncurated$description.19 %in% c('Pathological T: 2c','Pathological T: 3c', 'Pathological T: 4c') ~ 'c')) %>%
-  
-  dplyr::mutate(gleason_grade = dplyr::case_when(
-    uncurated$description.14 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.14 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.14 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.14 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.14 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.14 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.15 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.15 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.15 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.15 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.15 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.15 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.16 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.16 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.16 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.16 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.16 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.16 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.17 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.17 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.17 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.17 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.17 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.17 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.18 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.18 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.18 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.18 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.18 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.18 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.19 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.19 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.19 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.19 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.19 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.19 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.20 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.20 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.20 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.20 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.20 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.20 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.21 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.21 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.21 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.21 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.21 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.21 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.22 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.22 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.22 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.22 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.22 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.22 %in% 'Pathological Gleason Score: 5-6' ~ '6',
-    uncurated$description.23 %in% 'Clinical Gleason Score: 7' ~ '7',
-    uncurated$description.23 %in% 'Clinical Gleason Score: 8-10' ~ '8',
-    uncurated$description.23 %in% 'Clinical Gleason Score: 5-6' ~ '6',
-    uncurated$description.23 %in% 'Pathological Gleason Score: 7' ~ '7',
-    uncurated$description.23 %in% 'Pathological Gleason Score: 8-10' ~ '8',
-    uncurated$description.23 %in% 'Pathological Gleason Score: 5-6' ~ '6')) %>%
-    
-  dplyr::mutate(T_clinical = dplyr::case_when(
-    uncurated$description.9 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.9 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.9 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4,
-    uncurated$description.10 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.10 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.10 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4,
-    uncurated$description.11 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.11 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.11 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4,
-    uncurated$description.12 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.12 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.12 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4,
-    uncurated$description.13 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.13 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.13 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4,
-    uncurated$description.14 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.14 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.14 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4,
-    uncurated$description.15 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.15 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.15 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4,
-    uncurated$description.16 %in% c('Clinical T: 2a','Clinical T: 2b', 'Clinical T: 2c') ~ 2,
-    uncurated$description.16 %in% c('Clinical T: 3a','Clinical T: 3b', 'Clinical T: 3c') ~ 3,
-    uncurated$description.16 %in% c('Clinical T: 4', 'Clinical T: 4a') ~ 4)) %>%
-  
-  dplyr::mutate(T_substage_clinical = dplyr::case_when(
-    uncurated$description.9 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.10 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.11 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.12 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.13 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.14 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.15 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.16 %in% c('Clinical T: 2a','Clinical T: 3a', 'Clinical T: 4a') ~ 'a',
-    uncurated$description.9 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.10 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.11 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.12 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.13 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.14 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.15 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.16 %in% c('Clinical T: 2b','Clinical T: 3b', 'Clinical T: 4b') ~ 'b',
-    uncurated$description.9 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
-    uncurated$description.10 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
-    uncurated$description.11 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
-    uncurated$description.12 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
-    uncurated$description.13 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
-    uncurated$description.14 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
-    uncurated$description.15 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c',
-    uncurated$description.16 %in% c('Clinical T: 2c','Clinical T: 3c', 'Clinical T: 4c') ~ 'c')) %>%
-
-   # Pathological N -> Lymph node spread
-  dplyr::mutate(N_stage = uncurated$PathologicalN) %>%
-   # Pathological M -> Metastatic disease
-  dplyr::mutate(M_stage = uncurated$PathologicalM) %>%    
-   # Primary site was 'Prostate' in all, no metastases
-  dplyr::mutate(sample_type = "primary")   
-   # Histology  
-
-curated <- dplyr::select(curated, -(description.6))
-
 clinical_igc <- curated
 
 save(clinical_igc, file = "data-raw/clinical_igc.RData")   
-    
- # "Type of Tobacco Use: Cigarettes" %in% uncurated$description.6 ~ 1,
-  #"Type of Tobacco Use: Cigars" %in% uncurated$description.6 ~ 1),  
-#  is.na(uncurated$description.6) ~ 0))
+
 
 #####################################################################################
 #cBioportal BACA
