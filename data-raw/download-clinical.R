@@ -2228,10 +2228,12 @@ curated <- curated %>%
   )) %>%
   dplyr::mutate(gleason_grade = gleason_major+gleason_minor) %>%
   dplyr::mutate(grade_group = dplyr::case_when(
+    # Some major/minor combinations were missing while overall sum was available
     stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
     stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
     stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) == "4+3" ~ "4+3",
-    stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8"
+    stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8",
+    gleason_grade >= 8 ~ ">=8"
   )) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
     uncurated1$SAMPLE_TYPE == "Metastasis" ~ "metastatic",
@@ -2244,10 +2246,13 @@ curated <- curated %>%
   # Batches inside the study
   dplyr::mutate(batch = uncurated1$COHORT) %>%
   # Nonsynonymous TMB added as other sample information
-  dplyr:mutate(sample_other = paste0("TMB_NONSYNONYMOUS=", round(uncurated1$TMB_NONSYNONYMOUS,3)))
+  dplyr::mutate(other_sample = paste0("TMB_NONSYNONYMOUS=", round(uncurated1$TMB_NONSYNONYMOUS,3))) %>%
   # ERG statuses from FISH or sequencing
+  dplyr::mutate(ERG_fusion_IHC = as.numeric(!is.na(uncurated1$ERG_FISH_RESULT))) %>%
+  # Contains also non-ERG alterations from sequencing
+  dplyr::mutate(ERG_fusion_CNA = 0)
   
-  
+curated[grep("TMPRSS2-ERG", uncurated1$"ETS_FUSION_SEQ"), "ERG_fusion_CNA"] <- 1
   
 clinical_baca <- curated
 
