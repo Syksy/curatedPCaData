@@ -61,9 +61,6 @@ usethis::use_data(template_prad, overwrite = TRUE)
 mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
 uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_tcga_sequenced")
 
-#curated <- initial_curated_df(
-#  df_rownames = rownames(uncurated),
-#  template_name="data-raw/template_prad.csv")
 curated <- initial_curated_internal(df_rownames = rownames(uncurated))
 
 ## Note: 
@@ -2200,48 +2197,57 @@ save(clinical_igc, file = "data-raw/clinical_igc.RData")
 #cBioportal BACA
 #####################################################################################
 
-mae <-cBioPortalData::cBioDataPack("prad_broad_2013",ask = FALSE)
-uncurated=colData(mae)
-uncurated=as.data.frame(uncurated)
+mae <- cBioPortalData::cBioDataPack("prad_broad_2013", ask = FALSE)
+uncurated1 <- MultiAssayExperiment::colData(mae)
+uncurated1 <- as.data.frame(uncurated1)
 
-# mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-# uncurated <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_2013_all")
-# #mycancerstudy = cgdsr::getCancerStudies(mycgds)
-# mycaselistren = cgdsr::getCaseLists(mycgds,"prad_broad_2013")
+mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+uncurated2 <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_2013_all")
+mycaselist_baca = cgdsr::getCaseLists(mycgds,"prad_broad_2013")
 
 # create the curated object
-curated <- initial_curated_df(
-  df_rownames = gsub("-",".",rownames(uncurated)),
-  template_name="data-raw/template_prad.csv")
+curated <- initial_curated_internal(
+  df_rownames = gsub("-",".",rownames(uncurated1))
+)
 
 curated <- curated %>% 
+  # Portion from cBioPortalData-package
   dplyr::mutate(study_name = "Baca et al.") %>%
-  dplyr::mutate(patient_id = gsub("-",".",rownames(uncurated))) %>%
-  dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
+  dplyr::mutate(sample_name = uncurated1$SAMPLE_ID) %>%
+  dplyr::mutate(patient_id = gsub("-",".",rownames(uncurated1))) %>%
+  dplyr::mutate(age_at_initial_diagnosis = uncurated1$AGE) %>%
   ## TDL: Should follow allowed values assigned in 'template_prad.csv'
   #dplyr::mutate(sample_type=uncurated$SAMPLE_TYPE)%>%
-  dplyr::mutate(psa=uncurated$SERUM_PSA)%>%
-  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,1,1))) %>%
-  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
-  dplyr::mutate(T_pathological = readr::parse_number(uncurated$PATH_T_STAGE)) %>%
+  dplyr::mutate(psa = uncurated1$SERUM_PSA)%>%
+  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated1$GLEASON_SCORE,1,1))) %>%
+  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated1$GLEASON_SCORE,3,3))) %>%
+  dplyr::mutate(T_pathological = readr::parse_number(uncurated1$PATH_T_STAGE)) %>%
   dplyr::mutate(T_substage_pathological = dplyr::case_when(
-    uncurated$PATH_T_STAGE %in% c("Metastatic") ~ "NA",
-    TRUE ~ stringr::str_extract(uncurated$PATH_T_STAGE, "[a-c]+")
+    uncurated1$PATH_T_STAGE %in% c("Metastatic") ~ "NA",
+    TRUE ~ stringr::str_extract(uncurated1$PATH_T_STAGE, "[a-c]+")
   )) %>%
   dplyr::mutate(gleason_grade = gleason_major+gleason_minor) %>%
-  #dplyr::mutate(gleason_grade = gsub(";.*","",uncurated$GLEASON_SCORE)) %>%
   dplyr::mutate(grade_group = dplyr::case_when(
-    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
-    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
-    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "4+3" ~ "4+3",
-    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8"
+    stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
+    stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
+    stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) == "4+3" ~ "4+3",
+    stringr::str_sub(uncurated1$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8"
   )) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
-    uncurated$SAMPLE_TYPE == "Metastasis" ~ "metastatic",
-    uncurated$SAMPLE_TYPE == "Primary" ~ "primary"
+    uncurated1$SAMPLE_TYPE == "Metastasis" ~ "metastatic",
+    uncurated1$SAMPLE_TYPE == "Primary" ~ "primary"
   )) %>%
   # The samples were analyzed in a paired manner to normal tissue
-  dplyr::mutate(sample_paired = 1)
+  dplyr::mutate(sample_paired = 1) %>%
+  # ABSOLUTE purity scores
+  dplyr::mutate(tumor_purity_absolute = uncurated1$PURITY_ABSOLUTE) %>%
+  # Batches inside the study
+  dplyr::mutate(batch = uncurated1$COHORT) %>%
+  # Nonsynonymous TMB added as other sample information
+  dplyr:mutate(sample_other = paste0("TMB_NONSYNONYMOUS=", round(uncurated1$TMB_NONSYNONYMOUS,3)))
+  # ERG statuses from FISH or sequencing
+  
+  
   
 clinical_baca <- curated
 
