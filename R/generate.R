@@ -127,7 +127,7 @@ generate_gex_geo <- function(
   		else if(pckg == "affy"){
   			## DEPRECATED ANNOTATION OVER CHIP TYPES
 			# Three different platforms were used; need to read them separately with ReadAffy  
-			gse <- GEOquery::getGEO("GSE6919", GSEMatrix = TRUE)
+			gse <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE)
 			# ...
 			# GSM152839 - GSM152855 : U95C
 			# GSM152856 - GSM152880 : U95Av2
