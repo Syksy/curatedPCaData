@@ -1545,7 +1545,8 @@ generate_cbioportaldata <- function(caselist,profile){
       rownames(res2) <- symbols
       colnames(res2)<-gsub("-",".",colnames(res2))
       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(res2)}
+      return(as.matrix(res2))
+    }
     
     else if(caselist=="prad_eururol_2017"){
       res=prof[["cna"]]
@@ -1555,8 +1556,7 @@ generate_cbioportaldata <- function(caselist,profile){
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(res2)
-      
+      return(as.matrix(res2))
     }
     
     else if(caselist=="prad_su2c_2019"){
@@ -1573,7 +1573,7 @@ generate_cbioportaldata <- function(caselist,profile){
       rownames(res2) <- symbols
       colnames(res2)<-gsub("-",".",colnames(res2))
       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(res2)
+      return(as.matrix(res2))
     }
     
     else if (caselist=="prad_mskcc"){
@@ -1593,7 +1593,8 @@ generate_cbioportaldata <- function(caselist,profile){
       ind=which(colnames(res2) %in% same_barcode=="TRUE")
       res3<-res2[, c(ind)]
       
-      return(res3)}
+      return(as.matrix(res3))
+    }
     
     else if (caselist == "prad_broad_2013"){
       res=prof[["cna"]]
@@ -1604,7 +1605,7 @@ generate_cbioportaldata <- function(caselist,profile){
       rownames(res2) <- symbols
       colnames(res2)<-gsub("-",".",colnames(res2))
       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(res2)
+      return(as.matrix(res2))
       
     }
   }
@@ -1657,7 +1658,7 @@ generate_cbioportaldata <- function(caselist,profile){
       symbols <- symbols[!is.na(symbols)]
       rownames(gex2) <- symbols
       gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      return(gex2)
+      return(as.matrix(gex2))
     }else if(caselist=="prad_broad"){
       gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
       gex2=RaggedExperiment::assay(gex)
@@ -1668,7 +1669,7 @@ generate_cbioportaldata <- function(caselist,profile){
       rownames(gex2) <- symbols
       colnames(gex2)<-gsub("-",".",colnames(gex2))
       gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      return(gex2)
+      return(as.matrix(gex2))
     }else if(caselist=="prad_su2c_2019"){
       gex=metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
       gex=as.data.frame(gex)
@@ -1683,10 +1684,9 @@ generate_cbioportaldata <- function(caselist,profile){
       rownames(gex2) <- symbols
       colnames(gex2)<-gsub("-",".",colnames(gex2))
       gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      return(gex2)
+      return(as.matrix(gex2))
     }
-  }
-  
+  }  
 }
 
 #' Download and generate omics from the ICGC
