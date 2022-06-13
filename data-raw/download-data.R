@@ -150,7 +150,7 @@ usethis::use_data(mae_barwick, overwrite = TRUE)
 # - GPL92	[HG_U95B] Affymetrix Human Genome U95B Array
 # - GPL93	[HG_U95C] Affymetrix Human Genome U95C Array
 # - GPL8300	[HG_U95Av2] Affymetrix Human Genome U95 Version 2 Array
-gex.rma_chandran <- curatedPCaData::generate_gex_geo(
+gex.rma_chandran <- curatedPCaData:::generate_gex_geo(
 	geo_code = "GSE6919",
 	pckg = "oligo",
 	filter_regex = "_RAW"
@@ -401,8 +401,6 @@ tcga_mut <- curatedPCaData:::generate_xenabrowser(
   type = "mut",
   truncate = 0 # '.01A' -> '.01' suffix
 )
-# Save NA values as truly NA instead of "NaN" even if other instances exist on column
-#mut_tcga[which(mut_tcga=="NaN")] <- NA
 save(tcga_mut, file="data-raw/mut_tcga.RData")
 
 # Create MAE object

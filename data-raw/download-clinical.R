@@ -1854,8 +1854,7 @@ save(clinical_true, file =  "./data-raw//clinical_true.RData")
 #############################################################################
 
 # load series and platform data from GEO
-
-gset <- getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
+gset <- GEOquery::getGEO("GSE6956", GSEMatrix =TRUE, getGPL=FALSE)
 
 # clinical
 uncurated <- Biobase::pData(gset[[1]]) 
@@ -1938,6 +1937,8 @@ curated <- curated %>%
   dplyr::mutate(therapy_surgery_initial = 0) %>%
   dplyr::mutate(therapy_hormonal_initial = 0)
 
+# The unnamed matched normals are given unique identifiers
+curated[which(is.na(curated$patient_id)),"patient_id"] <- paste0("unmatched normal ", 1:6)
 
 clinical_wallace <- curated
 
@@ -2201,9 +2202,9 @@ mae <- cBioPortalData::cBioDataPack("prad_broad_2013", ask = FALSE)
 uncurated1 <- MultiAssayExperiment::colData(mae)
 uncurated1 <- as.data.frame(uncurated1)
 
-mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
-uncurated2 <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_2013_all")
-mycaselist_baca = cgdsr::getCaseLists(mycgds,"prad_broad_2013")
+#mycgds <- cgdsr::CGDS("http://www.cbioportal.org/")
+#uncurated2 <- cgdsr::getClinicalData(mycgds, caseList="prad_broad_2013_all")
+#mycaselist_baca = cgdsr::getCaseLists(mycgds,"prad_broad_2013")
 
 # create the curated object
 curated <- initial_curated_internal(
@@ -2213,7 +2214,7 @@ curated <- initial_curated_internal(
 curated <- curated %>% 
   # Portion from cBioPortalData-package
   dplyr::mutate(study_name = "Baca et al.") %>%
-  dplyr::mutate(sample_name = uncurated1$SAMPLE_ID) %>%
+  dplyr::mutate(sample_name = gsub("-",".",uncurated1$SAMPLE_ID)) %>%
   dplyr::mutate(patient_id = gsub("-",".",rownames(uncurated1))) %>%
   dplyr::mutate(age_at_initial_diagnosis = uncurated1$AGE) %>%
   ## TDL: Should follow allowed values assigned in 'template_prad.csv'
@@ -2253,6 +2254,7 @@ curated <- curated %>%
   dplyr::mutate(ERG_fusion_CNA = 0)
   
 curated[grep("TMPRSS2-ERG", uncurated1$"ETS_FUSION_SEQ"), "ERG_fusion_CNA"] <- 1
+#rownames(curated) <- curated$patient_id
   
 clinical_baca <- curated
 
