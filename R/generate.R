@@ -753,10 +753,6 @@ generate_gex_geo <- function(
 			nam[is.na(nam)] <- "NA"
 			# Collapse probes
 			gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapse_fun))
-			# Return numeric matrix
-
-			## TDL: Store (unmatched) healthy tissues, can be useful for e.g. assessing tumor purity assessment where normal samples are required
-			#gex <- gex[, !is.element(colnames(gex), unmatched_healty_tissue)]
 		}
 	}
   
@@ -881,7 +877,7 @@ generate_gex_geo <- function(
 	gex <- gex[order(rownames(gex)),]
 	# Cast to matrix type, remove empty rows/columns and return gene expression matrix
 	gex <- as.matrix(gex)
-	gex <- gex %>% janitor::remove_empty(which = c("rows", "cols"))
+	gex <- gex |> janitor::remove_empty(which = c("rows", "cols"))
 	gex
 }
 
