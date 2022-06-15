@@ -8,6 +8,7 @@
 ## IMMUNE DECONVOLUTION VARIABLES
 
 library(immunedeconv) # NECESSARY!
+library(RaggedExperiment) # Necessary, otherwise MAE objects cannot be fully opened correctly
 
 ## Assistance function for adding a new slot in case it doesn't exist, or to avoid existing slot name overlap
 addSlotMAE <- function(
