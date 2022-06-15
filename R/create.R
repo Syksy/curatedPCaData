@@ -14,6 +14,13 @@ create_mae <- function(
   verb = TRUE,
   ...
 ){
+  # Separate loading of RaggedExperiment required to be able to create MultiAssayExperiment::ExperimentList containing RaggedExperiment-objects
+  require(RaggedExperiment)
+  # NOTE: Normally loading of packages should not be required
+  # A better fix is probably possible, although extensive testing didn't provide one that would've helped 
+  # with the 'Error values must be length 1 but FUN(X[[1]]) result is length 0 ...' error
+  # when casting to MultiAssayExperiment::ExperimentList with the list containing both matrices and RaggedExperiment
+  
   if(verb) print(paste("Starting to process:", study_name))
   data_sets <- list.files("data-raw/",pattern=tolower(study_name))
   if(length(data_sets) == 0){
@@ -28,7 +35,6 @@ create_mae <- function(
   ## 'omics vary from study to study, read in as many as possible
   omics_sets <- strsplit(data_sets, "_")
   # Omit clinical information or custom mapping character string split from the 'omics portion
-  # JC : I am still not a fan of importing an already made map and would like to return this line back 
   omics_sets <- omics_sets[-which(unlist(lapply(omics_sets, FUN=function(z) { any(c("clinical", "map") %in% z) })))]
   # 'omics names is concatenated from all strsplit prior to last element (which is presumably "_STUDYNAME.{rda,RData}")
   omics_names <- unlist(lapply(omics_sets, FUN=function(z) { paste(z[-length(z)], collapse="_") }))
@@ -43,7 +49,7 @@ create_mae <- function(
   # Give correct name for each omics list member
   names(omics) <- omics_names
   if(verb) print(paste0("Omics: ", paste(omics_names, collapse = ", ")))
-  rm(f, omic, omics_names, omics_sets)
+  #rm(f, omic, omics_names, omics_sets)
   
   ## Construct whole path to data sets
   data_sets <- paste0("data-raw/", data_sets)  
@@ -53,9 +59,19 @@ create_mae <- function(
   
   map <- data.frame(assay = character(0), primary = character(0), colname = character(0))
   for(i in 1:length(omics)){
-    map <- rbind(map, data.frame(assay = names(omics)[[i]], 
-                                 colname = colnames(omics[[i]]))
-    )
+  	# GEX/CNA stored as matrices; their sample names are column names
+	if(any(class(omics[[i]]) %in% c("matrix","array"))){
+	    map <- rbind(map, data.frame(assay = names(omics)[[i]], 
+		colname = colnames(omics[[i]])
+	      )
+	    )
+        # RaggedExperiments (for 'mut') store their sample names for mapping differently than ordinary matrices (for 'gex' and 'cna)
+	}else{
+	    map <- rbind(map, data.frame(assay = names(omics)[[i]], 
+		colname = names(omics[[i]]@assays)
+	      )
+	    )
+	}
   }
   
   sample_num <- stringr::str_count(pheno_object$sample_name[[1]], "\\|") + 1
