@@ -61,28 +61,28 @@ create_mae <- function(
   sample_num <- stringr::str_count(pheno_object$sample_name[[1]], "\\|") + 1
   sample_num_names <- paste0("X",1:sample_num)
   
-  map <- map %>%
-    dplyr::left_join(pheno_object %>%
+  map <- map |>
+    dplyr::left_join(pheno_object |>
                        #dplyr::select(primary = rlang::.data$patient_id, rlang::.data$sample_name) %>%
-                       dplyr::select(primary = .data$patient_id, .data$sample_name) %>%
+                       dplyr::select(primary = .data$patient_id, .data$sample_name) |>
                        #tidyr::separate(rlang::.data$sample_name, sample_num_names, 
                        tidyr::separate(.data$sample_name, sample_num_names, 
-                                       sep = "\\|") %>%
+                                       sep = "\\|") |>
                        dplyr::mutate_at(sample_num_names, 
-                                        ~ gsub(".*: ", "", .)) %>%
+                                        ~ gsub(".*: ", "", .)) |>
                        dplyr::mutate_at(sample_num_names, 
-                                        ~dplyr::na_if(., "NA")) %>%
+                                        ~dplyr::na_if(., "NA")) |>
                        #tidyr::pivot_longer(!rlang::.data$primary, names_to = "omic",
                        tidyr::pivot_longer(!.data$primary, names_to = "omic",
-                                           values_to = "sample_name") %>%
+                                           values_to = "sample_name") |>
                        dplyr::select(-omic), 
                      by = c("colname" = "sample_name")) 
   
-  clinical_object <- pheno_object %>%
+  clinical_object <- pheno_object |>
     #dplyr::distinct(rlang::.data$patient_id, .keep_all = TRUE)
     dplyr::distinct(.data$patient_id, .keep_all = TRUE)
   
-  clinical_object <- clinical_object %>%
+  clinical_object <- clinical_object |>
     #dplyr::filter(rlang::.data$patient_id %in% map$primary)
     dplyr::filter(.data$patient_id %in% map$primary)
   
