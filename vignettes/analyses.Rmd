@@ -300,7 +300,7 @@ ComplexHeatmap::oncoPrint(taylor_oncoprint_2, alter_fun = alter_fun)
 
 ```
 
-# General trends in gene expression across datasets
+### General trends in gene expression across datasets
 
 Using the curatedpcadata package, patterns in gene expression across different datasets can be studied.
 
