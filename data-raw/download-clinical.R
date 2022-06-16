@@ -867,12 +867,14 @@ curated <- curated %>%
                                                            uncurated$'risk group:ch1' == 'H-df' ~ 0
                                                            )) 
 
-extra_cl = read.table('data-raw/GSE134051_Pheno_Data_ControlType.txt', h = T) # extra clinical from Friedrich et al. 
-extra_cl[extra_cl$PathoState == 'None', 'PathoState'] = NA
-extra_cl$PathoState = as.numeric(extra_cl$PathoState)
-curated[extra_cl$Control_status == 'BLADDER_CANCER', 'tissue_source'] = 'cystoprostatectomy'
-curated[extra_cl$Control_status == 'OTHER', 'tissue_source'] = 'TURP'
-curated[, 'T_pathological'] = extra_cl$PathoState
+## TDL: Data is not publicly available on GEO it seems
+#
+#extra_cl = read.table('data-raw/GSE134051_Pheno_Data_ControlType.txt', h = T) # extra clinical from Friedrich et al. 
+#extra_cl[extra_cl$PathoState == 'None', 'PathoState'] = NA
+#extra_cl$PathoState = as.numeric(extra_cl$PathoState)
+#curated[extra_cl$Control_status == 'BLADDER_CANCER', 'tissue_source'] = 'cystoprostatectomy'
+#curated[extra_cl$Control_status == 'OTHER', 'tissue_source'] = 'TURP'
+#curated[, 'T_pathological'] = extra_cl$PathoState
 
 clinical_friedrich <- curated
 
@@ -1350,8 +1352,7 @@ save(clinical_barwick, file = "./data-raw/clinical_barwick.RData")
 #
 #########################################################
 
-library(GEOquery)
-gset <- getGEO("GSE14206", GSEMatrix =TRUE, getGPL=TRUE)
+gset <- GEOquery::getGEO("GSE14206", GSEMatrix =TRUE, getGPL=TRUE)
 
 # clinical
 uncurated <- Biobase::pData(gset[[1]]) 
@@ -1411,11 +1412,9 @@ save(clinical_kunderfranco, file = "./data-raw/clinical_kunderfranco.RData")
 #
 ###########################################################################################
 
-library(GEOquery)
-
 # load series and platform data from GEO
 
-gset <- getGEO("GSE5132", GSEMatrix =TRUE, getGPL=TRUE)
+gset <- GEOquery::getGEO("GSE5132", GSEMatrix =TRUE, getGPL=TRUE)
 
 # for reasons unknown the clinical is split in a set of 31 samples and a set of 1 sample
 uncurated1 <- Biobase::pData(gset[[1]]) 

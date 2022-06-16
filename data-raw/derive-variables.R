@@ -35,42 +35,59 @@ addSlotMAE <- function(
 ## AGGREGATE LOAD
 ## Load temporary MAE-objects so the whole script can be run and output saved over all iterated 
 ## Use latest MAE-objects from the package, coming with GEX and other slots necessary for calculating derived variables here-in
-##
+## Update: load the data from working directory '/data/mae_*.rda'
 # Processed datasets
 # - Abida et al.
-mae_abida <- curatedPCaData::mae_abida
+#mae_abida <- curatedPCaData::mae_abida
+load("data/mae_abida.rda")
 # - Barbieri et al.
-mae_barbieri <- curatedPCaData::mae_barbieri
+#mae_barbieri <- curatedPCaData::mae_barbieri
+load("data/mae_barbieri.rda")
 # - Barwick et al.
-mae_barwick <- curatedPCaData::mae_barwick
+#mae_barwick <- curatedPCaData::mae_barwick
+load("data/mae_barwick.rda")
 # - Chandran et al.
-mae_chandran <- curatedPCaData::mae_chandran
+#mae_chandran <- curatedPCaData::mae_chandran
+load("data/mae_chandran.rda")
 # - Friedrich et al.
-mae_friedrich <- curatedPCaData::mae_friedrich
+#mae_friedrich <- curatedPCaData::mae_friedrich
+load("data/mae_friedrich.rda")
 # - ICGC CA
-mae_icgcca <- curatedPCaData::mae_icgcca
+#mae_icgcca <- curatedPCaData::mae_icgcca
+load("data/mae_icgcca.rda")
 # - IGC
-mae_igc <- curatedPCaData::mae_igc
+#mae_igc <- curatedPCaData::mae_igc
+load("data/mae_igc.rda")
 # - Kim et al.
-mae_kim <- curatedPCaData::mae_kim
+#mae_kim <- curatedPCaData::mae_kim
+load("data/mae_kim.rda")
 # - Kunderfranco et al.
-mae_kunderfranco <- curatedPCaData::mae_kunderfranco
+#mae_kunderfranco <- curatedPCaData::mae_kunderfranco
+load("data/mae_kunderfranco.rda")
 # - Ren et al.
-mae_ren <- curatedPCaData::mae_ren
+#mae_ren <- curatedPCaData::mae_ren
+load("data/mae_ren.rda")
 # - Sun et al.
-mae_sun <- curatedPCaData::mae_sun
+#mae_sun <- curatedPCaData::mae_sun
+load("data/mae_sun.rda")
 # - Taylor et al.
-mae_taylor <- curatedPCaData::mae_taylor
+#mae_taylor <- curatedPCaData::mae_taylor
+load("data/mae_taylor.rda")
 # - TCGA
-mae_tcga <- curatedPCaData::mae_tcga
+#mae_tcga <- curatedPCaData::mae_tcga
+load("data/mae_tcga.rda")
 # - True et al.
-mae_true <- curatedPCaData::mae_true
+#mae_true <- curatedPCaData::mae_true
+load("data/mae_true.rda")
 # - Wallace et al.
-mae_wallace <- curatedPCaData::mae_wallace
+#mae_wallace <- curatedPCaData::mae_wallace
+load("data/mae_wallace.rda")
 # - Wang et al.
-mae_wang <- curatedPCaData::mae_wang
+#mae_wang <- curatedPCaData::mae_wang
+load("data/mae_wang.rda")
 # - Weiner et al.
-mae_weiner <- curatedPCaData::mae_weiner
+#mae_weiner <- curatedPCaData::mae_weiner
+load("data/mae_weiner.rda")
 
 ## IMMUNE DECONVOLUTION VARIABLES
 
