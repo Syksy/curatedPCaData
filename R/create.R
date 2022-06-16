@@ -112,6 +112,9 @@ create_mae <- function(
     sampleMap = as.data.frame(map)
   )
 
+  if(verb) print(paste("Saving system date in attr 'mae_date' for sanity checking:", Sys.time()))
+  attr(mae_object, 'mae_date') <- Sys.time()
+
   if(verb) print(paste("MAE-object successfully created for", study_name))
   
   return(mae_object)
