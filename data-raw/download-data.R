@@ -4,13 +4,14 @@
 ## MUT: Mutations
 ### Available platforms for extracting raw or processed data
 ## GEO: Gene Omnibus
-## cBioPortal (query via cgdsr-package)
+## cBioPortal (query via cgdsr-package or superceded by cBioPortalData-package)
+## XenoBrowser (TCGA re-processed)
 
 ### Rough pipeline:
 ## Download clinical data first (via download-clinical.R), and save in data-raw
 ## Download GEX/CNA/MUT and save in data-raw using functions via generate.R
 ## Create final MAE object for package export using functions via create.R
-
+## Later, additional derivate variables are added in derive-variables.R and added as MAE slots
 
 ### Alphabetic ordering of datasets:
 ## - Abida et al.
@@ -59,8 +60,8 @@ save(cna.gistic_abida, file="data-raw/cna.gistic_abida.RData")
 #   caseList="prad_su2c_2019_sequenced"
 # )
 # mut_abida[which(mut_abida=="NaN")] <- NA
-abida_mut <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","mut")
-save(abida_mut, file="data-raw/mut_abida.RData")
+mut_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019", "mut")
+save(mut_abida, file="data-raw/mut_abida.RData")
 # To check: Fusions separately?
 
 # Create MAE object
@@ -81,8 +82,8 @@ cna.gistic_baca <-curatedPCaData:::generate_cbioportaldata("prad_broad_2013","cn
 save(cna.gistic_baca, file="data-raw/cna.gistic_baca.RData")
 
 # Mutations
-baca_mut <- curatedPCaData:::generate_cbioportaldata("prad_broad_2013","mut")
-save(baca_mut, file="data-raw/mut_baca.RData")
+mut_baca <- curatedPCaData:::generate_cbioportaldata("prad_broad_2013","mut")
+save(mut_baca, file="data-raw/mut_baca.RData")
 
 # Create MAE object
 mae_baca <- curatedPCaData:::create_mae(study_name = "baca")
@@ -121,11 +122,11 @@ save(cna.gistic_barbieri, file="data-raw/cna.gistic_barbieri.RData")
 # barbieri_mut<-curatedPCaData:::generate_cbioportaldata_mut(
 #   caselist = "prad_broad"
 #   )
-barbieri_mut <- curatedPCaData:::generate_cbioportaldata("prad_broad","mut")
-save(barbieri_mut, file="data-raw/mut_barbieri.RData")
+mut_barbieri <- curatedPCaData:::generate_cbioportaldata("prad_broad","mut")
+save(mut_barbieri, file="data-raw/mut_barbieri.RData")
 
 # Create MAE object
-mae_barbieri <- curatedPCaData:::create_mae(study_name = "Barbieri")
+mae_barbieri <- curatedPCaData:::create_mae(study_name = "barbieri")
 usethis::use_data(mae_barbieri, overwrite = TRUE)
 
 ## - end Barbieri et al. -
@@ -367,7 +368,6 @@ save(cna.gistic_taylor, file="data-raw/cna.gistic_taylor.RData")
 # # Grep down to using only patient samples, omitting cell lines etc
 # mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
 taylor_mut<- curatedPCaData:::generate_cbioportaldata("prad_mskcc","mut")
-
 save(taylor_mut, file="data-raw/mut_taylor.RData")
 
 # Create MAE object
