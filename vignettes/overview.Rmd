@@ -17,10 +17,9 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   cache = TRUE,
-  tidy = FALSE
+  tidy = TRUE,
+  width.cutoff = 70
 )
-#library(tidyverse)
-#library(viridis)
 
 ###
 #
@@ -275,12 +274,14 @@ dats <- dats[grep("mae_", dats[,1]),]
 knitr::kable(dats, caption="List of datasets in curatedPCaData")
 ```
 
-Individual datasets can also be imported by using the `data` function
+Individual datasets can also be imported by using the `data` function:
 
 ```{r data-import}
 data("mae_tcga")
 mae_tcga
 ```
+
+However, it should be noted that the package is built with the option `LazyData: true`, therefore all the `mae_*` objects will be available to the user by simply running `library(curatedPCaData)`.
 
 # Overview to the available datasets
 
@@ -313,7 +314,6 @@ for(mae in studies[,"MAE-object"]){
 		studies[w,"Data source"] <- "cBioPortal"
 	}else if(mae == "mae_baca"){
 		studies[w,"Data source"] <- "cBioPortal"
-		studies[w,"Notes"] <- "CNA only"
 	}else if(mae == "mae_barbieri"){
 		studies[w,"Data source"] <- "cBioPortal"
 	}else if(mae == "mae_barwick"){
@@ -490,31 +490,6 @@ head(mae_taylor[["mcp"]])[1:5,1:3]
 
 Each row of the deconvolution matrix represents the content of a certain immune cell type and the columns represent the patient sample IDs. The variables on the rows are specific for each method. Further, it should be noted that not all methods could be run on all datasets due to lack of overlap in genes of interest.
 
-## Sample purity estimates
-
-Tumor sample purities were run for studies which had separate normal samples (and their gene expression) available.
-
-The purity scores were calculated using DeMixT [Wang et al., 2018], and was available for the studies:
-- ```mae_chandran```
-- ```mae_friedrich```
-- ```mae_kunderfranco```
-- ```mae_taylor```
-- ```mae_tcga```
-- ```mae_wallace```
-
-The purity scores are stored in slot ```purity``` and can be accessed via:
-
-```{r purities}
-mae_tcga[["purity"]][,1:10]
-```
-
-The metadata slot provides the original purity values as estimated by the original authors, if they provided these pre-calculated values. For example in TCGA, our estimated DeMixT values vs. the original values:
-
-```{r demixt_own_vs_authors, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="DeMixT from curatedPCaData vs. directly from TCGA"}
-tcga_demixts <- wideFormat(mae_tcga[c("demixt"),,"purity"], colDataCols="tumor_purity_demixt")
-plot(as.matrix(tcga_demixts[,2:3]), pch=16, xlab="DeMixT from curatedPCaData's GDC processed FPKM-UQ", ylab="Original DeMixT from TCGA")
-```
-
 ## Risk scores and other metrics
 
 The slot ```scores``` is used to provide key risk scores or other informative metrics based on the primary data. These scores can be accessed as a matrix as if they were variables on an assay with this name:
@@ -525,13 +500,13 @@ mae_tcga[["scores"]][,1:4]
 
 The following PCa risk scores are offered:
 
-- ```Decipher``` [Herlemann et al., 2020]
-- ```Oncotype DX``` [Knezevic et al., 2013]
-- ```Prolaris``` [NICE Advice, 2018]
+- Decipher ```(rowname: decipher)``` [Herlemann et al., 2020]
+- Oncotype DX ```(rowname: oncotype)``` [Knezevic et al., 2013]
+- Prolaris ```(rowname: prolaris)``` [NICE Advice, 2018]
 
 Further, the 20-gene Androgen Receptor (AR) score is calculated as described in the TCGA's Cell 2015 paper:
 
-- ```AR_score``` [Cancer Genome Atlas Research Network, 2015]
+- AR score ```(rowname: ar_score)``` [Cancer Genome Atlas Research Network, 2015]
 
 # Citations
 

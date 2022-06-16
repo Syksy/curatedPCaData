@@ -156,24 +156,12 @@ coxph_taylor_prolaris <- coxph(bcr_taylor_subset ~ taylor_prolaris)
 summary(coxph_taylor_prolaris)
 ```
 
-## Purity scores
-
-### Pathology purity vs. DeMixT
-
-```{r path_purity_vs_demixt_run, dpi=150, fig.width=12, fig.height=7, out.width="100%", fig.cap="DeMixT purity estimates vs. pathology purity assessments in TCGA"}
-demixt_tcga <- c(mae_tcga[["purity"]])
-clin_tcga <- colData(mae_tcga)
-pathpurity_tcga <- clin_tcga[match(colnames(mae_tcga[["purity"]]), clin_tcga$sample_name),"tumor_purity_pathology"]
-boxplot(demixt_tcga ~ pathpurity_tcga, xlab="Purity assessed by pathology", ylab="Purity estimated by DeMixT")
-stripchart(demixt_tcga ~ pathpurity_tcga, vertical=TRUE, add=TRUE, pch=16)
-```
-
 ## Correlations between genes and derived variables
 
-### Purity, risk scores, and AR score
+### Risk scores, and AR score
 
-```{r purity_risks_ar, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Correlations between DeMixT purity scores, risk scores, and AR score in TCGA"}
-correlations <- cor(as.matrix(wideFormat(mae_tcga[,,c("purity", "scores")])[,2:6]), use="na.or.complete")
+```{r purity_risks_ar, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Correlations risk scores and AR score in TCGA"}
+correlations <- cor(as.matrix(wideFormat(mae_tcga[,,"scores"])[,2:5]), use="na.or.complete")
 corrplot::corrplot(correlations)
 ```
 
