@@ -295,7 +295,6 @@ taylor_oncoprint_2 <- curatedPCaData:::wrapper_oncoprintify(mae_taylor, genes=ge
 
 # Draw the oncoprint
 ComplexHeatmap::oncoPrint(taylor_oncoprint_2, alter_fun = alter_fun)
-
 ```
 
 
