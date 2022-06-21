@@ -4,7 +4,7 @@
 #'
 #' @param mae MultiAssayExperiment object with gene expression available
 #' @param slot Name of the Gene Expression slot, by default grepping for 'gex' prefix and picking the hit
-#' @param test Type of test; available: "Prolaris", "Oncotype DX", and "Decypher"
+#' @param test Type of test; available: "Prolaris", "Oncotype DX", and "Decipher" (case insensitive)
 #' @param log Should data be log(x+1)-transformed prior to calculating the risk score
 #'
 #' @details https://bjui-journals.onlinelibrary.wiley.com/doi/10.1111/bju.14452 https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-14-690 https://www.nature.com/articles/s41391-019-0167-9
@@ -303,7 +303,7 @@ genomic_score <- function(
 	}
 	# TCGA version of AR score supporting gene aliases and different naming conventions
 	
-	if(base::tolower(test) %in%  c("ar", "ar score", "ar-score")){		
+	if(base::tolower(test) %in%  c("ar", "ar score", "ar-score", "ar_score")){		
 		# Aliases queried using https://www.genecards.org/
 		ar_genes <- list(
 			"KLK3" = c("KLK3", "PSA", "APS", "KLK2A1"), # Possibly HK3; ambiguous
