@@ -1,0 +1,31 @@
+citHeader("To cite curatedPCaData in publications use, please cite Laajala et al. Further, specific citations for the curated PCa studies can be found from their respective MAE-object R documentation files.")
+
+citEntry(
+  entry    = "Article",
+  title    = "Integration of clinical, genomic, and signature prostate cancer features through a curated and harmonized dataset",
+  author   = personList(
+              as.person("Teemu D Laajala"),
+              as.person("Jordan Creed"),
+              as.person("Varsha Sreekanth"),
+              as.person("Alex Soupir"),
+              as.person("Kalaimathy Singaravelu"),
+              as.person("Federico Calboli"),
+              as.person("Christelle Colin Leitzinger"),
+              as.person("Travis Gerke"),
+              as.person("Brooke Fidley"),
+              as.person("Svitlana Tyekucheva"),
+              as.person("James C Costello")), 
+  journal  = "",
+  year     = "2022",
+  volume   = "",
+  number   = "",
+  pages    = "",
+  url      = "", 
+  doi      = "",
+  textVersion = paste(
+             "Laajala, T.D., et al. (2022)",
+             "Integration of clinical, genomic, and signature prostate cancer features through a curated and harmonized dataset",
+             "To be submitted."
+  )
+)
+
