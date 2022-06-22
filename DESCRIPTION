@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.9.19
-Date: 2022-06-21
+Version: 0.9.20
+Date: 2022-06-22
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -15,15 +15,18 @@ Encoding: UTF-8
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 LazyData: true
+LazyDataCompression: xz
 URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
 Depends: R (>= 4.1.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, RaggedExperiment
 Imports: 
-    shiny, DT,
-    knitr, rmarkdown,
-    utils
+    shiny, 
+    DT,
+    utils, 
+    methods
 Suggests: 
-    xtable,
+    knitr,
+    rmarkdown,
     progress,
     cgdsr,
     biomaRt,
