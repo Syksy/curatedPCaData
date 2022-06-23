@@ -14,6 +14,7 @@ An MAE object spanning 67 samples of normal prostate samples and prostate cancer
   \item{quantiseq}{matrix with 11 rows and 67 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 67 columns, of mcp-counter based deconvolution data}
   \item{scores}{matrix with 2 rows and 67 columns, of Prolaris risk scores and AR scores}
+  \item{purity}{matrix with 1 rows and 53 columns, of tumor purity estimates}
 }
 }
 \source{

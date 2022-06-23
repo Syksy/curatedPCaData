@@ -3,7 +3,7 @@
 \docType{data}
 \name{mae_igc}
 \alias{mae_igc}
-\title{IGC}
+\title{International Genomics Consortium (IGC) MAE-object}
 \format{
 An MAE object spanning 83 men with prostate cancer
 \describe{
@@ -24,6 +24,6 @@ An MAE object spanning 83 men with prostate cancer
 mae_igc
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from IGC's Expression Project for Oncology (expO)
+MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from IGC's Expression Project for Oncology (expO) with a subset for prostate cancer
 }
 \keyword{datasets}
