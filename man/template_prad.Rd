@@ -5,7 +5,7 @@
 \alias{template_prad}
 \title{Template for curatedPCaData clinical fields}
 \format{
-An object of class \code{data.frame} with 67 rows and 8 columns.
+An object of class \code{data.frame} with 68 rows and 6 columns.
 }
 \usage{
 template_prad

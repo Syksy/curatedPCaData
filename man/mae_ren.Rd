@@ -7,8 +7,8 @@
 \format{
 An MAE object spanning 65 men with prostate cancer
 \describe{
-  \item{cna.gistic}{matrix with 20873 rows and 65 columns, from GISTIC discretized copy number alteration calls}
-  \item{gex.relz}{matrix with 21589 rows and 65 columns, of gene expression data}
+  \item{cna.gistic}{matrix with 20324 rows and 65 columns, from GISTIC discretized copy number alteration calls}
+  \item{gex.relz}{matrix with 19393 rows and 65 columns, of gene expression data}
   \item{mut}{RaggedExperiment with 50803 rows and 65 columns, of mutation data from cbioportal}
   \item{cibersort}{matrix with 22 rows and 65 columns, of cibersort based deconvolution data}
   \item{xcell}{matrix with 39 rows and 65 columns, of xcell based deconvolution data}
