@@ -11,6 +11,7 @@ A MAE object spanning 146 prostate cancer samples.
   \item{cibersort}{matrix with 22 rows and 146 columns, of cibersort based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 146 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 4 rows and 146 columns, of mcp-counter based deconvolution data}
+  \item{scores}{matrix with 2 rows and 146 columns, of Prolaris risk scores and AR scores}
 }
 }
 \source{

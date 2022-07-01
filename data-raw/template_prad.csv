@@ -11,7 +11,7 @@ gleason_grade,integer,non-unique,optional,2|3|4|5|6|7|8|9|10,Gleason grade  (int
 gleason_major,integer,non-unique,optional,2|3|4|5,Gleason grade  (integer) for the major site score,,
 gleason_minor,integer,non-unique,optional,2|3|4|5,Gleason grade  (integer) for the minor site score,,
 source_of_gleason,character,non-unique,optional,biopsy|prostatectomy|tissue_block,source of where the pathogist performed Gleason grading,,
-grade_group,character,non-unique,optional,<=6|3+4|4+3|>=8,separation of the gleason grades into groups that show different prognosis,,
+grade_group,character,non-unique,optional,<=6|3+4|4+3|7|>=8,"Separation of the gleason grades into groups that show different prognosis; if major+minor is separation not available, allow showing just sum (ie. 7)",,
 T_pathological,integer,non-unique,optional,1|2|3|4,"pathological T stage (assessment made after surgery), based on tumor only ",,
 T_substage_pathological,character,non-unique,optional,a|b|c,"pathological T substage (assessment made after surgery), based on tumor only ",,
 T_clinical,integer,non-unique,optional,1|2|3|4,clinical T stage (at time of diagnosis) based on tumor only,,

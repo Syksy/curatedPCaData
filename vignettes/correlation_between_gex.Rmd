@@ -1,11 +1,11 @@
 ---
-title: "correlation in gex"
+title: "Example correlations for genes in curatedPCaData"
 output: 
   rmarkdown::html_vignette:
     toc: true
     number_sections: false
 vignette: >
-  %\VignetteIndexEntry{Analysis examples in curatedPCaData}
+  %\VignetteIndexEntry{Example correlations for genes in curatedPCaData}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

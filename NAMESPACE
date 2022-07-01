@@ -3,5 +3,7 @@
 export(shinyPCa)
 import(MultiAssayExperiment)
 import(S4Vectors)
+importFrom(magrittr,"%>%")
+importFrom(methods,slot)
 importFrom(stats,median)
 importFrom(utils,read.table)

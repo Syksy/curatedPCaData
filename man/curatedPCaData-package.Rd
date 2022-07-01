@@ -6,7 +6,7 @@
 \alias{curatedPCaData-package}
 \title{curatedPCaData: Curated Prostate Cancer Data}
 \description{
-A selection of annotated prostate cancer datasets featuring multiple omics and derived downstream variables
+The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables.
 }
 \seealso{
 Useful links:
