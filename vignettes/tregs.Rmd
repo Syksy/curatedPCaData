@@ -107,49 +107,51 @@ ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)
 
 ### Relationship between Tregs and Gleason grade
 
-Since there is a significant difference in the survival of TCGA patients with high Tregs, looking at the gleason grade patterns can be useful.
-The bar plot below shows the percentage of TCGA samples with different gleason grades, quartile stratified by Treg infiltration.
+Since there is a significant difference in the survival of TCGA patients with high Tregs, studying the gleason grade patterns can be useful.
+The bar plots below show the percentage of samples with different gleason grades plotted against median stratified Treg infiltration across different data sets.
 
 
 ```{r,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs TCGA"}
 
 tcga<-as.data.frame(colData(mae_tcga))
-
 clinical<-tcga[,c("sample_name","grade_group")]
+
+
 cibersort=mae_tcga[["cibersort"]]
 tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
 
+median=median(tregs$`T cells regulatory (Tregs)`)
+
+
+tregs<-tregs%>%mutate(
+condition_tregs = case_when(
+  `T cells regulatory (Tregs)`<median ~ "low T cells regulatory",
+  `T cells regulatory (Tregs)`>=median ~ "high T cells regulatory"
+  ))
+
+
 tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
 
-tregs_and_clinical=tregs_and_clinical[order(tregs_and_clinical$`T cells regulatory (Tregs)`),]
-
-tregs_and_clinical=tregs_and_clinical %>%
-    mutate(quantile = ntile(`T cells regulatory (Tregs)`, 3))
-
-colnames(tregs_and_clinical)[4]<-"condition_tregs"
-
-treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="1",]
-treg_mid<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="2",]
-treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="3",]
-
+treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="low T cells regulatory",]
+treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="high T cells regulatory",]
 
 treg_low=treg_low[,c("grade_group","condition_tregs")]
 treg_high=treg_high[,c("grade_group","condition_tregs")]
-treg_mid=treg_mid[,c("grade_group","condition_tregs")]
 
 freq_low_tregs=as.data.frame(table(treg_low$grade_group))
 freq_high_tregs=as.data.frame(table(treg_high$grade_group))
-freq_mid_tregs=as.data.frame(table(treg_mid$grade_group))
+
 
 freq_low_tregs$condition="low T cells regulatory"
 freq_high_tregs$condition="high T cells regulatory"
-freq_mid_tregs$condition="mid T cells regulatory"
 
-frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
-frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
+freq_low_tregs$freq_frac=(freq_low_tregs$Freq/nrow(treg_low))*100
+freq_high_tregs$freq_frac=(freq_high_tregs$Freq/nrow(treg_high))*100
+
+frequency_table=rbind(freq_low_tregs,freq_high_tregs)
 names(frequency_table)[1]<-"Gleason grade"
 
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (TCGA)")
+ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency %",title="Gleason grade vs Tregs (TCGA)")+scale_fill_hue(l=40)
 
 
 ```
@@ -157,182 +159,95 @@ ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom
 ```{r,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs Taylor"}
 
 taylor<-as.data.frame(colData(mae_taylor))
-
 clinical<-taylor[,c("sample_name","grade_group")]
 clinical<-clinical[!is.na(clinical$grade_group),]
+
 cibersort=mae_taylor[["cibersort"]]
 tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
 
+median=median(tregs$`T cells regulatory (Tregs)`)
+
+
+tregs<-tregs%>%mutate(
+condition_tregs = case_when(
+  `T cells regulatory (Tregs)`<median ~ "low T cells regulatory",
+  `T cells regulatory (Tregs)`>=median ~ "high T cells regulatory"
+  ))
+
 tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
 
-tregs_and_clinical=tregs_and_clinical[order(tregs_and_clinical$`T cells regulatory (Tregs)`),]
-
-tregs_and_clinical=tregs_and_clinical %>%
-    mutate(quantile = ntile(`T cells regulatory (Tregs)`, 3))
-
-colnames(tregs_and_clinical)[4]<-"condition_tregs"
-
-treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="1",]
-treg_mid<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="2",]
-treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="3",]
-
+treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="low T cells regulatory",]
+treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="high T cells regulatory",]
 
 treg_low=treg_low[,c("grade_group","condition_tregs")]
 treg_high=treg_high[,c("grade_group","condition_tregs")]
-treg_mid=treg_mid[,c("grade_group","condition_tregs")]
 
 freq_low_tregs=as.data.frame(table(treg_low$grade_group))
 freq_high_tregs=as.data.frame(table(treg_high$grade_group))
-freq_mid_tregs=as.data.frame(table(treg_mid$grade_group))
+
 
 freq_low_tregs$condition="low T cells regulatory"
 freq_high_tregs$condition="high T cells regulatory"
-freq_mid_tregs$condition="mid T cells regulatory"
 
-frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
-frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
+freq_low_tregs$freq_frac=(freq_low_tregs$Freq/nrow(treg_low))*100
+freq_high_tregs$freq_frac=(freq_high_tregs$Freq/nrow(treg_high))*100
+
+frequency_table=rbind(freq_low_tregs,freq_high_tregs)
 names(frequency_table)[1]<-"Gleason grade"
 
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (Taylor)")
+ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency %",title="Gleason grade vs Tregs (Taylor)")+scale_fill_hue(l=40)
 
 
 ```
 
-```{r ,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs Ren"}
-
-ren<-as.data.frame(as.matrix(colData(mae_ren)))
-
-clinical<-ren[,c("sample_name","grade_group")]
-clinical<-clinical[!is.na(clinical$grade_group),]
-cibersort=mae_ren[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
-
-tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
-
-tregs_and_clinical=tregs_and_clinical[order(tregs_and_clinical$`T cells regulatory (Tregs)`),]
-
-tregs_and_clinical=tregs_and_clinical %>%
-    mutate(quantile = ntile(`T cells regulatory (Tregs)`, 3))
-
-colnames(tregs_and_clinical)[4]<-"condition_tregs"
-
-treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="1",]
-treg_mid<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="2",]
-treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="3",]
-
-
-treg_low=treg_low[,c("grade_group","condition_tregs")]
-treg_high=treg_high[,c("grade_group","condition_tregs")]
-treg_mid=treg_mid[,c("grade_group","condition_tregs")]
-
-freq_low_tregs=as.data.frame(table(treg_low$grade_group))
-freq_high_tregs=as.data.frame(table(treg_high$grade_group))
-freq_mid_tregs=as.data.frame(table(treg_mid$grade_group))
-
-freq_low_tregs$condition="low T cells regulatory"
-freq_high_tregs$condition="high T cells regulatory"
-freq_mid_tregs$condition="mid T cells regulatory"
-
-frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
-frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
-names(frequency_table)[1]<-"Gleason grade"
-
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (Ren)")
-
-
-```
-
-```{r,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs Barbieri"}
-
-barbieri<-as.data.frame(as.matrix(colData(mae_barbieri)))
-
-clinical<-barbieri[,c("sample_name","grade_group")]
-clinical<-clinical[!is.na(clinical$grade_group),]
-cibersort=mae_barbieri[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
-
-tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
-
-tregs_and_clinical=tregs_and_clinical[order(tregs_and_clinical$`T cells regulatory (Tregs)`),]
-
-tregs_and_clinical=tregs_and_clinical %>%
-    mutate(quantile = ntile(`T cells regulatory (Tregs)`, 3))
-
-colnames(tregs_and_clinical)[4]<-"condition_tregs"
-
-treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="1",]
-treg_mid<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="2",]
-treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="3",]
-
-
-treg_low=treg_low[,c("grade_group","condition_tregs")]
-treg_high=treg_high[,c("grade_group","condition_tregs")]
-treg_mid=treg_mid[,c("grade_group","condition_tregs")]
-
-freq_low_tregs=as.data.frame(table(treg_low$grade_group))
-freq_high_tregs=as.data.frame(table(treg_high$grade_group))
-freq_mid_tregs=as.data.frame(table(treg_mid$grade_group))
-
-freq_low_tregs$condition="low T cells regulatory"
-freq_high_tregs$condition="high T cells regulatory"
-freq_mid_tregs$condition="mid T cells regulatory"
-
-frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
-frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
-names(frequency_table)[1]<-"Gleason grade"
-
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (Barbieri)")
-
-
-```
 
 ```{r ,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs IGC"}
 
 igc<-as.data.frame(as.matrix(colData(mae_igc)))
-
 clinical<-igc[,c("sample_name","grade_group")]
 clinical<-clinical[!is.na(clinical$grade_group),]
+
 cibersort=mae_igc[["cibersort"]]
 tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
 
+median=median(tregs$`T cells regulatory (Tregs)`)
+
+
+tregs<-tregs%>%mutate(
+condition_tregs = case_when(
+  `T cells regulatory (Tregs)`<median ~ "low T cells regulatory",
+  `T cells regulatory (Tregs)`>=median ~ "high T cells regulatory"
+  ))
+
 tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
 
-tregs_and_clinical=tregs_and_clinical[order(tregs_and_clinical$`T cells regulatory (Tregs)`),]
-
-tregs_and_clinical=tregs_and_clinical %>%
-    mutate(quantile = ntile(`T cells regulatory (Tregs)`, 3))
-
-colnames(tregs_and_clinical)[4]<-"condition_tregs"
-
-treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="1",]
-treg_mid<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="2",]
-treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="3",]
-
+treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="low T cells regulatory",]
+treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="high T cells regulatory",]
 
 treg_low=treg_low[,c("grade_group","condition_tregs")]
 treg_high=treg_high[,c("grade_group","condition_tregs")]
-treg_mid=treg_mid[,c("grade_group","condition_tregs")]
 
 freq_low_tregs=as.data.frame(table(treg_low$grade_group))
 freq_high_tregs=as.data.frame(table(treg_high$grade_group))
-freq_mid_tregs=as.data.frame(table(treg_mid$grade_group))
+
 
 freq_low_tregs$condition="low T cells regulatory"
 freq_high_tregs$condition="high T cells regulatory"
-freq_mid_tregs$condition="mid T cells regulatory"
 
-frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
-frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
+freq_low_tregs$freq_frac=(freq_low_tregs$Freq/nrow(treg_low))*100
+freq_high_tregs$freq_frac=(freq_high_tregs$Freq/nrow(treg_high))*100
+
+frequency_table=rbind(freq_low_tregs,freq_high_tregs)
 names(frequency_table)[1]<-"Gleason grade"
 
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (IGC)")
+ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency %",title="Gleason grade vs Tregs (igc)")+scale_fill_hue(l=40)
 
 
 ```
 
 
 
-```{r ,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs Kunderfranco"}
+```{r ,include=FALSE}
 
 kunderfranco<-as.data.frame(as.matrix(colData(mae_kunderfranco)))
 
@@ -371,51 +286,60 @@ frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
 frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
 names(frequency_table)[1]<-"Gleason grade"
 
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (Kunderfranco)")
+ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (Kunderfranco)")+scale_fill_hue(l=40)
 
 
 ```
 
-```{r ,include=FALSE}
+```{r ,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs Weiner"}
 
-true<-as.data.frame(colData(mae_true))
+weiner<-as.data.frame(as.matrix(colData(mae_weiner)))
+clinical<-weiner[,c("sample_name","grade_group")]
+clinical<-clinical[!is.na(clinical$grade_group),]
+#clinical<-clinical[!is.na(clinical$gleason_grade),]
+#clinical$gleason_grade=as.numeric(clinical$gleason_grade)
 
-clinical<-true[,c("sample_name","grade_group")]
-cibersort=mae_true[["cibersort"]]
+#clinical<-clinical%>%mutate(
+#grade_group = case_when(
+#  gleason_grade <= 6 ~ "<=6",
+#  gleason_grade >=8 ~ ">=8",
+#  gleason_grade == 7 ~ "7"
+#  ))
+
+cibersort=mae_weiner[["cibersort"]]
 tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+
+median=median(tregs$`T cells regulatory (Tregs)`)
+
+
+tregs<-tregs%>%mutate(
+condition_tregs = case_when(
+  `T cells regulatory (Tregs)`<median ~ "low T cells regulatory",
+  `T cells regulatory (Tregs)`>=median ~ "high T cells regulatory"
+  ))
 
 tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
 
-tregs_and_clinical=tregs_and_clinical[order(tregs_and_clinical$`T cells regulatory (Tregs)`),]
-
-tregs_and_clinical=tregs_and_clinical %>%
-    mutate(quantile = ntile(`T cells regulatory (Tregs)`, 3))
-
-colnames(tregs_and_clinical)[4]<-"condition_tregs"
-
-treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="1",]
-treg_mid<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="2",]
-treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="3",]
-
+treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="low T cells regulatory",]
+treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="high T cells regulatory",]
 
 treg_low=treg_low[,c("grade_group","condition_tregs")]
 treg_high=treg_high[,c("grade_group","condition_tregs")]
-treg_mid=treg_mid[,c("grade_group","condition_tregs")]
 
 freq_low_tregs=as.data.frame(table(treg_low$grade_group))
 freq_high_tregs=as.data.frame(table(treg_high$grade_group))
-freq_mid_tregs=as.data.frame(table(treg_mid$grade_group))
+
 
 freq_low_tregs$condition="low T cells regulatory"
 freq_high_tregs$condition="high T cells regulatory"
-freq_mid_tregs$condition="mid T cells regulatory"
 
-frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
-frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
+freq_low_tregs$freq_frac=(freq_low_tregs$Freq/nrow(treg_low))*100
+freq_high_tregs$freq_frac=(freq_high_tregs$Freq/nrow(treg_high))*100
+
+frequency_table=rbind(freq_low_tregs,freq_high_tregs)
 names(frequency_table)[1]<-"Gleason grade"
 
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (True)")
-
+ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency %",title="Gleason grade vs Tregs (weiner)")+scale_fill_hue(l=40)
 
 ```
 
@@ -423,43 +347,43 @@ ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom
 ```{r ,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs icgcca"}
 
 icgcca<-as.data.frame(as.matrix(colData(mae_icgcca)))
-
 clinical<-icgcca[,c("sample_name","grade_group")]
-clinical<-clinical[clinical$grade_group!="NA",]
+clinical<-clinical[!is.na(clinical$grade_group),]
+
 cibersort=mae_icgcca[["cibersort"]]
 tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
 
+median=median(tregs$`T cells regulatory (Tregs)`)
+
+
+tregs<-tregs%>%mutate(
+condition_tregs = case_when(
+  `T cells regulatory (Tregs)`<median ~ "low T cells regulatory",
+  `T cells regulatory (Tregs)`>=median ~ "high T cells regulatory"
+  ))
+
 tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
 
-tregs_and_clinical=tregs_and_clinical[order(tregs_and_clinical$`T cells regulatory (Tregs)`),]
-
-tregs_and_clinical=tregs_and_clinical %>%
-    mutate(quantile = ntile(`T cells regulatory (Tregs)`, 3))
-
-colnames(tregs_and_clinical)[4]<-"condition_tregs"
-
-treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="1",]
-treg_mid<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="2",]
-treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="3",]
-
+treg_low<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="low T cells regulatory",]
+treg_high<-tregs_and_clinical[tregs_and_clinical$condition_tregs=="high T cells regulatory",]
 
 treg_low=treg_low[,c("grade_group","condition_tregs")]
 treg_high=treg_high[,c("grade_group","condition_tregs")]
-treg_mid=treg_mid[,c("grade_group","condition_tregs")]
 
 freq_low_tregs=as.data.frame(table(treg_low$grade_group))
 freq_high_tregs=as.data.frame(table(treg_high$grade_group))
-freq_mid_tregs=as.data.frame(table(treg_mid$grade_group))
+
 
 freq_low_tregs$condition="low T cells regulatory"
 freq_high_tregs$condition="high T cells regulatory"
-freq_mid_tregs$condition="mid T cells regulatory"
 
-frequency_table=rbind(freq_low_tregs,freq_high_tregs,freq_mid_tregs)
-frequency_table$freq_frac=(frequency_table$Freq/nrow(treg_low))*100
+freq_low_tregs$freq_frac=(freq_low_tregs$Freq/nrow(treg_low))*100
+freq_high_tregs$freq_frac=(freq_high_tregs$Freq/nrow(treg_high))*100
+
+frequency_table=rbind(freq_low_tregs,freq_high_tregs)
 names(frequency_table)[1]<-"Gleason grade"
 
-ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency % ",title = "Gleason grade vs Tregs (icgcca)")
+ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom_bar(stat="identity")+labs(x="",y="Frequency %",title="Gleason grade vs Tregs (icgcca)")+scale_fill_hue(l=40)
 
 
 ```
@@ -467,7 +391,7 @@ ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom
 
 ### Relationship between TP53 mutation and Treg infiltration
 
-The tumor suppressor gene TP53 is one of the most commonly mutated genes across multiple cancers. Studying how Treg infiltration is associated with TP53 mutation can be interesting given high Treg populations have shown to reduce survival across prostate cancer patients. The box plot below shows that association in TCGA patients:
+The tumor suppressor gene TP53 is one of the most commonly mutated genes across multiple cancers. Studying how Treg infiltration is associated with TP53 mutation can be interesting given high Treg populations have shown to reduce survival across prostate cancer patients. The box plots below show that association in patients from the TCGA and Abida data sets.
 
 ```{r,dpi=150, fig.width=7, fig.height=7,out.width="100%", fig.cap="TP53 Mutation vs Tregs TCGA"}
 mut=mae_tcga[["mut"]]
@@ -523,3 +447,147 @@ boxplot(`T cells regulatory (Tregs)`~TP53,data=cibersort_and_mut, main="Box plot
 
 
 ```
+
+
+### FOXP3 exp vs Treg infilteration (TCGA)
+
+FOXP3 is a well known regulator of T regulatory cells. Using the curatedpcadata package we can look at the association between T reg infiltration and FOXP3 expression across multiple data sets. For example the plots below show how the FOXP3 expression looks like in patients with high and low Tregs stratified by the median in the TCGA and Taylor data sets.
+
+```{r,dpi=150, fig.width=7, fig.height=7,out.width="100%", fig.cap="FOXP3 exp vs Tregs (TCGA)"}
+tcga<-as.data.frame(mae_tcga[["gex.fpkm"]])
+
+cibersort=mae_tcga[["cibersort"]]
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+
+median=median(tregs$`T cells regulatory (Tregs)`)
+
+
+tregs<-tregs%>%mutate(
+condition_tregs = case_when(
+  `T cells regulatory (Tregs)`<median ~ "low T cells regulatory",
+  `T cells regulatory (Tregs)`>=median ~ "high T cells regulatory"
+  ))
+
+foxp3_exp=as.data.frame(t(tcga["FOXP3",]))
+foxp3_and_tregs=merge(foxp3_exp,tregs,by=0)
+
+ggplot(foxp3_and_tregs, aes(x=condition_tregs, y=FOXP3))+geom_boxplot() +geom_jitter(color="black", size=0.4, alpha=0.9)+ylab("FOXP3 expression (TCGA)") 
+
+
+```
+
+### FOXP3 exp vs Treg infilteration (Taylor)
+
+```{r,dpi=150, fig.width=7, fig.height=7,out.width="100%", fig.cap="FOXP3 exp vs Tregs (Taylor)"}
+taylor<-as.data.frame(mae_taylor[["gex.rma"]])
+
+cibersort=mae_taylor[["cibersort"]]
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+
+median=median(tregs$`T cells regulatory (Tregs)`)
+
+
+tregs<-tregs%>%mutate(
+condition_tregs = case_when(
+  `T cells regulatory (Tregs)`<median ~ "low T cells regulatory",
+  `T cells regulatory (Tregs)`>=median ~ "high T cells regulatory"
+  ))
+
+foxp3_exp=as.data.frame(t(taylor["FOXP3",]))
+foxp3_and_tregs=merge(foxp3_exp,tregs,by=0)
+
+ggplot(foxp3_and_tregs, aes(x=condition_tregs, y=FOXP3))+geom_boxplot() +geom_jitter(color="black", size=0.4, alpha=0.9)+ylab("FOXP3 expression (Taylor)") 
+
+
+```
+
+### FOXP3 exp vs DFS (TCGA)
+
+Since Treg infiltration is related to poor survival in Prostate cancer patients, understanding the relationship between FOXP3 and disease free survival can be extremely useful.
+
+```{r,dpi=150, fig.width=7, fig.height=7,out.width="100%", fig.cap="FOXP3 exp vs DFS (TCGA)"}
+
+tcga_gex<-as.data.frame(mae_tcga[["gex.fpkm"]])
+foxp3_exp=as.data.frame(t(tcga_gex["FOXP3",]))
+
+tcga<-as.data.frame(colData(mae_tcga))
+
+clinical<-tcga[,c("sample_name","disease_specific_recurrence_status","days_to_disease_specific_recurrence")]
+clinical$days_to_disease_specific_recurrence=as.numeric(clinical$days_to_disease_specific_recurrence)
+clinical$disease_specific_recurrence_status=as.numeric(clinical$disease_specific_recurrence_status)
+clinical$days_to_disease_specific_recurrence=(clinical$days_to_disease_specific_recurrence)/30
+colnames(clinical)[3]="months_to_disease_specific_recurrence"
+
+
+median=median(foxp3_exp$FOXP3)
+
+
+foxp3_exp<-foxp3_exp%>%mutate(
+condition_foxp3 = case_when(
+  FOXP3<median ~ "low FOXP3",
+  FOXP3>=median ~ "high FOXP3"
+  ))
+
+
+foxp3_and_clinical=merge(foxp3_exp,clinical,by.x=0,by.y="sample_name")
+
+sfit<-survfit(Surv(months_to_disease_specific_recurrence,disease_specific_recurrence_status)~condition_foxp3, data=foxp3_and_clinical)
+
+
+ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)",title="FOXP3 vs BCR (TCGA)")
+
+
+```
+
+### FOXP3 exp vs DFS (Taylor)
+
+```{r,dpi=150, fig.width=7, fig.height=7,out.width="100%", fig.cap="FOXP3 exp vs DFS (Taylor)"}
+
+taylor_gex<-as.data.frame(mae_taylor[["gex.rma"]])
+foxp3_exp=as.data.frame(t(taylor_gex["FOXP3",]))
+
+taylor<-as.data.frame(colData(mae_taylor))
+
+clinical<-taylor[,c("sample_name","disease_specific_recurrence_status","days_to_disease_specific_recurrence")]
+clinical$days_to_disease_specific_recurrence=as.numeric(clinical$days_to_disease_specific_recurrence)
+clinical$disease_specific_recurrence_status=as.numeric(clinical$disease_specific_recurrence_status)
+clinical$days_to_disease_specific_recurrence=(clinical$days_to_disease_specific_recurrence)/30
+colnames(clinical)[3]="months_to_disease_specific_recurrence"
+
+
+median=median(foxp3_exp$FOXP3)
+
+
+foxp3_exp<-foxp3_exp%>%mutate(
+condition_foxp3 = case_when(
+  FOXP3<median ~ "low FOXP3",
+  FOXP3>=median ~ "high FOXP3"
+  ))
+
+
+foxp3_and_clinical=merge(foxp3_exp,clinical,by.x=0,by.y="sample_name")
+
+sfit<-survfit(Surv(months_to_disease_specific_recurrence,disease_specific_recurrence_status)~condition_foxp3, data=foxp3_and_clinical)
+
+
+ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)",title="FOXP3 vs BCR (Taylor)")
+
+
+```
+
+### Correlation between FOXP3 expression and Tregs
+
+Looking at general trends in how FOXP3 expression changes overall with increase in Treg populations gives an idea of how the gene affects immune responses. The correlation plot depicts that trend in the TCGA patients.
+```{r}
+tcga_gex<-as.data.frame(mae_tcga[["gex.fpkm"]])
+foxp3_exp=as.data.frame(t(tcga_gex["FOXP3",]))
+
+cibersort=mae_tcga[["cibersort"]]
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+
+tregs_and_foxp3=merge(foxp3_exp,tregs,by=0)
+
+plot(tregs_and_foxp3$`T cells regulatory (Tregs)`,tregs_and_foxp3$FOXP3,xlab="T regulatory cells",ylab="FOXP3 Expression")
+
+```
+
