@@ -587,7 +587,7 @@ tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop
 
 tregs_and_foxp3=merge(foxp3_exp,tregs,by=0)
 
-plot(tregs_and_foxp3$`T cells regulatory (Tregs)`,tregs_and_foxp3$FOXP3,xlab="T regulatory cells",ylab="FOXP3 Expression")
+plot(tregs_and_foxp3$`T cells regulatory (Tregs)`,tregs_and_foxp3$FOXP3,xlab="T regulatory cells",ylab="FOXP3 Expression",title="Tregs vs FOXP3 expression (TCGA)")
 
 ```
 
