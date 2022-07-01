@@ -1095,3 +1095,22 @@ usethis::use_data(mae_wang, overwrite = TRUE)
 # - Weiner et al.
 usethis::use_data(mae_weiner, overwrite = TRUE)
 
+# Re-save the processed datasets using the compression indicated at LazyDataCompression-field in DESCRIPTION
+tools::resaveRdaFiles("data/mae_abida.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_barbieri.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_barwick.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_chandran.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_friedrich.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_icgcca.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_igc.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_kim.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_kunderfranco.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_ren.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_sun.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_taylor.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_tcga.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_true.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_wallace.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_wang.rda", compress="xz")
+tools::resaveRdaFiles("data/mae_weiner.rda", compress="xz")
+

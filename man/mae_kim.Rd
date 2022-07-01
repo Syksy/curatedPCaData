@@ -3,7 +3,7 @@
 \docType{data}
 \name{mae_kim}
 \alias{mae_kim}
-\title{Kim et al.}
+\title{Kim et al. MAE-object}
 \format{
 An MAE object spanning 266 men with prostate cancer
 \describe{
