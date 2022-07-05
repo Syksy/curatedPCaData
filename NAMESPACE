@@ -2,6 +2,7 @@
 
 export(shinyPCa)
 import(MultiAssayExperiment)
+import(RaggedExperiment)
 import(S4Vectors)
 importFrom(magrittr,"%>%")
 importFrom(methods,slot)
