@@ -267,6 +267,7 @@ wrapper_metasweep <- function(
 #'
 #' @param mae MultiAssayExperiment object from curatedPCaData package
 #' @param col Name of the column to unwrap (e.g. 'other_sample', 'other_patient', ...)
+#' @param vals Directly a vector of concatenized character values (for example from an external source); will override use of 'mae' and 'col' if provided
 #' @param varsep Separator for different variables to perform strsplit on, for example "var1=123|var2=foo|var3=bar", by default '|'.
 #' @param valsep Separator that separates variable name from its corresponding value, for example "myvar=123", where '=' is the default separator.
 #' @param casts List of class cast functions in importance order to attempt cast values into; if an non-NA warning is detected, the next cast type is tested
@@ -274,17 +275,23 @@ wrapper_metasweep <- function(
 #' @return Return a data.frame where the values with a certain separator have been unwrapped from character strings
 #' 
 #' @examples
+#' library(curatedPCaData)
+
+#' unwrap(vals=colData(mae_abida)[,"other_feature"])
 #' 
 #' @noRd
 #' @keywords internal
 unwrap <- function(
 	mae,
 	col,
+	vals,
 	varsep = "|",
 	valsep = "=",
 	casts = c(as.numeric, as.character)
 ){
-	vals <- MultiAssayExperiment::colData(mae)[,col]
+	if(missing(vals)){
+		vals <- MultiAssayExperiment::colData(mae)[,col]
+	}
 	do.call("rbind", lapply(lapply(vals, FUN=function(x){
 		strsplit(x, split=varsep, fixed=TRUE)[[1]]
 		}), FUN=function(z){
