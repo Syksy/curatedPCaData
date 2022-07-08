@@ -73,13 +73,3 @@ updateAnno <- function(
 	
 	x
 }
-
-#' Pipe operator
-#'
-#' See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
-#'
-#' @rdname pipe
-#' @keywords internal
-#' @noRd
-#' @importFrom magrittr %>%
-NULL
