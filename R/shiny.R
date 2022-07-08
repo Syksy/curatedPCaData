@@ -59,7 +59,7 @@ shinyPCa <- function(){
 		), 
 		server = function(input, output, session){
 			# Need to load select options on the run
-			updateSelectInput(session, "dat",
+			shiny::updateSelectInput(session, "dat",
 				choices = as.list(utils::data(package="curatedPCaData")$results[,"Item"])
 			)
 			# outputs
