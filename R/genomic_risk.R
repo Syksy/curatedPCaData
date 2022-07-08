@@ -147,9 +147,13 @@ genomic_risk <- function(mae,
 		}
     
 		risk <- dat[, colnames(dat) %in% unlist(prolaris_genes)]
-		gene_med <- apply(risk, 2, stats::median)
-		risk_centered <- risk - gene_med
-		risk_centered <- risk_centered^2 # squaring the median centered expression values 
+		gene_med <- apply(risk, MARGIN=2, stats::median)
+		#risk_centered <- risk - gene_med
+		# Genes should be shifted in a row-wise manner
+		risk_centered <- t(apply(risk, MARGIN=1, FUN=function(x) { x - gene_med }))
+		
+		# Squaring the median centered expression values 
+		risk_centered <- risk_centered^2 
 
 		risk_score <- apply(risk_centered, 1, mean)
 		risk_score <- log2(risk_score)
@@ -222,8 +226,10 @@ genomic_risk <- function(mae,
 		risk <- dat[,intersect(colnames(dat),c(over, under))]
 
 		# Median centering    
-		gene_med <- apply(risk, 2, median)
-		risk_centered <- risk - gene_med
+		gene_med <- apply(risk, MARGIN=2, stats::median)
+		#risk_centered <- risk - gene_med
+		# Genes should be shifted in a row-wise manner
+		risk_centered <- t(apply(risk, MARGIN=1, FUN=function(x) { x - gene_med }))
     
 		# average of the log2 normalized values for the 9 over-expressed targets
 		c1 <- apply(risk_centered[,over], MARGIN=1, FUN=function(x) { mean(x, na.rm=TRUE) })
