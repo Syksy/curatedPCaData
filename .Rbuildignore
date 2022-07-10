@@ -13,4 +13,3 @@
 ^vignettes/TCGA-example\.Rmd$
 ^vignettes/data-dictionaries\.Rmd$
 ^temp$
-^data-raw$
