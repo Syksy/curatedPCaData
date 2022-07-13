@@ -10,55 +10,27 @@
 #' @noRd
 #' @keywords internal
 wrapper_raggedexp<-function(ragexp, field="Variant_Classification"){
-I=RaggedExperiment::sparseAssay(ragexp,field)
-I=as.data.frame(I)
-I$gene=rownames(I)
-#I=I[,c(44,1:43)]
-I$gene=gsub("\\..*","",I$gene)
-
-
-v=I %>% 
-  dplyr::group_by(gene) %>% 
-  dplyr::summarise_all(toString)
-
-v=as.data.frame(v)
-
-b <- data.frame(lapply(v, function(x) {
-  gsub("NA, NA, NA", "NA", x)
-}))
-D<-data.frame(lapply(b, function(x) {
-  gsub("NA, NA", "NA", x)
-}))
-E<-data.frame(lapply(D, function(x) {
-  gsub("NA,", "", x)
-}))
-G<-data.frame(lapply(E, function(x) {
-  gsub(", NA", "", x)
-}))
-# h<-data.frame(lapply(G, function(x) {
-#   gsub("", "NA",x)
-# }))
-
-rownames(G)=G$gene
-G <- G[ , ! names(G) %in% "gene"]
-
-j=as.data.frame(apply(G,2,function(x)gsub('\\s+', '',x)))
-j=as.data.frame(j)
-j$gene<-rownames(j)
-
-h<-data.frame(lapply(j, function(x) {
-  gsub(",NA", "", x)
-}))
-
-i<-data.frame(lapply(h, function(x) {
-  gsub(";", ",", x)
-}))
-
-rownames(i)<-i$gene
-
-i<-i[,-321]
-
-return(i)
+  I=RaggedExperiment::sparseAssay(ragexp,field)
+  I[is.na(I)]<-""
+  I=as.data.frame(I)
+  I$gene=rownames(I)
+  I$gene=gsub("\\..*","",I$gene)
+  
+  v=I %>% 
+    dplyr::group_by(gene) %>% 
+    dplyr::summarise_all(toString)
+  
+  v=as.data.frame(v)
+  
+  rownames(v)=v$gene
+  v = v[ ,-which(names(v) %in% "gene")]
+  
+  for (i in 1:ncol(v)){
+    v[,i]=gsub(",","",v[,i])}
+  
+  for (i in 1:ncol(v)){
+    v[,i]<-stringr::str_squish(v[,i])}
+  return(v)
 }
 
 #' Wrapper function to help produce oncoprint-friendly output from MAEs
