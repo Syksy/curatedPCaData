@@ -27,6 +27,9 @@ MultiAssayExperiment object containing gene expression (gex) and immune cell est
 \details{
 The expression data for this dataset was produced by an older two colour chip that provides the relative expression levels for between tumor and normal.  Due to the chip type, there was a lack of gene overlap with some of the downstream methods, thus some downstream methods are missing.
 }
+\examples{
+mae_true
+}
 \references{
 True, L., Coleman, I., Hawley, S., et al. (2006). A molecular correlate to the Gleason grading system for prostate adenocarcinoma. Proceedings of the National Academy of Sciences of the United States of America, 103(29), 10991–10996. https://doi.org/10.1073/pnas.0603678103
  (\href{https://pubmed.ncbi.nlm.nih.gov/16829574/}{PubMed})

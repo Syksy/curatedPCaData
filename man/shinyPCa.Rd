@@ -7,5 +7,11 @@
 shinyPCa()
 }
 \description{
-Description
+shinyPCa launches an R Shiny web interface session, which can be used to access the mae-objects and data there-in.
+}
+\examples{
+if(interactive()){
+    shinyPCa()
+}
+
 }

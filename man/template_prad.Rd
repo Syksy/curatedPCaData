@@ -13,4 +13,7 @@ template_prad
 \description{
 This data frame contains the clinical fields which were the aim for extraction when gathering metadata for each dataset. Variable types, ranges, and description is reported.
 }
+\examples{
+head(template_prad)
+}
 \keyword{datasets}

@@ -22,6 +22,9 @@ MultiAssayExperiment object containing copy number alteration (cna) for Hieronym
 \details{
 The data comprises of 104 samples, for which are available clinical data and Copy Number Alteration, but no gene expression data -- thus no deconvolution results are available.
 }
+\examples{
+mae_hieronymus
+}
 \references{
 Hieronymus, H., Schultz, N., Gopalan, A., et al. (2014). Copy number alteration burden predicts prostate cancer relapse. Proceedings of the National Academy of Sciences of the United States of America, 111(30), 11139–11144. https://doi.org/10.1073/pnas.1411446111
 (\href{https://pubmed.ncbi.nlm.nih.gov/25024180/}{PubMed})

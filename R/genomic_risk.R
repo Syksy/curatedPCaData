@@ -365,7 +365,7 @@ genomic_score <- function(
 		names(res) <- colnames(gex)
 		res		
 	}else{
-		stop(paste("Unknown genomic score parameter:", type))
+		stop(paste("Unknown genomic score parameter:", test))
 	}
 }
 

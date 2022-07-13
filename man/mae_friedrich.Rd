@@ -29,6 +29,9 @@ MultiAssayExperiment object containing gene expression (gex) and immune cell est
 \details{
 The data comprises of 255 samples, with 164 primary tumors samples, 52 adjacent normal samples, and 39 benign prostate hyperplasia samples.  This dataset includes in its totality the 164 samples analysed in Kreutz et al. 2020.
 }
+\examples{
+mae_friedrich
+}
 \references{
 Friedrich, M., Wiedemann, K., Reiche, K., et al. (2020). The Role of lncRNAs TAPIR-1 and -2 as Diagnostic Markers and Potential Therapeutic Targets in Prostate Cancer. Cancers, 12(5), 1122. https://doi.org/10.3390/cancers12051122
 (\href{https://pubmed.ncbi.nlm.nih.gov/32365858/}{PubMed})

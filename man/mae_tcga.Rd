@@ -32,6 +32,9 @@ number alteration (cna), mutations and immune cell estimates from GDC TCGA.
 \details{
 TCGA data was obtained from the latest GDC's XenaBrowser release.
 }
+\examples{
+mae_tcga
+}
 \references{
 Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011-1025. https://doi.org/10.1016/j.cell.2015.10.025
  (\href{https://pubmed.ncbi.nlm.nih.gov/26544944/}{PubMed})
