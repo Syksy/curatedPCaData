@@ -15,7 +15,7 @@ create_mae <- function(
   ...
 ){
   # Separate loading of RaggedExperiment required to be able to create MultiAssayExperiment::ExperimentList containing RaggedExperiment-objects
-  require(RaggedExperiment)
+  requireNamespace(RaggedExperiment)
   # NOTE: Normally loading of packages should not be required
   # A better fix is probably possible, although extensive testing didn't provide one that would've helped 
   # with the 'Error values must be length 1 but FUN(X[[1]]) result is length 0 ...' error
@@ -79,28 +79,23 @@ create_mae <- function(
   
   map <- map |>
     dplyr::left_join(pheno_object |>
-                       #dplyr::select(primary = rlang::.data$patient_id, rlang::.data$sample_name) %>%
-                       dplyr::select(primary = .data$patient_id, .data$sample_name) |>
-                       #tidyr::separate(rlang::.data$sample_name, sample_num_names, 
-                       tidyr::separate(.data$sample_name, sample_num_names, 
+                       dplyr::select(primary = rlang::.data$patient_id, rlang::.data$sample_name) |>
+                       tidyr::separate(rlang::.data$sample_name, sample_num_names, 
                                        sep = "\\|") |>
                        dplyr::mutate_at(sample_num_names, 
                                         ~ gsub(".*: ", "", .)) |>
                        dplyr::mutate_at(sample_num_names, 
                                         ~dplyr::na_if(., "NA")) |>
-                       #tidyr::pivot_longer(!rlang::.data$primary, names_to = "omic",
-                       tidyr::pivot_longer(!.data$primary, names_to = "omic",
+                       tidyr::pivot_longer(!rlang::.data$primary, names_to = "omic",
                                            values_to = "sample_name") |>
                        dplyr::select(-omic), 
                      by = c("colname" = "sample_name")) 
   
   clinical_object <- pheno_object |>
-    #dplyr::distinct(rlang::.data$patient_id, .keep_all = TRUE)
-    dplyr::distinct(.data$patient_id, .keep_all = TRUE)
+    dplyr::distinct(rlang::.data$patient_id, .keep_all = TRUE)
   
   clinical_object <- clinical_object |>
-    #dplyr::filter(rlang::.data$patient_id %in% map$primary)
-    dplyr::filter(.data$patient_id %in% map$primary)
+    dplyr::filter(rlang::.data$patient_id %in% map$primary)
   
   row.names(clinical_object) <- clinical_object$patient_id
   

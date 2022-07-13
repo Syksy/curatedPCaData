@@ -31,6 +31,9 @@ number alteration (cna), mutations (mut) and immune cell estimates for Barbieri 
 \details{
 The data comprises of primary localised prostate tumors from two cohorts, the Weill Cornell Medical College (WCMC; New York, NY), and the Uropath (Perth, Australia), which commercially provides banked urological tissues. None of the samples comes from patients who had received prior treatment for prostate cancer.
 }
+\examples{
+mae_barbieri
+}
 \references{
 Barbieri, C. E., Baca, S. C., Lawrence, M. S., et al. (2012). Exome sequencing identifies recurrent SPOP, FOXA1 and MED12 mutations in prostate cancer. Nature genetics, 44(6), 685–689. https://doi.org/10.1038/ng.2279
 (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})

@@ -370,7 +370,7 @@ generate_gex_geo <- function(
 		gz_files <- gz_files[grep(".gz", gz_files)]	
 		for (x in gz_files){GEOquery::gunzip(x)}
 		files <- gsub(".gz", "", gz_files)
-		# Files inlcude 'GPL887_old_annotation.txt', grep this away
+		# Files include 'GPL887_old_annotation.txt', grep this away
 		files <- files[-grep("GPL887", files)]
 		if(pckg=="limma"){
 			# New code RAW data processed in limma
@@ -940,7 +940,7 @@ generate_cna_geo <- function(
 			filenames <- grep("GSM", list.files(), value=TRUE)
 		}
 		# For now, the package 'rCGH' has to be available in the workspace,
-		require(rCGH)
+		requireNamespace("rCGH")
 		# otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
 		# Read in Agilent 2-color data
 		cna <- lapply(1:length(filenames), FUN = function(i) { 
@@ -1115,7 +1115,7 @@ generate_gistic_geo <- function(
 			filenames <- grep("GSM", list.files(), value=TRUE)
 		}
 		# For now, the package 'rCGH' has to be available in the workspace,
-		require(rCGH)
+		requireNamespace("rCGH")
 		# otherwise below functions will fail on e.g. rCGH::adjustSignal and when trying to find 'hg18'
 		# Read in Agilent 2-color data
 		cna <- lapply(1:length(filenames), FUN = function(i) { 
@@ -1448,8 +1448,8 @@ generate_cbioportal_oncoprint <- function(
 #' @param splitsize TODO
 #' @param verb TODO
 #' @examples
-#' ren_mut=generate_cgdsr_mut("ren",genes=curatedPCaData::curatedPCaData_genes$hgnc_symbol)
-#' barbieri_mut=generate_cgdsr_mut("barbieri",genes=curatedPCaData::curatedPCaData_genes$hgnc_symbol)
+#' ren_mut <- curatedPCaData:::generate_cgdsr_mut("ren",genes=curatedPCaData:::curatedPCaData_genes$hgnc_symbol)
+#' barbieri_mut <- curatedPCaData:::generate_cgdsr_mut("barbieri",genes=curatedPCaData:::curatedPCaData_genes$hgnc_symbol)
 #' @noRd
 #' @keywords internal
 generate_cgdsr_mut <- function(

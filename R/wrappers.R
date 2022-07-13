@@ -5,7 +5,7 @@
 #' @return A summarized matrix with mutation information for different genes across all samples
 #'
 #' @examples
-#' mut_abida<-curatedPCaData:::wrapper_raggedexp(mae_abida[["mut"]])
+#' mut_abida <- curatedPCaData:::wrapper_raggedexp(mae_abida[["mut"]])
 #' 
 #' @noRd
 #' @keywords internal
@@ -199,6 +199,8 @@ wrapper_genesweep <- function(
 	res <- list()
 	# List of MAE objects
 	maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
+	# As default, use mae_tcga if eval fails
+	mae_obj <- curatedPCaData::mae_tcga
 	# Query gene over omics
 	for(mae in maes){
 		i <- length(res)+1
@@ -246,6 +248,8 @@ wrapper_metasweep <- function(
 	res <- list()
 	# List of MAE objects
 	maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
+	# As default, use mae_tcga if eval fails
+	mae_obj <- curatedPCaData::mae_tcga
 	# Query gene over omics
 	res <- lapply(maes, FUN=function(mae){
 		eval(parse(text=paste0("mae_obj <- curatedPCaData::", mae)))
@@ -276,7 +280,6 @@ wrapper_metasweep <- function(
 #' 
 #' @examples
 #' library(curatedPCaData)
-
 #' unwrap(vals=colData(mae_abida)[,"other_feature"])
 #' 
 #' @noRd

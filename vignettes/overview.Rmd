@@ -244,13 +244,17 @@ This vignette introduces `curatedPCaData` and provides an overview for the packa
 
 ***
 
-3 different raw data types are currently available (stored in `/data-raw/` and not exported by the package namespace): 
+3 different omics data types and accompanying clinical/phenotype data are currently available (stored in `/data-raw/` and not exported by the package namespace): 
 
 1. `gex_*.RData` contains gene expression values
 2. `cna_*.RData` contains copy number values
-3. `clinical_*.RData` contains clinical/phenotype information
+3. `mut_*.RData` contains somatic mutation calls
+4. `clinical_*.RData` contains clinical/phenotype information
     
+These data files have been processed and built into the `MultiAssayExperiment`-objects; however, if the user wishes to return and inspect the raw data files, the repositories still contain these files. 
+
 These elements are created with internal functions within `curatedPCaData` and are then used to derive additional measures, such as immune deconvolution results and risk scores. 
+
 Not all datasets will contain each of these elements but at minimum will contain `clinical_*.rda` and either `gex_*.rda` or `cna_*.rda`.
 These individual elements are combined into a `MultiAssayExperiment object` (abbreviation: `MAE`, in lower case by convention) called `mae_*.rda` [Ramos et al., 2017]. These `MAE` objects are then exported by `curatedPCaData`.
 

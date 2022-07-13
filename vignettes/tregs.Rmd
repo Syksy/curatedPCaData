@@ -24,7 +24,7 @@ library(survival)
 library(survminer)
 library(corrplot)
 library(dplyr)
-library(SummarizedExperiment)
+#library(SummarizedExperiment)
 library(stringr)    
 ```
 
@@ -589,5 +589,11 @@ tregs_and_foxp3=merge(foxp3_exp,tregs,by=0)
 
 plot(tregs_and_foxp3$`T cells regulatory (Tregs)`,tregs_and_foxp3$FOXP3,xlab="T regulatory cells",ylab="FOXP3 Expression",title="Tregs vs FOXP3 expression (TCGA)")
 
+```
+
+# Session info
+
+```{r session}
+sessionInfo()
 ```
 

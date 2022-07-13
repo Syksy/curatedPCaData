@@ -28,6 +28,9 @@ MultiAssayExperiment object containing gene expression (gex) and immune cell est
 \details{
 148 prostate samples, with various amounts of tumor, stroma, BPH and atrophic gland, were used for this study.
 }
+\examples{
+mae_wang
+}
 \references{
 Wang Y, Xia XQ, Jia Z, Sawyers A et al. In silico estimates of tissue components in surgical samples based on expression profiling data. Cancer Res 2010 Aug 15;70(16):6448-55.
  (\href{https://pubmed.ncbi.nlm.nih.gov/20663908/}{PubMed})

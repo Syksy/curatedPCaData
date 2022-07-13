@@ -25,6 +25,9 @@ mae_weiner
 \description{
 A MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for Weiner et al.
 }
+\examples{
+mae_weiner
+}
 \references{
 Weiner, A.B., Vidotto, T., Liu, Y. et al. Plasma cells are enriched in localized prostate cancer in Black men and are associated with improved outcomes. Nat Commun 12, 935 (2021). https://doi.org/10.1038/s41467-021-21245-w
 (\href{https://pubmed.ncbi.nlm.nih.gov/33568675/}{PubMed})

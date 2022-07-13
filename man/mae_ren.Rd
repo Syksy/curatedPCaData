@@ -31,6 +31,9 @@ number alteration (cna), mutations and immune cell estimates from Ren et al.
 \details{
 The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples.
 }
+\examples{
+mae_ren
+}
 \references{
 Ren, S., Wei, G. H., Liu, D., et al.  (2018). Whole-genome and Transcriptome Sequencing of Prostate Cancer Identify New Genetic Alterations Driving Disease Progression. European urology, 73(3), 322–339. https://doi.org/10.1016/j.eururo.2017.08.027
  (\href{https://pubmed.ncbi.nlm.nih.gov/28927585/}{PubMed})

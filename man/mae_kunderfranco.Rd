@@ -29,6 +29,9 @@ MultiAssayExperiment object containing gene expression (gex) and immune cell est
 \details{
 The data contains 14 disease free benign prostate hyperplasia smaples and 53 prostate cancer samples.
 }
+\examples{
+mae_kunderfranco
+}
 \references{
 Kunderfranco, P., Mello-Grand, M., Cangemi, R., et al.  (2010). ETS transcription factors control transcription of EZH2 and epigenetic silencing of the tumor suppressor gene Nkx3.1 in prostate cancer. PloS one, 5(5), e10547. https://doi.org/10.1371/journal.pone.0010547
  (\href{https://pubmed.ncbi.nlm.nih.gov/20479932/}{PubMed})
