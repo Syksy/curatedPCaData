@@ -6,6 +6,9 @@
 \usage{
 shinyPCa()
 }
+\value{
+An interactive R Shiny browser session
+}
 \description{
 shinyPCa launches an R Shiny web interface session, which can be used to access the mae-objects and data there-in.
 }

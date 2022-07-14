@@ -17,7 +17,7 @@ wrapper_raggedexp<-function(ragexp, field="Variant_Classification"){
   I$gene=gsub("\\..*","",I$gene)
   
   v=I %>% 
-    dplyr::group_by(gene) %>% 
+    dplyr::group_by(.data$gene) %>% 
     dplyr::summarise_all(toString)
   
   v=as.data.frame(v)
@@ -217,7 +217,6 @@ wrapper_metasweep <- function(
 	exact = FALSE,
 	drop = FALSE
 ){
-	res <- list()
 	# List of MAE objects
 	maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
 	# As default, use mae_tcga if eval fails

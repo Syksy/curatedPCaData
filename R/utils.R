@@ -24,7 +24,7 @@ updateAnno <- function(
 	# Additional parameters
 	...
 ){
-	genes <- curatedPCaData:::curatedPCaData_genes
+	genes <- curatedPCaData_genes
 	# First argument
 	type <- type[1]
 	# Row splitting known aliases
@@ -72,4 +72,28 @@ updateAnno <- function(
 	}
 	
 	x
+}
+
+#' Loop and load all MAE data objects available in curatedPCaData
+#'
+#' To avoid having to use LazyLoad, the package has been set to not load all data objects upon package being loaded.
+#' However, for many convenience reasons it'd be handy to have all the mae_*-named objects in the workspace without
+#' having to manually iterate over all of them. This function extract the latest MAE-object list from the package and
+#' calls 'data(mae_*)' on them.
+#'
+#' @return All data objects from curatedPCaData loaded into the environment using the 'data'-function.
+#'
+#' @examples
+#' loadPCa()
+#'
+#' @export
+loadPCa <- function(){
+	# List of MAE objects
+	maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
+	# Loop over the available MAEs and data them into the working environment 
+	for(mae in maes){
+		eval(parse(text=paste0("data(", mae, ")")))
+	}
+	# Also load the prostate adenocarcinoma metadata template
+	data("template_prad")
 }
