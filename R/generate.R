@@ -85,7 +85,7 @@ generate_gex_geo <- function(
 		rownames(gex) <- unlist(lapply(rownames(gex), FUN=function(x) { strsplit(x, ".", fixed=TRUE)[[1]][1] }))
 
 		# Hugo symbols
-		symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex), curatedPCaData:::curatedPCaData_genes[,"refseq_mrna"]),"hgnc_symbol"]
+		symbols <- curatedPCaData_genes[match(rownames(gex), curatedPCaData_genes[,"refseq_mrna"]),"hgnc_symbol"]
 		gex <- gex[!is.na(symbols),]
 		symbols <- symbols[!is.na(symbols)]
 		rownames(gex) <- symbols
@@ -235,7 +235,7 @@ generate_gex_geo <- function(
 			# Map rownames to ENSG#### 
 			ensg <- gpl[match(rownames(gex), gpl$ID),"SPOT_ID"]
 			ensg[which(ensg == "NoEntry")] <- NA
-			genes <- curatedPCaData:::curatedPCaData_genes$hgnc_symbol[match(ensg, curatedPCaData:::curatedPCaData_genes$ensembl_gene_id)]
+			genes <- curatedPCaData_genes$hgnc_symbol[match(ensg, curatedPCaData_genes$ensembl_gene_id)]
 			genes[which(genes == "")] <- NA
 			# Collapse using hugo gene symbols
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
@@ -251,7 +251,7 @@ generate_gex_geo <- function(
 			fr_gset <- GEOquery::getGEO("GSE134051", GSEMatrix =TRUE, getGPL=TRUE)
 
 			labels = Biobase::fData(fr_gset[[1]])
-			gtab = curatedPCaData:::curatedPCaData_genes
+			gtab = curatedPCaData_genes
 
 			if (length(fr_gset) > 1) idx <- grep("GPL26898", attr(gset, "names")) else idx <- 1
 			fr_ex <- Biobase::exprs(fr_gset[[idx]])
@@ -441,8 +441,8 @@ generate_gex_geo <- function(
 			gex <- oligo::exprs(gex)
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
-			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2$affy_hg_u133a_2),"hgnc_symbol"]
+			# Map the probes to gene symbols stored in curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData_genes_affy_hg_u133a_2[match(rownames(gex), curatedPCaData_genes_affy_hg_u133a_2$affy_hg_u133a_2),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}else if(pckg == "affy"){
@@ -510,8 +510,8 @@ generate_gex_geo <- function(
 			gex <- oligo::exprs(gex)
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
-			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a$affy_hg_u133a),"hgnc_symbol"]
+			# Map the probes to gene symbols stored in curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData_genes_affy_hg_u133a[match(rownames(gex), curatedPCaData_genes_affy_hg_u133a$affy_hg_u133a),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}else if(pckg == "affy"){	
@@ -533,7 +533,7 @@ generate_gex_geo <- function(
 			gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES = nam, FUN = collapse_fun))
 
 			# Gene mapping and uniqueness via updateAnno-functionality
-			gex <- curatedPCaData:::updateAnno(x=gex, main="hgnc_symbol", type="Aliases", collapse_fun=collapse_fun)
+			gex <- updateAnno(x=gex, main="hgnc_symbol", type="Aliases", collapse_fun=collapse_fun)
 		}
 	}
 
@@ -668,7 +668,7 @@ generate_gex_geo <- function(
 			gex2 <- gex2[match(rownames(gex1),rownames(gex2)),,drop=FALSE]
 			rownames(gex2) <- rownames(gex1)
 			for(r in which(is.na(gex2))){
-				gex2[r,] <- median(gex1[r,])
+				gex2[r,] <- stats::median(gex1[r,])
 			}
 			# Merge data based on intersecting genes
 			# 11th sample is a special case for v3 array and must be placed separately
@@ -735,8 +735,8 @@ generate_gex_geo <- function(
 			gex <- oligo::exprs(gex)
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
-			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a_2$affy_hg_u133a_2),"hgnc_symbol"]
+			# Map the probes to gene symbols stored in curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData_genes_affy_hg_u133a_2[match(rownames(gex), curatedPCaData_genes_affy_hg_u133a_2$affy_hg_u133a_2),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}
@@ -774,8 +774,8 @@ generate_gex_geo <- function(
 			gex <- oligo::exprs(gex)
 			# Sanitize column names
 			colnames(gex) <- gsub(".CEL.gz", "", colnames(gex))
-			# Map the probes to gene symbols stored in curatedPCaData:::curatedPCaData_genes for hgu133a
-			genes <- curatedPCaData:::curatedPCaData_genes_affy_hg_u133a[match(rownames(gex), curatedPCaData:::curatedPCaData_genes_affy_hg_u133a$affy_hg_u133a),"hgnc_symbol"]
+			# Map the probes to gene symbols stored in curatedPCaData_genes for hgu133a
+			genes <- curatedPCaData_genes_affy_hg_u133a[match(rownames(gex), curatedPCaData_genes_affy_hg_u133a$affy_hg_u133a),"hgnc_symbol"]
 			# Collapse probes that target the same gene
 			gex <- do.call("rbind", by(gex, INDICES=genes, FUN=collapse_fun))
 		}else if(pckg == "affy"){
@@ -1243,7 +1243,7 @@ generate_gistic_geo <- function(
 #' @noRd
 #' @keywords internal
 generate_cbioportal <- function(
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), 
+  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)), 
   geneticProfiles = c("prad_tcga_pub_rna_seq_v2_mrna", #TCGA GEX 
                       "prad_tcga_pub_gistic", # TCGA CNA (GISTIC)
                       "prad_tcga_pub_linear_CNA", # TCGA CNA (Capped relative linear copy-number values)
@@ -1308,17 +1308,16 @@ generate_cbioportal <- function(
 #' @param verb TODO
 #' @param oncoprintify TODO
 #' @examples
-#' oncop_tcga <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="tcga", oncoprintify=TRUE)
-#' oncop_taylor <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="taylor", oncoprintify=TRUE)
-#' oncop_barbieri <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="barbieri", oncoprintify=TRUE)
-#' oncop_ren <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="ren", oncoprintify=TRUE)
-#' # TODO
-#' # oncop_abida <- curatedPCaData:::generate_cbioportal_oncoprint(study_id="abida", oncoprintify=TRUE)
+#' oncop_tcga <- generate_cbioportal_oncoprint(study_id="tcga", oncoprintify=TRUE)
+#' oncop_taylor <- generate_cbioportal_oncoprint(study_id="taylor", oncoprintify=TRUE)
+#' oncop_barbieri <- generate_cbioportal_oncoprint(study_id="barbieri", oncoprintify=TRUE)
+#' oncop_ren <- generate_cbioportal_oncoprint(study_id="ren", oncoprintify=TRUE)
+#'
 #' @noRd
 #' @keywords internal
 generate_cbioportal_oncoprint <- function(
 	study_id, # tcga, taylor, barbieri, ren, or abida
-	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+	genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
 	delay = 0.05,
 	splitsize = 100,
 	verb = TRUE,
@@ -1448,13 +1447,13 @@ generate_cbioportal_oncoprint <- function(
 #' @param splitsize TODO
 #' @param verb TODO
 #' @examples
-#' ren_mut <- curatedPCaData:::generate_cgdsr_mut("ren",genes=curatedPCaData:::curatedPCaData_genes$hgnc_symbol)
-#' barbieri_mut <- curatedPCaData:::generate_cgdsr_mut("barbieri",genes=curatedPCaData:::curatedPCaData_genes$hgnc_symbol)
+#' ren_mut <- generate_cgdsr_mut("ren",genes=curatedPCaData_genes$hgnc_symbol)
+#' barbieri_mut <- generate_cgdsr_mut("barbieri",genes=curatedPCaData_genes$hgnc_symbol)
 #' @noRd
 #' @keywords internal
 generate_cgdsr_mut <- function(
   study_id, # tcga, taylor, barbieri, ren, or abida
-  genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
+  genes = sort(unique(curatedPCaData_genes$hgnc_symbol)),
   delay = 0.05,
   splitsize = 100,
   verb = TRUE
@@ -1520,8 +1519,8 @@ generate_cgdsr_mut <- function(
 #' @param profile character string of variable
 #' @param caseList character string of patient IDs for that genetic profile
 #' @examples
-#' cna.gistic_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","cna")
-#' gex.relz_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","gex")
+#' cna.gistic_abida <- generate_cbioportaldata("prad_su2c_2019","cna")
+#' gex.relz_abida <- generate_cbioportaldata("prad_su2c_2019","gex")
 #' @noRd
 #' @keywords internal
 generate_cbioportaldata <- function(caselist,profile){
@@ -1535,7 +1534,7 @@ generate_cbioportaldata <- function(caselist,profile){
       res2<-res2[!is.na(a),]
       a=a[!is.na(a)]
       rownames(res2) <- a
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
@@ -1547,7 +1546,7 @@ generate_cbioportaldata <- function(caselist,profile){
     else if(caselist=="prad_eururol_2017"){
       res=prof[["cna"]]
       res2=RaggedExperiment::assay(res)
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
@@ -1562,7 +1561,7 @@ generate_cbioportaldata <- function(caselist,profile){
       res2=res2[!grepl("-AS1", res2$Hugo_Symbol),]
       rownames(res2)<-res2$Hugo_Symbol
       res2<-res2[,-1]
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
@@ -1578,7 +1577,7 @@ generate_cbioportaldata <- function(caselist,profile){
       res2=rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
       res2<-res2[,-2]
       rownames(res2)<-make.names(res2$Hugo_Symbol,unique = TRUE)
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
@@ -1595,7 +1594,7 @@ generate_cbioportaldata <- function(caselist,profile){
     else if (caselist == "prad_broad_2013"){
       res=prof[["cna"]]
       res2=RaggedExperiment::assay(res)
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(res2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       res2 <- res2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(res2) <- symbols
@@ -1609,7 +1608,7 @@ generate_cbioportaldata <- function(caselist,profile){
   if(profile=="mut"){
     ragexp=prof[["mutations"]]
     if(caselist=="prad_eururol_2017"){
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       ragexp2 <- ragexp[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(ragexp2) <- symbols
@@ -1617,7 +1616,7 @@ generate_cbioportaldata <- function(caselist,profile){
       
     }else if (caselist == "prad_broad" || caselist=="prad_su2c_2019"){
       colnames(ragexp)<-gsub("-",".",colnames(ragexp))
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       ragexp2 <- ragexp[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(ragexp2) <- symbols
@@ -1628,7 +1627,7 @@ generate_cbioportaldata <- function(caselist,profile){
       same_barcode=colnames(ragexp)[grepl("PCA", colnames(ragexp))]
       ind=which(colnames(ragexp) %in% same_barcode=="TRUE")
       ragexp2<-ragexp[, c(ind)]
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(ragexp2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       ragexp3 <- ragexp2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(ragexp3) <- symbols
@@ -1636,7 +1635,7 @@ generate_cbioportaldata <- function(caselist,profile){
       return(ragexp3)
       
     }else if (caselist=="prad_broad_2013"){
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(ragexp), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       ragexp2 <- ragexp[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(ragexp2) <- symbols
@@ -1649,7 +1648,7 @@ generate_cbioportaldata <- function(caselist,profile){
     if(caselist=="prad_eururol_2017"){
       gex=prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
       gex2=RaggedExperiment::assay(gex)
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       gex2 <- gex2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(gex2) <- symbols
@@ -1659,7 +1658,7 @@ generate_cbioportaldata <- function(caselist,profile){
       gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
       gex2=RaggedExperiment::assay(gex)
       gex2=gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       gex2 <- gex2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
       rownames(gex2) <- symbols
@@ -1673,7 +1672,7 @@ generate_cbioportaldata <- function(caselist,profile){
       gex2=gex2[!grepl("-AS1", gex2$Hugo_Symbol),]
       rownames(gex2)<-gex2$Hugo_Symbol
       gex2<-gex2[,-1]
-      symbols <- curatedPCaData:::curatedPCaData_genes[match(rownames(gex2), curatedPCaData:::curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+      symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
       
       gex2 <- gex2[!is.na(symbols),]
       symbols <- symbols[!is.na(symbols)]
@@ -1827,7 +1826,7 @@ generate_icgc <- function(
 		# Mapping of genes to hugo symbols is dependent on the dataset
 		if(icgc_id == "PRAD_CA"){
 			# Normalized expression values based on refseq gene ids, add hugo symbols
-			ret$hgnc_symbol <- curatedPCaData:::curatedPCaData_genes[match(ret$gene_id, curatedPCaData:::curatedPCaData_genes$refseq_mrna),"hgnc_symbol"]
+			ret$hgnc_symbol <- curatedPCaData_genes[match(ret$gene_id, curatedPCaData_genes$refseq_mrna),"hgnc_symbol"]
 			# Remove entries for which gene_id or hgnc_symbol is missing
 			ret <- ret[-which(is.na(ret$gene_id) | is.na(ret$hgnc_symbol)),]
 			# Create a gex matrix of samples as columns and genes as rows

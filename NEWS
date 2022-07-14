@@ -1,3 +1,13 @@
+curatedPCaData v0.9.25 (Release date: 2022-07-14)
+==============
+
+Changes:
+
+* biocViews / BiocType expanded, various BiocCheck fixes
+* Corrected internal function/data calls
+* Various misc fixes so that R CMD check is clean (except size NOTE)
+* Testing Bioconductor instructions for LazyData set to false, replaced by use of 'loadPCa()'-function by the user
+
 curatedPCaData v0.9.24 (Release date: 2022-07-13)
 ==============
 

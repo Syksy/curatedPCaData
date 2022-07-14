@@ -6,7 +6,6 @@
 #' head(template_prad)
 "template_prad"
 
-
 #' Abida et al. MAE-object
 #'
 #' MultiAssayExperiment object containing gene expression (gex), copy 

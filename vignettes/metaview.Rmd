@@ -1,0 +1,34 @@
+---
+title: "curatedPCaData metadata catalogue"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{curatedPCaData metadata catalogue}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  cache = TRUE,
+  tidy = TRUE,
+  width.cutoff = 70
+)
+```
+
+# Sweeping metadata summaries across curatedPCaData studies
+
+We will use the `curatedPCaData::template_prad` to sweep across the studies and report which metadata fields are most commonly available and in which studies.
+
+# Session info
+
+```{r session}
+sessionInfo()
+```
+
