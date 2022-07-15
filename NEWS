@@ -1,3 +1,10 @@
+curatedPCaData v0.9.26 (Release date: 2022-07-15)
+==============
+
+Changes:
+
+* CNA data matrices filtered down to protein coding (i.e. exclude miRNAs and such)
+
 curatedPCaData v0.9.25 (Release date: 2022-07-14)
 ==============
 
