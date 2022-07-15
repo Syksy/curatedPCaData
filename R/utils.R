@@ -4,6 +4,12 @@
 #
 ###
 
+###
+#
+# Internal functions
+#
+###
+
 #' Update gene annotations and resolve ambiguity
 #' 
 #' A function that helps update gene annotations in ambiguous cases
@@ -74,6 +80,25 @@ updateAnno <- function(
 	x
 }
 
+#' Function that filters rownames based on curatedPCaData's annotated gene list down to protein coding genes
+#'
+#' This function will use the list extracted from biomaRt and only leave rows which are reported as protein coding.
+#' It will for example remove miRNAs, which may confound CNA-analyses.
+#'
+#' @param x Input data matrix
+#'
+#' @noRd
+#' @keywords internal
+filterToProteinCoding <- function(x){
+	x[which(rownames(x) %in% curatedPCaData_genes[which(curatedPCaData_genes$transcript_biotype == "protein_coding"),"hgnc_symbol"]),]
+}
+
+####
+#
+# Exported functions
+#
+####
+
 #' Loop and load all MAE data objects available in curatedPCaData
 #'
 #' To avoid having to use LazyLoad, the package has been set to not load all data objects upon package being loaded.
@@ -95,5 +120,6 @@ loadPCa <- function(){
 		eval(parse(text=paste0("data(", mae, ")")))
 	}
 	# Also load the prostate adenocarcinoma metadata template
-	data("template_prad")
+	utils::data("template_prad")
 }
+
