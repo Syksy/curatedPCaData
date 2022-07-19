@@ -1,38 +1,10 @@
----
-title: "Example correlations for genes in curatedPCaData"
-output: 
-  rmarkdown::html_vignette:
-    toc: true
-    number_sections: false
-vignette: >
-  %\VignetteIndexEntry{Example correlations for genes in curatedPCaData}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  warning = FALSE,
-  message = FALSE,
-  cache = TRUE
-)
-```
+####
+#
+# Pre-calculation of correlation_between_gex.Rmd to avoid overtly long vignette build times
+#
+####
 
-```{r packages}
 library(curatedPCaData)
-library(MultiAssayExperiment)
-library(RaggedExperiment)
-library(survival)
-library(survminer)
-library(corrplot)
-```
-
-### General trends in gene expression across datasets
-
-Using the curatedpcadata package, patterns in gene expression across different datasets can be studied.
-
-```{r correlation_plot, eval = FALSE}
 
 calculate_correlation<-function(dataset,gene){
   name=deparse(substitute(dataset))
@@ -115,32 +87,13 @@ correlation_of_correlations<-function(gene){
   combined_cor_list[,c(1:17)]=sapply( combined_cor_list[,c(1:17)], as.numeric )
   return(combined_cor_list)
 }
-```
-
-For example the correlation of AR expression to the expression of all the other genes across all datasets can be studied with the help of a correlation plot as shown:
-  
-```{r, results=FALSE, eval = FALSE}
 
 library(corrplot)
 combined_cor_list=correlation_of_correlations("AR")
 corr_of_corr = cor(combined_cor_list)
-```
 
-In order to save time for vignette illustration purposes, above correlation matrix has been precomputed and stored as a `.RData` workspace.
-
-```{r load_workspace}
-load("correlation_between_gex.RData")
-```
-
-The corresponding correlation plot:
-
-```{r, dpi=150, fig.width=7, fig.height=7, out.width="100%"}
+png("images/correlation_between_gex.png", width=1000, height=1000)
 corrplot::corrplot(corr_of_corr,method = 'color')
+dev.off()
 
-```
-
-# Session info
-
-```{r session}
-sessionInfo()
-```
+save.image("correlation_between_gex.RData")
