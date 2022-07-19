@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.9.24
-Date: 2022-07-14
+Version: 0.9.27
+Date: 2022-07-18
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -9,12 +9,13 @@ Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c
              person("Federico", "Calboli", email = "federico.calboli@utu.fi", role = "ctb"),
              person("Kalaimathy", "Singaravelu", email = "kalsin@utu.fi", role = "ctb")
            )
-Description: The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables.
+Description: The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables. The studies are offered as MultiAssayExperiment (MAE) objects, and compromise of clinical characteristics tied to gene expression, copy number alteration and somatic mutation data. Further, downstream features computed from these multi-omics data are offered inside the MAE objects. Multiple vignettes help grasp characteristics of the various studies and provide example exploratory and meta-analysis of leveraging the multiple studies provided here-in.
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.2.0
 VignetteBuilder: knitr
-biocViews: ExperimentData
+biocViews: ExperimentData, ProstateCancerData, CancerData, Homo_sapiens_Data, MicroarrayData, RNASeqData, ExpressionData, CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
+BiocType: ExperimentData
 LazyData: true
 LazyDataCompression: xz
 URL: https://github.com/Syksy/curatedPCaData
@@ -26,9 +27,13 @@ Imports:
     utils, 
     methods,
     magrittr,
+    rlang,
+    stats
 Suggests: 
     knitr,
     rmarkdown,
+    survival,
+    survminer,
     progress,
     cgdsr,
     biomaRt,
@@ -41,7 +46,6 @@ Suggests:
     oligo,
     AnnotationDbi,
     dplyr,
-    rlang,
     janitor,
     limma,
     rCGH,
@@ -56,8 +60,6 @@ Suggests:
     data.tree,
     RCurl,
     R.utils,
-    survival,
-    survminer,
     textshape,
     pacman,
     pd.huex.1.0.st.v2,

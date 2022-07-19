@@ -51,8 +51,17 @@
 #132     agilent_wholegenome_4x44k_v1     AGILENT WholeGenome 4x44k v1 probe feature_page
 #133     agilent_wholegenome_4x44k_v2     AGILENT WholeGenome 4x44k v2 probe feature_page  
   
+# If main Ensembl is unresponsive, specific mirror can be specified:
+# mart <- biomaRt::useEnsembl(biomart = "ensembl", mirror = "uswest", dataset="hsapiens_gene_ensembl")
 mart <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")  
 # Fetch gene names for various annotations
+
+### 
+#
+# Generic gene annotations
+#
+###
+
 # Gene type annotations
 curatedPCaData_genes <- biomaRt::getBM(
 	attributes = 
@@ -65,12 +74,20 @@ curatedPCaData_genes <- biomaRt::getBM(
 			'refseq_mrna',
 			# Chromosomal information
 			'chromosome_name','start_position','end_position',
+			# For identifying protein coding regions
+			'transcript_biotype',
 			# Description
 			'description'
 		),
 	mart = mart
 )
-# Array specific sets
+
+###
+#
+# Array specific annotation sets
+#
+###
+
 # Affymetrix HG U133A
 curatedPCaData_genes_affy_hg_u133a <- biomaRt::getBM(
 	attributes = 
@@ -88,7 +105,7 @@ curatedPCaData_genes_affy_hg_u133a_2 <- biomaRt::getBM(
 		c(
 			# Hugo
 			'hgnc_symbol',
-			# Affymetrix HG U133A
+			# Affymetrix HG U133A v2
 			'affy_hg_u133a_2'
 		),
 	mart = mart
