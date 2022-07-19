@@ -18,10 +18,10 @@ genomic_risk <- function(mae,
 ){
 	# Internal function for automatically extracting the latest curatedPCaData::curatedPCaData_genes[,"Aliases"] for a specific hugo symbol
 	expandAliases <- function(gene){
-		if(length(which(curatedPCaData:::curatedPCaData_genes$hgnc_symbol == gene))>0){
+		if(length(which(curatedPCaData_genes$hgnc_symbol == gene))>0){
 			unique(c(gene, 
 				unlist(
-					strsplit(curatedPCaData:::curatedPCaData_genes[which(curatedPCaData:::curatedPCaData_genes$hgnc_symbol == gene),"Aliases"],";")[[1]]
+					strsplit(curatedPCaData_genes[which(curatedPCaData_genes$hgnc_symbol == gene),"Aliases"],";")[[1]]
 				)
 			))
 		}else{

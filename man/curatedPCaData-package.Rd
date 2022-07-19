@@ -6,7 +6,7 @@
 \alias{curatedPCaData-package}
 \title{curatedPCaData: Curated Prostate Cancer Data}
 \description{
-The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables.
+The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables. The studies are offered as MultiAssayExperiment (MAE) objects, and compromise of clinical characteristics tied to gene expression, copy number alteration and somatic mutation data. Further, downstream features computed from these multi-omics data are offered inside the MAE objects. Multiple vignettes help grasp characteristics of the various studies and provide example exploratory and meta-analysis of leveraging the multiple studies provided here-in.
 }
 \seealso{
 Useful links:

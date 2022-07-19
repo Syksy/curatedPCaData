@@ -3,9 +3,9 @@
 #' @import MultiAssayExperiment
 #' @import RaggedExperiment
 #' @importFrom methods slot
-#' @importFrom stats median
-#' @importFrom utils read.table
+#' @importFrom utils read.table data
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage
