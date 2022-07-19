@@ -26,6 +26,9 @@ mae_wallace
 \description{
 MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from Wallace et al.
 }
+\examples{
+mae_wallace
+}
 \references{
 Wallace, T. A., Prueitt, R. L., Yi, M., Howe, T. M., Gillespie, J. W., Yfantis, H. G., Stephens, R. M., Caporaso, N. E., Loffredo, C. A., & Ambs, S. (2008). Tumor immunobiological differences in prostate cancer between African-American and European-American men. Cancer research, 68(3), 927–936. https://doi.org/10.1158/0008-5472.CAN-07-2608
  (\href{https://pubmed.ncbi.nlm.nih.gov/18245496/}{PubMed})

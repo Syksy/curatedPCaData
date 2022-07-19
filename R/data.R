@@ -2,6 +2,8 @@
 #'
 #' This data frame contains the clinical fields which were the aim for extraction when gathering metadata for each dataset. Variable types, ranges, and description is reported.
 #'
+#' @examples
+#' head(template_prad)
 "template_prad"
 
 
@@ -27,6 +29,9 @@
 #' @references Abida, W., Cyrta, J., Heller, G., et al. (2019). Genomic correlates of clinical outcome in advanced prostate cancer. Proceedings of the National Academy of Sciences of the United States of America, 116, 11428 - 11436.
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/31061129/}{PubMed})
 #' @source  \url{https://www.cbioportal.org/study/summary?id=prad_su2c_2019}
+#'
+#' @examples
+#' mae_abida
 "mae_abida"
 
 #' Baca et al. MAE-object
@@ -39,6 +44,9 @@
 #'   \item{mut}{RaggedExperiment with 2622 rows and 57 columns, mutation data from cbioportal}
 #' }
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad_2013}
+#'
+#' @examples
+#' mae_baca
 "mae_baca"
 
 #' Barbieri et al. MAE-object
@@ -62,6 +70,9 @@
 #' @references Barbieri, C. E., Baca, S. C., Lawrence, M. S., et al. (2012). Exome sequencing identifies recurrent SPOP, FOXA1 and MED12 mutations in prostate cancer. Nature genetics, 44(6), 685–689. https://doi.org/10.1038/ng.2279
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_broad}
+#'
+#' @examples
+#' mae_barbieri
 "mae_barbieri"
 
 #' Barwick et al. MAE-object
@@ -80,6 +91,9 @@
 #' @references Barwick, B. G., Abramovitz, M., Kodani, M., Moreno, C. S., Nam, R., Tang, W., Bouzyk, M., Seth, A., & Leyland-Jones, B. (2010). Prostate cancer genes associated with TMPRSS2-ERG gene fusion and prognostic of biochemical recurrence in multiple cohorts. British journal of cancer, 102(3), 570–576. https://doi.org/10.1038/sj.bjc.6605519
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18655}
+#'
+#' @examples
+#' mae_barwick
 "mae_barwick"
 
 #' Chandran et al., Yu et al. MAE-object
@@ -103,6 +117,9 @@
 #' Yu, Y. P., Landsittel, D., Jing, L., et al. (2004). Gene expression alterations in prostate cancer predicting tumor aggression and preceding development of malignancy. Journal of clinical oncology : official journal of the American Society of Clinical Oncology, 22(14), 2790–2799. https://doi.org/10.1200/JCO.2004.05.158
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/15254046/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6919}
+#'
+#' @examples
+#' mae_chandran
 "mae_chandran"
 
 #' Friedrich et al. MAE-object
@@ -125,6 +142,9 @@
 #' Kreuz, M., Otto, D. J., Fuessel, et al. (2020). ProstaTrend-A Multivariable Prognostic RNA Expression Score for Aggressive Prostate Cancer. European urology, 78(3), 452–459. https://doi.org/10.1016/j.eururo.2020.06.001
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/32631745/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE134051}
+#'
+#' @examples
+#' mae_friedrich
 "mae_friedrich"
 
 #' Hieronymus et al. MAE-object
@@ -139,6 +159,9 @@
 #' @references Hieronymus, H., Schultz, N., Gopalan, A., et al. (2014). Copy number alteration burden predicts prostate cancer relapse. Proceedings of the National Academy of Sciences of the United States of America, 111(30), 11139–11144. https://doi.org/10.1073/pnas.1411446111
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/25024180/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE54691}
+#'
+#' @examples
+#' mae_hieronymus
 "mae_hieronymus"
 
 #' ICGC CA MAE-object
@@ -159,6 +182,9 @@
 #' @references Fraser, M., Sabelnykova, V.Y., Yamaguchi, T.N., et al. (2017). Genomic hallmarks of localized, non-indolent prostate cancer. Nature, 541, 359-364.
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/28068672/}{PubMed})
 #' @source \url{https://dcc.icgc.org/projects/PRAD-CA}
+#'
+#' @examples
+#' mae_icgcca
 "mae_icgcca"
 
 #' International Genomics Consortium (IGC) MAE-object
@@ -178,6 +204,9 @@
 #' }
 #' 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse2109}
+#'
+#' @examples
+#' mae_igc
 "mae_igc"
 
 #' Kim et al. MAE-object
@@ -199,8 +228,10 @@
 #' @references Kim HL, Li P, Huang HC, Deheshi S et al. Validation of the Decipher Test for predicting adverse pathology in candidates for prostate cancer active surveillance. Prostate Cancer Prostatic Dis 2019 Sep;22(3):399-405.
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/30542054/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119616}
+#'
+#' @examples
+#' mae_kim
 "mae_kim"
-
 
 #' Kunderfranco et al. MAE-object
 #'
@@ -221,6 +252,9 @@
 #' @references Kunderfranco, P., Mello-Grand, M., Cangemi, R., et al.  (2010). ETS transcription factors control transcription of EZH2 and epigenetic silencing of the tumor suppressor gene Nkx3.1 in prostate cancer. PloS one, 5(5), e10547. https://doi.org/10.1371/journal.pone.0010547
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/20479932/}{PubMed})
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE14206}
+#'
+#' @examples
+#' mae_kunderfranco
 "mae_kunderfranco"
 
 #' Ren et al. MAE-object
@@ -244,6 +278,9 @@
 #' @references Ren, S., Wei, G. H., Liu, D., et al.  (2018). Whole-genome and Transcriptome Sequencing of Prostate Cancer Identify New Genetic Alterations Driving Disease Progression. European urology, 73(3), 322–339. https://doi.org/10.1016/j.eururo.2017.08.027
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/28927585/}{PubMed})
 #' @source \url{https://www.cbioportal.org/study/summary?id=prad_eururol_2017}
+#'
+#' @examples
+#' mae_ren
 "mae_ren"
 
 #' Sun et al. MAE-object
@@ -264,6 +301,9 @@
 #' @references Sun, Y., & Goodison, S. (2009). Optimizing molecular signatures for predicting prostate cancer recurrence. The Prostate, 69(10), 1119–1127. https://doi.org/10.1002/pros.20961
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/19343730/}{PubMed}) 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25136}
+#'
+#' @examples
+#' mae_sun
 "mae_sun"
 
 #' Taylor et al. MAE-object
@@ -290,6 +330,9 @@
 #' @references Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/20579941/}{PubMed}) 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE21035}
+#'
+#' @examples
+#' mae_taylor
 "mae_taylor"
 
 #' TCGA MAE-object
@@ -315,6 +358,9 @@
 #' @references Cancer Genome Atlas Research Network (2015). The Molecular Taxonomy of Primary Prostate Cancer. Cell, 163(4), 1011-1025. https://doi.org/10.1016/j.cell.2015.10.025
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/26544944/}{PubMed}) 
 #' @source \url{https://xenabrowser.net/datapages/?cohort=GDC\%20TCGA\%20Prostate\%20Cancer\%20(PRAD)}
+#'
+#' @examples
+#' mae_tcga
 "mae_tcga"
 
 #' True et al. MAE-object
@@ -333,6 +379,9 @@
 #' @references True, L., Coleman, I., Hawley, S., et al. (2006). A molecular correlate to the Gleason grading system for prostate adenocarcinoma. Proceedings of the National Academy of Sciences of the United States of America, 103(29), 10991–10996. https://doi.org/10.1073/pnas.0603678103
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/16829574/}{PubMed}) 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE5132}
+#'
+#' @examples
+#' mae_true
 "mae_true"
 
 #' Wallace et al. MAE-object
@@ -354,6 +403,9 @@
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/18245496/}{PubMed}) 
 #'
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6956}
+#'
+#' @examples
+#' mae_wallace
 "mae_wallace"
 
 #' Wang et al. MAE-object
@@ -374,6 +426,9 @@
 #'  (\href{https://pubmed.ncbi.nlm.nih.gov/20663908/}{PubMed}) 
 #'
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8218}
+#'
+#' @examples
+#' mae_wang
 "mae_wang"
 
 
@@ -394,6 +449,7 @@
 #' @references Weiner, A.B., Vidotto, T., Liu, Y. et al. Plasma cells are enriched in localized prostate cancer in Black men and are associated with improved outcomes. Nat Commun 12, 935 (2021). https://doi.org/10.1038/s41467-021-21245-w
 #' (\href{https://pubmed.ncbi.nlm.nih.gov/33568675/}{PubMed}) 
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE157548}
+#'
+#' @examples
+#' mae_weiner
 "mae_weiner"
-
-

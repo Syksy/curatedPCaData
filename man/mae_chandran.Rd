@@ -29,6 +29,9 @@ MultiAssayExperiment object containing gene expression (gex) and immune cell est
 \details{
 .
 }
+\examples{
+mae_chandran
+}
 \references{
 Chandran, U. R., Ma, C., Dhir, R., et al. (2007). Gene expression profiles of prostate cancer reveal involvement of multiple molecular pathways in the metastatic process. BMC cancer, 7, 64. https://doi.org/10.1186/1471-2407-7-64
 (\href{https://pubmed.ncbi.nlm.nih.gov/17430594/}{PubMed})

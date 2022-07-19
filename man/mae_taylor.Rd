@@ -33,6 +33,9 @@ number alteration (cna), mutations and immune cell estimates from Taylor et al.
 \details{
 Note that there is lack of overlap between the omics provided for each sample.
 }
+\examples{
+mae_taylor
+}
 \references{
 Taylor, B. S., Schultz, N., Hieronymus, H., et al. (2010). Integrative genomic profiling of human prostate cancer. Cancer cell, 18(1), 11–22. https://doi.org/10.1016/j.ccr.2010.05.026
  (\href{https://pubmed.ncbi.nlm.nih.gov/20579941/}{PubMed})
