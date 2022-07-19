@@ -471,7 +471,8 @@ condition_tregs = case_when(
 foxp3_exp=as.data.frame(t(tcga["FOXP3",]))
 foxp3_and_tregs=merge(foxp3_exp,tregs,by=0)
 
-ggplot(foxp3_and_tregs, aes(x=condition_tregs, y=FOXP3))+geom_boxplot() +geom_jitter(color="black", size=0.4, alpha=0.9)+ylab("FOXP3 expression (TCGA)") 
+
+ggplot(foxp3_and_tregs, aes(x=condition_tregs, y=FOXP3))+geom_boxplot() +geom_jitter(color="black", size=0.4, alpha=0.9)+ylab("FOXP3 expression (TCGA)"+ theme_bw() + theme_classic()) 
 
 
 ```
@@ -496,7 +497,8 @@ condition_tregs = case_when(
 foxp3_exp=as.data.frame(t(taylor["FOXP3",]))
 foxp3_and_tregs=merge(foxp3_exp,tregs,by=0)
 
-ggplot(foxp3_and_tregs, aes(x=condition_tregs, y=FOXP3))+geom_boxplot() +geom_jitter(color="black", size=0.4, alpha=0.9)+ylab("FOXP3 expression (Taylor)") 
+
+ggplot(foxp3_and_tregs, aes(x=condition_tregs, y=FOXP3))+geom_boxplot() +geom_jitter(color="black", size=0.4, alpha=0.9)+ylab("FOXP3 expression (Taylor)"+ theme_bw() + theme_classic()) 
 
 
 ```
@@ -534,7 +536,7 @@ foxp3_and_clinical=merge(foxp3_exp,clinical,by.x=0,by.y="sample_name")
 sfit<-survfit(Surv(months_to_disease_specific_recurrence,disease_specific_recurrence_status)~condition_foxp3, data=foxp3_and_clinical)
 
 
-ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)",title="FOXP3 vs BCR (TCGA)")
+ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)",title="FOXP3 vs BCR (TCGA)"+ theme_bw() + theme_classic())
 
 
 ```
@@ -570,7 +572,7 @@ foxp3_and_clinical=merge(foxp3_exp,clinical,by.x=0,by.y="sample_name")
 sfit<-survfit(Surv(months_to_disease_specific_recurrence,disease_specific_recurrence_status)~condition_foxp3, data=foxp3_and_clinical)
 
 
-ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)",title="FOXP3 vs BCR (Taylor)")
+ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)",title="FOXP3 vs BCR (Taylor)"+ theme_bw() + theme_classic())
 
 
 ```
@@ -587,7 +589,7 @@ tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop
 
 tregs_and_foxp3=merge(foxp3_exp,tregs,by=0)
 
-plot(tregs_and_foxp3$`T cells regulatory (Tregs)`,tregs_and_foxp3$FOXP3,xlab="T regulatory cells",ylab="FOXP3 Expression",title="Tregs vs FOXP3 expression (TCGA)")
+plot(tregs_and_foxp3$`T cells regulatory (Tregs)`,tregs_and_foxp3$FOXP3,xlab="T regulatory cells",ylab="FOXP3 Expression",title="Tregs vs FOXP3 expression (TCGA)",pch=20)
 
 ```
 
