@@ -1,3 +1,12 @@
+curatedPCaData v0.9.24 (Release date: 2022-07-13)
+==============
+
+Changes:
+
+* R CMD check feedback fixes
+* BiocCheck feedback fixes
+* biocViews in DESCRIPTION (ExperimentData)
+
 curatedPCaData v0.9.23 (Release date: 2022-07-08)
 ==============
 

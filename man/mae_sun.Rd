@@ -25,6 +25,9 @@ mae_sun
 \description{
 MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from Sun et al.
 }
+\examples{
+mae_sun
+}
 \references{
 Sun, Y., & Goodison, S. (2009). Optimizing molecular signatures for predicting prostate cancer recurrence. The Prostate, 69(10), 1119–1127. https://doi.org/10.1002/pros.20961
  (\href{https://pubmed.ncbi.nlm.nih.gov/19343730/}{PubMed})

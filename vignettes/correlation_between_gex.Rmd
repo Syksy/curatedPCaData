@@ -131,3 +131,9 @@ corr_of_corr = cor(combined_cor_list)
 corrplot::corrplot(corr_of_corr,method = 'color')
 
 ```
+
+# Session info
+
+```{r session}
+sessionInfo()
+```

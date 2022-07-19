@@ -26,4 +26,7 @@ mae_igc
 \description{
 MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from IGC's Expression Project for Oncology (expO) with a subset for prostate cancer
 }
+\examples{
+mae_igc
+}
 \keyword{datasets}

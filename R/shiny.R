@@ -6,9 +6,14 @@
 
 #' Launch R Shiny interface for the curatedPCaData-package
 #'
-#' Description
+#' shinyPCa launches an R Shiny web interface session, which can be used to access the mae-objects and data there-in.
 #'
 #' @rdname shinyPCa
+#'
+#' @examples
+#' if(interactive()){
+#'     shinyPCa()
+#' }
 #'
 #' @export
 shinyPCa <- function(){

@@ -32,6 +32,9 @@ number alteration (cna), mutations (mut) and immune cell estimates for Abida et 
 \details{
 the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
 }
+\examples{
+mae_abida
+}
 \references{
 Abida, W., Cyrta, J., Heller, G., et al. (2019). Genomic correlates of clinical outcome in advanced prostate cancer. Proceedings of the National Academy of Sciences of the United States of America, 116, 11428 - 11436.
 (\href{https://pubmed.ncbi.nlm.nih.gov/31061129/}{PubMed})

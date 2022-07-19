@@ -29,6 +29,9 @@ MultiAssayExperiment object containing gene expression (gex) and immune cell est
 \details{
 The dataset consists of 266 NCCN very low/low or favorable-intermediate risk PCa patients
 }
+\examples{
+mae_kim
+}
 \references{
 Kim HL, Li P, Huang HC, Deheshi S et al. Validation of the Decipher Test for predicting adverse pathology in candidates for prostate cancer active surveillance. Prostate Cancer Prostatic Dis 2019 Sep;22(3):399-405.
 (\href{https://pubmed.ncbi.nlm.nih.gov/30542054/}{PubMed})

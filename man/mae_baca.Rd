@@ -20,4 +20,7 @@ mae_baca
 \description{
 MultiAssayExperiment object containing copy number alteration (cna) and mutations for Baca et al.
 }
+\examples{
+mae_baca
+}
 \keyword{datasets}

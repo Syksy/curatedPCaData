@@ -28,6 +28,9 @@ MultiAssayExperiment object containing gene expression (gex) and immune cell est
 \details{
 The data refers to samples from the ICGC Canadian Prostate Cancer Genome Network (ICGC-PRAD-CA)
 }
+\examples{
+mae_icgcca
+}
 \references{
 Fraser, M., Sabelnykova, V.Y., Yamaguchi, T.N., et al. (2017). Genomic hallmarks of localized, non-indolent prostate cancer. Nature, 541, 359-364.
  (\href{https://pubmed.ncbi.nlm.nih.gov/28068672/}{PubMed})
