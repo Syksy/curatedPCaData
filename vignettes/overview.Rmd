@@ -87,7 +87,8 @@ summarize_feature <- function(mae, feature){
 				return(paste0("[",paste0(round(quantile(x),2), collapse=", "),"]"))
 			}
 		}		
-	}else{
+	}
+	else{
 		return("Unidentified var.class")
 	}
 }
@@ -95,7 +96,8 @@ missingness_feature <- function(mae, feature){
 	x <- MultiAssayExperiment::colData(mae)[,feature]
 	if(sum(is.na(x))>0){
 		paste0("n=", sum(is.na(x)), " (", round(100*sum(is.na(x))/length(x),0), "%)")
-	}else{
+	}
+	else{
 		"-"
 	}
 }

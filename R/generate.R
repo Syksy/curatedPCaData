@@ -1272,7 +1272,7 @@ generate_cbioportal <- function(
   verb = TRUE
 ){
   # If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
-  if(class(genes)=="list"){
+  if(is(genes,"list")){
     genes <- genes$hgnc_symbol
   }
   # Establisigh connection to cBioPortal
@@ -1351,7 +1351,7 @@ generate_cbioportal_oncoprint <- function(
 	)
 
 	# If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
-	if(class(genes)=="list"){
+	if(is(genes,"list")){
 		genes <- genes$hgnc_symbol
 	}
 	# Establisigh connection to cBioPortal
@@ -1486,7 +1486,7 @@ generate_cgdsr_mut <- function(
   )
   
   # If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
-  if(class(genes)=="list"){
+  if(is(genes,"list")){
     genes <- genes$hgnc_symbol
   }
   # Establisigh connection to cBioPortal
