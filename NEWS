@@ -1,9 +1,15 @@
+curatedPCaData v0.9.28 (Release date: 2022-07-21)
+==============
+
+* 
+
 curatedPCaData v0.9.27 (Release date: 2022-07-18)
 ==============
 
 Changes:
 
 * Lifted computational burden from a vignette to pre-computed workspace
+* Fixed class check comparison WARNINGS from BiocCheck with methods::is 
 
 curatedPCaData v0.9.26 (Release date: 2022-07-15)
 ==============
