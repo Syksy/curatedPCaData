@@ -294,13 +294,13 @@ generate_gex_geo <- function(
 		    print("ORIGINAL:")
 		    print(affyio::read.celfile.header(celFilePath)[1])
 		  }
-		  f <- base::file(celFilePath, "r+b")
-		  base::seek(f, writeBytePos, "start", "write")
-		  replicate(overwriteBytes, base::writeBin(as.raw(0), f, useBytes = T)) #clear the old name (14 characters)
-		  base::seek(f, writeBytePos, "start", "write")
+		  filename <- base::file(celFilePath, "r+b")
+		  base::seek(filename, writeBytePos, "start", "write")
+		  replicate(overwriteBytes, base::writeBin(as.raw(0), filename, useBytes = TRUE)) #clear the old name (14 characters)
+		  base::seek(filename, writeBytePos, "start", "write")
 		  encoded <- stringi::stri_enc_toutf32(header)[[1]]
-		  base::writeBin(encoded, f, size=2)
-		  base::close(f)
+		  base::writeBin(encoded, filename, size=2)
+		  base::close(filename)
 		  cfh <- affyio::read.celfile.header(celFilePath)
 		  if (verbose) {
 		    print("REVISED:")
@@ -655,23 +655,23 @@ generate_gex_geo <- function(
 			gex1 <- Biobase::exprs(gset[[1]])
 			rownames(gex1) = labels1$"Related Gene Symbol"
 			gex1 = gex1[-which(rownames(gex1) == ''), ]
-			gex1 = aggregate(gex1, by = list(rownames(gex1)), mean, na.rm = T)
+			gex1 = aggregate(gex1, by = list(rownames(gex1)), mean, na.rm = TRUE)
 			rownames(gex1) = gex1[, 1]
 			gex1 = gex1[, -1]
 			# Second part of the data
 			gex2 <- Biobase::exprs(gset[[2]])
 			rownames(gex2) = labels2$Hugo
-			gex2 = gex2[-which(rownames(gex2) == ''), , drop = F]
+			gex2 = gex2[-which(rownames(gex2) == ''), , drop = FALSE]
 			gex2 = cbind(gex2, 1)
-			gex2 = aggregate(gex2, by = list(rownames(gex2)), mean, na.rm = T)
+			gex2 = aggregate(gex2, by = list(rownames(gex2)), mean, na.rm = TRUE)
 			rownames(gex2) = gex2[, 1]
 			gex2 = gex2[, -1]
-			gex2 = gex2 [, -2, drop = F]
+			gex2 = gex2 [, -2, drop = FALSE]
 
 			# Intersect to common genes
 			common_genes = intersect(rownames(gex1), rownames(gex2))
-			gex1 = gex1[is.element(rownames(gex1), common_genes), ,drop = F]
-			gex2 = gex2[is.element(rownames(gex2), common_genes), ,drop = F]
+			gex1 = gex1[is.element(rownames(gex1), common_genes), ,drop = FALSE]
+			gex2 = gex2[is.element(rownames(gex2), common_genes), ,drop = FALSE]
 
 			# the two datasets are merged respecting the order of the GEO sample IDs
 			if(identical(rownames(gex1), rownames(gex2))) gex = cbind(gex1[,1:10], gex2[,1], gex1[,11:31])
