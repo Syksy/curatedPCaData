@@ -45,7 +45,7 @@ colnames(clinical)[3]="months_to_disease_specific_recurrence"
 
 cibersort=mae_tcga[["cibersort"]]
 
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -81,7 +81,7 @@ colnames(clinical)[3]="months_to_disease_specific_recurrence"
 
 cibersort=mae_taylor[["cibersort"]]
 
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -117,7 +117,7 @@ clinical<-tcga[,c("sample_name","grade_group")]
 
 
 cibersort=mae_tcga[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -162,7 +162,7 @@ clinical<-taylor[,c("sample_name","grade_group")]
 clinical<-clinical[!is.na(clinical$grade_group),]
 
 cibersort=mae_taylor[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -207,7 +207,7 @@ clinical<-igc[,c("sample_name","grade_group")]
 clinical<-clinical[!is.na(clinical$grade_group),]
 
 cibersort=mae_igc[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -253,7 +253,7 @@ kunderfranco<-as.data.frame(as.matrix(colData(mae_kunderfranco)))
 clinical<-kunderfranco[,c("sample_name","grade_group")]
 clinical<-clinical[clinical$grade_group!="NA",]
 cibersort=mae_kunderfranco[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 tregs_and_clinical=merge(clinical,tregs,by.x="sample_name",by.y=0)
 
@@ -306,7 +306,7 @@ clinical<-clinical[!is.na(clinical$grade_group),]
 #  ))
 
 cibersort=mae_weiner[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -350,7 +350,7 @@ clinical<-icgcca[,c("sample_name","grade_group")]
 clinical<-clinical[!is.na(clinical$grade_group),]
 
 cibersort=mae_icgcca[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -456,7 +456,7 @@ FOXP3 is a well known regulator of T regulatory cells. Using the curatedpcadata 
 tcga<-as.data.frame(mae_tcga[["gex.fpkm"]])
 
 cibersort=mae_tcga[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -482,7 +482,7 @@ ggplot(foxp3_and_tregs, aes(x=condition_tregs, y=FOXP3))+geom_boxplot() +geom_ji
 taylor<-as.data.frame(mae_taylor[["gex.rma"]])
 
 cibersort=mae_taylor[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 median=median(tregs$`T cells regulatory (Tregs)`)
 
@@ -584,7 +584,7 @@ tcga_gex<-as.data.frame(mae_tcga[["gex.fpkm"]])
 foxp3_exp=as.data.frame(t(tcga_gex["FOXP3",]))
 
 cibersort=mae_tcga[["cibersort"]]
-tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=F])))
+tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
 
 tregs_and_foxp3=merge(foxp3_exp,tregs,by=0)
 

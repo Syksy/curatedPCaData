@@ -47,8 +47,6 @@ generate_gex_geo <- function(
 
 	if(!pckg %in% c("oligo", "affy", "limma", "other")) stop(paste0("Invalid processing method parameter pckg (should be either 'oligo', 'affy', 'limma', or 'other'):", pckg))
 
-
-  
 	# Barwick et al.
 	if(geo_code == "GSE18655"){
 		# Following lumi-package variance stabilizing transformation normalization
@@ -95,7 +93,6 @@ generate_gex_geo <- function(
 			collapse_fun(x)
 		}))
 	}
-  
   	# Chandran et al.
   	else if(geo_code == "GSE6919"){
   		# Open the tarball(s)
@@ -199,10 +196,8 @@ generate_gex_geo <- function(
 			gex <- tmp
 		}
   	}
-  	
 	# Friedrich et al. 
 	else if(geo_code == "GSE134051"){
-		# TDL: Re-implement
   		# Open the tarball(s)
   		utils::untar(tarfile = rownames(supfiles))
 		gz_files <- list.files()
@@ -276,7 +271,6 @@ generate_gex_geo <- function(
 			gex <- gex[order(rownames(gex)),]
 		}
 	}
-  
 	# Kim et al.
 	else if(geo_code == "GSE119616"){
 		# Open the tarball(s)
@@ -296,41 +290,29 @@ generate_gex_geo <- function(
 		  # NEVER change this.
 		  writeBytePos=430
 		  overwriteBytes=28 # 2 x 14 characters in "HuEx-1_0-st-v2"
-
 		  if (verbose) {
 		    print("ORIGINAL:")
 		    print(affyio::read.celfile.header(celFilePath)[1])
 		  }
-
-		  f <- base::file(celFilePath, "r+b")
-
-		  base::seek(f, writeBytePos, "start", "write")
-		  replicate(overwriteBytes, base::writeBin(as.raw(0), f, useBytes = T)) #clear the old name (14 characters)
-
-		  base::seek(f, writeBytePos, "start", "write")
+		  filename <- base::file(celFilePath, "r+b")
+		  base::seek(filename, writeBytePos, "start", "write")
+		  replicate(overwriteBytes, base::writeBin(as.raw(0), filename, useBytes = TRUE)) #clear the old name (14 characters)
+		  base::seek(filename, writeBytePos, "start", "write")
 		  encoded <- stringi::stri_enc_toutf32(header)[[1]]
-		  base::writeBin(encoded, f, size=2)
-
-		  base::close(f)
-
+		  base::writeBin(encoded, filename, size=2)
+		  base::close(filename)
 		  cfh <- affyio::read.celfile.header(celFilePath)
-
 		  if (verbose) {
 		    print("REVISED:")
 		    print(cfh[1])
 		  }
-
 		  return(invisible(cfh$cdfName ==  header))
 		}
-
 		sapply(celfiles, celfileHeaderToHuex, verbose=TRUE)
-
 		# Read in the CEL files 
 		CELs <- oligo::read.celfiles(celfiles)
-
 		# Perform RMA normalization
 		RMAs <- oligo::rma(CELs)
-
 		# Obtain gene and sample information
 		Biobase::featureData(RMAs) <- oligo::getNetAffx(RMAs, "transcript")
 		# GSM######-type names from GEO
@@ -347,7 +329,6 @@ generate_gex_geo <- function(
 		# Extract gene names
 		genenames <- unlist(lapply(Biobase::fData(RMAs)[,"geneassignment"], 
 				       FUN = function(z) { strsplit(z, " // ")[[1]][2] }))
-
 		# Transform into a matrix and remove empty gene names
 		gex <- as.matrix(Biobase::exprs(RMAs))
 		gex <- gex[-which(is.na(genenames)),]
@@ -360,7 +341,6 @@ generate_gex_geo <- function(
 		colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
     
 	}
-
 	# Kunderfranco et al.
 	# GPL887	Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
 	else if(geo_code == "GSE14206"){
@@ -413,7 +393,6 @@ generate_gex_geo <- function(
 			gex <- gex[-which(rownames(gex) == ''), ]
 		}
 	}
-
 	# IGC
 	else if(geo_code == "GSE2109"){
 		## Note: IGC has >2k samples, many of which are not prostate cancer
@@ -491,7 +470,6 @@ generate_gex_geo <- function(
 			row.names(gex) <- compare_names$new_names
 		}
 	}
-
   	# Sun et al. 
 	else if(geo_code == "GSE25136"){
 		# Open the tarball(s)
@@ -536,7 +514,6 @@ generate_gex_geo <- function(
 			gex <- updateAnno(x=gex, main="hgnc_symbol", type="Aliases", collapse_fun=collapse_fun)
 		}
 	}
-
 	# Taylor et al.
 	# [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
 	# Affymetrix Human Exon 1.0 ST Array [CDF: HuEx_1_0_st_v2_main_A20071112_EP.cdf]
@@ -602,7 +579,6 @@ generate_gex_geo <- function(
 			colnames(gex) <- unlist(lapply(nam, FUN=function(z){ strsplit(z, "_")[[1]][1] }))
 		}
 	}
-
 	# True et al.
 	# GPL3834	FHCRC Human Prostate PEDB cDNA Array
 	# GPL3836	FHCRC Human Prostate PEDB cDNA Array v3 (-> single sample only! 11th, GSM115769)
@@ -618,30 +594,19 @@ generate_gex_geo <- function(
 			gpl <- GEOquery::getGEO(geo_code, GSEMatrix = FALSE, getGPL = TRUE)
 			# Add meta Block column for mapping between GPL and genes read in with limma::read.maimages; GEO's GPL-files do not share identifiers with raw .gpr files
 			gpl@gpls[[1]]@dataTable@table$Block <- rep(1:32, each=484)
-			#gpl@gpls[[1]]@dataTable@table$Block <- rep(1:32, times=484)
 			gpl@gpls[[2]]@dataTable@table$Block <- rep(1:32, each=420)			
-			#gpl@gpls[[2]]@dataTable@table$Block <- rep(1:32, times=420)
 			# Construct ID with xx_yy_zz where xx = Block, yy = Column, zz = Row (includes leading zeroes)
 			gpl@gpls[[1]]@dataTable@table$ID <- paste(sprintf("%02d", gpl@gpls[[1]]@dataTable@table$Block), sprintf("%02d", gpl@gpls[[1]]@dataTable@table$Column), sprintf("%02d", gpl@gpls[[1]]@dataTable@table$Row), sep="_")
 			gpl@gpls[[2]]@dataTable@table$ID <- paste(sprintf("%02d", gpl@gpls[[2]]@dataTable@table$Block), sprintf("%02d", gpl@gpls[[2]]@dataTable@table$Column), sprintf("%02d", gpl@gpls[[2]]@dataTable@table$Row), sep="_")
 			# Gunzip .gpr files and read them via limma
 			lapply(gz_files, FUN=GEOquery::gunzip)
 			# FHCRC Human Prostate PEDB cDNA Array v3 vs v4
-			#gpl_1 <- paste0(c("GSM115759", paste0("GSM11576", 0:8)), ".gpr")
-			#gpl_2 <- grep(".gpr", list.files(), value=TRUE)
-			#gpl_2 <- gpl_2[which(!gpl_2 %in% gpl_1)]
 			gpl_1 <- grep(".gpr", list.files(), value=TRUE)
 			gpl_1 <- gpl_1[!gpl_1 == "GSM115769.gpr"]
 			gpl_2 <- "GSM115769.gpr"
-			#gex <- limma::read.maimages(grep(".gpr", list.files(), value=TRUE), source="genepix")
 			gex1 <- limma::read.maimages(gpl_1, source="genepix")
 			gex2 <- limma::read.maimages(gpl_2, source="genepix")
 			# Platform 2 has IDs in different format
-			#gex2$genes$ID2 <- gex2$genes$ID
-			#gex2$genes$ID <- paste(sprintf("%02d", gex2$genes$Block), sprintf("%02d", gex2$genes$Column), sprintf("%02d", gex2$genes$Row), sep="_")
-			# Sort GPL data tables to be in same order as the read MA images
-			#gpl@gpls[[1]]@dataTable@table <- gpl@gpls[[1]]@dataTable@table[match(gpl@gpls[[1]]@dataTable@table$ID, gex1$genes$ID),]
-			#gpl@gpls[[2]]@dataTable@table <- gpl@gpls[[2]]@dataTable@table[match(gpl@gpls[[2]]@dataTable@table$ID, gex2$genes$ID),]
 			# Assign gene names to the metadata
 			gex1$genes$genename <- gpl@gpls[[1]]@dataTable@table[,"Related Gene Symbol"]
 			gex2$genes$genename <- gpl@gpls[[2]]@dataTable@table[,"Hugo"]
@@ -673,8 +638,7 @@ generate_gex_geo <- function(
 			# Merge data based on intersecting genes
 			# 11th sample is a special case for v3 array and must be placed separately
 			gex <- cbind(gex1[,1:10], GSM115769 = gex2, gex1[,11:31])			
-			
-			# Channels were swapped in samples #3,4, 7 and 8, 12, 14, 15, 17, 18, 20, 22, 23, 24, 26, 30, 31
+			# Channels were swapped in samples #3, 4, 7, 8, 12, 14, 15, 17, 18, 20, 22, 23, 24, 26, 30, 31
 			# In these tumor vs normal log ratio is inverted
 			for(i in c(3,4,7,8,12,14,15,17,18,20,22,23,24,26,30,31)){
 				gex[,i] <- -gex[,i]
@@ -691,23 +655,23 @@ generate_gex_geo <- function(
 			gex1 <- Biobase::exprs(gset[[1]])
 			rownames(gex1) = labels1$"Related Gene Symbol"
 			gex1 = gex1[-which(rownames(gex1) == ''), ]
-			gex1 = aggregate(gex1, by = list(rownames(gex1)), mean, na.rm = T)
+			gex1 = aggregate(gex1, by = list(rownames(gex1)), mean, na.rm = TRUE)
 			rownames(gex1) = gex1[, 1]
 			gex1 = gex1[, -1]
 			# Second part of the data
 			gex2 <- Biobase::exprs(gset[[2]])
 			rownames(gex2) = labels2$Hugo
-			gex2 = gex2[-which(rownames(gex2) == ''), , drop = F]
+			gex2 = gex2[-which(rownames(gex2) == ''), , drop = FALSE]
 			gex2 = cbind(gex2, 1)
-			gex2 = aggregate(gex2, by = list(rownames(gex2)), mean, na.rm = T)
+			gex2 = aggregate(gex2, by = list(rownames(gex2)), mean, na.rm = TRUE)
 			rownames(gex2) = gex2[, 1]
 			gex2 = gex2[, -1]
-			gex2 = gex2 [, -2, drop = F]
+			gex2 = gex2 [, -2, drop = FALSE]
 
 			# Intersect to common genes
 			common_genes = intersect(rownames(gex1), rownames(gex2))
-			gex1 = gex1[is.element(rownames(gex1), common_genes), ,drop = F]
-			gex2 = gex2[is.element(rownames(gex2), common_genes), ,drop = F]
+			gex1 = gex1[is.element(rownames(gex1), common_genes), ,drop = FALSE]
+			gex2 = gex2[is.element(rownames(gex2), common_genes), ,drop = FALSE]
 
 			# the two datasets are merged respecting the order of the GEO sample IDs
 			if(identical(rownames(gex1), rownames(gex2))) gex = cbind(gex1[,1:10], gex2[,1], gex1[,11:31])
@@ -715,7 +679,6 @@ generate_gex_geo <- function(
 			colnames(gex)[11] = colnames(gex2)
 		}
 	}
-  
 	# Wallace et al.	
 	else if(geo_code == "GSE6956"){
   
@@ -755,8 +718,7 @@ generate_gex_geo <- function(
 			gex <- do.call("rbind", by(as.matrix(affy::exprs(gex)), INDICES=nam, FUN=collapse_fun))
 		}
 	}
-  
-	# Wang et al.  
+  	# Wang et al.  
 	else if(geo_code == "GSE8218"){
 		# Open the tarball(s)
 		utils::untar(tarfile = rownames(supfiles))
@@ -830,10 +792,6 @@ generate_gex_geo <- function(
 		gz_files <- gz_files[grep(".gz", gz_files)]
   		if(pckg == "oligo"){
 			# Read CEL
-			#gex <- oligo::read.celfiles(gz_files)
-			# Too large for a high-end desktop: 
-			#> Error: cannot allocate vector of size 40.9 Gb 		
-			#gex <- oligo::read.celfiles(gz_files[1:400])
 			gex <- oligo::read.celfiles(gz_files)
 			# Normalize background convolution of noise and signal using RMA (median-polish)
 			gex <- oligo::rma(gex)
@@ -852,7 +810,6 @@ generate_gex_geo <- function(
 			gex <- round(gex, 6)
   		}  		
   	}
-  	
 	# Unknown GEO id (throw an error) -----
 	else{
 		stop("Unknown GEO id, see allowed parameter values for geo_code")
@@ -1272,7 +1229,7 @@ generate_cbioportal <- function(
   verb = TRUE
 ){
   # If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
-  if(class(genes)=="list"){
+  if(is(genes,"list")){
     genes <- genes$hgnc_symbol
   }
   # Establisigh connection to cBioPortal
@@ -1351,7 +1308,7 @@ generate_cbioportal_oncoprint <- function(
 	)
 
 	# If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
-	if(class(genes)=="list"){
+	if(is(genes,"list")){
 		genes <- genes$hgnc_symbol
 	}
 	# Establisigh connection to cBioPortal
@@ -1486,7 +1443,7 @@ generate_cgdsr_mut <- function(
   )
   
   # If given genes is a list (with slots for various annotation types), try to extract hugo gene symbols
-  if(class(genes)=="list"){
+  if(is(genes,"list")){
     genes <- genes$hgnc_symbol
   }
   # Establisigh connection to cBioPortal
@@ -2003,4 +1960,3 @@ generate_xenabrowser <- function(
 	# Return the processed dat
 	dat
 }
-

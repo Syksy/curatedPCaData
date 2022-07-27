@@ -87,7 +87,8 @@ summarize_feature <- function(mae, feature){
 				return(paste0("[",paste0(round(quantile(x),2), collapse=", "),"]"))
 			}
 		}		
-	}else{
+	}
+	else{
 		return("Unidentified var.class")
 	}
 }
@@ -95,7 +96,8 @@ missingness_feature <- function(mae, feature){
 	x <- MultiAssayExperiment::colData(mae)[,feature]
 	if(sum(is.na(x))>0){
 		paste0("n=", sum(is.na(x)), " (", round(100*sum(is.na(x))/length(x),0), "%)")
-	}else{
+	}
+	else{
 		"-"
 	}
 }
@@ -115,17 +117,17 @@ for(i in 1:nrow(gleasons)){
 	# Iterate through gleasons 5-10
 	gls <- 5:10
 	for(j in 1:(ncol(gleasons)-2)){
-		if(!sum(gl==gls[j], na.rm=T)==0){
-			gleasons[i,j] <- paste0(sum(gl==gls[j], na.rm=T), " (", round(100*sum(gl==gls[j], na.rm=T)/length(gl),0), "%)")	
+		if(!sum(gl==gls[j], na.rm=TRUE)==0){
+			gleasons[i,j] <- paste0(sum(gl==gls[j], na.rm=TRUE), " (", round(100*sum(gl==gls[j], na.rm=TRUE)/length(gl),0), "%)")	
 		}else{
 			gleasons[i,j] <- "-"
 		}
 	}
 	# Other values
 	vals <- c(5:10, NA)
-	gleasons[i,ncol(gleasons)-1] <- paste0(sum(!gl %in% vals, na.rm=T), " (", round(100*sum(!gl %in% vals, na.rm=T)/length(gl),0), "%)")
+	gleasons[i,ncol(gleasons)-1] <- paste0(sum(!gl %in% vals, na.rm=TRUE), " (", round(100*sum(!gl %in% vals, na.rm=TRUE)/length(gl),0), "%)")
 	# NA-values
-	gleasons[i,ncol(gleasons)] <- paste0(sum(is.na(gl), na.rm=T), " (", round(100*sum(is.na(gl), na.rm=T)/length(gl),0), "%)")
+	gleasons[i,ncol(gleasons)] <- paste0(sum(is.na(gl), na.rm=TRUE), " (", round(100*sum(is.na(gl), na.rm=TRUE)/length(gl),0), "%)")
 }
 
 ###
