@@ -1821,142 +1821,348 @@ generate_icgc <- function(
 #'
 #' @noRd
 #' @keywords internal
+# generate_xenabrowser <- function(
+# 	id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
+# 	type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
+# 	# Function for collapsing rows for identical gene symbols; separate for gene expression (GEX) or copy number alteration (CNA) data, as latter is rounded to integers in case of median giving out means between two mid-most samples
+# 	collapse_fun_gex = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
+# 	collapse_fun_cna = function(z) {apply(z, MARGIN = 2, FUN = function(x) { round(stats::median(x),0) })},	
+# 	# If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
+# 	truncate = TRUE,
+# 	# Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
+# 	digits,
+# 	# If intermediate files ought to be removed
+# 	cleanup = TRUE,
+# 	...
+# ){
+# 	# Small internal function to assist with the downloads from xenabrowser.net
+# 	.xenabrowserDownload <- function(url, gz=TRUE){
+# 		# Pick the filename from the end of the URL
+# 		filename <- strsplit(url, "/")
+# 		filename <- filename[[1]][[length(filename[[1]])]]
+# 		# Download file into parsed *.tsv.gz 
+# 		utils::download.file(url=url, destfile=filename)
+# 		# if .gz, gunzip the files open
+# 		if(gz) GEOquery::gunzip(filename, overwrite=TRUE)
+# 		gsub(".gz", "", filename)
+# 	}
+# 	# Cases (typically TCGA-PRAD)
+# 	if(id == "TCGA-PRAD"){
+# 		# Release Mid 2019ish
+# 		urls = list(
+# 			"htseq.fpkm" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.htseq_fpkm-uq.tsv.gz",
+# 			"gistic" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.gistic.tsv.gz",
+# 			"mutect2" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.mutect2_snv.tsv.gz",
+# 			"phenotype" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.GDC_phenotype.tsv.gz",
+# 			"os" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.survival.tsv",
+# 			"genemap" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap"
+# 		)
+# 		# Gene expression
+# 		if(type == "gex"){
+# 			# Download the FPKM-UQ values processed via HTSeq
+# 			file <- .xenabrowserDownload(urls[["htseq.fpkm"]])
+# 			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+# 			if(cleanup) file.remove(file)
+# 			# Download the gene mapping file
+# 			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
+# 			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+# 			if(cleanup) file.remove(file)
+# 			# Rearrange to match the ordering of the data matrix
+# 			map <- map[match(rownames(dat), rownames(map)),]
+# 			#> all(rownames(map) == rownames(dat))
+# 			#[1] TRUE
+# 			# Reassign gene names from ENSEMBL gene ids to gene symbols collapsing identical names and arranging to alphabetic order
+# 			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_gex))
+# 			dat <- dat[order(rownames(dat)),]
+# 			#> dim(dat)
+# 			#[1] 58387   551
+# 			#
+# 			# If column names should truncate last segment (sample -> patient id level truncation)
+# 			if(truncate>=1){
+# 				print("Truncating to 3 dot-separated names...")
+# 				# Remove fourth element separated by '.'
+# 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+# 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
+# 			}else if(truncate>=0){
+# 				print("Substituting '.01A|.01B' with '.01' ...")
+# 				# Sub '.01A" with the default ".01"
+# 				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+# 			}
+# 		# Copy number alterations (discretized by GISTIC)
+# 		}else if(type == "cna"){
+# 			# Download the copy number alteration values processed via GISTIC
+# 			file <- .xenabrowserDownload(urls[["gistic"]])
+# 			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+# 			if(cleanup) file.remove(file)
+# 			# Download the gene mapping file
+# 			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
+# 			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+# 			if(cleanup) file.remove(file)
+# 			# Rearrange to match the ordering of the data matrix
+# 			map <- map[match(rownames(dat), rownames(map)),]
+# 			# > all(rownames(map) == rownames(dat))
+# 			#[1] TRUE
+# 			#> dim(dat)
+# 			#[1] 19729   502
+# 			#
+# 			## Smaller dimension than for gex as expected
+# 			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_cna))
+# 			dat <- dat[order(rownames(dat)),]
+# 			# If column names should truncate last segment (sample -> patient id level truncation)
+# 			if(truncate>=1){
+# 				print("Truncating to 3 dot-separated names...")
+# 				# Remove fourth element separated by '.'
+# 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+# 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
+# 			}else if(truncate>=0){
+# 				print("Substituting '.01A|.01B' with '.01' ...")
+# 				# Sub '.01A" with the default ".01"
+# 				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+# 			}
+# 		# Small mutations (SNV / INDELs called by Mutect2)
+# 		}else if(type == "mut"){
+# 			# Download the MuTect2 somatic mutation calls
+# 			file <- .xenabrowserDownload(urls[["mutect2"]])
+# 			# Suitable for RaggedExperiment style data storage
+# 			dat <- read.table(file, sep="\t", header=TRUE)
+# 			if(cleanup) file.remove(file)
+# 			tcga_mut<-dat[,c(3:5,1,2,6:11)]
+# 			colnames(tcga_mut)[1:3]=c("seqnames","start","end")
+# 			tcga_mut$Sample_ID<-gsub("-",".",tcga_mut$Sample_ID)
+# 			tcga_mut$Sample_ID<-gsub("01A","01",tcga_mut$Sample_ID)
+# 			names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
+# 			#a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
+# 			GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "Sample_ID",
+# 			                                    names.field = "gene",keep.extra.columns = TRUE)
+# 			ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
+# 			return(ragexp_tcga)
+# 		# Clinical data matrix construction
+# 		}else if(type == "clinical"){
+# 			# Generic phenotype information
+# 			file <- .xenabrowserDownload(urls[["phenotype"]])
+# 			phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+# 			if(cleanup) file.remove(file)
+# 			# Overall Survival
+# 			file <- .xenabrowserDownload(urls[["os"]], gz=FALSE)
+# 			os <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+# 			if(cleanup) file.remove(file)
+# 			# Combine the two			
+# 			dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
+# 			# .11A are healthy samples (GEX)
+# 			#rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
+# 		# Unknown data type
+# 		}else{
+# 			stop(paste("Invalid query type for xenabrowser:", type))
+# 		}
+# 	}
+# 	# Round to certain digits if requested
+# 	if(!missing(digits)) dat <- round(dat, digits)
+# 	# Return the processed dat
+# 	dat
+# }
 generate_xenabrowser <- function(
-	id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
-	type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
-	# Function for collapsing rows for identical gene symbols; separate for gene expression (GEX) or copy number alteration (CNA) data, as latter is rounded to integers in case of median giving out means between two mid-most samples
-	collapse_fun_gex = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
-	collapse_fun_cna = function(z) {apply(z, MARGIN = 2, FUN = function(x) { round(stats::median(x),0) })},	
-	# If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
-	truncate = TRUE,
-	# Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
-	digits,
-	# If intermediate files ought to be removed
-	cleanup = TRUE,
-	...
+  id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
+  type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
+  # Function for collapsing rows for identical gene symbols; separate for gene expression (GEX) or copy number alteration (CNA) data, as latter is rounded to integers in case of median giving out means between two mid-most samples
+  collapse_fun_gex = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
+  collapse_fun_cna = function(z) {apply(z, MARGIN = 2, FUN = function(x) { round(stats::median(x),0) })},	
+  # If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
+  truncate = TRUE,
+  # Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
+  digits,
+  # If intermediate files ought to be removed
+  cleanup = TRUE,
+  ...
 ){
-	# Small internal function to assist with the downloads from xenabrowser.net
-	.xenabrowserDownload <- function(url, gz=TRUE){
-		# Pick the filename from the end of the URL
-		filename <- strsplit(url, "/")
-		filename <- filename[[1]][[length(filename[[1]])]]
-		# Download file into parsed *.tsv.gz 
-		utils::download.file(url=url, destfile=filename)
-		# if .gz, gunzip the files open
-		if(gz) GEOquery::gunzip(filename, overwrite=TRUE)
-		gsub(".gz", "", filename)
-	}
-	# Cases (typically TCGA-PRAD)
-	if(id == "TCGA-PRAD"){
-		# Release Mid 2019ish
-		urls = list(
-			"htseq.fpkm" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.htseq_fpkm-uq.tsv.gz",
-			"gistic" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.gistic.tsv.gz",
-			"mutect2" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.mutect2_snv.tsv.gz",
-			"phenotype" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.GDC_phenotype.tsv.gz",
-			"os" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.survival.tsv",
-			"genemap" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap"
-		)
-		# Gene expression
-		if(type == "gex"){
-			# Download the FPKM-UQ values processed via HTSeq
-			file <- .xenabrowserDownload(urls[["htseq.fpkm"]])
-			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-			if(cleanup) file.remove(file)
-			# Download the gene mapping file
-			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
-			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
-			if(cleanup) file.remove(file)
-			# Rearrange to match the ordering of the data matrix
-			map <- map[match(rownames(dat), rownames(map)),]
-			#> all(rownames(map) == rownames(dat))
-			#[1] TRUE
-			# Reassign gene names from ENSEMBL gene ids to gene symbols collapsing identical names and arranging to alphabetic order
-			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_gex))
-			dat <- dat[order(rownames(dat)),]
-			#> dim(dat)
-			#[1] 58387   551
-			#
-			# If column names should truncate last segment (sample -> patient id level truncation)
-			if(truncate>=1){
-				print("Truncating to 3 dot-separated names...")
-				# Remove fourth element separated by '.'
-				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
-			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
-			}else if(truncate>=0){
-				print("Substituting '.01A|.01B' with '.01' ...")
-				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
-			}
-		# Copy number alterations (discretized by GISTIC)
-		}else if(type == "cna"){
-			# Download the copy number alteration values processed via GISTIC
-			file <- .xenabrowserDownload(urls[["gistic"]])
-			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-			if(cleanup) file.remove(file)
-			# Download the gene mapping file
-			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
-			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
-			if(cleanup) file.remove(file)
-			# Rearrange to match the ordering of the data matrix
-			map <- map[match(rownames(dat), rownames(map)),]
-			# > all(rownames(map) == rownames(dat))
-			#[1] TRUE
-			#> dim(dat)
-			#[1] 19729   502
-			#
-			## Smaller dimension than for gex as expected
-			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_cna))
-			dat <- dat[order(rownames(dat)),]
-			# If column names should truncate last segment (sample -> patient id level truncation)
-			if(truncate>=1){
-				print("Truncating to 3 dot-separated names...")
-				# Remove fourth element separated by '.'
-				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
-			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
-			}else if(truncate>=0){
-				print("Substituting '.01A|.01B' with '.01' ...")
-				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
-			}
-		# Small mutations (SNV / INDELs called by Mutect2)
-		}else if(type == "mut"){
-			# Download the MuTect2 somatic mutation calls
-			file <- .xenabrowserDownload(urls[["mutect2"]])
-			# Suitable for RaggedExperiment style data storage
-			dat <- read.table(file, sep="\t", header=TRUE)
-			if(cleanup) file.remove(file)
-			tcga_mut<-dat[,c(3:5,1,2,6:11)]
-			colnames(tcga_mut)[1:3]=c("seqnames","start","end")
-			tcga_mut$Sample_ID<-gsub("-",".",tcga_mut$Sample_ID)
-			tcga_mut$Sample_ID<-gsub("01A","01",tcga_mut$Sample_ID)
-			names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
-			#a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
-			GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "Sample_ID",
-			                                    names.field = "gene",keep.extra.columns = TRUE)
-			ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
-			return(ragexp_tcga)
-		# Clinical data matrix construction
-		}else if(type == "clinical"){
-			# Generic phenotype information
-			file <- .xenabrowserDownload(urls[["phenotype"]])
-			phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
-			if(cleanup) file.remove(file)
-			# Overall Survival
-			file <- .xenabrowserDownload(urls[["os"]], gz=FALSE)
-			os <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
-			if(cleanup) file.remove(file)
-			# Combine the two			
-			dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
-			# .11A are healthy samples (GEX)
-			#rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
-		# Unknown data type
-		}else{
-			stop(paste("Invalid query type for xenabrowser:", type))
-		}
-	}
-	# Round to certain digits if requested
-	if(!missing(digits)) dat <- round(dat, digits)
-	# Return the processed dat
-	dat
+  # Small internal function to assist with the downloads from xenabrowser.net
+  .xenabrowserDownload <- function(url, gz=TRUE){
+    # Pick the filename from the end of the URL
+    filename <- strsplit(url, "/")
+    filename <- filename[[1]][[length(filename[[1]])]]
+    # Download file into parsed *.tsv.gz 
+    utils::download.file(url=url, destfile=filename)
+    # if .gz, gunzip the files open
+    if(gz) GEOquery::gunzip(filename, overwrite=TRUE)
+    gsub(".gz", "", filename)
+  }
+  harmonize_matrix<-function(matrix){
+    no_match=matrix[is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+    no_match=as.data.frame(no_match)
+    match=matrix[!is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+    match=as.data.frame(match)
+    
+    rownames(match)=gsub("\\.","-",rownames(match))
+    rownames(no_match)=gsub("\\.","-",rownames(no_match))
+    
+    # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+    vector=rownames(no_match)
+    symbols <- vector()
+    
+    a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    symbols=c(symbols,a1)
+    
+    for (i in 2:length(vector)) {
+      a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+      symbols<- c(symbols,a2)
+    }
+    
+    no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
+    
+    no_match <- no_match[!is.na(symbols),]
+    symbols <- symbols[!is.na(symbols)]
+    
+    rownames(no_match) <- make.names(symbols,unique = T)
+    
+    
+    # For those that match just pull hgnc_symbols directly
+    symbols2 <- curatedPCaData:::curatedPCaData_genes[match(rownames(match), curatedPCaData:::curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+    
+    match <- match[!is.na(symbols2),]
+    symbols2 <- symbols2[!is.na(symbols2)]
+    
+    rownames(match) <- symbols2
+    
+    # Combine the match and no_match matrices
+    final_matrix= rbind(match,no_match)
+    colnames(final_matrix)<-gsub("-",".",colnames(final_matrix))
+    final_matrix<-final_matrix[rowSums(is.na(final_matrix)) != ncol(final_matrix), ]
+    
+    return(final_matrix)
+    
+  }
+  harmonize_raggedexp=function(ragexp2){
+    no_match=ragexp2[is.na(match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+    no_match=rownames(no_match)
+    match=ragexp2[!is.na(match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+    match=rownames(match)
+    
+    
+    match=gsub("\\.","-",match)
+    no_match=gsub("\\.","-",no_match)
+    
+    vector=no_match
+    symbols <- vector()
+    
+    if(length(vector)>1){
+      a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+      symbols=c(symbols,a1)
+      
+      for (i in 2:length(vector)) {
+        a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+        symbols<- c(symbols,a2)
+      }}else{
+        a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+        symbols=c(symbols,a1)
+      }
+    
+    no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
+    vector2=match
+    symbols2 <- curatedPCaData:::curatedPCaData_genes[match(vector2, curatedPCaData:::curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+    
+    symbols_final=c(symbols,symbols2)
+    final_matrix=ragexp2[!is.na(symbols_final),]
+    symbols_final=symbols_final[!is.na(symbols_final)]
+    
+    rownames(final_matrix) <- symbols_final
+    colnames(final_matrix)<-gsub("-",".",colnames(final_matrix))
+    
+    return(final_matrix)
+  }
+  # Cases (typically TCGA-PRAD)
+  if(id == "TCGA-PRAD"){
+    # Release Mid 2019ish
+    urls = list(
+      "rsem.log" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/TCGA.PRAD.sampleMap%2FHiSeqV2.gz",
+      "gistic" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/TCGA.PRAD.sampleMap%2FGistic2_CopyNumber_Gistic2_all_thresholded.by_genes.gz",
+      "mc3" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/mc3%2FPRAD_mc3.txt.gz",
+      "phenotype" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/TCGA.PRAD.sampleMap%2FPRAD_clinicalMatrix",
+      "os" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/survival%2FPRAD_survival.txt"
+    )
+    # Gene expression
+    if(type == "gex"){
+      # Download the FPKM-UQ values processed via HTSeq
+      file <- .xenabrowserDownload(urls[["rsem.log"]])
+      dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+      dat=harmonize_matrix(dat)
+      
+      # If column names should truncate last segment (sample -> patient id level truncation)
+      if(truncate>=1){
+        print("Truncating to 3 dot-separated names...")
+        # Remove fourth element separated by '.'
+        colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+        # Lesser truncation with suffix '.01A' -> '.01' as in cBio
+      }else if(truncate>=0){
+        print("Substituting '.01A|.01B' with '.01' ...")
+        # Sub '.01A" with the default ".01"
+        colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+      }
+      # Copy number alterations (discretized by GISTIC)
+    }else if(type == "cna"){
+      # Download the copy number alteration values processed via GISTIC
+      file <- .xenabrowserDownload(urls[["gistic"]])
+      dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+      dat=harmonize_matrix(dat)
+      # If column names should truncate last segment (sample -> patient id level truncation)
+      if(truncate>=1){
+        print("Truncating to 3 dot-separated names...")
+        # Remove fourth element separated by '.'
+        colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+        # Lesser truncation with suffix '.01A' -> '.01' as in cBio
+      }else if(truncate>=0){
+        print("Substituting '.01A|.01B' with '.01' ...")
+        # Sub '.01A" with the default ".01"
+        colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+      }
+      # Small mutations (SNV / INDELs called by Mutect2)
+    }else if(type == "mut"){
+      # Download the MuTect2 somatic mutation calls
+      file <- .xenabrowserDownload(urls[["mc3"]])
+      # Suitable for RaggedExperiment style data storage
+      dat <- read.table(file, sep="\t", header=TRUE)
+      if(cleanup) file.remove(file)
+      tcga_mut<-dat[,c(2:4,1,5:11)]
+      colnames(tcga_mut)[1:3]=c("seqnames","start","end")
+      tcga_mut$sample<-gsub("-",".",tcga_mut$sample)
+      tcga_mut$sample<-gsub("01A","01",tcga_mut$sample)
+      names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
+      #a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
+      
+      # Liftover from hg19 to hg38
+      ch = rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
+      names(ch)=gsub("chr","",names(ch))
+      ranges <- rtracklayer::liftOver(rowRanges(ragexp_tcga), ch)
+      ragexp2 <- ragexp_tcga[as.logical(lengths(ranges))]
+      ranges <- unlist(ranges)
+      genome(ranges) <- "GRCh38"
+      rowRanges(ragexp2) <- ranges
+      
+      # Harmonize gene names
+      final_ragexp=harmonize_raggedexp(ragexp2)
+      return(final_ragexp)
+      # Clinical data matrix construction
+    }else if(type == "clinical"){
+      # Generic phenotype information
+      file <- .xenabrowserDownload(urls[["phenotype"]])
+      phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+      if(cleanup) file.remove(file)
+      # Overall Survival
+      file <- .xenabrowserDownload(urls[["os"]], gz=FALSE)
+      os <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+      if(cleanup) file.remove(file)
+      # Combine the two			
+      dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
+      # .11A are healthy samples (GEX)
+      #rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
+      # Unknown data type
+    }else{
+      stop(paste("Invalid query type for xenabrowser:", type))
+    }
+  }
+  # Round to certain digits if requested
+  if(!missing(digits)) dat <- round(dat, digits)
+  # Return the processed dat
+  dat
 }
