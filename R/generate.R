@@ -1483,26 +1483,33 @@ generate_cgdsr_mut <- function(
 generate_cbioportaldata <- function(caselist,profile){
   
   harmonize_matrix<-function(matrix){
+    # if the gene names dont match the hgnc_symbols column, create a seperate matrix called no_match with those rownames 
     no_match=matrix[is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
     no_match=as.data.frame(no_match)
+    # if the gene names match the hgnc_symbols column, create a seperate matrix called match with those rownames 
     match=matrix[!is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
     match=as.data.frame(match)
     
+    # Replace any "." in gene names with "-" since that is how the curatedpcadata_genes dictionary has them
     rownames(match)=gsub("\\.","-",rownames(match))
     rownames(no_match)=gsub("\\.","-",rownames(no_match))
     
-    # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+    
     vector=rownames(no_match)
     symbols <- vector()
     
+    # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+    # Match just the first gene and store it in a vector
     a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
     symbols=c(symbols,a1)
     
+    # Do the aliase match for the rest of the genes and append it to the vector called symbols
     for (i in 2:length(vector)) {
       a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
       symbols<- c(symbols,a2)
     }
     
+    # create a df with the aliases and the associated hgnc_symbol
     no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
     
     no_match <- no_match[!is.na(symbols),]
@@ -1521,7 +1528,9 @@ generate_cbioportaldata <- function(caselist,profile){
     
     # Combine the match and no_match matrices
     final_matrix= rbind(match,no_match)
+    # Replace "-" in colnames with "."
     colnames(final_matrix)<-gsub("-",".",colnames(final_matrix))
+    # Remove rows with all NAs
     final_matrix<-final_matrix[rowSums(is.na(final_matrix)) != ncol(final_matrix), ]
     
     return(final_matrix)
