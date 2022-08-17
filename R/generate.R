@@ -1499,23 +1499,70 @@ generate_cbioportaldata <- function(caselist,profile){
     symbols <- vector()
     
     # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
-    # Match just the first gene and store it in a vector
-    a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-    symbols=c(symbols,a1)
+    original_gene=vector()
+    curatedPCaData_genes=curatedPCaData:::curatedPCaData_genes
     
-    # Do the aliase match for the rest of the genes and append it to the vector called symbols
-    for (i in 2:length(vector)) {
-      a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-      symbols<- c(symbols,a2)
+    for (i in 1:length(vector)) {
+      # match_name genes to the aliases column in the curatedpcadata dictionary
+      match_name <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE),"hgnc_symbol"]
+      # Assign NAs to the ones that had no match_name
+      match_name[length(match_name)==0] <- NA
+      # Store data with duplicates
+      orig2<-replicate(length(match_name),vector[i])
+      original_gene<-c(original_gene,orig2)
+      symbols<- c(symbols,match_name)
+      
     }
     
+    # a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    # symbols=c(symbols,a1)
+    
+    
+    # for (i in 2:length(vector)) {
+    #   a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #   symbols<- c(symbols,a2)
+    # }
+    
     # create a df with the aliases and the associated hgnc_symbol
-    no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
+    # no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
+    # 
+    # no_match <- no_match[!is.na(symbols),]
+    # symbols <- symbols[!is.na(symbols)]
+    # 
+    # rownames(no_match) <- make.names(symbols,unique = T)
     
-    no_match <- no_match[!is.na(symbols),]
-    symbols <- symbols[!is.na(symbols)]
+    # create a dictionary/df with the aliases and the associated hgnc_symbol
+    no_match_dict<-data.frame(original_gene=original_gene,mapped_gene=symbols)
+    # Remove those aliases that did not map to any hgnc_symbol
+    no_match_dict2<-no_match_dict[!is.na(no_match_dict$mapped_gene),]
+    # Remove duplicates in the mapped hgnc symbols
+    no_match_dict3<-no_match_dict2[!duplicated(no_match_dict2$mapped_gene),]
     
-    rownames(no_match) <- make.names(symbols,unique = T)
+    # check which aliase is duplicated(ie maps to multiple hgnc symbols)
+    dup<-no_match_dict3[duplicated(no_match_dict3$original_gene),]
+    dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
+    
+    # Keep only those aliases that have a one to one mapping
+    remove_dup=no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+    
+    # create a vector by matching aliases to the new df
+    final_map=vector()
+    
+    for (i in 1:length(vector)){
+      if (vector[i] %in% remove_dup$original_gene){
+        map<-remove_dup$mapped_gene[which(vector[i] == remove_dup$original_gene)]
+        final_map<-c(final_map,map)
+      }else{
+        map<-NA
+        final_map<-c(final_map,map)
+        
+      }
+    }
+    
+    no_match <- no_match[!is.na(final_map),]
+    final_map <- final_map[!is.na(final_map)]
+    
+    rownames(no_match) <- final_map
     
     
     # For those that match just pull hgnc_symbols directly
@@ -1546,25 +1593,75 @@ generate_cbioportaldata <- function(caselist,profile){
     
     vector=rownames(no_match)
     symbols <- vector()
+    #no_match_dict=data.frame(matrix(ncol=2))
     
-    if(length(vector)>1){
-      a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-      symbols=c(symbols,a1)
+    # if(length(vector)>1){
+    #   a1 <- curatedPCaData:::curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData:::curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #   symbols=c(symbols,a1)
+    #   
+    #   for (i in 2:length(vector)) {
+    #     a2 <- curatedPCaData:::curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData:::curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #     symbols<- c(symbols,a2)
+    #   }}else{
+    #     a1 <- curatedPCaData:::curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData:::curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #     symbols=c(symbols,a1)
+    #   }
+    # no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
+    # no_match <- no_match[!is.na(symbols),]
+    # symbols <- symbols[!is.na(symbols)]
+    # 
+    # rownames(no_match) <- make.names(symbols,unique = T)
+    
+    curatedPCaData_genes=curatedPCaData:::curatedPCaData_genes
+    # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+    # Match just the first gene and store it in a vector
+    # Do the aliase match for the rest of the genes and append it to the vector called symbols
+    original_gene=vector()
+    
+    for (i in 1:length(vector)) {
+      # match_name genes to the aliases column in the curatedpcadata dictionary
+      match_name <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE),"hgnc_symbol"]
+      # Assign NAs to the ones that had no match_name
+      match_name[length(match_name)==0] <- NA
+      # Store data with duplicates
+      orig2<-replicate(length(match_name),vector[i])
+      original_gene<-c(original_gene,orig2)
+      symbols<- c(symbols,match_name)
       
-      for (i in 2:length(vector)) {
-        a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-        symbols<- c(symbols,a2)
-      }}else{
-        a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-        symbols=c(symbols,a1)
+    }
+    
+    # create a dictionary/df with the aliases and the associated hgnc_symbol
+    no_match_dict<-data.frame(original_gene=original_gene,mapped_gene=symbols)
+    # Remove those aliases that did not map to any hgnc_symbol
+    no_match_dict2<-no_match_dict[!is.na(no_match_dict$mapped_gene),]
+    # Remove duplicates in the mapped hgnc symbols
+    no_match_dict3<-no_match_dict2[!duplicated(no_match_dict2$mapped_gene),]
+    
+    # check which aliase is duplicated(ie maps to multiple hgnc symbols)
+    dup<-no_match_dict3[duplicated(no_match_dict3$original_gene),]
+    dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
+    
+    # Keep only those aliases that have a one to one mapping
+    remove_dup=no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+    
+    # create a vector by matching aliases to the new df
+    final_map=vector()
+    
+    for (i in 1:length(vector)){
+      if (vector[i] %in% remove_dup$original_gene){
+        map<-remove_dup$mapped_gene[which(vector[i] == remove_dup$original_gene)]
+        final_map<-c(final_map,map)
+      }else{
+        map<-NA
+        final_map<-c(final_map,map)
+        
       }
+    }
     
-    no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
-    no_match <- no_match[!is.na(symbols),]
-    symbols <- symbols[!is.na(symbols)]
+    no_match <- no_match[!is.na(final_map),]
+    final_map <- final_map[!is.na(final_map)]
     
-    rownames(no_match) <- make.names(symbols,unique = T)
-    
+    rownames(no_match) <- final_map
     
     # For those that match just pull hgnc_symbols directly
     symbols2 <- curatedPCaData:::curatedPCaData_genes[match(rownames(match), curatedPCaData:::curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
@@ -1575,8 +1672,30 @@ generate_cbioportaldata <- function(caselist,profile){
     rownames(match) <- symbols2
     
     # Combine the match and no_match matrices
-    final_matrix= c(rowRanges(match),rowRanges(no_match))
-    return(final_matrix)
+    match_df<-match@assays
+    match_df <- unlist(match_df)
+    match_df<-data.frame(match_df,names=names(match_df))
+    #match_df<-match_df[,c(1:3,46,4:45)]
+    
+    no_match_df<-no_match@assays
+    no_match_df <- unlist(no_match_df)
+    no_match_df<-data.frame(no_match_df,names=names(no_match_df))
+    #no_match_df<-no_match_df[,c(1:3,46,4:45)]
+    
+    final<-rbind(match_df,no_match_df)
+    final$NCBI_Build="GRCh38"
+    
+    final$sample<-sub("^(.*)[.].*", "\\1", final$names)
+    final$gene<-sub('.*\\.', '', final$names)
+    final<-final[ , -which(names(final) %in% "names")]
+    
+    
+    GRL <- GenomicRanges::makeGRangesListFromDataFrame(final, split.field = "sample",
+                                                       names.field = "gene",keep.extra.columns = TRUE)
+    ragexp_final<-RaggedExperiment::RaggedExperiment(GRL)
+    
+    #final_matrix= c(rowRanges(match),rowRanges(no_match))
+    return(ragexp_final)
   }
   
   
@@ -1661,11 +1780,8 @@ generate_cbioportaldata <- function(caselist,profile){
       genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
       
-      harmonized<-harmonize_raggedexp(ragexp2)
-      t=names(harmonized)
-      ragexp3=ragexp2[1:length(t)]
-      rowRanges(ragexp3) <- harmonized
-      return(ragexp3)
+      final_ragexp<-harmonize_raggedexp(ragexp2)
+      return(final_ragexp)
       
     }else if (caselist == "prad_broad"){
       
@@ -1681,13 +1797,22 @@ generate_cbioportaldata <- function(caselist,profile){
       
       
     }else if(caselist =="prad_su2c_2019"){
-      # This code breaks (Needs fixing)
+      
+      ragexp_grangelist<-ragexp@assays
+      ragexp_grangelist@unlistData@elementMetadata@listData$gene<-ragexp_grangelist@unlistData@ranges@NAMES
+      # GRL_un<-unlist(GRL)
+      # names(GRL_un)<-sub("^(.*)[.].*", "\\1", names(GRL_un))
+      # 
+      # GRL2 <- GenomicRanges::makeGRangesFromDataFrame(assays2,keep.extra.columns = TRUE)
+      # GRL2@ranges@NAMES<-GRL2@elementMetadata@listData[["gene"]]
       names(ch)=gsub("chr","",names(ch))
-      ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
-      ragexp2 <- ragexp[as.logical(lengths(ranges))]
-      ranges <- unlist(ranges)
-      genome(ranges) <- "GRCh38"
-      rowRanges(ragexp2) <- ranges
+      
+      ranges2 <- rtracklayer::liftOver(ragexp_grangelist, ch)
+      
+      genome(ranges2) <- "GRCh38"
+      ragexp2<-RaggedExperiment(ranges2)
+      rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
+      
       
       final_ragexp=harmonize_raggedexp(ragexp2)
       return(final_ragexp)
@@ -1709,13 +1834,16 @@ generate_cbioportaldata <- function(caselist,profile){
       
       
     }else if (caselist=="prad_broad_2013"){
-      # This code breaks (Needs fixing)
+      
+      ragexp_grangelist<-ragexp@assays
+      ragexp_grangelist@unlistData@elementMetadata@listData$gene<-ragexp_grangelist@unlistData@ranges@NAMES
       names(ch)=gsub("chr","",names(ch))
-      ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
-      ragexp2 <- ragexp[as.logical(lengths(ranges))]
-      ranges <- unlist(ranges)
-      genome(ranges) <- "GRCh38"
-      rowRanges(ragexp2) <- ranges
+      
+      ranges2 <- rtracklayer::liftOver(ragexp_grangelist, ch)
+      
+      genome(ranges2) <- "GRCh38"
+      ragexp2<-RaggedExperiment(ranges2)
+      rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
       
       final_ragexp=harmonize_raggedexp(ragexp2)
       return(final_ragexp)
