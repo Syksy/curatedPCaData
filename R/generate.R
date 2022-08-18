@@ -1693,6 +1693,7 @@ generate_cbioportaldata <- function(caselist,profile){
     GRL <- GenomicRanges::makeGRangesListFromDataFrame(final, split.field = "sample",
                                                        names.field = "gene",keep.extra.columns = TRUE)
     ragexp_final<-RaggedExperiment::RaggedExperiment(GRL)
+    colnames(ragexp_final)<-gsub("-",".",colnames(ragexp_final))
     
     #final_matrix= c(rowRanges(match),rowRanges(no_match))
     return(ragexp_final)
@@ -1827,10 +1828,7 @@ generate_cbioportaldata <- function(caselist,profile){
       return(final_ragexp)
       
     }else if (caselist=="prad_mskcc"){
-      # Exclude cell line samples
-      same_barcode=colnames(ragexp)[grepl("PCA", colnames(ragexp))]
-      ind=which(colnames(ragexp) %in% same_barcode=="TRUE")
-      ragexp<-ragexp[, c(ind)]
+      
       # Liftover using chain file
       names(ch)=gsub("chr","",names(ch))
       ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
@@ -1838,9 +1836,25 @@ generate_cbioportaldata <- function(caselist,profile){
       ranges <- unlist(ranges)
       genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
+      
       # Run harmonize function to harmonize gene names
       final_ragexp=harmonize_raggedexp(ragexp2)
-      return(final_ragexp)
+      
+      # Exclude cell lines
+      final_ragexp_df<-final_ragexp@assays
+      final_ragexp_df <- unlist(final_ragexp_df)
+      final_ragexp_df<-data.frame(final_ragexp_df,names=names(final_ragexp_df))
+      
+      final_ragexp_df$sample<-sub("^(.*)[.].*", "\\1", final_ragexp_df$names)
+      final_ragexp_df$gene<-sub('.*\\.', '', final_ragexp_df$names)
+      final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
+      
+      final_ragexp_df<-final_ragexp_df[final_ragexp_df$sample %like% "PCA", ]
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_final2<-RaggedExperiment::RaggedExperiment(GRL)
+      return(ragexp_final2)
       
       
     }else if (caselist=="prad_broad_2013"){
