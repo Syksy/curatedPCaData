@@ -77,4 +77,7 @@ Suggests:
     AnVIL,
     GenomicRanges,
     corrplot,
-    ComplexHeatmap
+    ComplexHeatmap,
+    rtracklayer,
+    GenomeInfoDb,
+    MatrixGenerics
