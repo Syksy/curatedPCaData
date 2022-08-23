@@ -1484,23 +1484,23 @@ generate_cbioportaldata <- function(caselist,profile){
   
   harmonize_matrix<-function(matrix){
     # if the gene names dont match the hgnc_symbols column, create a seperate matrix called no_match with those rownames 
-    no_match=matrix[is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
-    no_match=as.data.frame(no_match)
+    no_match<-matrix[is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+    no_match<-as.data.frame(no_match)
     # if the gene names match the hgnc_symbols column, create a seperate matrix called match with those rownames 
-    match=matrix[!is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
-    match=as.data.frame(match)
+    match<-matrix[!is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+    match<-as.data.frame(match)
     
     # Replace any "." in gene names with "-" since that is how the curatedpcadata_genes dictionary has them
-    rownames(match)=gsub("\\.","-",rownames(match))
-    rownames(no_match)=gsub("\\.","-",rownames(no_match))
+    rownames(match)<-gsub("\\.","-",rownames(match))
+    rownames(no_match)<-gsub("\\.","-",rownames(no_match))
     
     
-    vector=rownames(no_match)
+    vector<-rownames(no_match)
     symbols <- vector()
     
     # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
-    original_gene=vector()
-    curatedPCaData_genes=curatedPCaData:::curatedPCaData_genes
+    original_gene<-vector()
+    #curatedPCaData_genes<-curatedPCaData_genes
     
     for (i in 1:length(vector)) {
       # match_name genes to the aliases column in the curatedpcadata dictionary
@@ -1543,10 +1543,10 @@ generate_cbioportaldata <- function(caselist,profile){
     dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
     
     # Keep only those aliases that have a one to one mapping
-    remove_dup=no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+    remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
     
     # create a vector by matching aliases to the new df
-    final_map=vector()
+    final_map<-vector()
     
     for (i in 1:length(vector)){
       if (vector[i] %in% remove_dup$original_gene){
@@ -1566,7 +1566,7 @@ generate_cbioportaldata <- function(caselist,profile){
     
     
     # For those that match just pull hgnc_symbols directly
-    symbols2 <- curatedPCaData:::curatedPCaData_genes[match(rownames(match), curatedPCaData:::curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+    symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
     
     match <- match[!is.na(symbols2),]
     symbols2 <- symbols2[!is.na(symbols2)]
@@ -1574,7 +1574,7 @@ generate_cbioportaldata <- function(caselist,profile){
     rownames(match) <- symbols2
     
     # Combine the match and no_match matrices
-    final_matrix= rbind(match,no_match)
+    final_matrix<- rbind(match,no_match)
     # Replace "-" in colnames with "."
     colnames(final_matrix)<-gsub("-",".",colnames(final_matrix))
     # Remove rows with all NAs
@@ -1585,25 +1585,25 @@ generate_cbioportaldata <- function(caselist,profile){
   }
   
   harmonize_raggedexp=function(ragexp2){
-    no_match=ragexp2[is.na(match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
-    match=ragexp2[!is.na(match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+    no_match<-ragexp2[is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
+    match<-ragexp2[!is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
     
-    rownames(match)=gsub("\\.","-",rownames(match))
-    rownames(no_match)=gsub("\\.","-",rownames(no_match))
+    rownames(match)<-gsub("\\.","-",rownames(match))
+    rownames(no_match)<-gsub("\\.","-",rownames(no_match))
     
-    vector=rownames(no_match)
+    vector<-rownames(no_match)
     symbols <- vector()
     #no_match_dict=data.frame(matrix(ncol=2))
     
     # if(length(vector)>1){
-    #   a1 <- curatedPCaData:::curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData:::curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #   a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
     #   symbols=c(symbols,a1)
     #   
     #   for (i in 2:length(vector)) {
-    #     a2 <- curatedPCaData:::curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData:::curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #     a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
     #     symbols<- c(symbols,a2)
     #   }}else{
-    #     a1 <- curatedPCaData:::curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData:::curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #     a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
     #     symbols=c(symbols,a1)
     #   }
     # no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
@@ -1612,11 +1612,11 @@ generate_cbioportaldata <- function(caselist,profile){
     # 
     # rownames(no_match) <- make.names(symbols,unique = T)
     
-    curatedPCaData_genes=curatedPCaData:::curatedPCaData_genes
+    #curatedPCaData_genes<-curatedPCaData_genes
     # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
     # Match just the first gene and store it in a vector
     # Do the aliase match for the rest of the genes and append it to the vector called symbols
-    original_gene=vector()
+    original_gene<-vector()
     
     for (i in 1:length(vector)) {
       # match_name genes to the aliases column in the curatedpcadata dictionary
@@ -1642,10 +1642,10 @@ generate_cbioportaldata <- function(caselist,profile){
     dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
     
     # Keep only those aliases that have a one to one mapping
-    remove_dup=no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+    remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
     
     # create a vector by matching aliases to the new df
-    final_map=vector()
+    final_map<-vector()
     
     for (i in 1:length(vector)){
       if (vector[i] %in% remove_dup$original_gene){
@@ -1664,7 +1664,7 @@ generate_cbioportaldata <- function(caselist,profile){
     rownames(no_match) <- final_map
     
     # For those that match just pull hgnc_symbols directly
-    symbols2 <- curatedPCaData:::curatedPCaData_genes[match(rownames(match), curatedPCaData:::curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+    symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
     
     match <- match[!is.na(symbols2),]
     symbols2 <- symbols2[!is.na(symbols2)]
@@ -1692,6 +1692,7 @@ generate_cbioportaldata <- function(caselist,profile){
     
     GRL <- GenomicRanges::makeGRangesListFromDataFrame(final, split.field = "sample",
                                                        names.field = "gene",keep.extra.columns = TRUE)
+    GenomeInfoDb::genome(GRL)<-"GRCh38"
     ragexp_final<-RaggedExperiment::RaggedExperiment(GRL)
     colnames(ragexp_final)<-gsub("-",".",colnames(ragexp_final))
     
@@ -1722,54 +1723,54 @@ generate_cbioportaldata <- function(caselist,profile){
     }
     
     else if(caselist=="prad_eururol_2017"){
-      res=prof[["cna"]]
+      res<-prof[["cna"]]
       # Create a matrix with cna and gene names
-      res2=RaggedExperiment::assay(res)
+      res2<-RaggedExperiment::assay(res)
       # Harmonize matrix
-      final_matrix_cna=harmonize_matrix(res2)
+      final_matrix_cna<-harmonize_matrix(res2)
       
       return(as.matrix(final_matrix_cna))
     }
     
     else if(caselist=="prad_su2c_2019"){
       # Get cna from metadata of the MAE
-      res=metadata(prof)$cna
-      res=as.data.frame(res)
+      res<-metadata(prof)$cna
+      res<-as.data.frame(res)
       # Remove duplicate gene symbols
-      res2=res[!(duplicated(res$Hugo_Symbol)|duplicated(res$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
+      res2<-res[!(duplicated(res$Hugo_Symbol)|duplicated(res$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
       # Set gene symbols as rownames and remove the extra column
       rownames(res2)<-res2$Hugo_Symbol
       res2<-res2[,-1]
       # Harmonize matrix
-      final_matrix_cna=harmonize_matrix(res2)
+      final_matrix_cna<-harmonize_matrix(res2)
       return(as.matrix(final_matrix_cna))
     }
     
     else if (caselist=="prad_mskcc"){
       # Download study and store cna matrix in res2
-      study=cBioPortalData::downloadStudy("prad_mskcc")
+      study<-cBioPortalData::downloadStudy("prad_mskcc")
       ut <- cBioPortalData::untarStudy(study[[1]])
-      res2=rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
+      res2<-rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
       res2<-res2[,-2]
       # Remove duplicate gene symbols
-      res2=res2[!duplicated(res2$Hugo_Symbol),]
+      res2<-res2[!duplicated(res2$Hugo_Symbol),]
       # Set gene symbols as rownames and remove the extra column
       rownames(res2)<-res2$Hugo_Symbol
-      res2=res2[,-1]
+      res2<-res2[,-1]
       # Exclude cell line samples
-      same_barcode=colnames(res2)[grepl("PCA", colnames(res2))]
-      ind=which(colnames(res2) %in% same_barcode=="TRUE")
+      same_barcode<-colnames(res2)[grepl("PCA", colnames(res2))]
+      ind<-which(colnames(res2) %in% same_barcode=="TRUE")
       res2<-res2[, c(ind)]
       # Harmonize matrix
-      final_matrix_cna=harmonize_matrix(res2)
+      final_matrix_cna<-harmonize_matrix(res2)
       return(as.matrix(final_matrix_cna))
     }
     
     else if (caselist == "prad_broad_2013"){
-      res=prof[["cna"]]
-      res2=RaggedExperiment::assay(res)
+      res<-prof[["cna"]]
+      res2<-RaggedExperiment::assay(res)
       # Harmonize matrix
-      final_matrix_cna=harmonize_matrix(res2)
+      final_matrix_cna<-harmonize_matrix(res2)
       
       return(as.matrix(final_matrix_cna))
       
@@ -1777,18 +1778,18 @@ generate_cbioportaldata <- function(caselist,profile){
   }
   
   if(profile=="mut"){
-    ragexp=prof[["mutations"]]
+    ragexp<-prof[["mutations"]]
     # Download chain file into data raw directory and unzip it
     #download.file("https://hgdownload.soe.ucsc.edu/gbdb/hg19/liftOver/hg19ToHg38.over.chain.gz", "./data-raw/hg19ToHg38.over.chain.gz")
     #system("gzip -d ./data-raw/hg19ToHg38.over.chain.gz")
-    ch = rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
+    ch <- rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
     if(caselist=="prad_eururol_2017"){
       # Liftover using chain file
-      names(ch)=gsub("chr","",names(ch))
+      names(ch)<-gsub("chr","",names(ch))
       ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
       ragexp2 <- ragexp[as.logical(lengths(ranges))]
       ranges <- unlist(ranges)
-      genome(ranges) <- "GRCh38"
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
       # Run harmonize function to harmonize gene names
       final_ragexp<-harmonize_raggedexp(ragexp2)
@@ -1796,14 +1797,14 @@ generate_cbioportaldata <- function(caselist,profile){
       
     }else if (caselist == "prad_broad"){
       # Liftover using chain file
-      names(ch)=gsub("chr","",names(ch))
+      names(ch)<-gsub("chr","",names(ch))
       ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
       ragexp2 <- ragexp[as.logical(lengths(ranges))]
       ranges <- unlist(ranges)
-      genome(ranges) <- "GRCh38"
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
       # Run harmonize function to harmonize gene names
-      final_ragexp=harmonize_raggedexp(ragexp2)
+      final_ragexp<-harmonize_raggedexp(ragexp2)
       return(final_ragexp)
       
       
@@ -1816,29 +1817,29 @@ generate_cbioportaldata <- function(caselist,profile){
       # Liftover using chain file
       names(ch)=gsub("chr","",names(ch))
       ranges2 <- rtracklayer::liftOver(ragexp_grangelist, ch)
-      genome(ranges2) <- "GRCh38"
+      GenomeInfoDb::genome(ranges2) <- "GRCh38"
       
       # Convert grangelist to raggedexperiment
-      ragexp2<-RaggedExperiment(ranges2)
+      ragexp2<-RaggedExperiment::RaggedExperiment(ranges2)
       # Assign gene names in the metadata to the rownames of the raggedexperiment object
       rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
       
       # Run harmonize function to harmonize gene names
-      final_ragexp=harmonize_raggedexp(ragexp2)
+      final_ragexp<-harmonize_raggedexp(ragexp2)
       return(final_ragexp)
       
     }else if (caselist=="prad_mskcc"){
       
       # Liftover using chain file
-      names(ch)=gsub("chr","",names(ch))
+      names(ch)<-gsub("chr","",names(ch))
       ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
       ragexp2 <- ragexp[as.logical(lengths(ranges))]
       ranges <- unlist(ranges)
-      genome(ranges) <- "GRCh38"
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
       
       # Run harmonize function to harmonize gene names
-      final_ragexp=harmonize_raggedexp(ragexp2)
+      final_ragexp<-harmonize_raggedexp(ragexp2)
       
       # Exclude cell lines
       final_ragexp_df<-final_ragexp@assays
@@ -1849,7 +1850,8 @@ generate_cbioportaldata <- function(caselist,profile){
       final_ragexp_df$gene<-sub('.*\\.', '', final_ragexp_df$names)
       final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
       
-      final_ragexp_df<-final_ragexp_df[final_ragexp_df$sample %like% "PCA", ]
+      #final_ragexp_df<-final_ragexp_df[final_ragexp_df$sample %like% "PCA", ]
+      final_ragexp_df<-final_ragexp_df[data.table::`%like%`(final_ragexp_df$sample,"PCA"),]
       
       GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
@@ -1865,44 +1867,44 @@ generate_cbioportaldata <- function(caselist,profile){
       ragexp_grangelist@unlistData@elementMetadata@listData$gene<-ragexp_grangelist@unlistData@ranges@NAMES
       
       # Liftover using chain file
-      names(ch)=gsub("chr","",names(ch))
+      names(ch)<-gsub("chr","",names(ch))
       ranges2 <- rtracklayer::liftOver(ragexp_grangelist, ch)
-      genome(ranges2) <- "GRCh38"
+      GenomeInfoDb::genome(ranges2) <- "GRCh38"
       
       # Convert grangelist to raggedexperiment
-      ragexp2<-RaggedExperiment(ranges2)
+      ragexp2<-RaggedExperiment::RaggedExperiment(ranges2)
       # Assign gene names in the metadata to the rownames of the raggedexperiment object
       rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
       # Run harmonize function to harmonize gene names
-      final_ragexp=harmonize_raggedexp(ragexp2)
+      final_ragexp<-harmonize_raggedexp(ragexp2)
       return(final_ragexp)
       
     }
   }
   if(profile=="gex"){
     if(caselist=="prad_eururol_2017"){
-      gex=prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
-      gex2=RaggedExperiment::assay(gex)
+      gex<-prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
+      gex2<-RaggedExperiment::assay(gex)
       # Harmonize matrix
-      final_matrix_gex=harmonize_matrix(gex2)
+      final_matrix_gex<-harmonize_matrix(gex2)
       return(as.matrix(final_matrix_gex))
       
     }else if(caselist=="prad_broad"){
-      gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
-      gex2=RaggedExperiment::assay(gex)
+      gex<-prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
+      gex2<-RaggedExperiment::assay(gex)
       # Harmonize matrix
-      final_matrix_gex=harmonize_matrix(gex2)
+      final_matrix_gex<-harmonize_matrix(gex2)
       return(as.matrix(final_matrix_gex))
       
     }else if(caselist=="prad_su2c_2019"){
-      gex=metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
-      gex=as.data.frame(gex)
+      gex<-metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
+      gex<-as.data.frame(gex)
       # Remove duplicate gene symbols
-      gex2=gex[!(duplicated(gex$Hugo_Symbol)|duplicated(gex$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
+      gex2<-gex[!(duplicated(gex$Hugo_Symbol)|duplicated(gex$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
       rownames(gex2)<-gex2$Hugo_Symbol
       gex2<-gex2[,-1]
       # Harmonize matrix
-      final_matrix_gex=harmonize_matrix(gex2)
+      final_matrix_gex<-harmonize_matrix(gex2)
       return(as.matrix(final_matrix_gex))
     }
   }  
@@ -2418,27 +2420,27 @@ generate_xenabrowser <- function(
   }
   harmonize_matrix<-function(matrix){
       # if the gene names dont match the hgnc_symbols column, create a seperate matrix called no_match with those rownames 
-      no_match=matrix[is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
-      no_match=as.data.frame(no_match)
+      no_match<-matrix[is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+      no_match<-as.data.frame(no_match)
       # if the gene names match the hgnc_symbols column, create a seperate matrix called match with those rownames 
-      match=matrix[!is.na(match(rownames(matrix), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
-      match=as.data.frame(match)
+      match<-matrix[!is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+      match<-as.data.frame(match)
       
       # Replace any "." in gene names with "-" since that is how the curatedpcadata_genes dictionary has them
-      rownames(match)=gsub("\\.","-",rownames(match))
-      rownames(no_match)=gsub("\\.","-",rownames(no_match))
+      rownames(match)<-gsub("\\.","-",rownames(match))
+      rownames(no_match)<-gsub("\\.","-",rownames(no_match))
       
       
-      vector=rownames(no_match)
+      vector<-rownames(no_match)
       vector<-gsub("\\?.*", NA, vector)
-      vector=vector[!is.na(vector)]
+      vector<-vector[!is.na(vector)]
       symbols <- vector()
       
       no_match<-no_match[vector,]
       
       # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
-      original_gene=vector()
-      curatedPCaData_genes=curatedPCaData:::curatedPCaData_genes
+      original_gene<-vector()
+      #curatedPCaData_genes<-curatedPCaData_genes
       
       for (i in 1:length(vector)) {
         # match_name genes to the aliases column in the curatedpcadata dictionary
@@ -2464,10 +2466,10 @@ generate_xenabrowser <- function(
       dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
       
       # Keep only those aliases that have a one to one mapping
-      remove_dup=no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+      remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
       
       # create a vector by matching aliases to the new df
-      final_map=vector()
+      final_map<-vector()
       
       for (i in 1:length(vector)){
         if (vector[i] %in% remove_dup$original_gene){
@@ -2486,7 +2488,7 @@ generate_xenabrowser <- function(
       rownames(no_match) <- final_map
       
       # For those that match just pull hgnc_symbols directly
-      symbols2 <- curatedPCaData:::curatedPCaData_genes[match(rownames(match), curatedPCaData:::curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+      symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
       
       match <- match[!is.na(symbols2),]
       symbols2 <- symbols2[!is.na(symbols2)]
@@ -2494,7 +2496,7 @@ generate_xenabrowser <- function(
       rownames(match) <- symbols2
       
       # Combine the match and no_match matrices
-      final_matrix= rbind(match,no_match)
+      final_matrix<- rbind(match,no_match)
       # Replace "-" in colnames with "."
       colnames(final_matrix)<-gsub("-",".",colnames(final_matrix))
       # Remove rows with all NAs
@@ -2505,20 +2507,20 @@ generate_xenabrowser <- function(
     }
     
     harmonize_raggedexp=function(ragexp2){
-      no_match=ragexp2[is.na(match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
-      match=ragexp2[!is.na(match(rownames(ragexp2), curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),]
+      no_match<-ragexp2[is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
+      match<-ragexp2[!is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
       
-      rownames(match)=gsub("\\.","-",rownames(match))
-      rownames(no_match)=gsub("\\.","-",rownames(no_match))
+      rownames(match)<-gsub("\\.","-",rownames(match))
+      rownames(no_match)<-gsub("\\.","-",rownames(no_match))
       
-      vector=rownames(no_match)
+      vector<-rownames(no_match)
       symbols <- vector()
       
-      curatedPCaData_genes=curatedPCaData:::curatedPCaData_genes
+      #curatedPCaData_genes<-curatedPCaData_genes
       # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
       # Match just the first gene and store it in a vector
       # Do the aliase match for the rest of the genes and append it to the vector called symbols
-      original_gene=vector()
+      original_gene<-vector()
       
       for (i in 1:length(vector)) {
         # match_name genes to the aliases column in the curatedpcadata dictionary
@@ -2544,10 +2546,10 @@ generate_xenabrowser <- function(
       dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
       
       # Keep only those aliases that have a one to one mapping
-      remove_dup=no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+      remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
       
       # create a vector by matching aliases to the new df
-      final_map=vector()
+      final_map<-vector()
       
       for (i in 1:length(vector)){
         if (vector[i] %in% remove_dup$original_gene){
@@ -2566,7 +2568,7 @@ generate_xenabrowser <- function(
       rownames(no_match) <- final_map
       
       # For those that match just pull hgnc_symbols directly
-      symbols2 <- curatedPCaData:::curatedPCaData_genes[match(rownames(match), curatedPCaData:::curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+      symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
       
       match <- match[!is.na(symbols2),]
       symbols2 <- symbols2[!is.na(symbols2)]
@@ -2594,6 +2596,7 @@ generate_xenabrowser <- function(
       
       GRL <- GenomicRanges::makeGRangesListFromDataFrame(final, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
+      GenomeInfoDb::genome(GRL)<-"GRCh38"
       ragexp_final<-RaggedExperiment::RaggedExperiment(GRL)
       
       #final_matrix= c(rowRanges(match),rowRanges(no_match))
@@ -2614,7 +2617,7 @@ generate_xenabrowser <- function(
       # Download the FPKM-UQ values processed via HTSeq
       file <- .xenabrowserDownload(urls[["rsem.log"]])
       dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-      dat=harmonize_matrix(dat)
+      dat<-harmonize_matrix(dat)
       
       # If column names should truncate last segment (sample -> patient id level truncation)
       if(truncate>=1){
@@ -2634,7 +2637,7 @@ generate_xenabrowser <- function(
       # Download the copy number alteration values processed via GISTIC
       file <- .xenabrowserDownload(urls[["gistic"]])
       dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-      dat=harmonize_matrix(dat)
+      dat<-harmonize_matrix(dat)
       # If column names should truncate last segment (sample -> patient id level truncation)
       if(truncate>=1){
         print("Truncating to 3 dot-separated names...")
@@ -2655,26 +2658,26 @@ generate_xenabrowser <- function(
       dat <- read.table(file, sep="\t", header=TRUE)
       if(cleanup) file.remove(file)
       tcga_mut<-dat[,c(2:4,1,5:11)]
-      colnames(tcga_mut)[1:3]=c("seqnames","start","end")
+      colnames(tcga_mut)[1:3]<-c("seqnames","start","end")
       tcga_mut$sample<-gsub("-",".",tcga_mut$sample)
       tcga_mut$sample<-gsub("01A","01",tcga_mut$sample)
       names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
       #a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
       GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
-      ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
+      ragexp_tcga<-RaggedExperiment::RaggedExperiment(GRL)
       
       # Liftover from hg19 to hg38
-      ch = rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
-      names(ch)=gsub("chr","",names(ch))
+      ch <- rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
+      names(ch)<-gsub("chr","",names(ch))
       ranges <- rtracklayer::liftOver(rowRanges(ragexp_tcga), ch)
       ragexp2 <- ragexp_tcga[as.logical(lengths(ranges))]
       ranges <- unlist(ranges)
-      genome(ranges) <- "GRCh38"
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
       
       # Harmonize gene names
-      final_ragexp=harmonize_raggedexp(ragexp2)
+      final_ragexp<-harmonize_raggedexp(ragexp2)
       return(final_ragexp)
       # Clinical data matrix construction
     }else if(type == "clinical"){
