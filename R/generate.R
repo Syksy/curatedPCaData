@@ -1481,165 +1481,598 @@ generate_cgdsr_mut <- function(
 #' @noRd
 #' @keywords internal
 generate_cbioportaldata <- function(caselist,profile){
+  
+  harmonize_matrix<-function(matrix){
+    # if the gene names dont match the hgnc_symbols column, create a seperate matrix called no_match with those rownames 
+    no_match<-matrix[is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+    no_match<-as.data.frame(no_match)
+    # if the gene names match the hgnc_symbols column, create a seperate matrix called match with those rownames 
+    match<-matrix[!is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+    match<-as.data.frame(match)
+    
+    # Replace any "." in gene names with "-" since that is how the curatedpcadata_genes dictionary has them
+    rownames(match)<-gsub("\\.","-",rownames(match))
+    rownames(no_match)<-gsub("\\.","-",rownames(no_match))
+    
+    
+    vector<-rownames(no_match)
+    symbols <- vector()
+    
+    # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+    original_gene<-vector()
+    #curatedPCaData_genes<-curatedPCaData_genes
+    
+    for (i in 1:length(vector)) {
+      # match_name genes to the aliases column in the curatedpcadata dictionary
+      match_name <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE),"hgnc_symbol"]
+      # Assign NAs to the ones that had no match_name
+      match_name[length(match_name)==0] <- NA
+      # Store data with duplicates
+      orig2<-replicate(length(match_name),vector[i])
+      original_gene<-c(original_gene,orig2)
+      symbols<- c(symbols,match_name)
+      
+    }
+    
+    # a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    # symbols=c(symbols,a1)
+    
+    
+    # for (i in 2:length(vector)) {
+    #   a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #   symbols<- c(symbols,a2)
+    # }
+    
+    # create a df with the aliases and the associated hgnc_symbol
+    # no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
+    # 
+    # no_match <- no_match[!is.na(symbols),]
+    # symbols <- symbols[!is.na(symbols)]
+    # 
+    # rownames(no_match) <- make.names(symbols,unique = T)
+    
+    # create a dictionary/df with the aliases and the associated hgnc_symbol
+    no_match_dict<-data.frame(original_gene=original_gene,mapped_gene=symbols)
+    # Remove those aliases that did not map to any hgnc_symbol
+    no_match_dict2<-no_match_dict[!is.na(no_match_dict$mapped_gene),]
+    # Remove duplicates in the mapped hgnc symbols
+    no_match_dict3<-no_match_dict2[!duplicated(no_match_dict2$mapped_gene),]
+    
+    # check which aliase is duplicated(ie maps to multiple hgnc symbols)
+    dup<-no_match_dict3[duplicated(no_match_dict3$original_gene),]
+    dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
+    
+    # Keep only those aliases that have a one to one mapping
+    remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+    
+    # create a vector by matching aliases to the new df
+    final_map<-vector()
+    
+    for (i in 1:length(vector)){
+      if (vector[i] %in% remove_dup$original_gene){
+        map<-remove_dup$mapped_gene[which(vector[i] == remove_dup$original_gene)]
+        final_map<-c(final_map,map)
+      }else{
+        map<-NA
+        final_map<-c(final_map,map)
+        
+      }
+    }
+    
+    no_match <- no_match[!is.na(final_map),]
+    final_map <- final_map[!is.na(final_map)]
+    
+    rownames(no_match) <- final_map
+    
+    
+    # For those that match just pull hgnc_symbols directly
+    symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+    
+    match <- match[!is.na(symbols2),]
+    symbols2 <- symbols2[!is.na(symbols2)]
+    
+    rownames(match) <- symbols2
+    
+    # Combine the match and no_match matrices
+    final_matrix<- rbind(match,no_match)
+    # Replace "-" in colnames with "."
+    colnames(final_matrix)<-gsub("-",".",colnames(final_matrix))
+    # Remove rows with all NAs
+    final_matrix<-final_matrix[rowSums(is.na(final_matrix)) != ncol(final_matrix), ]
+    
+    return(final_matrix)
+    
+  }
+  
+  harmonize_raggedexp=function(ragexp2){
+    no_match<-ragexp2[is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
+    match<-ragexp2[!is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
+    
+    rownames(match)<-gsub("\\.","-",rownames(match))
+    rownames(no_match)<-gsub("\\.","-",rownames(no_match))
+    
+    vector<-rownames(no_match)
+    symbols <- vector()
+    #no_match_dict=data.frame(matrix(ncol=2))
+    
+    # if(length(vector)>1){
+    #   a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #   symbols=c(symbols,a1)
+    #   
+    #   for (i in 2:length(vector)) {
+    #     a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #     symbols<- c(symbols,a2)
+    #   }}else{
+    #     a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
+    #     symbols=c(symbols,a1)
+    #   }
+    # no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
+    # no_match <- no_match[!is.na(symbols),]
+    # symbols <- symbols[!is.na(symbols)]
+    # 
+    # rownames(no_match) <- make.names(symbols,unique = T)
+    
+    #curatedPCaData_genes<-curatedPCaData_genes
+    # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+    # Match just the first gene and store it in a vector
+    # Do the aliase match for the rest of the genes and append it to the vector called symbols
+    original_gene<-vector()
+    
+    for (i in 1:length(vector)) {
+      # match_name genes to the aliases column in the curatedpcadata dictionary
+      match_name <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE),"hgnc_symbol"]
+      # Assign NAs to the ones that had no match_name
+      match_name[length(match_name)==0] <- NA
+      # Store data with duplicates
+      orig2<-replicate(length(match_name),vector[i])
+      original_gene<-c(original_gene,orig2)
+      symbols<- c(symbols,match_name)
+      
+    }
+    
+    # create a dictionary/df with the aliases and the associated hgnc_symbol
+    no_match_dict<-data.frame(original_gene=original_gene,mapped_gene=symbols)
+    # Remove those aliases that did not map to any hgnc_symbol
+    no_match_dict2<-no_match_dict[!is.na(no_match_dict$mapped_gene),]
+    # Remove duplicates in the mapped hgnc symbols
+    no_match_dict3<-no_match_dict2[!duplicated(no_match_dict2$mapped_gene),]
+    
+    # check which aliase is duplicated(ie maps to multiple hgnc symbols)
+    dup<-no_match_dict3[duplicated(no_match_dict3$original_gene),]
+    dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
+    
+    # Keep only those aliases that have a one to one mapping
+    remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+    
+    # create a vector by matching aliases to the new df
+    final_map<-vector()
+    
+    for (i in 1:length(vector)){
+      if (vector[i] %in% remove_dup$original_gene){
+        map<-remove_dup$mapped_gene[which(vector[i] == remove_dup$original_gene)]
+        final_map<-c(final_map,map)
+      }else{
+        map<-NA
+        final_map<-c(final_map,map)
+        
+      }
+    }
+    
+    no_match <- no_match[!is.na(final_map),]
+    final_map <- final_map[!is.na(final_map)]
+    
+    rownames(no_match) <- final_map
+    
+    # For those that match just pull hgnc_symbols directly
+    symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+    
+    match <- match[!is.na(symbols2),]
+    symbols2 <- symbols2[!is.na(symbols2)]
+    
+    rownames(match) <- symbols2
+    
+    # Combine the match and no_match matrices
+    match_df<-match@assays
+    match_df <- unlist(match_df)
+    match_df<-data.frame(match_df,names=names(match_df))
+    #match_df<-match_df[,c(1:3,46,4:45)]
+    
+    no_match_df<-no_match@assays
+    no_match_df <- unlist(no_match_df)
+    no_match_df<-data.frame(no_match_df,names=names(no_match_df))
+    #no_match_df<-no_match_df[,c(1:3,46,4:45)]
+    
+    final<-rbind(match_df,no_match_df)
+    final$NCBI_Build="GRCh38"
+    
+    final$sample<-sub("^(.*)[.].*", "\\1", final$names)
+    final$gene<-sub('.*\\.', '', final$names)
+    final<-final[ , -which(names(final) %in% "names")]
+    
+    
+    GRL <- GenomicRanges::makeGRangesListFromDataFrame(final, split.field = "sample",
+                                                       names.field = "gene",keep.extra.columns = TRUE)
+    GenomeInfoDb::genome(GRL)<-"GRCh38"
+    ragexp_final<-RaggedExperiment::RaggedExperiment(GRL)
+    colnames(ragexp_final)<-gsub("-",".",colnames(ragexp_final))
+    
+    #final_matrix= c(rowRanges(match),rowRanges(no_match))
+    return(ragexp_final)
+  }
+  
+  
+  
   prof=cBioPortalData::cBioDataPack(caselist,ask = FALSE)
   
   if(profile=="cna"){
     if (caselist == "prad_broad"){
-      res=prof[["cna"]]
-      a=RaggedExperiment::rowData(res)[match(rownames(res),rownames(RaggedExperiment::rowData(res))),"Hugo_Symbol"]
-      res2=RaggedExperiment::assay(res)
+      # Get the copy number matrix as Summarizedexperiment object
+      res<-prof[["cna"]]
+      # Get gene names from Summarizedexperiment and store it in a variable
+      a<-RaggedExperiment::rowData(res)[match(rownames(res),rownames(RaggedExperiment::rowData(res))),"Hugo_Symbol"]
+      # Create a matrix with cna and gene names making sure that there are no NAs in gene names
+      res2<-RaggedExperiment::assay(res)
       res2<-res2[!is.na(a),]
-      a=a[!is.na(a)]
+      a<-a[!is.na(a)]
       rownames(res2) <- a
-      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      res2 <- res2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(res2) <- symbols
-      colnames(res2)<-gsub("-",".",colnames(res2))
-      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(as.matrix(res2))
+      # If there are any lower cases in gene names convert them to upper case
+      rownames(res2)<-toupper(rownames(res2))
+      # Harmonize matrix
+      final_matrix_cna<-harmonize_matrix(res2)
+      return(as.matrix(final_matrix_cna))
     }
     
     else if(caselist=="prad_eururol_2017"){
-      res=prof[["cna"]]
-      res2=RaggedExperiment::assay(res)
-      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      res2 <- res2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(res2) <- symbols
-      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(as.matrix(res2))
+      res<-prof[["cna"]]
+      # Create a matrix with cna and gene names
+      res2<-RaggedExperiment::assay(res)
+      # Harmonize matrix
+      final_matrix_cna<-harmonize_matrix(res2)
+      
+      return(as.matrix(final_matrix_cna))
     }
     
     else if(caselist=="prad_su2c_2019"){
-      res=metadata(prof)$cna
-      res=as.data.frame(res)
-      res2=res[!(duplicated(res$Hugo_Symbol)|duplicated(res$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
-      res2=res2[!grepl("-AS1", res2$Hugo_Symbol),]
+      # Get cna from metadata of the MAE
+      res<-metadata(prof)$cna
+      res<-as.data.frame(res)
+      # Remove duplicate gene symbols
+      res2<-res[!(duplicated(res$Hugo_Symbol)|duplicated(res$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
+      # Set gene symbols as rownames and remove the extra column
       rownames(res2)<-res2$Hugo_Symbol
       res2<-res2[,-1]
-      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      
-      res2 <- res2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(res2) <- symbols
-      colnames(res2)<-gsub("-",".",colnames(res2))
-      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(as.matrix(res2))
+      # Harmonize matrix
+      final_matrix_cna<-harmonize_matrix(res2)
+      return(as.matrix(final_matrix_cna))
     }
     
     else if (caselist=="prad_mskcc"){
-      study=cBioPortalData::downloadStudy("prad_mskcc")
+      # Download study and store cna matrix in res2
+      study<-cBioPortalData::downloadStudy("prad_mskcc")
       ut <- cBioPortalData::untarStudy(study[[1]])
-      res2=rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
+      res2<-rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
       res2<-res2[,-2]
-      rownames(res2)<-make.names(res2$Hugo_Symbol,unique = TRUE)
-      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      res2 <- res2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(res2) <- symbols
+      # Remove duplicate gene symbols
+      res2<-res2[!duplicated(res2$Hugo_Symbol),]
+      # Set gene symbols as rownames and remove the extra column
+      rownames(res2)<-res2$Hugo_Symbol
       res2<-res2[,-1]
-      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      
-      same_barcode=colnames(res2)[grepl("PCA", colnames(res2))]
-      ind=which(colnames(res2) %in% same_barcode=="TRUE")
-      res3<-res2[, c(ind)]
-      
-      return(as.matrix(res3))
+      # Exclude cell line samples
+      same_barcode<-colnames(res2)[grepl("PCA", colnames(res2))]
+      ind<-which(colnames(res2) %in% same_barcode=="TRUE")
+      res2<-res2[, c(ind)]
+      # Harmonize matrix
+      final_matrix_cna<-harmonize_matrix(res2)
+      return(as.matrix(final_matrix_cna))
     }
     
     else if (caselist == "prad_broad_2013"){
-      res=prof[["cna"]]
-      res2=RaggedExperiment::assay(res)
-      symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      res2 <- res2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(res2) <- symbols
-      colnames(res2)<-gsub("-",".",colnames(res2))
-      res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
-      return(as.matrix(res2))
+      res<-prof[["cna"]]
+      res2<-RaggedExperiment::assay(res)
+      # Harmonize matrix
+      final_matrix_cna<-harmonize_matrix(res2)
+      
+      return(as.matrix(final_matrix_cna))
       
     }
   }
   
   if(profile=="mut"){
-    ragexp=prof[["mutations"]]
+    ragexp<-prof[["mutations"]]
+    # Download chain file into data raw directory and unzip it
+    #download.file("https://hgdownload.soe.ucsc.edu/gbdb/hg19/liftOver/hg19ToHg38.over.chain.gz", "./data-raw/hg19ToHg38.over.chain.gz")
+    #system("gzip -d ./data-raw/hg19ToHg38.over.chain.gz")
+    ch <- rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
     if(caselist=="prad_eururol_2017"){
-      symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      ragexp2 <- ragexp[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(ragexp2) <- symbols
-      return(ragexp2)
+      # Liftover using chain file
+      names(ch)<-gsub("chr","",names(ch))
+      ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
+      ragexp2 <- ragexp[as.logical(lengths(ranges))]
+      ranges <- unlist(ranges)
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
+      rowRanges(ragexp2) <- ranges
+      # Run harmonize function to harmonize gene names
+      final_ragexp<-harmonize_raggedexp(ragexp2)
+      return(final_ragexp)
       
-    }else if (caselist == "prad_broad" || caselist=="prad_su2c_2019"){
-      colnames(ragexp)<-gsub("-",".",colnames(ragexp))
-      symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      ragexp2 <- ragexp[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(ragexp2) <- symbols
-      colnames(ragexp2)<-gsub("-",".",colnames(ragexp2))
-      return(ragexp2)
+    }else if (caselist == "prad_broad"){
+      # Liftover using chain file
+      names(ch)<-gsub("chr","",names(ch))
+      ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
+      ragexp2 <- ragexp[as.logical(lengths(ranges))]
+      ranges <- unlist(ranges)
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
+      rowRanges(ragexp2) <- ranges
+      # Run harmonize function to harmonize gene names
+      final_ragexp<-harmonize_raggedexp(ragexp2)
+      return(final_ragexp)
+      
+      
+    }else if(caselist =="prad_su2c_2019"){
+      #Convert ragexp to Grangelist and store it in ragexp_grangelist
+      ragexp_grangelist<-ragexp@assays
+      # Add gene names to metadata of the Grangelist
+      ragexp_grangelist@unlistData@elementMetadata@listData$gene<-ragexp_grangelist@unlistData@ranges@NAMES
+      
+      # Liftover using chain file
+      names(ch)=gsub("chr","",names(ch))
+      ranges2 <- rtracklayer::liftOver(ragexp_grangelist, ch)
+      GenomeInfoDb::genome(ranges2) <- "GRCh38"
+      
+      # Convert grangelist to raggedexperiment
+      ragexp2<-RaggedExperiment::RaggedExperiment(ranges2)
+      # Assign gene names in the metadata to the rownames of the raggedexperiment object
+      rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
+      
+      # Run harmonize function to harmonize gene names
+      final_ragexp<-harmonize_raggedexp(ragexp2)
+      return(final_ragexp)
       
     }else if (caselist=="prad_mskcc"){
-      same_barcode=colnames(ragexp)[grepl("PCA", colnames(ragexp))]
-      ind=which(colnames(ragexp) %in% same_barcode=="TRUE")
-      ragexp2<-ragexp[, c(ind)]
-      symbols <- curatedPCaData_genes[match(rownames(ragexp2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      ragexp3 <- ragexp2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(ragexp3) <- symbols
       
-      return(ragexp3)
+      # Liftover using chain file
+      names(ch)<-gsub("chr","",names(ch))
+      ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
+      ragexp2 <- ragexp[as.logical(lengths(ranges))]
+      ranges <- unlist(ranges)
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
+      rowRanges(ragexp2) <- ranges
+      
+      # Run harmonize function to harmonize gene names
+      final_ragexp<-harmonize_raggedexp(ragexp2)
+      
+      # Exclude cell lines
+      final_ragexp_df<-final_ragexp@assays
+      final_ragexp_df <- unlist(final_ragexp_df)
+      final_ragexp_df<-data.frame(final_ragexp_df,names=names(final_ragexp_df))
+      
+      final_ragexp_df$sample<-sub("^(.*)[.].*", "\\1", final_ragexp_df$names)
+      final_ragexp_df$gene<-sub('.*\\.', '', final_ragexp_df$names)
+      final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
+      
+      #final_ragexp_df<-final_ragexp_df[final_ragexp_df$sample %like% "PCA", ]
+      final_ragexp_df<-final_ragexp_df[data.table::`%like%`(final_ragexp_df$sample,"PCA"),]
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_final2<-RaggedExperiment::RaggedExperiment(GRL)
+      return(ragexp_final2)
+      
       
     }else if (caselist=="prad_broad_2013"){
-      symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      ragexp2 <- ragexp[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(ragexp2) <- symbols
-      colnames(ragexp2)<-gsub("-",".",colnames(ragexp2))
-      return(ragexp2)
+      
+      #Convert ragexp to Grangelist and store it in ragexp_grangelist
+      ragexp_grangelist<-ragexp@assays
+      # Add gene names to metadata of the Grangelist
+      ragexp_grangelist@unlistData@elementMetadata@listData$gene<-ragexp_grangelist@unlistData@ranges@NAMES
+      
+      # Liftover using chain file
+      names(ch)<-gsub("chr","",names(ch))
+      ranges2 <- rtracklayer::liftOver(ragexp_grangelist, ch)
+      GenomeInfoDb::genome(ranges2) <- "GRCh38"
+      
+      # Convert grangelist to raggedexperiment
+      ragexp2<-RaggedExperiment::RaggedExperiment(ranges2)
+      # Assign gene names in the metadata to the rownames of the raggedexperiment object
+      rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
+      # Run harmonize function to harmonize gene names
+      final_ragexp<-harmonize_raggedexp(ragexp2)
+      return(final_ragexp)
       
     }
   }
   if(profile=="gex"){
     if(caselist=="prad_eururol_2017"){
-      gex=prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
-      gex2=RaggedExperiment::assay(gex)
-      symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      gex2 <- gex2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(gex2) <- symbols
-      gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      return(as.matrix(gex2))
+      gex<-prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
+      gex2<-RaggedExperiment::assay(gex)
+      # Harmonize matrix
+      final_matrix_gex<-harmonize_matrix(gex2)
+      return(as.matrix(final_matrix_gex))
+      
     }else if(caselist=="prad_broad"){
-      gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
-      gex2=RaggedExperiment::assay(gex)
-      gex2=gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      gex2 <- gex2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(gex2) <- symbols
-      colnames(gex2)<-gsub("-",".",colnames(gex2))
-      gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      return(as.matrix(gex2))
+      gex<-prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
+      gex2<-RaggedExperiment::assay(gex)
+      # Harmonize matrix
+      final_matrix_gex<-harmonize_matrix(gex2)
+      return(as.matrix(final_matrix_gex))
+      
     }else if(caselist=="prad_su2c_2019"){
-      gex=metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
-      gex=as.data.frame(gex)
-      gex2=gex[!(duplicated(gex$Hugo_Symbol)|duplicated(gex$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
-      gex2=gex2[!grepl("-AS1", gex2$Hugo_Symbol),]
+      gex<-metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
+      gex<-as.data.frame(gex)
+      # Remove duplicate gene symbols
+      gex2<-gex[!(duplicated(gex$Hugo_Symbol)|duplicated(gex$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
       rownames(gex2)<-gex2$Hugo_Symbol
       gex2<-gex2[,-1]
-      symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
-      
-      gex2 <- gex2[!is.na(symbols),]
-      symbols <- symbols[!is.na(symbols)]
-      rownames(gex2) <- symbols
-      colnames(gex2)<-gsub("-",".",colnames(gex2))
-      gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
-      return(as.matrix(gex2))
+      # Harmonize matrix
+      final_matrix_gex<-harmonize_matrix(gex2)
+      return(as.matrix(final_matrix_gex))
     }
   }  
 }
+
+
+
+
+# generate_cbioportaldata <- function(caselist,profile){
+#   prof=cBioPortalData::cBioDataPack(caselist,ask = FALSE)
+#   
+#   if(profile=="cna"){
+#     if (caselist == "prad_broad"){
+#       res=prof[["cna"]]
+#       a=RaggedExperiment::rowData(res)[match(rownames(res),rownames(RaggedExperiment::rowData(res))),"Hugo_Symbol"]
+#       res2=RaggedExperiment::assay(res)
+#       res2<-res2[!is.na(a),]
+#       a=a[!is.na(a)]
+#       rownames(res2) <- a
+#       symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       res2 <- res2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(res2) <- symbols
+#       colnames(res2)<-gsub("-",".",colnames(res2))
+#       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
+#       return(as.matrix(res2))
+#     }
+#     
+#     else if(caselist=="prad_eururol_2017"){
+#       res=prof[["cna"]]
+#       res2=RaggedExperiment::assay(res)
+#       symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       res2 <- res2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(res2) <- symbols
+#       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
+#       return(as.matrix(res2))
+#     }
+#     
+#     else if(caselist=="prad_su2c_2019"){
+#       res=metadata(prof)$cna
+#       res=as.data.frame(res)
+#       res2=res[!(duplicated(res$Hugo_Symbol)|duplicated(res$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
+#       res2=res2[!grepl("-AS1", res2$Hugo_Symbol),]
+#       rownames(res2)<-res2$Hugo_Symbol
+#       res2<-res2[,-1]
+#       symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       
+#       res2 <- res2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(res2) <- symbols
+#       colnames(res2)<-gsub("-",".",colnames(res2))
+#       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
+#       return(as.matrix(res2))
+#     }
+#     
+#     else if (caselist=="prad_mskcc"){
+#       study=cBioPortalData::downloadStudy("prad_mskcc")
+#       ut <- cBioPortalData::untarStudy(study[[1]])
+#       res2=rio::import(paste0(ut,"/prad_mskcc/","data_cna.txt"))
+#       res2<-res2[,-2]
+#       rownames(res2)<-make.names(res2$Hugo_Symbol,unique = TRUE)
+#       symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       res2 <- res2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(res2) <- symbols
+#       res2<-res2[,-1]
+#       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
+#       
+#       same_barcode=colnames(res2)[grepl("PCA", colnames(res2))]
+#       ind=which(colnames(res2) %in% same_barcode=="TRUE")
+#       res3<-res2[, c(ind)]
+#       
+#       return(as.matrix(res3))
+#     }
+#     
+#     else if (caselist == "prad_broad_2013"){
+#       res=prof[["cna"]]
+#       res2=RaggedExperiment::assay(res)
+#       symbols <- curatedPCaData_genes[match(rownames(res2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       res2 <- res2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(res2) <- symbols
+#       colnames(res2)<-gsub("-",".",colnames(res2))
+#       res2<-res2[rowSums(is.na(res2)) != ncol(res2), ]
+#       return(as.matrix(res2))
+#       
+#     }
+#   }
+#   
+#   if(profile=="mut"){
+#     ragexp=prof[["mutations"]]
+#     if(caselist=="prad_eururol_2017"){
+#       symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       ragexp2 <- ragexp[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(ragexp2) <- symbols
+#       return(ragexp2)
+#       
+#     }else if (caselist == "prad_broad" || caselist=="prad_su2c_2019"){
+#       colnames(ragexp)<-gsub("-",".",colnames(ragexp))
+#       symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       ragexp2 <- ragexp[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(ragexp2) <- symbols
+#       colnames(ragexp2)<-gsub("-",".",colnames(ragexp2))
+#       return(ragexp2)
+#       
+#     }else if (caselist=="prad_mskcc"){
+#       same_barcode=colnames(ragexp)[grepl("PCA", colnames(ragexp))]
+#       ind=which(colnames(ragexp) %in% same_barcode=="TRUE")
+#       ragexp2<-ragexp[, c(ind)]
+#       symbols <- curatedPCaData_genes[match(rownames(ragexp2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       ragexp3 <- ragexp2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(ragexp3) <- symbols
+#       
+#       return(ragexp3)
+#       
+#     }else if (caselist=="prad_broad_2013"){
+#       symbols <- curatedPCaData_genes[match(rownames(ragexp), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       ragexp2 <- ragexp[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(ragexp2) <- symbols
+#       colnames(ragexp2)<-gsub("-",".",colnames(ragexp2))
+#       return(ragexp2)
+#       
+#     }
+#   }
+#   if(profile=="gex"){
+#     if(caselist=="prad_eururol_2017"){
+#       gex=prof[["mrna_seq_rpkm_zscores_ref_all_samples"]]
+#       gex2=RaggedExperiment::assay(gex)
+#       symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       gex2 <- gex2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(gex2) <- symbols
+#       gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
+#       return(as.matrix(gex2))
+#     }else if(caselist=="prad_broad"){
+#       gex=prof[["mrna_agilent_microarray_zscores_ref_all_samples"]]
+#       gex2=RaggedExperiment::assay(gex)
+#       gex2=gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
+#       symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       gex2 <- gex2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(gex2) <- symbols
+#       colnames(gex2)<-gsub("-",".",colnames(gex2))
+#       gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
+#       return(as.matrix(gex2))
+#     }else if(caselist=="prad_su2c_2019"){
+#       gex=metadata(prof)$mrna_seq_fpkm_polya_zscores_ref_all_samples
+#       gex=as.data.frame(gex)
+#       gex2=gex[!(duplicated(gex$Hugo_Symbol)|duplicated(gex$Hugo_Symbol, fromLast=TRUE)),, drop=FALSE]
+#       gex2=gex2[!grepl("-AS1", gex2$Hugo_Symbol),]
+#       rownames(gex2)<-gex2$Hugo_Symbol
+#       gex2<-gex2[,-1]
+#       symbols <- curatedPCaData_genes[match(rownames(gex2), curatedPCaData_genes[,"hgnc_symbol"]),"hgnc_symbol"]
+#       
+#       gex2 <- gex2[!is.na(symbols),]
+#       symbols <- symbols[!is.na(symbols)]
+#       rownames(gex2) <- symbols
+#       colnames(gex2)<-gsub("-",".",colnames(gex2))
+#       gex2<-gex2[rowSums(is.na(gex2)) != ncol(gex2), ]
+#       return(as.matrix(gex2))
+#     }
+#   }  
+# }
 
 #' Download and generate omics from the ICGC
 #'
@@ -1821,142 +2254,453 @@ generate_icgc <- function(
 #'
 #' @noRd
 #' @keywords internal
+# generate_xenabrowser <- function(
+# 	id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
+# 	type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
+# 	# Function for collapsing rows for identical gene symbols; separate for gene expression (GEX) or copy number alteration (CNA) data, as latter is rounded to integers in case of median giving out means between two mid-most samples
+# 	collapse_fun_gex = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
+# 	collapse_fun_cna = function(z) {apply(z, MARGIN = 2, FUN = function(x) { round(stats::median(x),0) })},	
+# 	# If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
+# 	truncate = TRUE,
+# 	# Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
+# 	digits,
+# 	# If intermediate files ought to be removed
+# 	cleanup = TRUE,
+# 	...
+# ){
+# 	# Small internal function to assist with the downloads from xenabrowser.net
+# 	.xenabrowserDownload <- function(url, gz=TRUE){
+# 		# Pick the filename from the end of the URL
+# 		filename <- strsplit(url, "/")
+# 		filename <- filename[[1]][[length(filename[[1]])]]
+# 		# Download file into parsed *.tsv.gz 
+# 		utils::download.file(url=url, destfile=filename)
+# 		# if .gz, gunzip the files open
+# 		if(gz) GEOquery::gunzip(filename, overwrite=TRUE)
+# 		gsub(".gz", "", filename)
+# 	}
+# 	# Cases (typically TCGA-PRAD)
+# 	if(id == "TCGA-PRAD"){
+# 		# Release Mid 2019ish
+# 		urls = list(
+# 			"htseq.fpkm" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.htseq_fpkm-uq.tsv.gz",
+# 			"gistic" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.gistic.tsv.gz",
+# 			"mutect2" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.mutect2_snv.tsv.gz",
+# 			"phenotype" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.GDC_phenotype.tsv.gz",
+# 			"os" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.survival.tsv",
+# 			"genemap" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap"
+# 		)
+# 		# Gene expression
+# 		if(type == "gex"){
+# 			# Download the FPKM-UQ values processed via HTSeq
+# 			file <- .xenabrowserDownload(urls[["htseq.fpkm"]])
+# 			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+# 			if(cleanup) file.remove(file)
+# 			# Download the gene mapping file
+# 			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
+# 			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+# 			if(cleanup) file.remove(file)
+# 			# Rearrange to match the ordering of the data matrix
+# 			map <- map[match(rownames(dat), rownames(map)),]
+# 			#> all(rownames(map) == rownames(dat))
+# 			#[1] TRUE
+# 			# Reassign gene names from ENSEMBL gene ids to gene symbols collapsing identical names and arranging to alphabetic order
+# 			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_gex))
+# 			dat <- dat[order(rownames(dat)),]
+# 			#> dim(dat)
+# 			#[1] 58387   551
+# 			#
+# 			# If column names should truncate last segment (sample -> patient id level truncation)
+# 			if(truncate>=1){
+# 				print("Truncating to 3 dot-separated names...")
+# 				# Remove fourth element separated by '.'
+# 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+# 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
+# 			}else if(truncate>=0){
+# 				print("Substituting '.01A|.01B' with '.01' ...")
+# 				# Sub '.01A" with the default ".01"
+# 				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+# 			}
+# 		# Copy number alterations (discretized by GISTIC)
+# 		}else if(type == "cna"){
+# 			# Download the copy number alteration values processed via GISTIC
+# 			file <- .xenabrowserDownload(urls[["gistic"]])
+# 			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+# 			if(cleanup) file.remove(file)
+# 			# Download the gene mapping file
+# 			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
+# 			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
+# 			if(cleanup) file.remove(file)
+# 			# Rearrange to match the ordering of the data matrix
+# 			map <- map[match(rownames(dat), rownames(map)),]
+# 			# > all(rownames(map) == rownames(dat))
+# 			#[1] TRUE
+# 			#> dim(dat)
+# 			#[1] 19729   502
+# 			#
+# 			## Smaller dimension than for gex as expected
+# 			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_cna))
+# 			dat <- dat[order(rownames(dat)),]
+# 			# If column names should truncate last segment (sample -> patient id level truncation)
+# 			if(truncate>=1){
+# 				print("Truncating to 3 dot-separated names...")
+# 				# Remove fourth element separated by '.'
+# 				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+# 			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
+# 			}else if(truncate>=0){
+# 				print("Substituting '.01A|.01B' with '.01' ...")
+# 				# Sub '.01A" with the default ".01"
+# 				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+# 			}
+# 		# Small mutations (SNV / INDELs called by Mutect2)
+# 		}else if(type == "mut"){
+# 			# Download the MuTect2 somatic mutation calls
+# 			file <- .xenabrowserDownload(urls[["mutect2"]])
+# 			# Suitable for RaggedExperiment style data storage
+# 			dat <- read.table(file, sep="\t", header=TRUE)
+# 			if(cleanup) file.remove(file)
+# 			tcga_mut<-dat[,c(3:5,1,2,6:11)]
+# 			colnames(tcga_mut)[1:3]=c("seqnames","start","end")
+# 			tcga_mut$Sample_ID<-gsub("-",".",tcga_mut$Sample_ID)
+# 			tcga_mut$Sample_ID<-gsub("01A","01",tcga_mut$Sample_ID)
+# 			names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
+# 			#a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
+# 			GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "Sample_ID",
+# 			                                    names.field = "gene",keep.extra.columns = TRUE)
+# 			ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
+# 			return(ragexp_tcga)
+# 		# Clinical data matrix construction
+# 		}else if(type == "clinical"){
+# 			# Generic phenotype information
+# 			file <- .xenabrowserDownload(urls[["phenotype"]])
+# 			phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+# 			if(cleanup) file.remove(file)
+# 			# Overall Survival
+# 			file <- .xenabrowserDownload(urls[["os"]], gz=FALSE)
+# 			os <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+# 			if(cleanup) file.remove(file)
+# 			# Combine the two			
+# 			dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
+# 			# .11A are healthy samples (GEX)
+# 			#rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
+# 		# Unknown data type
+# 		}else{
+# 			stop(paste("Invalid query type for xenabrowser:", type))
+# 		}
+# 	}
+# 	# Round to certain digits if requested
+# 	if(!missing(digits)) dat <- round(dat, digits)
+# 	# Return the processed dat
+# 	dat
+# }
 generate_xenabrowser <- function(
-	id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
-	type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
-	# Function for collapsing rows for identical gene symbols; separate for gene expression (GEX) or copy number alteration (CNA) data, as latter is rounded to integers in case of median giving out means between two mid-most samples
-	collapse_fun_gex = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
-	collapse_fun_cna = function(z) {apply(z, MARGIN = 2, FUN = function(x) { round(stats::median(x),0) })},	
-	# If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
-	truncate = TRUE,
-	# Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
-	digits,
-	# If intermediate files ought to be removed
-	cleanup = TRUE,
-	...
+  id = "TCGA-PRAD", # Study ID (by expectation TCGA's Prostate Adenocarcinoma
+  type = c("gex", "cna", "mut", "clinical"), # First instance of vector is used to determine what is extracted
+  # Function for collapsing rows for identical gene symbols; separate for gene expression (GEX) or copy number alteration (CNA) data, as latter is rounded to integers in case of median giving out means between two mid-most samples
+  collapse_fun_gex = function(z) {apply(z, MARGIN = 2, FUN = stats::median)},	
+  collapse_fun_cna = function(z) {apply(z, MARGIN = 2, FUN = function(x) { round(stats::median(x),0) })},	
+  # If Sample IDs should be truncated down to Patient ID level (leave out last segment of the '-' or '.' separators)
+  truncate = TRUE,
+  # Number of digits to store for the data object; for large matrices this may be required to stay beneath 100 MB, or to get rid of insignificant digits
+  digits,
+  # If intermediate files ought to be removed
+  cleanup = TRUE,
+  ...
 ){
-	# Small internal function to assist with the downloads from xenabrowser.net
-	.xenabrowserDownload <- function(url, gz=TRUE){
-		# Pick the filename from the end of the URL
-		filename <- strsplit(url, "/")
-		filename <- filename[[1]][[length(filename[[1]])]]
-		# Download file into parsed *.tsv.gz 
-		utils::download.file(url=url, destfile=filename)
-		# if .gz, gunzip the files open
-		if(gz) GEOquery::gunzip(filename, overwrite=TRUE)
-		gsub(".gz", "", filename)
-	}
-	# Cases (typically TCGA-PRAD)
-	if(id == "TCGA-PRAD"){
-		# Release Mid 2019ish
-		urls = list(
-			"htseq.fpkm" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.htseq_fpkm-uq.tsv.gz",
-			"gistic" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.gistic.tsv.gz",
-			"mutect2" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.mutect2_snv.tsv.gz",
-			"phenotype" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.GDC_phenotype.tsv.gz",
-			"os" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-PRAD.survival.tsv",
-			"genemap" = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap"
-		)
-		# Gene expression
-		if(type == "gex"){
-			# Download the FPKM-UQ values processed via HTSeq
-			file <- .xenabrowserDownload(urls[["htseq.fpkm"]])
-			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-			if(cleanup) file.remove(file)
-			# Download the gene mapping file
-			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
-			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
-			if(cleanup) file.remove(file)
-			# Rearrange to match the ordering of the data matrix
-			map <- map[match(rownames(dat), rownames(map)),]
-			#> all(rownames(map) == rownames(dat))
-			#[1] TRUE
-			# Reassign gene names from ENSEMBL gene ids to gene symbols collapsing identical names and arranging to alphabetic order
-			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_gex))
-			dat <- dat[order(rownames(dat)),]
-			#> dim(dat)
-			#[1] 58387   551
-			#
-			# If column names should truncate last segment (sample -> patient id level truncation)
-			if(truncate>=1){
-				print("Truncating to 3 dot-separated names...")
-				# Remove fourth element separated by '.'
-				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
-			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
-			}else if(truncate>=0){
-				print("Substituting '.01A|.01B' with '.01' ...")
-				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
-			}
-		# Copy number alterations (discretized by GISTIC)
-		}else if(type == "cna"){
-			# Download the copy number alteration values processed via GISTIC
-			file <- .xenabrowserDownload(urls[["gistic"]])
-			dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-			if(cleanup) file.remove(file)
-			# Download the gene mapping file
-			file <- .xenabrowserDownload(urls[["genemap"]], gz=FALSE)
-			map <- read.table(file, sep="\t", header=TRUE, row.names=1)			
-			if(cleanup) file.remove(file)
-			# Rearrange to match the ordering of the data matrix
-			map <- map[match(rownames(dat), rownames(map)),]
-			# > all(rownames(map) == rownames(dat))
-			#[1] TRUE
-			#> dim(dat)
-			#[1] 19729   502
-			#
-			## Smaller dimension than for gex as expected
-			dat <- do.call("rbind", by(dat, INDICES=map[,"gene"], FUN=collapse_fun_cna))
-			dat <- dat[order(rownames(dat)),]
-			# If column names should truncate last segment (sample -> patient id level truncation)
-			if(truncate>=1){
-				print("Truncating to 3 dot-separated names...")
-				# Remove fourth element separated by '.'
-				colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
-			# Lesser truncation with suffix '.01A' -> '.01' as in cBio
-			}else if(truncate>=0){
-				print("Substituting '.01A|.01B' with '.01' ...")
-				# Sub '.01A" with the default ".01"
-				colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
-			}
-		# Small mutations (SNV / INDELs called by Mutect2)
-		}else if(type == "mut"){
-			# Download the MuTect2 somatic mutation calls
-			file <- .xenabrowserDownload(urls[["mutect2"]])
-			# Suitable for RaggedExperiment style data storage
-			dat <- read.table(file, sep="\t", header=TRUE)
-			if(cleanup) file.remove(file)
-			tcga_mut<-dat[,c(3:5,1,2,6:11)]
-			colnames(tcga_mut)[1:3]=c("seqnames","start","end")
-			tcga_mut$Sample_ID<-gsub("-",".",tcga_mut$Sample_ID)
-			tcga_mut$Sample_ID<-gsub("01A","01",tcga_mut$Sample_ID)
-			names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
-			#a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
-			GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "Sample_ID",
-			                                    names.field = "gene",keep.extra.columns = TRUE)
-			ragexp_tcga=RaggedExperiment::RaggedExperiment(GRL)
-			return(ragexp_tcga)
-		# Clinical data matrix construction
-		}else if(type == "clinical"){
-			# Generic phenotype information
-			file <- .xenabrowserDownload(urls[["phenotype"]])
-			phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
-			if(cleanup) file.remove(file)
-			# Overall Survival
-			file <- .xenabrowserDownload(urls[["os"]], gz=FALSE)
-			os <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
-			if(cleanup) file.remove(file)
-			# Combine the two			
-			dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
-			# .11A are healthy samples (GEX)
-			#rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
-		# Unknown data type
-		}else{
-			stop(paste("Invalid query type for xenabrowser:", type))
-		}
-	}
-	# Round to certain digits if requested
-	if(!missing(digits)) dat <- round(dat, digits)
-	# Return the processed dat
-	dat
+  # Small internal function to assist with the downloads from xenabrowser.net
+  .xenabrowserDownload <- function(url, gz=TRUE){
+    # Pick the filename from the end of the URL
+    filename <- strsplit(url, "/")
+    filename <- filename[[1]][[length(filename[[1]])]]
+    # Download file into parsed *.tsv.gz 
+    utils::download.file(url=url, destfile=filename)
+    # if .gz, gunzip the files open
+    if(gz) GEOquery::gunzip(filename, overwrite=TRUE)
+    gsub(".gz", "", filename)
+  }
+  harmonize_matrix<-function(matrix){
+      # if the gene names dont match the hgnc_symbols column, create a seperate matrix called no_match with those rownames 
+      no_match<-matrix[is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+      no_match<-as.data.frame(no_match)
+      # if the gene names match the hgnc_symbols column, create a seperate matrix called match with those rownames 
+      match<-matrix[!is.na(match(rownames(matrix), curatedPCaData_genes$hgnc_symbol)),]
+      match<-as.data.frame(match)
+      
+      # Replace any "." in gene names with "-" since that is how the curatedpcadata_genes dictionary has them
+      rownames(match)<-gsub("\\.","-",rownames(match))
+      rownames(no_match)<-gsub("\\.","-",rownames(no_match))
+      
+      
+      vector<-rownames(no_match)
+      vector<-gsub("\\?.*", NA, vector)
+      vector<-vector[!is.na(vector)]
+      symbols <- vector()
+      
+      no_match<-no_match[vector,]
+      
+      # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+      original_gene<-vector()
+      #curatedPCaData_genes<-curatedPCaData_genes
+      
+      for (i in 1:length(vector)) {
+        # match_name genes to the aliases column in the curatedpcadata dictionary
+        match_name <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE),"hgnc_symbol"]
+        # Assign NAs to the ones that had no match_name
+        match_name[length(match_name)==0] <- NA
+        # Store data with duplicates
+        orig2<-replicate(length(match_name),vector[i])
+        original_gene<-c(original_gene,orig2)
+        symbols<- c(symbols,match_name)
+        
+      }
+      
+      # create a dictionary/df with the aliases and the associated hgnc_symbol
+      no_match_dict<-data.frame(original_gene=original_gene,mapped_gene=symbols)
+      # Remove those aliases that did not map to any hgnc_symbol
+      no_match_dict2<-no_match_dict[!is.na(no_match_dict$mapped_gene),]
+      # Remove duplicates in the mapped hgnc symbols
+      no_match_dict3<-no_match_dict2[!duplicated(no_match_dict2$mapped_gene),]
+      
+      # check which aliase is duplicated(ie maps to multiple hgnc symbols)
+      dup<-no_match_dict3[duplicated(no_match_dict3$original_gene),]
+      dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
+      
+      # Keep only those aliases that have a one to one mapping
+      remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+      
+      # create a vector by matching aliases to the new df
+      final_map<-vector()
+      
+      for (i in 1:length(vector)){
+        if (vector[i] %in% remove_dup$original_gene){
+          map<-remove_dup$mapped_gene[which(vector[i] == remove_dup$original_gene)]
+          final_map<-c(final_map,map)
+        }else{
+          map<-NA
+          final_map<-c(final_map,map)
+          
+        }
+      }
+      
+      no_match <- no_match[!is.na(final_map),]
+      final_map <- final_map[!is.na(final_map)]
+      
+      rownames(no_match) <- final_map
+      
+      # For those that match just pull hgnc_symbols directly
+      symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+      
+      match <- match[!is.na(symbols2),]
+      symbols2 <- symbols2[!is.na(symbols2)]
+      
+      rownames(match) <- symbols2
+      
+      # Combine the match and no_match matrices
+      final_matrix<- rbind(match,no_match)
+      # Replace "-" in colnames with "."
+      colnames(final_matrix)<-gsub("-",".",colnames(final_matrix))
+      # Remove rows with all NAs
+      final_matrix<-final_matrix[rowSums(is.na(final_matrix)) != ncol(final_matrix), ]
+      
+      return(final_matrix)
+      
+    }
+    
+    harmonize_raggedexp=function(ragexp2){
+      no_match<-ragexp2[is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
+      match<-ragexp2[!is.na(match(rownames(ragexp2), curatedPCaData_genes$hgnc_symbol)),]
+      
+      rownames(match)<-gsub("\\.","-",rownames(match))
+      rownames(no_match)<-gsub("\\.","-",rownames(no_match))
+      
+      vector<-rownames(no_match)
+      symbols <- vector()
+      
+      #curatedPCaData_genes<-curatedPCaData_genes
+      # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
+      # Match just the first gene and store it in a vector
+      # Do the aliase match for the rest of the genes and append it to the vector called symbols
+      original_gene<-vector()
+      
+      for (i in 1:length(vector)) {
+        # match_name genes to the aliases column in the curatedpcadata dictionary
+        match_name <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE),"hgnc_symbol"]
+        # Assign NAs to the ones that had no match_name
+        match_name[length(match_name)==0] <- NA
+        # Store data with duplicates
+        orig2<-replicate(length(match_name),vector[i])
+        original_gene<-c(original_gene,orig2)
+        symbols<- c(symbols,match_name)
+        
+      }
+      
+      # create a dictionary/df with the aliases and the associated hgnc_symbol
+      no_match_dict<-data.frame(original_gene=original_gene,mapped_gene=symbols)
+      # Remove those aliases that did not map to any hgnc_symbol
+      no_match_dict2<-no_match_dict[!is.na(no_match_dict$mapped_gene),]
+      # Remove duplicates in the mapped hgnc symbols
+      no_match_dict3<-no_match_dict2[!duplicated(no_match_dict2$mapped_gene),]
+      
+      # check which aliase is duplicated(ie maps to multiple hgnc symbols)
+      dup<-no_match_dict3[duplicated(no_match_dict3$original_gene),]
+      dup_vector<-dup[!duplicated(dup$original_gene),]$original_gene
+      
+      # Keep only those aliases that have a one to one mapping
+      remove_dup<-no_match_dict3[!(no_match_dict3$original_gene%in%dup_vector),]
+      
+      # create a vector by matching aliases to the new df
+      final_map<-vector()
+      
+      for (i in 1:length(vector)){
+        if (vector[i] %in% remove_dup$original_gene){
+          map<-remove_dup$mapped_gene[which(vector[i] == remove_dup$original_gene)]
+          final_map<-c(final_map,map)
+        }else{
+          map<-NA
+          final_map<-c(final_map,map)
+          
+        }
+      }
+      
+      no_match <- no_match[!is.na(final_map),]
+      final_map <- final_map[!is.na(final_map)]
+      
+      rownames(no_match) <- final_map
+      
+      # For those that match just pull hgnc_symbols directly
+      symbols2 <- curatedPCaData_genes[match(rownames(match), curatedPCaData_genes$hgnc_symbol),"hgnc_symbol"]
+      
+      match <- match[!is.na(symbols2),]
+      symbols2 <- symbols2[!is.na(symbols2)]
+      
+      rownames(match) <- symbols2
+      
+      # Combine the match and no_match matrices
+      match_df<-match@assays
+      match_df <- unlist(match_df)
+      match_df<-data.frame(match_df,names=names(match_df))
+      #match_df<-match_df[,c(1:3,46,4:45)]
+      
+      no_match_df<-no_match@assays
+      no_match_df <- unlist(no_match_df)
+      no_match_df<-data.frame(no_match_df,names=names(no_match_df))
+      #no_match_df<-no_match_df[,c(1:3,46,4:45)]
+      
+      final<-rbind(match_df,no_match_df)
+      final$NCBI_Build="GRCh38"
+      
+      final$sample<-sub("^(.*)[.].*", "\\1", final$names)
+      final$gene<-sub('.*\\.', '', final$names)
+      final<-final[ , -which(names(final) %in% "names")]
+      
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      GenomeInfoDb::genome(GRL)<-"GRCh38"
+      ragexp_final<-RaggedExperiment::RaggedExperiment(GRL)
+      
+      #final_matrix= c(rowRanges(match),rowRanges(no_match))
+      return(ragexp_final)
+    }
+  # Cases (typically TCGA-PRAD)
+  if(id == "TCGA-PRAD"){
+    # Release Mid 2019ish
+    urls = list(
+      "rsem.log" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/TCGA.PRAD.sampleMap%2FHiSeqV2.gz",
+      "gistic" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/TCGA.PRAD.sampleMap%2FGistic2_CopyNumber_Gistic2_all_thresholded.by_genes.gz",
+      "mc3" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/mc3%2FPRAD_mc3.txt.gz",
+      "phenotype" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/TCGA.PRAD.sampleMap%2FPRAD_clinicalMatrix",
+      "os" = "https://tcga-xena-hub.s3.us-east-1.amazonaws.com/download/survival%2FPRAD_survival.txt"
+    )
+    # Gene expression
+    if(type == "gex"){
+      # Download the FPKM-UQ values processed via HTSeq
+      file <- .xenabrowserDownload(urls[["rsem.log"]])
+      dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+      dat<-harmonize_matrix(dat)
+      
+      # If column names should truncate last segment (sample -> patient id level truncation)
+      if(truncate>=1){
+        print("Truncating to 3 dot-separated names...")
+        # Remove fourth element separated by '.'
+        colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+        # Lesser truncation with suffix '.01A' -> '.01' as in cBio
+      }else if(truncate>=0){
+        print("Substituting '.01A|.01B' with '.01' ...")
+        # Sub '.01A" with the default ".01"
+        colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+        
+      }
+      #return(dat)
+      # Copy number alterations (discretized by GISTIC)
+    }else if(type == "cna"){
+      # Download the copy number alteration values processed via GISTIC
+      file <- .xenabrowserDownload(urls[["gistic"]])
+      dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
+      dat<-harmonize_matrix(dat)
+      # If column names should truncate last segment (sample -> patient id level truncation)
+      if(truncate>=1){
+        print("Truncating to 3 dot-separated names...")
+        # Remove fourth element separated by '.'
+        colnames(dat) <- unlist(lapply(colnames(dat), FUN=function(x) { paste(strsplit(x, ".", fixed=TRUE)[[1]][1:3], collapse=".") }))
+        # Lesser truncation with suffix '.01A' -> '.01' as in cBio
+      }else if(truncate>=0){
+        print("Substituting '.01A|.01B' with '.01' ...")
+        # Sub '.01A" with the default ".01"
+        colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
+      }
+      #return(dat)
+      # Small mutations (SNV / INDELs called by Mutect2)
+    }else if(type == "mut"){
+      # Download the MuTect2 somatic mutation calls
+      file <- .xenabrowserDownload(urls[["mc3"]])
+      # Suitable for RaggedExperiment style data storage
+      dat <- read.table(file, sep="\t", header=TRUE)
+      if(cleanup) file.remove(file)
+      tcga_mut<-dat[,c(2:4,1,5:11)]
+      colnames(tcga_mut)[1:3]<-c("seqnames","start","end")
+      tcga_mut$sample<-gsub("-",".",tcga_mut$sample)
+      tcga_mut$sample<-gsub("01A","01",tcga_mut$sample)
+      names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
+      #a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_tcga<-RaggedExperiment::RaggedExperiment(GRL)
+      
+      # Liftover from hg19 to hg38
+      ch <- rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
+      names(ch)<-gsub("chr","",names(ch))
+      ranges <- rtracklayer::liftOver(rowRanges(ragexp_tcga), ch)
+      ragexp2 <- ragexp_tcga[as.logical(lengths(ranges))]
+      ranges <- unlist(ranges)
+      GenomeInfoDb::genome(ranges) <- "GRCh38"
+      rowRanges(ragexp2) <- ranges
+      
+      # Harmonize gene names
+      final_ragexp<-harmonize_raggedexp(ragexp2)
+      return(final_ragexp)
+      # Clinical data matrix construction
+    }else if(type == "clinical"){
+      # Generic phenotype information
+      file <- .xenabrowserDownload(urls[["phenotype"]])
+      phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+      if(cleanup) file.remove(file)
+      # Overall Survival
+      file <- .xenabrowserDownload(urls[["os"]], gz=FALSE)
+      os <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
+      if(cleanup) file.remove(file)
+      # Combine the two			
+      dat <- cbind(phenotype, os[match(rownames(phenotype), rownames(os)),])
+      return(dat)
+      # .11A are healthy samples (GEX)
+      #rownames(dat) <- gsub(".01A|.11A|01B", "", gsub("-", ".", rownames(dat)))
+      # Unknown data type
+    }else{
+      stop(paste("Invalid query type for xenabrowser:", type))
+    }
+  }
+  # Round to certain digits if requested
+  if(!missing(digits)) dat <- round(dat, digits)
+  # Return the processed dat
+    return(dat)
 }
