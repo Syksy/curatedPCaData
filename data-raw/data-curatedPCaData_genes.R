@@ -67,7 +67,7 @@ curatedPCaData_genes <- biomaRt::getBM(
 	attributes = 
 		c(
 			# Hugo
-			'hgnc_symbol',
+			'hgnc_symbol','entrezgene_id',
 			# ENSEMBL
 			'ensembl_gene_id', 'ensembl_transcript_id',
 			# RefSeq
