@@ -353,7 +353,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_taylor <- addSlotMAE(mae_taylor, xcell = tmp)
 
 # TCGA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="xcell"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.rsem.log"]], method="xcell"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -493,7 +493,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_taylor <- addSlotMAE(mae_taylor, epic = tmp)
 
 # TCGA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.rsem.log"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -633,7 +633,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_taylor <- addSlotMAE(mae_taylor, quantiseq = tmp)
 
 # TCGA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.rsem.log"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -774,7 +774,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_taylor <- addSlotMAE(mae_taylor, mcp = tmp)
 
 # TCGA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.fpkm"]], method="mcp_counter"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.rsem.log"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -959,10 +959,10 @@ mae_taylor <- addSlotMAE(mae_taylor,
 ## TCGA 
 mae_tcga <- addSlotMAE(mae_tcga,
 	scores = rbind(
-		decipher = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "decipher", log=TRUE),
-		oncotype = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "oncotype", log=TRUE),
-		prolaris = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.fpkm", test = "prolaris", log=TRUE),
-		ar_score = curatedPCaData:::genomic_score(mae_tcga, slot = "gex.fpkm", test = "AR")
+		decipher = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.rsem.log", test = "decipher", log=TRUE),
+		oncotype = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.rsem.log", test = "oncotype", log=TRUE),
+		prolaris = curatedPCaData:::genomic_risk(mae_tcga, slot = "gex.rsem.log", test = "prolaris", log=TRUE),
+		ar_score = curatedPCaData:::genomic_score(mae_tcga, slot = "gex.rsem.log", test = "AR")
 	)
 )
 
