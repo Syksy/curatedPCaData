@@ -2702,5 +2702,5 @@ generate_xenabrowser <- function(
   # Round to certain digits if requested
   if(!missing(digits)) dat <- round(dat, digits)
   # Return the processed dat
-    return(dat)
+    return(as.matrix(dat))
 }

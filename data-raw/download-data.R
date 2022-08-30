@@ -379,13 +379,13 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 
 ## - TCGA - 
 # GEX
-gex.fpkm_tcga <- curatedPCaData:::generate_xenabrowser(
+gex.rsem.log_tcga <- curatedPCaData:::generate_xenabrowser(
 	id = "TCGA-PRAD",
 	type = "gex",
 	digits = 4,
 	truncate = 0 # '.01A' -> '.01' suffix
 )
-save(gex.fpkm_tcga, file="data-raw/gex.fpkm_tcga.RData")
+save(gex.rsem.log_tcga, file="data-raw/gex.rsem.log_tcga.RData")
 
 # CNA (GISTIC)
 cna.gistic_tcga <- curatedPCaData:::generate_xenabrowser(
