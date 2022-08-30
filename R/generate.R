@@ -1715,8 +1715,7 @@ generate_cbioportaldata <- function(caselist,profile){
       res2<-res2[!is.na(a),]
       a<-a[!is.na(a)]
       rownames(res2) <- a
-      # If there are any lower cases in gene names convert them to upper case
-      rownames(res2)<-toupper(rownames(res2))
+      
       # Harmonize matrix
       final_matrix_cna<-harmonize_matrix(res2)
       return(as.matrix(final_matrix_cna))

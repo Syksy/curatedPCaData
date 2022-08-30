@@ -39,7 +39,7 @@ gex_true2 <- gex_true2[,c(33,1:32)]
 #gex_true2 <- gex_true2[-9534,]
 write.table(gex_true2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_true.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-gex_Barbieri<-mae_barbieri[["gex.relz"]]
+gex_Barbieri<-curatedPCaData::mae_barbieri[["gex.relz"]]
 gex_barbieri2 <- gex_Barbieri
 gex_barbieri2 <- as.data.frame(gex_barbieri2)
 gex_barbieri2<- gex_barbieri2[complete.cases(gex_barbieri2), ]
@@ -49,9 +49,9 @@ gex_barbieri2[,32]<-rownames(gex_barbieri2)
 rownames(gex_barbieri2) <- NULL
 gex_barbieri2 <- gex_barbieri2[,c(32,1:31)]
 #gex_barbieri2 <- gex_barbieri2[-9534,]
-write.table(gex_barbieri2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_barbieri.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_barbieri2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex_latest/gex_barbieri.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-gex_eururol<-mae_ren[["gex.relz"]]
+gex_eururol<-curatedPCaData::mae_ren[["gex.relz"]]
 gex_ren2 <- gex_eururol
 gex_ren2 <- as.data.frame(gex_ren2)
 gex_ren2<- gex_ren2[complete.cases(gex_ren2), ]
@@ -61,7 +61,7 @@ gex_ren2[,66]<-rownames(gex_ren2)
 rownames(gex_ren2) <- NULL
 gex_ren2 <- gex_ren2[,c(66,1:65)]
 #gex_ren2 <- gex_ren2[-9534,]
-write.table(gex_ren2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_ren.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_ren2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex_latest/gex_ren.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 load("data-raw/gex.rma_igc.RData")
 gex_igc2 <- gex.rma_igc
@@ -147,7 +147,7 @@ gex_friedrich2 <- gex_friedrich2[,c(256,1:255)]
 #gex_friedrich2 <- gex_friedrich2[-6860,]
 write.table(gex_friedrich2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_friedrich.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-gex_polyA_abida=mae_abida[["gex.relz"]]
+gex_polyA_abida=curatedPCaData::mae_abida[["gex.relz"]]
 gex_abida2 <- gex_polyA_abida
 gex_abida2 <- as.data.frame(gex_abida2)
 gex_abida2<- gex_abida2[complete.cases(gex_abida2), ]
@@ -157,7 +157,7 @@ gex_abida2[,267]<-rownames(gex_abida2)
 rownames(gex_abida2) <- NULL
 gex_abida2 <- gex_abida2[,c(267,1:266)]
 #gex_abida2 <- gex_abida2[-6860,]
-write.table(gex_abida2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_abida.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_abida2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex_latest/gex_abida.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 
 
@@ -198,17 +198,17 @@ gex_icgcca2 <- gex_icgcca2[,c(214,1:213)]
 #gex_icgcca2 <- gex_icgcca2[-6860,]
 write.table(gex_icgcca2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_icgcca.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
-gex.fpkm_tcga=mae_tcga[["gex.fpkm"]]
-gex_tcga2 <- gex.fpkm_tcga
+gex.rsem.log_tcga=curatedPCaData::mae_tcga[["gex.rsem.log"]]
+gex_tcga2 <- gex.rsem.log_tcga
 gex_tcga2 <- as.data.frame(gex_tcga2)
 gex_tcga2<- gex_tcga2[complete.cases(gex_tcga2), ]
 #gex_tcga2 <- gex_tcga2[-9561,]
-gex_tcga2[,370]<-rownames(gex_tcga2)
+gex_tcga2[,334]<-rownames(gex_tcga2)
 #View(gex_tcga2)
 rownames(gex_tcga2) <- NULL
-gex_tcga2 <- gex_tcga2[,c(370,1:369)]
+gex_tcga2 <- gex_tcga2[,c(334,1:333)]
 #gex_tcga2 <- gex_tcga2[-9534,]
-write.table(gex_tcga2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex/gex_tcga.txt",sep="\t",row.names = FALSE,col.names = TRUE)
+write.table(gex_tcga2,"/Users/varsha/Desktop/gex_cibersortx/changed_gex_latest/gex_tcga.txt",sep="\t",row.names = FALSE,col.names = TRUE)
 
 
 
