@@ -1,7 +1,14 @@
-curatedPCaData v0.9.28 (Release date: 2022-07-21)
+curatedPCaData v0.9.29 (Release date: 2022-09-05)
 ==============
 
-* 
+* cBioPortal processing pipeline revised
+* MAEs and corresponding raw data revised
+* CIBERSORTx rerun
+
+curatedPCaData v0.9.28 (Release date: 2022-07-25)
+==============
+
+* Reprocessed data
 
 curatedPCaData v0.9.27 (Release date: 2022-07-18)
 ==============
