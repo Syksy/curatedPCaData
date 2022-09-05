@@ -450,10 +450,10 @@ boxplot(`T cells regulatory (Tregs)`~TP53,data=cibersort_and_mut, main="Box plot
 
 ### FOXP3 exp vs Treg infilteration (TCGA)
 
-FOXP3 is a well known regulator of T regulatory cells. Using the curatedpcadata package we can look at the association between T reg infiltration and FOXP3 expression across multiple data sets. For example the plots below show how the FOXP3 expression looks like in patients with high and low Tregs stratified by the median in the TCGA and Taylor data sets.
+FOXP3 is a well known regulator of T regulatory cells. Using the curatedPCaData package we can look at the association between T reg infiltration and FOXP3 expression across multiple data sets. For example the plots below show how the FOXP3 expression looks like in patients with high and low Tregs stratified by the median in the TCGA and Taylor data sets.
 
 ```{r,dpi=150, fig.width=7, fig.height=7,out.width="100%", fig.cap="FOXP3 exp vs Tregs (TCGA)"}
-tcga<-as.data.frame(mae_tcga[["gex.fpkm"]])
+tcga<-as.data.frame(mae_tcga[["gex.rsem.log"]])
 
 cibersort=mae_tcga[["cibersort"]]
 tregs=as.data.frame(t(as.data.frame(cibersort["T cells regulatory (Tregs)",,drop=FALSE])))
@@ -508,7 +508,7 @@ Since Treg infiltration is related to poor survival in Prostate cancer patients,
 
 ```{r,dpi=150, fig.width=7, fig.height=7,out.width="100%", fig.cap="FOXP3 exp vs DFS (TCGA)"}
 
-tcga_gex<-as.data.frame(mae_tcga[["gex.fpkm"]])
+tcga_gex<-as.data.frame(mae_tcga[["gex.rsem.log"]])
 foxp3_exp=as.data.frame(t(tcga_gex["FOXP3",]))
 
 tcga<-as.data.frame(colData(mae_tcga))
@@ -580,7 +580,7 @@ ggsurvplot(sfit,pval=TRUE, risk.table=TRUE,palette = "Dark2",xlab="Time (months)
 
 Looking at general trends in how FOXP3 expression changes overall with increase in Treg populations gives an idea of how the gene affects immune responses. The correlation plot depicts that trend in the TCGA patients.
 ```{r}
-tcga_gex<-as.data.frame(mae_tcga[["gex.fpkm"]])
+tcga_gex<-as.data.frame(mae_tcga[["gex.rsem.log"]])
 foxp3_exp=as.data.frame(t(tcga_gex["FOXP3",]))
 
 cibersort=mae_tcga[["cibersort"]]
