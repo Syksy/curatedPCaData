@@ -1,7 +1,19 @@
-curatedPCaData v0.9.28 (Release date: 2022-07-21)
+curatedPCaData v0.9.30 (Release date: 2022-09-06)
 ==============
 
-* 
+* CNA landscape plots (original code thanks to Mike)
+
+curatedPCaData v0.9.29 (Release date: 2022-09-05)
+==============
+
+* cBioPortal processing pipeline revised
+* MAEs and corresponding raw data revised
+* CIBERSORTx rerun
+
+curatedPCaData v0.9.28 (Release date: 2022-07-25)
+==============
+
+* Reprocessed data
 
 curatedPCaData v0.9.27 (Release date: 2022-07-18)
 ==============

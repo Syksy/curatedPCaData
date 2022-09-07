@@ -189,7 +189,7 @@ tp53 <- wideFormat(mae_tcga["TP53",,"mut"])
 We choose SPOP as a concept example for mutation and copy-number alteration (i.e. deletion) tied to an endpoint (BCR) as well as as an example to exemplify connections between copy number alteration and transcriptome expression.
 
 ```{r tcga_spop}
-spop_tcga <- wideFormat(mae_tcga["SPOP",,c("gex.fpkm", "cna.gistic", "mut")])
+spop_tcga <- wideFormat(mae_tcga["SPOP",,c("gex.rsem.log", "cna.gistic", "mut")])
 spop_tcga <- as.data.frame(spop_tcga)
 ```
 
@@ -203,16 +203,16 @@ spop_tcga <- spop_tcga[spop_tcga[,"primary"] %in% rownames(colData(mae_tcga)[whi
 For example, it may be worth inspecting if the GISTIC2 discretized values {-2,-1,0,1,2} corresponding to deep deletion, shallow deletion, no somatic copy number change, low gain, and high gain, seem to correlate with the overall gene expression level:
 
 ```{r tcga_spop_gex_cna, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="SPOP GEX vs CNA in TCGA"}
-boxplot(spop_tcga[,"gex.fpkm_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], main="TCGA CNA vs. GEX in SPOP", xlab="GISTIC2", ylab="Gene expression (FPKM)")
-stripchart(spop_tcga[,"gex.fpkm_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], pch=16, add=TRUE, vertical=TRUE)
+boxplot(spop_tcga[,"gex.rsem.log_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], main="TCGA CNA vs. GEX in SPOP", xlab="GISTIC2", ylab="Gene expression (FPKM)")
+stripchart(spop_tcga[,"gex.rsem.log_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], pch=16, add=TRUE, vertical=TRUE)
 ```
 
 As expected, samples with deletions called by GISTIC2 exhibit lower expression in general, while samples with copy number gains called by GISTIC2 have overall higher SPOP expression levels.
 
-Let us pick an another gene of interest, PTEN. We can examine this also in other datasets; as an example, Ren et al with an N=65 overlap between GEX and CNA samples:
+Let us pick an another gene of interest, PTEN. We can examine this also in other datasets; as an example, Ren et al with an N=65:
 
 ```{r ren_pten}
-pten_ren <- wideFormat(mae_ren["PTEN",,c("gex.relz", "cna.gistic", "mut")])
+pten_ren <- wideFormat(mae_ren["PTEN",,c("gex.relz", "mut")])
 pten_ren <- as.data.frame(pten_ren)
 ```
 
@@ -222,24 +222,16 @@ We notice that all samples in Ren et al. are primary samples; this is because th
 table(colData(mae_ren)$sample_type)
 ```
 
-```{r ren_pten_gex_cna, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="PTEN GEX vs CNA in Ren et al."}
-boxplot(pten_ren[,"gex.relz_PTEN"] ~ pten_ren[,"cna.gistic_PTEN"], main="Ren et al. CNA vs. GEX in PTEN", xlab="GISTIC2", ylab="Gene expression (relative z-scores)")
-stripchart(pten_ren[,"gex.relz_PTEN"] ~ pten_ren[,"cna.gistic_PTEN"], pch=16, add=TRUE, vertical=TRUE)
-```
-
-We notice that the tumor for which the GISTIC2 call indicated a shallow or a deep deletion tended to have a lower expression of PTEN. Therefore, it makes sense to consider cross-omics information, when this is available.
-
-
 ### Multivariable regression from multiple assay types
 
 Let us build a multivariable Cox regression model, which takes into account multiple omics as well as a couple clinical variables:
 
 ```{r tcga_multivar}
-subset_tcga <- wideFormat(mae_tcga[c("SPOP", "PTEN", "TP53"),,c("gex.fpkm", "cna.gistic")], colDataCols=c("psa", "ERG_fusion_GEX", "disease_specific_recurrence_status", "days_to_disease_specific_recurrence", "sample_type"))
+subset_tcga <- wideFormat(mae_tcga[c("SPOP", "PTEN", "TP53"),,c("gex.rsem.log", "cna.gistic")], colDataCols=c("psa", "ERG_fusion_GEX", "disease_specific_recurrence_status", "days_to_disease_specific_recurrence", "sample_type"))
 subset_tcga <- as.data.frame(subset_tcga)
 subset_tcga <- subset_tcga[subset_tcga$sample_type == "primary",]
 
-x <- subset_tcga[,c("psa", "ERG_fusion_GEX", "gex.fpkm_SPOP", "gex.fpkm_PTEN", "gex.fpkm_TP53", "cna.gistic_SPOP", "cna.gistic_PTEN", "cna.gistic_TP53")]
+x <- subset_tcga[,c("psa", "ERG_fusion_GEX", "gex.rsem.log_SPOP", "gex.rsem.log_PTEN", "gex.rsem.log_TP53", "cna.gistic_SPOP", "cna.gistic_PTEN", "cna.gistic_TP53")]
 x <- as.matrix(x)
 
 y <- Surv(time=subset_tcga$days_to_disease_specific_recurrence, event=subset_tcga$disease_specific_recurrence_status)
