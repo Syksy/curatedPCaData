@@ -1721,6 +1721,24 @@ generate_cbioportaldata <- function(caselist,profile){
       return(as.matrix(final_matrix_cna))
     }
     
+    else if (caselist == "prad_mskcc_2014"){
+      # Get the copy number matrix as Summarizedexperiment object
+      res<-prof[["CNA"]]
+      # Get gene names from Summarizedexperiment and store it in a variable
+      a<-RaggedExperiment::rowData(res)[match(rownames(res),rownames(RaggedExperiment::rowData(res))),"Hugo_Symbol"]
+      # Create a matrix with cna and gene names making sure that there are no NAs in gene names
+      res2<-RaggedExperiment::assay(res)
+      res2<-res2[!is.na(a),]
+      a<-a[!is.na(a)]
+      rownames(res2) <- a
+      
+      res2<-as.data.frame(res2)
+      
+      # Harmonize matrix
+      final_matrix_cna<-harmonize_matrix(res2)
+      return(as.matrix(final_matrix_cna))
+    }
+    
     else if(caselist=="prad_eururol_2017"){
       res<-prof[["cna"]]
       # Create a matrix with cna and gene names
