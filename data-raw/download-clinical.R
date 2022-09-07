@@ -586,13 +586,13 @@ gse <- GEOquery::getGEO("GSE54691", GSEMatrix = TRUE)
 uncurated <- Biobase::pData(gse[[1]])
 
 curated <- initial_curated_internal(
-  df_rownames = rownames(uncurated)
+  df_rownames = sub(".*\\s", "", uncurated$title)
 )
 
 curated <- curated %>% 
   dplyr::mutate(study_name = "Hieronymus, et al.") %>% 
-  dplyr::mutate(sample_name = row.names(uncurated)) %>% 
-  dplyr::mutate(patient_id = row.names(uncurated)) %>%
+  dplyr::mutate(sample_name =sub(".*\\s", "", uncurated$title)) %>% 
+  dplyr::mutate(patient_id = rownames(uncurated)) %>%
   dplyr::mutate(sample_type = "primary") %>%
   dplyr::mutate(overall_survival_status = dplyr::case_when(
     is.na(uncurated$`survivalevent:ch1`) ~ 0,
@@ -650,7 +650,7 @@ curated <- curated %>%
     TRUE ~ 0
   ))
 
-rownames(curated) <- rownames(uncurated)        
+rownames(curated) <- sub(".*\\s", "", uncurated$title)        
 clinical_hieronymus <- curated
 
 save(clinical_hieronymus, file = "data-raw/clinical_hieronymus.RData")
