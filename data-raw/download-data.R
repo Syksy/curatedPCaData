@@ -183,11 +183,15 @@ usethis::use_data(mae_friedrich, internal = FALSE, overwrite = TRUE)
 
 
 ## - Hieronymus et al. -
-# CNA
-cna.logr_hieronymus <- curatedPCaData:::generate_cna_geo(
-  geo_code = "GSE54691"
-)
-save(cna.logr_hieronymus, file="data-raw/cna.logr_hieronymus.RData")
+# CNA logr
+# cna.logr_hieronymus <- curatedPCaData:::generate_cna_geo(
+#   geo_code = "GSE54691"
+# )
+# save(cna.logr_hieronymus, file="data-raw/cna.logr_hieronymus.RData")
+
+# CNA Gistic
+cna.gistic_hieronymus <- curatedPCaData:::generate_cbioportaldata("prad_mskcc_2014","cna")
+save(cna.gistic_hieronymus, file="data-raw/cna.gistic_hieronymus.RData")
 
 # Create MAE object
 mae_hieronymus <- curatedPCaData:::create_mae(study_name = "hieronymus")
