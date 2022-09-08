@@ -184,7 +184,7 @@ Pull CNA datasets from curatedPCaData
 Abida <- curatedPCaData::mae_abida@ExperimentList@listData$cna.gistic
 Baca <- curatedPCaData::mae_baca@ExperimentList@listData$cna.gistic
 Barbieri <- curatedPCaData::mae_barbieri@ExperimentList@listData$cna.gistic
-Hieronymus <- curatedPCaData::mae_hieronymus@ExperimentList@listData$cna.logr
+Hieronymus <- curatedPCaData::mae_hieronymus@ExperimentList@listData$cna.gistic
 Taylor <- curatedPCaData::mae_taylor@ExperimentList@listData$cna.gistic
 TCGA <- curatedPCaData::mae_tcga@ExperimentList@listData$cna.gistic
 ```
