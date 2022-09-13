@@ -1,3 +1,9 @@
+curatedPCaData v0.9.31 (Release date: 2022-09-08)
+==============
+
+* CNA GISTIC for Hieronymus et al. replacing the old log-ratios MAE slot
+* Fixes in landscapes.Rmd
+
 curatedPCaData v0.9.30 (Release date: 2022-09-06)
 ==============
 
