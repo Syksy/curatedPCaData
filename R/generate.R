@@ -2699,7 +2699,7 @@ generate_xenabrowser <- function(
       # Clinical data matrix construction
     }else if(type == "clinical"){
       # Generic phenotype information
-      file <- .xenabrowserDownload(urls[["phenotype"]])
+      file <- .xenabrowserDownload(urls[["phenotype"]], gz=FALSE)
       phenotype <- read.table(file, sep="\t", header=TRUE, row.names=1, quote="#")
       if(cleanup) file.remove(file)
       # Overall Survival
