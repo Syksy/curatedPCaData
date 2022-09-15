@@ -400,12 +400,12 @@ cna.gistic_tcga <- curatedPCaData:::generate_xenabrowser(
 save(cna.gistic_tcga, file="data-raw/cna.gistic_tcga.RData")
 
 # Mutations
-tcga_mut <- curatedPCaData:::generate_xenabrowser(
+mut_tcga <- curatedPCaData:::generate_xenabrowser(
   id = "TCGA-PRAD",
   type = "mut",
   truncate = 0 # '.01A' -> '.01' suffix
 )
-save(tcga_mut, file="data-raw/mut_tcga.RData")
+save(mut_tcga, file="data-raw/mut_tcga.RData")
 
 # Create MAE object
 mae_tcga <- curatedPCaData:::create_mae(study_name = "TCGA")

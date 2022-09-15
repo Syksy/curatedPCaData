@@ -221,86 +221,90 @@ curated[,"race"] <- curated2[,"race"]
 curated <- curated[which(curated$sample_name %in% intersect(rownames(uncurated), rownames(uncurated2))),]
 rownames(curated) <- curated$sample_name
 
-# Append information for the normal samples from GDC (XenaBrowser) as well as other potentially interesting fields
-uncurated3 <- curatedPCaData:::generate_xenabrowser(id="TCGA-PRAD", type="clinical")
-#curated3 <- initial_curated_df(
-#  df_rownames = rownames(uncurated3),
-#  template_name="data-raw/template_prad.csv")
-curated3 <- initial_curated_internal(df_rownames = rownames(uncurated3))
+# Post v0.9.31 due to changes in curatedPCaData:::generate_xenabrowser following curation script is no longer functional
+if(FALSE){
+	# Append information for the normal samples from GDC (XenaBrowser) as well as other potentially interesting fields
+	uncurated3 <- curatedPCaData:::generate_xenabrowser(id="TCGA-PRAD", type="clinical")
+	#curated3 <- initial_curated_df(
+	#  df_rownames = rownames(uncurated3),
+	#  template_name="data-raw/template_prad.csv")
+	curated3 <- initial_curated_internal(df_rownames = rownames(uncurated3))
 
-# GDC portion of clinical metadata (especially normal samples)
-curated3 <- curated3 %>%
-	dplyr::mutate(study_name = "TCGA") %>%
-	dplyr::mutate(patient_id = gsub("-", ".", uncurated3$X_PATIENT)) %>%
-	dplyr::mutate(sample_name = gsub(".01A", ".01", gsub("-", ".", sample_name))) %>%
-	dplyr::mutate(alt_sample_name = uncurated3$file_uuid) %>%
-	dplyr::mutate(age_at_initial_diagnosis = uncurated3$age_at_initial_pathologic_diagnosis) %>%
-	dplyr::mutate(gleason_grade = uncurated3$gleason_score) %>%
-	dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
-		uncurated3$biochemical_recurrence == "YES" ~ 1,
-		uncurated3$biochemical_recurrence == "NO" ~ 0,
-		is.na(uncurated3$biochemical_recurrence) | uncurated3$biochemical_recurrence == "" ~ NA_real_
-	)) %>%
-	dplyr::mutate(days_to_disease_specific_recurrence = uncurated3$days_to_first_biochemical_recurrence) %>%
-	dplyr::mutate(psa = uncurated3$psa_value) %>%
-	dplyr::mutate(overall_survival_status = uncurated3$OS) %>%
-	dplyr::mutate(days_to_overall_survival = uncurated3$OS.time) %>%
-	dplyr::mutate(gleason_major = uncurated3$primary_pattern) %>%
-	dplyr::mutate(gleason_minor = uncurated3$secondary_pattern) %>%
-	dplyr::mutate(grade_group = dplyr::case_when(
-		uncurated3$primary_pattern + uncurated3$secondary_pattern <= 6 ~ "<=6",
-		uncurated3$primary_pattern == 3 & uncurated3$secondary_pattern == 4 ~ "3+4",
-		uncurated3$primary_pattern == 4 & uncurated3$secondary_pattern == 3 ~ "4+3",
-		uncurated3$primary_pattern + uncurated3$secondary_pattern >= 8 ~ ">=8"
-	)) %>%
-	dplyr::mutate(sample_type = dplyr::case_when(
-		uncurated3$sample_type.samples == "Metastatic" ~ "metastatic",
-		uncurated3$sample_type.samples == "Primary Tumor" ~ "primary",
-		uncurated3$sample_type.samples == "Solid Tissue Normal" ~ "normal",
-		is.na(uncurated3$sample_type.samples) | uncurated3$sample_type.samples == "" ~ NA_character_
-	)) %>%
-	dplyr::mutate(year_diagnosis = uncurated3$year_of_diagnosis.diagnoses) %>%
-	dplyr::mutate(T_pathological = as.numeric(substr(uncurated3$pathologic_T, 2, 2))) %>%
-	dplyr::mutate(T_substage_pathological = substr(uncurated3$pathologic_T, 3, 3)) %>%
-	dplyr::mutate(zone_of_origin = dplyr::case_when(
-		uncurated3$zone_of_origin == "Central Zone" ~ "central",
-		uncurated3$zone_of_origin == "Overlapping / Multiple Zones" ~ "mixed",
-		uncurated3$zone_of_origin == "Peripheral Zone" ~ "peripheral",
-		uncurated3$zone_of_origin == "Transition Zone" ~ "transition",
-		is.na(uncurated3$zone_of_origin) | uncurated3$zone_of_origin == "" ~ NA_character_
-	)) %>%
-	dplyr::mutate(frozen_ffpe = ifelse(uncurated3$is_ffpe.samples == "True", "FFPE", "frozen")) %>%
-	dplyr::mutate(N_stage = as.numeric(substr(uncurated3$pathologic_N,2,2))) %>%
-	dplyr::mutate(race = dplyr::case_when(
-		uncurated3$race.demographic == "asian" ~ "asian",
-		uncurated3$race.demographic == "american indian or alaska native" ~ "other",
-		uncurated3$race.demographic == "black or african american" ~ "african_american",		
-		uncurated3$race.demographic == "white" ~ "caucasian",
-		is.na(uncurated3$race.demographic) | uncurated3$race.demographic == "not reported" ~ NA_character_
-	)) %>%
-	dplyr::mutate(therapy_radiation_initial = dplyr::case_when(
-		uncurated3$radiation_therapy == "NO" ~ 0,
-		uncurated3$radiation_therapy == "YES" ~ 0,
-		is.na(uncurated3$radiation_therapy) | uncurated3$radiation_therapy == "" ~ NA_real_
-	)) %>%
-	dplyr::mutate(therapy_hormonal_initial = dplyr::case_when(
-		uncurated3$additional_pharmaceutical_therapy == "YES" ~ 1,
-		uncurated3$additional_pharmaceutical_therapy == "NO" ~ 0,
-		is.na(uncurated3$additional_pharmaceutical_therapy) | uncurated3$additional_pharmaceutical_therapy == "" ~ NA_real_
-	)) %>%
-	dplyr::mutate(batch = uncurated3$batch_number) %>%
-	# Append custom features of interest
-	dplyr::mutate(other_feature = 
-		paste(
-			paste("primary_therapy_outcome_success=", uncurated3$primary_therapy_outcome_success, sep=""), 
-			paste("additional_radiation_therapy=", uncurated3$additional_radiation_therapy, sep=""), 
-		sep=";")
-	)
+	# GDC portion of clinical metadata (especially normal samples)
+	curated3 <- curated3 %>%
+		dplyr::mutate(study_name = "TCGA") %>%
+		dplyr::mutate(patient_id = gsub("-", ".", uncurated3$X_PATIENT)) %>%
+		dplyr::mutate(sample_name = gsub(".01A", ".01", gsub("-", ".", sample_name))) %>%
+		dplyr::mutate(alt_sample_name = uncurated3$file_uuid) %>%
+		dplyr::mutate(age_at_initial_diagnosis = uncurated3$age_at_initial_pathologic_diagnosis) %>%
+		dplyr::mutate(gleason_grade = uncurated3$gleason_score) %>%
+		dplyr::mutate(disease_specific_recurrence_status = dplyr::case_when(
+			uncurated3$biochemical_recurrence == "YES" ~ 1,
+			uncurated3$biochemical_recurrence == "NO" ~ 0,
+			is.na(uncurated3$biochemical_recurrence) | uncurated3$biochemical_recurrence == "" ~ NA_real_
+		)) %>%
+		dplyr::mutate(days_to_disease_specific_recurrence = uncurated3$days_to_first_biochemical_recurrence) %>%
+		dplyr::mutate(psa = uncurated3$psa_value) %>%
+		dplyr::mutate(overall_survival_status = uncurated3$OS) %>%
+		dplyr::mutate(days_to_overall_survival = uncurated3$OS.time) %>%
+		dplyr::mutate(gleason_major = uncurated3$primary_pattern) %>%
+		dplyr::mutate(gleason_minor = uncurated3$secondary_pattern) %>%
+		dplyr::mutate(grade_group = dplyr::case_when(
+			uncurated3$primary_pattern + uncurated3$secondary_pattern <= 6 ~ "<=6",
+			uncurated3$primary_pattern == 3 & uncurated3$secondary_pattern == 4 ~ "3+4",
+			uncurated3$primary_pattern == 4 & uncurated3$secondary_pattern == 3 ~ "4+3",
+			uncurated3$primary_pattern + uncurated3$secondary_pattern >= 8 ~ ">=8"
+		)) %>%
+		dplyr::mutate(sample_type = dplyr::case_when(
+			uncurated3$sample_type.samples == "Metastatic" ~ "metastatic",
+			uncurated3$sample_type.samples == "Primary Tumor" ~ "primary",
+			uncurated3$sample_type.samples == "Solid Tissue Normal" ~ "normal",
+			is.na(uncurated3$sample_type.samples) | uncurated3$sample_type.samples == "" ~ NA_character_
+		)) %>%
+		dplyr::mutate(year_diagnosis = uncurated3$year_of_diagnosis.diagnoses) %>%
+		dplyr::mutate(T_pathological = as.numeric(substr(uncurated3$pathologic_T, 2, 2))) %>%
+		dplyr::mutate(T_substage_pathological = substr(uncurated3$pathologic_T, 3, 3)) %>%
+		dplyr::mutate(zone_of_origin = dplyr::case_when(
+			uncurated3$zone_of_origin == "Central Zone" ~ "central",
+			uncurated3$zone_of_origin == "Overlapping / Multiple Zones" ~ "mixed",
+			uncurated3$zone_of_origin == "Peripheral Zone" ~ "peripheral",
+			uncurated3$zone_of_origin == "Transition Zone" ~ "transition",
+			is.na(uncurated3$zone_of_origin) | uncurated3$zone_of_origin == "" ~ NA_character_
+		)) %>%
+		dplyr::mutate(frozen_ffpe = ifelse(uncurated3$is_ffpe.samples == "True", "FFPE", "frozen")) %>%
+		dplyr::mutate(N_stage = as.numeric(substr(uncurated3$pathologic_N,2,2))) %>%
+		dplyr::mutate(race = dplyr::case_when(
+			uncurated3$race.demographic == "asian" ~ "asian",
+			uncurated3$race.demographic == "american indian or alaska native" ~ "other",
+			uncurated3$race.demographic == "black or african american" ~ "african_american",		
+			uncurated3$race.demographic == "white" ~ "caucasian",
+			is.na(uncurated3$race.demographic) | uncurated3$race.demographic == "not reported" ~ NA_character_
+		)) %>%
+		dplyr::mutate(therapy_radiation_initial = dplyr::case_when(
+			uncurated3$radiation_therapy == "NO" ~ 0,
+			uncurated3$radiation_therapy == "YES" ~ 0,
+			is.na(uncurated3$radiation_therapy) | uncurated3$radiation_therapy == "" ~ NA_real_
+		)) %>%
+		dplyr::mutate(therapy_hormonal_initial = dplyr::case_when(
+			uncurated3$additional_pharmaceutical_therapy == "YES" ~ 1,
+			uncurated3$additional_pharmaceutical_therapy == "NO" ~ 0,
+			is.na(uncurated3$additional_pharmaceutical_therapy) | uncurated3$additional_pharmaceutical_therapy == "" ~ NA_real_
+		)) %>%
+		dplyr::mutate(batch = uncurated3$batch_number) %>%
+		# Append custom features of interest
+		dplyr::mutate(other_feature = 
+			paste(
+				paste("primary_therapy_outcome_success=", uncurated3$primary_therapy_outcome_success, sep=""), 
+				paste("additional_radiation_therapy=", uncurated3$additional_radiation_therapy, sep=""), 
+			sep=";")
+		)
+}		
+		
 # Note regarding BCR: sometimes patient has "biochemical_recurrence" == "NO" but has das to first/second_biochemical_recurrence (?)
 # uncurated3[,c("biochemical_recurrence", "days_to_first_biochemical_recurrence", "days_to_second_biochemical_recurrence")]
 
 # Append normal samples with GDC metadata to curated data from cBio's metadata
-curated <- rbind(curated, curated3[which(curated3$sample_type == "normal"),])
+#curated <- rbind(curated, curated3[which(curated3$sample_type == "normal"),])
 
 # Utilize additional information of low quality samples from pathology review and RNA degradation
 # Samples excluded in pathology review
@@ -409,109 +413,117 @@ RNAdegrade <- gsub(".01A", ".01", substr(RNAdegrade, start=0, stop=16))
 curated <- curated[which(!curated$sample_name %in% c(PathReview, RNAdegrade)),]
 
 ################################################################################################################
-# TCGA - New Data (Xenabrowser)
+# TCGA - Xenabrowser
+# Re-run of clinical fields
 ################################################################################################################
 
-uncurated <- curatedPCaData:::generate_xenabrowser(
+uncurated4 <- curatedPCaData:::generate_xenabrowser(
   id = "TCGA-PRAD",
   type = "clinical",
   truncate = 0 
 )
 
-curated <- initial_curated_internal(df_rownames = gsub("-",".",rownames(uncurated)))
+curated4 <- initial_curated_internal(df_rownames = gsub("-",".",rownames(uncurated4)))
 
-curated <- curated %>% 
-  # Not just TCGA provisional with TCGA firehose brought in for GEX
+curated4 <- curated4 %>% 
   dplyr::mutate(study_name = "TCGA") %>%
-  dplyr::mutate(frozen_ffpe = uncurated$is_ffpe) %>%
+  dplyr::mutate(frozen_ffpe = uncurated4$is_ffpe) %>%
   dplyr::mutate(frozen_ffpe = dplyr::case_when(
-    frozen_ffpe %in% c("NO", "[Not Available]") ~ "NA",
-    frozen_ffpe == "" ~ "ffpe",
-    TRUE ~ frozen_ffpe
+    frozen_ffpe %in% c("NO", "[Not Available]") ~ NA_character_,
+    frozen_ffpe == "" ~ "FFPE",
+    TRUE ~ NA_character_
   )) %>%
   dplyr::mutate(sample_type = dplyr::case_when(
-    uncurated$sample_type == "Metastatic" ~ "metastatic",
-    uncurated$sample_type == "Primary Tumor" ~ "primary",
-    uncurated$sample_type == "Solid Tissue Normal" ~ "normal"
+    uncurated4$sample_type == "Metastatic" ~ "metastatic",
+    uncurated4$sample_type == "Primary Tumor" ~ "primary",
+    uncurated4$sample_type == "Solid Tissue Normal" ~ "normal"
   )) %>% 
   
-  dplyr::mutate(patient_id = gsub("-",".",uncurated$X_PATIENT)) %>%
+  dplyr::mutate(patient_id = gsub("-",".",uncurated4$X_PATIENT)) %>%
   #dplyr::mutate(alt_sample_name = uncurated$OTHER_SAMPLE_ID) %>%
-  dplyr::mutate(gleason_grade = uncurated$gleason_score) %>%
-  dplyr::mutate(gleason_major = uncurated$primary_pattern) %>%
-  dplyr::mutate(gleason_minor = uncurated$secondary_pattern) %>%
+  dplyr::mutate(gleason_grade = uncurated4$gleason_score) %>%
+  dplyr::mutate(gleason_major = uncurated4$primary_pattern) %>%
+  dplyr::mutate(gleason_minor = uncurated4$secondary_pattern) %>%
   #dplyr::mutate(source_of_gleason = "biopsy") %>%
   dplyr::mutate(grade_group = dplyr::case_when(
     gleason_grade == 6 ~ "<=6",
     gleason_major == 3 & gleason_minor == 4 ~ "3+4",
     gleason_major == 4 & gleason_minor == 3 ~ "4+3",
     gleason_grade %in% 8:10 ~ ">=8",
-    TRUE ~ "NA"
+    TRUE ~ NA_character_
   )) %>% 
   
-  dplyr::mutate(zone_of_origin = uncurated$zone_of_origin) %>%
+  dplyr::mutate(zone_of_origin = uncurated4$zone_of_origin) %>%
   dplyr::mutate(zone_of_origin = dplyr::case_when(
     zone_of_origin == "Peripheral Zone" ~ "peripheral",
     zone_of_origin == "Overlapping / Multiple Zones" ~ "mixed",
     zone_of_origin == "Central Zone" ~ "central",
     zone_of_origin == "Transition Zone" ~ "transitional",
-    zone_of_origin == "[Not Available]" ~ "NA",
-    TRUE ~ "NA"
+    zone_of_origin == "[Not Available]" ~ NA_character_,
+    TRUE ~ NA_character_
   )) %>%
-  
-  dplyr::mutate(year_diagnosis = uncurated$year_of_initial_pathologic_diagnosis) %>%
-  dplyr::mutate(overall_survival_status = uncurated$OS)  %>% 
-  dplyr::mutate(days_to_overall_survival = as.numeric(uncurated$OS.time) * 30.5) %>%
-  dplyr::mutate(disease_specific_recurrence_status = uncurated$DSS) %>%
-  dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated$DSS.time) * 30.5) %>% 
-  dplyr::mutate(disease_free_interval_status = uncurated$DFI) %>%
-  dplyr::mutate(days_to_disease_free_interval = as.numeric(uncurated$DFI.time) * 30.5) %>% 
-  dplyr::mutate(progression_free_interval_status = uncurated$PFI) %>%
-  dplyr::mutate(days_to_progression_free_interval = as.numeric(uncurated$PFI.time) * 30.5) %>% 
-  dplyr::mutate(psa = uncurated$psa_value) %>% 
-  dplyr::mutate(age_at_initial_diagnosis = uncurated$age_at_initial_pathologic_diagnosis) %>%
-  
-  
-  dplyr::mutate(M_stage = uncurated$clinical_M) %>% 
+  # NOTE: Time was already in days, do not scale with days per month
+  dplyr::mutate(year_diagnosis = uncurated4$year_of_initial_pathologic_diagnosis) %>%
+  dplyr::mutate(overall_survival_status = uncurated4$OS)  %>% 
+  #dplyr::mutate(days_to_overall_survival = as.numeric(uncurated4$OS.time) * 30.5) %>%
+  dplyr::mutate(days_to_overall_survival = as.numeric(uncurated4$OS.time)) %>%
+  dplyr::mutate(disease_specific_recurrence_status = uncurated4$DSS) %>%
+  #dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated4$DSS.time) * 30.5) %>% 
+  dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated4$DSS.time)) %>% 
+  #dplyr::mutate(disease_free_interval_status = uncurated$DFI) %>%
+  #dplyr::mutate(days_to_disease_free_interval = as.numeric(uncurated$DFI.time) * 30.5) %>% 
+  #dplyr::mutate(progression_free_interval_status = uncurated$PFI) %>%
+  #dplyr::mutate(days_to_progression_free_interval = as.numeric(uncurated$PFI.time) * 30.5) %>% 
+  dplyr::mutate(psa = uncurated4$psa_value) %>% 
+  dplyr::mutate(age_at_initial_diagnosis = uncurated4$age_at_initial_pathologic_diagnosis) %>%
+  dplyr::mutate(M_stage = uncurated4$clinical_M) %>% 
   dplyr::mutate(M_stage = dplyr::case_when(
     M_stage == "M0" ~ 0,
     M_stage %in% c("M1a", "M1b", "M1c") ~ 1,
     TRUE ~ NA_real_
   )) %>% 
   # stringr:: commands return true NA not character NA
-  dplyr::mutate(M_substage = stringr::str_sub(uncurated$clinical_M, 3, 3)) %>% 
-  # single instance '[Unknown]' will throw a warning for below
-  dplyr::mutate(T_clinical = readr::parse_number(uncurated$clinical_T)) %>% 
-  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$clinical_T, "[a-c]+")) %>%
-  dplyr::mutate(T_pathological = readr::parse_number(uncurated$pathologic_T)) %>%
-  dplyr::mutate(T_substage_pathological = stringr::str_extract(uncurated$pathologic_T, "[a-c]+")) %>%
+  dplyr::mutate(M_substage = stringr::str_sub(uncurated4$clinical_M, 3, 3)) %>% 
+  dplyr::mutate(T_clinical = as.integer(substr(uncurated4$clinical_T, 2, 2))) %>% 
+  dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated4$clinical_T, "[a-c]+")) %>%
+  dplyr::mutate(T_pathological = as.integer(substr(uncurated4$pathologic_T, 2, 2))) %>%
+  dplyr::mutate(T_substage_pathological = stringr::str_extract(uncurated4$pathologic_T, "[a-c]+")) %>%
   
-  dplyr::mutate(therapy_radiation_initial = uncurated$radiation_therapy) %>%
+  dplyr::mutate(therapy_radiation_initial = uncurated4$radiation_therapy) %>%
   # Radiation treatment given at initial treatment
   dplyr::mutate(therapy_radiation_initial = dplyr::case_when(
     therapy_radiation_initial == "YES" ~ 1,
     therapy_radiation_initial == "NO" ~ 0,
     therapy_radiation_initial == "" ~ NA_real_
   )) %>%
-  dplyr::mutate(other_treatment = uncurated$targeted_molecular_therapy) %>%
+  dplyr::mutate(other_treatment = uncurated4$targeted_molecular_therapy) %>%
   # Add additional treatments
   dplyr::mutate(other_treatment = dplyr::case_when(
-    other_treatment == "YES" ~ 1,
-    other_treatment == "NO" ~ 0,
-    other_treatment == "" ~ NA_real_
+    other_treatment == "YES" ~ "targeted_molecular_therapy",
+    other_treatment == "NO" ~ "",
+    other_treatment == "" ~ NA_character_
   )) %>%
   
   # Nx, N0 or N1 if findings in lymph nodes
-  dplyr::mutate(N_stage = uncurated$pathologic_N) %>%
+  dplyr::mutate(N_stage = uncurated4$pathologic_N) %>%
   dplyr::mutate(N_stage = dplyr::case_when(
     N_stage == "N0" ~ 0,
     N_stage == "N1" ~ 1,
     N_stage == "" ~ NA_real_
   ))
 
+rownames(curated4) <- curated4$sample_name
+# Exclusion of low quality samples
+curated4 <- curated4[which(!curated4$sample_name %in% c(PathReview, RNAdegrade)),]
 
-rownames(curated) <- curated$sample_name
-clinical_tcga <- curated
+# Append additional fields from the cgdsr 
+curated <- curated[rownames(curated4),]
+# Insert additional info where available from the cgdsr data extraction
+for(colname in c("alt_sample_name", "source_of_gleason", "ERG_fusion_GEX", "race", "tumor_purity_pathology", "tumor_purity_demixt", "tumor_purity_absolute", "AR_activity", "genome_altered")){
+	curated4[,colname] <- curated[,colname]
+}
+
+clinical_tcga <- curated4
 
 save(clinical_tcga, file = "data-raw/clinical_tcga.RData")
 
