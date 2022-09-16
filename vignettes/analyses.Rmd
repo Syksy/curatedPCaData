@@ -164,24 +164,6 @@ correlations <- cor(as.matrix(wideFormat(mae_tcga[,,"scores"])[,2:5]), use="na.o
 corrplot::corrplot(correlations)
 ```
 
-### TP53 and immune cell infiltration
-
-```{r tp53mut_and_cibersort}
-
-tp53 <- wideFormat(mae_tcga["TP53",,"mut"])
-
-
-
-```
-
-### Derived variables vs. end-points 
-
-```{r tcellinf_bcr}
-
-
-
-```
-
 ## Multi-omics
 
 ### Copy number deletion and gene expression
@@ -203,7 +185,7 @@ spop_tcga <- spop_tcga[spop_tcga[,"primary"] %in% rownames(colData(mae_tcga)[whi
 For example, it may be worth inspecting if the GISTIC2 discretized values {-2,-1,0,1,2} corresponding to deep deletion, shallow deletion, no somatic copy number change, low gain, and high gain, seem to correlate with the overall gene expression level:
 
 ```{r tcga_spop_gex_cna, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="SPOP GEX vs CNA in TCGA"}
-boxplot(spop_tcga[,"gex.rsem.log_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], main="TCGA CNA vs. GEX in SPOP", xlab="GISTIC2", ylab="Gene expression (FPKM)")
+boxplot(spop_tcga[,"gex.rsem.log_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], main="TCGA CNA vs. GEX in SPOP", xlab="GISTIC2", ylab="Gene expression")
 stripchart(spop_tcga[,"gex.rsem.log_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], pch=16, add=TRUE, vertical=TRUE)
 ```
 

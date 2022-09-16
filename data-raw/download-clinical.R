@@ -90,7 +90,7 @@ curated <- curated %>%
   dplyr::mutate(gleason_grade = uncurated$GLEASON_SCORE) %>%
   dplyr::mutate(gleason_major = uncurated$GLEASON_PATTERN_PRIMARY) %>%
   dplyr::mutate(gleason_minor = uncurated$GLEASON_PATTERN_SECONDARY) %>%
-  dplyr::mutate(source_of_gleason = "biopsy") %>%
+  #dplyr::mutate(source_of_gleason = "biopsy") %>%
   dplyr::mutate(grade_group = dplyr::case_when(
     gleason_grade == 6 ~ "<=6",
     gleason_major == 3 & gleason_minor == 4 ~ "3+4",
@@ -429,7 +429,7 @@ curated4 <- curated4 %>%
   dplyr::mutate(study_name = "TCGA") %>%
   dplyr::mutate(frozen_ffpe = uncurated4$is_ffpe) %>%
   dplyr::mutate(frozen_ffpe = dplyr::case_when(
-    frozen_ffpe %in% c("NO", "[Not Available]") ~ NA_character_,
+    frozen_ffpe == "NO" ~ NA_character_,
     frozen_ffpe == "" ~ "FFPE",
     TRUE ~ NA_character_
   )) %>%
@@ -438,7 +438,11 @@ curated4 <- curated4 %>%
     uncurated4$sample_type == "Primary Tumor" ~ "primary",
     uncurated4$sample_type == "Solid Tissue Normal" ~ "normal"
   )) %>% 
-  
+  dplyr::mutate(tissue_source = dplyr::case_when(
+    uncurated4$initial_pathologic_diagnosis_method == "Core needle biopsy" ~ "biopsy",
+    uncurated4$initial_pathologic_diagnosis_method == "Transurethral resection (TURBT)" ~ "TURP",
+    TRUE ~ NA_character_,    
+  )) %>%
   dplyr::mutate(patient_id = gsub("-",".",uncurated4$X_PATIENT)) %>%
   #dplyr::mutate(alt_sample_name = uncurated$OTHER_SAMPLE_ID) %>%
   dplyr::mutate(gleason_grade = uncurated4$gleason_score) %>%
@@ -467,9 +471,18 @@ curated4 <- curated4 %>%
   dplyr::mutate(overall_survival_status = uncurated4$OS)  %>% 
   #dplyr::mutate(days_to_overall_survival = as.numeric(uncurated4$OS.time) * 30.5) %>%
   dplyr::mutate(days_to_overall_survival = as.numeric(uncurated4$OS.time)) %>%
-  dplyr::mutate(disease_specific_recurrence_status = uncurated4$DSS) %>%
+  # DSS = Disease Specific Survival, not recurrence! PF = Progression Free
+  dplyr::mutate(days_to_disease_specific_recurrence = ifelse(
+  	is.na(uncurated4$days_to_first_biochemical_recurrence), 
+  	# No known BCR date
+  	uncurated4$days_to_last_followup, 
+  	# Known BCR date, taking first recurrence time
+  	uncurated4$days_to_first_biochemical_recurrence)) %>% 
+  dplyr::mutate(disease_specific_recurrence_status = as.integer(!is.na(uncurated4$"days_to_first_biochemical_recurrence"))) %>%
+  #dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated4$DSS.time)) %>% 
+  #dplyr::mutate(disease_specific_recurrence_status = uncurated4$DSS) %>%
   #dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated4$DSS.time) * 30.5) %>% 
-  dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated4$DSS.time)) %>% 
+  #dplyr::mutate(days_to_disease_specific_recurrence = as.numeric(uncurated4$DSS.time)) %>% 
   #dplyr::mutate(disease_free_interval_status = uncurated$DFI) %>%
   #dplyr::mutate(days_to_disease_free_interval = as.numeric(uncurated$DFI.time) * 30.5) %>% 
   #dplyr::mutate(progression_free_interval_status = uncurated$PFI) %>%
@@ -510,6 +523,14 @@ curated4 <- curated4 %>%
     N_stage == "N0" ~ 0,
     N_stage == "N1" ~ 1,
     N_stage == "" ~ NA_real_
+  )) %>%
+  dplyr::mutate(seminal_vesicle_invasion = as.integer(
+  	uncurated4$diagnostic_ct_abd_pelvis_result == "Extraprostatic Extension  Localized (e.g. seminal vesicles)" |
+  	uncurated4$diagnostic_mri_result %in% c("Extraprostatic Extension Localized (e.g. seminal vesicles)", "Extraprostatic Extension Localized (e.g. seminal vesicles)|Extraprostatic Extension (regional lymphadenopathy) [e.g. cN1]")
+  )) %>%
+  dplyr::mutate(angiolymphatic_invasion = as.integer(
+  	uncurated4$diagnostic_ct_abd_pelvis_result == "Extraprostatic Extension (regional lymphadenopathy)[e.g. cN1]" |
+  	uncurated4$diagnostic_mri_result == "Extraprostatic Extension Localized (e.g. seminal vesicles)|Extraprostatic Extension (regional lymphadenopathy) [e.g. cN1]"
   ))
 
 rownames(curated4) <- curated4$sample_name
@@ -519,7 +540,7 @@ curated4 <- curated4[which(!curated4$sample_name %in% c(PathReview, RNAdegrade))
 # Append additional fields from the cgdsr 
 curated <- curated[rownames(curated4),]
 # Insert additional info where available from the cgdsr data extraction
-for(colname in c("alt_sample_name", "source_of_gleason", "ERG_fusion_GEX", "race", "tumor_purity_pathology", "tumor_purity_demixt", "tumor_purity_absolute", "AR_activity", "genome_altered")){
+for(colname in c("alt_sample_name", "ERG_fusion_GEX", "race", "tumor_purity_pathology", "tumor_purity_demixt", "tumor_purity_absolute", "AR_activity", "genome_altered")){
 	curated4[,colname] <- curated[,colname]
 }
 
@@ -945,6 +966,11 @@ curated <- curated %>%
   dplyr::mutate(gleason_grade = dplyr::case_when(uncurated$'gleason score:ch1' == 'None' ~ NA_character_, 
                                                  TRUE ~ uncurated$'gleason score:ch1')) %>%
   dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>% 
+  dplyr::mutate(grade_group = dplyr::case_when(
+  	gleason_grade <= 1:6 ~ "<=6",
+  	gleason_grade == 7 ~ "7",
+  	gleason_grade >= 8:10 ~ ">=8"
+  )) %>%
   dplyr::mutate(race = 'caucasian') %>% 
   dplyr::mutate(tissue_source = 'prostatectomy') %>%
   dplyr::mutate(sample_type = dplyr::case_when(
@@ -1120,6 +1146,11 @@ curated <- curated %>%
 		uncurated$'Race:ch1' == 'African American' ~ 'african_american'
 	)) %>%
 	dplyr::mutate(gleason_grade = uncurated$'Gleason Grade:ch1') %>%
+	dplyr::mutate(grade_group = dplyr::case_when(
+		uncurated$'Gleason Grade:ch1' %in% 4:6 ~ "<=6",
+		uncurated$'Gleason Grade:ch1' == 7 ~ "7",
+		uncurated$'Gleason Grade:ch1' %in% 8:10 ~ ">=8"
+	)) %>%
 	# T_pathological & T_substage_pathological OR T_clinical & T_substage_clinical
 	dplyr::mutate(T_pathological = dplyr::case_when(
 		uncurated$'Tumor stage:ch1' %in% c('T2a','T2b') ~ 2, 
@@ -1377,6 +1408,11 @@ curated <- curated %>%
   	uncurated$TISSUE_SITE == "Unknown" ~ "other")) %>%
   dplyr::mutate(psa = uncurated$PSA) %>%
   dplyr::mutate(gleason_grade=as.numeric(uncurated$GLEASON_SCORE)) %>%
+  dplyr::mutate(grade_group = dplyr::case_when(
+  	uncurated$GLEASON_SCORE <= 6 ~ "<=6",
+  	uncurated$GLEASON_SCORE == 7 ~ "7",
+  	uncurated$GLEASON_SCORE >= 8 ~ ">=8"
+  )) %>%
   #dplyr::mutate(ar_score=uncurated$AR_SCORE) %>%
   dplyr::mutate(AR_activity=uncurated$AR_SCORE) %>%
   dplyr::mutate(genome_altered = uncurated$FRACTION_GENOME_ALTERED) %>%
@@ -1954,6 +1990,12 @@ curated2[1,'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurate
 # the datastes are merged in a way that preserves the order of the GEO sample indexes
 
 clinical_true = rbind(curated1[1:10, ], curated2[1, ], curated1[11:31, ])
+# Fix to grade groups
+clinical_true[which(clinical_true[,"gleason_grade"] <= 6),"grade_group"] <- "<=6"
+clinical_true[which(clinical_true[,"gleason_major"] == 3 & clinical_true[,"gleason_minor"] == 4),"grade_group"] <- "3+4"
+clinical_true[which(clinical_true[,"gleason_major"] == 4 & clinical_true[,"gleason_minor"] == 3),"grade_group"] <- "4+3"
+clinical_true[which(clinical_true[,"gleason_grade"] >= 8),"grade_group"] <- ">=8"
+
 
 save(clinical_true, file =  "./data-raw//clinical_true.RData")
 
@@ -1990,6 +2032,11 @@ curated <- curated %>%
                                                  uncurated$'gleason sum:ch1' == 'NA' ~ NA_character_, 
                                                  TRUE ~ uncurated$'gleason sum:ch1')) %>%
   dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>% 
+  dplyr::mutate(grade_group = dplyr::case_when(
+  	gleason_grade <= 6 ~ "<=6",
+  	gleason_grade == 7 ~ "7",
+  	gleason_grade >= 8 ~ "8",
+  )) %>%
   dplyr::mutate(race = dplyr::case_when(
                                         uncurated$"race:ch1" == 'African American' ~ 'african_american',
                                         uncurated$"race:ch1" == 'Caucasian' ~ 'caucasian',
