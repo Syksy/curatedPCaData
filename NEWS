@@ -1,7 +1,9 @@
-curatedPCaData v0.9.32 (Release date: 2022-09-14)
+curatedPCaData v0.9.32 (Release date: 2022-09-15)
 ==============
 
-* Clinical data revised for TCGA (xenabrowser-version) with a larger N subset
+* Clinical data revised for TCGA (xenabrowser-version) with a larger N subset appended by cBio's additional fields when available
+* Brief edits to other datasets' clinical metadata as well
+* Revised vignettes and new material
 
 curatedPCaData v0.9.31 (Release date: 2022-09-08)
 ==============
