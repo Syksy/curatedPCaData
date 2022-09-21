@@ -1,10 +1,10 @@
 ---
 title: "T cell immune profiling in PCa survival"
-output: html_document
-vignette: >
-  %\VignetteIndexEntry{T cell immune profiling in PCa survival}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+  html_document: default
+  pdf_document: default
+vignette: |
+  %\VignetteIndexEntry{T cell immune profiling in PCa survival} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
 ---
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -27,6 +27,17 @@ library(dplyr)
 library(stringr)    
 ```
 
+### Pull datasets from curatedPCaData
+```{r}
+mae_abida <- curatedPCaData::mae_abida
+mae_baca <- curatedPCaData::mae_baca
+mae_barbieri <- curatedPCaData::mae_barbieri
+mae_hieronymus <- curatedPCaData::mae_hieronymus
+mae_taylor <- curatedPCaData::mae_taylor
+mae_tcga <- curatedPCaData::mae_tcga
+```
+
+
 ### Effect of Treg infilteration on survival 
 
 Several studies have shown that high infiltration of T regulatory cells has a negative effect on survival. Treg infiltration from different immune deconvolution methods has been incorporated in curatedPCaData. Using the curatedPCaData package we can thus look at the effect of Treg infiltration on survival across different datasets. 
@@ -34,7 +45,7 @@ Several studies have shown that high infiltration of T regulatory cells has a ne
 
 ```{r,dpi=150, fig.width=10, fig.height=7,out.width="100%", fig.cap="Tregs vs BCR TCGA"}
 
-tcga<-as.data.frame(colData(mae_tcga))
+tcga<-as.data.frame(as.matrix(colData(mae_tcga)))
 
 clinical<-tcga[,c("sample_name","disease_specific_recurrence_status","days_to_disease_specific_recurrence")]
 clinical$days_to_disease_specific_recurrence=as.numeric(clinical$days_to_disease_specific_recurrence)
@@ -112,7 +123,7 @@ The bar plots below show the percentage of samples with different gleason grades
 
 ```{r,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs TCGA"}
 
-tcga<-as.data.frame(colData(mae_tcga))
+tcga<-as.data.frame(as.matrix(colData(mae_tcga)))
 clinical<-tcga[,c("sample_name","grade_group")]
 
 
