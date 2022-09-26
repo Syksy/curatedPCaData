@@ -387,12 +387,14 @@ ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom
 
 ```
 
-## T reg (CIBERSORT) vs. Gleasons over multiple datasets
+## T reg (CIBERSORT) vs. Gleason grade groups over multiple datasets
 
-```{r,dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Boxplots for T reg cells vs. Gleasons across multiple datasets"}
 
-# Aggregate T-reg data over multiple datasets and visualize as boxplots using ggplot2
-tregs <- as.data.frame(rbind(
+Aggregate T-reg data estimated using CIBERSORTx over multiple datasets and visualize as boxplots using ggplot2:
+
+```{r,dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Boxplots for T reg cells vs. Gleasons across multiple datasets estimated with CIBERSORT"}
+
+tregs_cibersort <- as.data.frame(rbind(
 	cbind(longFormat(mae_abida["T cells regulatory (Tregs)",,"cibersort"], colDataCols="grade_group"), dataset = "Abida et al."),
 	cbind(longFormat(mae_barbieri["T cells regulatory (Tregs)",,"cibersort"], colDataCols="grade_group"), dataset = "Barbieri et al."),
 	cbind(longFormat(mae_chandran["T cells regulatory (Tregs)",,"cibersort"], colDataCols="grade_group"), dataset = "Chandran et al."),
@@ -409,11 +411,79 @@ tregs <- as.data.frame(rbind(
 set.seed(1)
 library(ggplot2)
 
-p <- ggplot(tregs, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("T reg population (CIBERSORT)")
+p <- ggplot(tregs_cibersort, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("T reg population (CIBERSORT)")
 p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
 p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
 p <- p + facet_wrap(~dataset)
 p
+
+```
+
+## Rank based tests for differences in CIBERSORT
+
+Let us systematically test for differences between the Gleason groupings within each dataset for values estimated using CIBERSORT:
+
+```{r}
+
+by(tregs_cibersort, INDICES=tregs_cibersort$dataset, FUN=function(dat){
+	print(paste("====", unique(dat$dataset)[1], " / CIBERSORT ===="))
+	print("-- Kruskal-Wallis test --")
+	print(kruskal.test(value ~ grade_group, data = dat))
+	print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
+	print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
+})
+
+```
+
+
+
+
+## T reg (Quantiseq) vs. Gleason grade groups over multiple datasets
+
+Aggregate T-reg data estimated using Quantiseq over multiple datasets and visualize as boxplots using ggplot2
+
+```{r,dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Boxplots for T reg cells vs. Gleasons across multiple datasets estimated with Quantiseq"}
+
+tregs_quantiseq <- as.data.frame(rbind(
+	cbind(longFormat(mae_abida["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Abida et al."),
+	cbind(longFormat(mae_barbieri["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Barbieri et al."),
+	cbind(longFormat(mae_chandran["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Chandran et al."),
+	cbind(longFormat(mae_friedrich["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Friedrich et al."),
+	cbind(longFormat(mae_icgcca["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "ICGC Canadian"),
+	cbind(longFormat(mae_igc["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "IGC"),
+	cbind(longFormat(mae_kunderfranco["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Kunderfranco et al."),
+	cbind(longFormat(mae_taylor["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Taylor et al."),
+	cbind(longFormat(mae_tcga["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "TCGA"),
+	cbind(longFormat(mae_true["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "True et al."),
+	cbind(longFormat(mae_wallace["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Wallace et al.")
+))
+	
+set.seed(1)
+library(ggplot2)
+
+p <- ggplot(tregs_quantiseq, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("T reg population (Quantiseq)")
+p <- p + ylim(0, 1)
+p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
+p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
+p <- p + facet_wrap(~dataset)
+p
+
+```
+
+
+## Rank based tests for differences in Quantiseq
+
+Let us systematically test for differences between the Gleason groupings within each dataset for values estimated using CIBERSORT:
+
+```{r}
+
+by(tregs_quantiseq, INDICES=tregs_quantiseq$dataset, FUN=function(dat){
+	print(paste("\n====", unique(dat$dataset)[1], " / Quantiseq ====\n"))
+	print("-- Kruskal-Wallis test --")
+	print(kruskal.test(value ~ grade_group, data = dat))
+	print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
+	print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
+})
 
 ```
 
