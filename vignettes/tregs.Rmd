@@ -425,24 +425,24 @@ Let us systematically test for differences between the Gleason groupings within 
 
 ```{r}
 
-by(tregs_cibersort, INDICES=tregs_cibersort$dataset, FUN=function(dat){
-	print(paste("====", unique(dat$dataset)[1], " / CIBERSORT ===="))
+invisible(by(tregs_cibersort, INDICES=tregs_cibersort$dataset, FUN=function(dat){
+	cat(paste("\n====", unique(dat$dataset)[1], " / CIBERSORT ====\n"))
 	print("-- Kruskal-Wallis test --")
 	print(kruskal.test(value ~ grade_group, data = dat))
 	print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
 	print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
-})
+}))
 
 ```
 
 
 
 
-## T reg (Quantiseq) vs. Gleason grade groups over multiple datasets
+## T reg (quanTIseq) vs. Gleason grade groups over multiple datasets
 
-Aggregate T-reg data estimated using Quantiseq over multiple datasets and visualize as boxplots using ggplot2
+Aggregate T-reg data estimated using quanTIseq over multiple datasets and visualize as boxplots using ggplot2
 
-```{r,dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Boxplots for T reg cells vs. Gleasons across multiple datasets estimated with Quantiseq"}
+```{r,dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Boxplots for T reg cells vs. Gleasons across multiple datasets estimated with quanTIseq"}
 
 tregs_quantiseq <- as.data.frame(rbind(
 	cbind(longFormat(mae_abida["T cell regulatory (Tregs)",,"quantiseq"], colDataCols="grade_group"), dataset = "Abida et al."),
@@ -477,13 +477,13 @@ Let us systematically test for differences between the Gleason groupings within 
 
 ```{r}
 
-by(tregs_quantiseq, INDICES=tregs_quantiseq$dataset, FUN=function(dat){
-	print(paste("\n====", unique(dat$dataset)[1], " / Quantiseq ====\n"))
+invisible(by(tregs_quantiseq, INDICES=tregs_quantiseq$dataset, FUN=function(dat){
+	cat(paste("\n====", unique(dat$dataset)[1], " / Quantiseq ====\n"))
 	print("-- Kruskal-Wallis test --")
 	print(kruskal.test(value ~ grade_group, data = dat))
 	print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
 	print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
-})
+}))
 
 ```
 
