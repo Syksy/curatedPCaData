@@ -461,7 +461,7 @@ tregs_quantiseq <- as.data.frame(rbind(
 set.seed(1)
 library(ggplot2)
 
-p <- ggplot(tregs_quantiseq, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("T reg population (Quantiseq)")
+p <- ggplot(tregs_quantiseq, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("T reg population (quanTIseq)")
 p <- p + ylim(0, 1)
 p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
 p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))

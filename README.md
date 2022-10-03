@@ -24,8 +24,8 @@ terminal / command prompt while in the root of the project:
 
     R CMD build curatedPCaData
 
-One install the self-built tarball or download the a premade latest
-package tarball from the releases page and install it with:
+It is possible to install the self-built tarball or download a premade
+latest package with (see Releases-page on GitHub):
 
     R CMD INSTALL curatedPCaData_x.y.z.tar.gz
 
@@ -42,16 +42,16 @@ Simple example use of curated datasets and ’omics there-in:
     ## A MultiAssayExperiment object of 10 listed
     ##  experiments with user-defined names and respective classes.
     ##  Containing an ExperimentList class object of length 10:
-    ##  [1] cna.gistic: matrix with 19645 rows and 322 columns
-    ##  [2] gex.fpkm: matrix with 58387 rows and 369 columns
-    ##  [3] mut: RaggedExperiment with 29286 rows and 320 columns
-    ##  [4] cibersort: matrix with 22 rows and 369 columns
-    ##  [5] xcell: matrix with 39 rows and 369 columns
-    ##  [6] epic: matrix with 8 rows and 369 columns
-    ##  [7] quantiseq: matrix with 11 rows and 369 columns
-    ##  [8] mcp: matrix with 11 rows and 369 columns
-    ##  [9] scores: matrix with 4 rows and 369 columns
-    ##  [10] purity: matrix with 1 rows and 320 columns
+    ##  [1] cna.gistic: matrix with 23151 rows and 404 columns
+    ##  [2] gex.rsem.log: matrix with 19658 rows and 461 columns
+    ##  [3] mut: RaggedExperiment with 15389 rows and 371 columns
+    ##  [4] cibersort: matrix with 22 rows and 417 columns
+    ##  [5] xcell: matrix with 39 rows and 417 columns
+    ##  [6] epic: matrix with 8 rows and 417 columns
+    ##  [7] quantiseq: matrix with 11 rows and 417 columns
+    ##  [8] mcp: matrix with 11 rows and 417 columns
+    ##  [9] scores: matrix with 4 rows and 417 columns
+    ##  [10] estimate: data.frame with 4 rows and 417 columns
     ## Functionality:
     ##  experiments() - obtain the ExperimentList instance
     ##  colData() - the primary/phenotype DataFrame
@@ -61,42 +61,43 @@ Simple example use of curated datasets and ’omics there-in:
     ##  assays() - convert ExperimentList to a SimpleList of matrices
     ##  exportClass() - save data to flat files
 
-    curatedPCaData::mae_tcga[["gex.fpkm"]][1:4,1:4]
-    ##           TCGA.EJ.5505.01 TCGA.HC.A8D0.01 TCGA.VN.A88I.01 TCGA.KK.A8IA.01
-    ## 5_8S_rRNA          0.0000          0.0000          0.0000          0.0000
-    ## 5S_rRNA            0.0000          0.0000          0.0000          0.0000
-    ## 7SK                0.0000          0.0000          0.0000          0.0000
-    ## A1BG               9.5252         10.0481         10.9035         10.7319
+    curatedPCaData::mae_tcga[["gex.rsem.log"]][1:4,1:4]
+    ##           TCGA.G9.6348.01 TCGA.CH.5766.01 TCGA.EJ.A65G.01 TCGA.EJ.5527.01
+    ## ARHGEF10L          8.8729          8.5581          9.2085          8.7699
+    ## HIF3A              5.9049          4.9716          6.7795          5.5978
+    ## RNF17              0.4008          0.7574          0.0000          2.5554
+    ## RNF10             12.3538         12.2950         11.9701         11.7983
+
     curatedPCaData::mae_tcga[["cna.gistic"]][1:4,1:4]
-    ##       TCGA.HC.A632.01 TCGA.HC.8213.01 TCGA.HC.8216.01 TCGA.EJ.A65G.01
-    ## A1BG                0               0               0               0
-    ## A1CF                0               0               0               0
-    ## A2M                -1               0               0               0
-    ## A2ML1              -1               0               0               0
+    ##         TCGA.2A.A8VL.01 TCGA.2A.A8VO.01 TCGA.2A.A8VT.01 TCGA.2A.A8VV.01
+    ## ACAP3                 0               0               0               0
+    ## ACTRT2                0               0               0               0
+    ## AGRN                  0               0               0               0
+    ## ANKRD65               0               0               0               0
+
     MultiAssayExperiment::colData(curatedPCaData::mae_tcga)[1:3,1:5]
     ## DataFrame with 3 rows and 5 columns
     ##               study_name   patient_id     sample_name        alt_sample_name overall_survival_status
-    ##              <character>  <character>     <character>            <character>               <numeric>
-    ## TCGA.EJ.5502        TCGA TCGA.EJ.5502 TCGA.EJ.5502.01 d36a0b54-6e09-4ee2-9..                       0
-    ## TCGA.YJ.A8SW        TCGA TCGA.YJ.A8SW TCGA.YJ.A8SW.01 8A96A7A8-0413-42B9-9..                       0
-    ## TCGA.EJ.5525        TCGA TCGA.EJ.5525 TCGA.EJ.5525.01 351af15c-b213-4621-8..                       0
-
+    ##              <character>  <character>     <character>            <character>               <integer>
+    ## TCGA.2A.A8VL        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
+    ## TCGA.2A.A8VO        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
+    ## TCGA.2A.A8VT        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
 
     curatedPCaData::mae_taylor
     ## A MultiAssayExperiment object of 11 listed
     ##  experiments with user-defined names and respective classes.
     ##  Containing an ExperimentList class object of length 11:
-    ##  [1] cna.gistic: data.frame with 16715 rows and 194 columns
-    ##  [2] cna.logr: matrix with 22419 rows and 218 columns
+    ##  [1] cna.gistic: matrix with 17832 rows and 194 columns
+    ##  [2] cna.logr: matrix with 18062 rows and 218 columns
     ##  [3] gex.rma: matrix with 17410 rows and 179 columns
-    ##  [4] mut: RaggedExperiment with 319 rows and 43 columns
-    ##  [5] xcell: matrix with 39 rows and 179 columns
-    ##  [6] epic: matrix with 8 rows and 179 columns
-    ##  [7] quantiseq: matrix with 11 rows and 179 columns
-    ##  [8] mcp: matrix with 11 rows and 179 columns
-    ##  [9] scores: matrix with 4 rows and 179 columns
-    ##  [10] purity: matrix with 1 rows and 150 columns
-    ##  [11] cibersort: matrix with 22 rows and 179 columns
+    ##  [4] mut: RaggedExperiment with 90 rows and 43 columns
+    ##  [5] cibersort: matrix with 22 rows and 179 columns
+    ##  [6] xcell: matrix with 39 rows and 179 columns
+    ##  [7] epic: matrix with 8 rows and 179 columns
+    ##  [8] quantiseq: matrix with 11 rows and 179 columns
+    ##  [9] mcp: matrix with 11 rows and 179 columns
+    ##  [10] scores: matrix with 4 rows and 179 columns
+    ##  [11] estimate: data.frame with 4 rows and 179 columns
     ## Functionality:
     ##  experiments() - obtain the ExperimentList instance
     ##  colData() - the primary/phenotype DataFrame
@@ -105,17 +106,19 @@ Simple example use of curated datasets and ’omics there-in:
     ##  *Format() - convert into a long or wide DataFrame
     ##  assays() - convert ExperimentList to a SimpleList of matrices
     ##  exportClass() - save data to flat files
+
     curatedPCaData::mae_sun
-    ## A MultiAssayExperiment object of 7 listed
+    ## A MultiAssayExperiment object of 8 listed
     ##  experiments with user-defined names and respective classes.
-    ##  Containing an ExperimentList class object of length 7:
-    ##  [1] gex.rma: matrix with 12798 rows and 79 columns
+    ##  Containing an ExperimentList class object of length 8:
+    ##  [1] gex.rma: matrix with 12784 rows and 79 columns
     ##  [2] cibersort: matrix with 22 rows and 79 columns
     ##  [3] xcell: matrix with 39 rows and 79 columns
     ##  [4] epic: matrix with 8 rows and 79 columns
     ##  [5] quantiseq: matrix with 11 rows and 79 columns
     ##  [6] mcp: matrix with 11 rows and 79 columns
     ##  [7] scores: matrix with 4 rows and 79 columns
+    ##  [8] estimate: data.frame with 4 rows and 79 columns
     ## Functionality:
     ##  experiments() - obtain the ExperimentList instance
     ##  colData() - the primary/phenotype DataFrame
