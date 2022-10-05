@@ -35,6 +35,9 @@ mae_barbieri <- curatedPCaData::mae_barbieri
 mae_hieronymus <- curatedPCaData::mae_hieronymus
 mae_taylor <- curatedPCaData::mae_taylor
 mae_tcga <- curatedPCaData::mae_tcga
+mae_igc<-curatedPCaData::mae_igc
+mae_weiner<-curatedPCaData::mae_weiner
+mae_icgcca<-curatedPCaData::mae_icgcca
 ```
 
 
