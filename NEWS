@@ -1,5 +1,17 @@
+curatedPCaData v0.9.33 (Release date: 2022-09-27)
+==============
+
+Changes:
+
+* Revised vignettes
+* Revised parameters for running immunedeconv (esp. quanTIseq)
+* Adding ESTIMATE from immunedeconv >= v2.1.0
+* Subset to colData sample_name-column when adding new MAE slots (i.e. new assay/platform types)
+
 curatedPCaData v0.9.32 (Release date: 2022-09-15)
 ==============
+
+Changes:
 
 * Clinical data revised for TCGA (xenabrowser-version) with a larger N subset appended by cBio's additional fields when available
 * Brief edits to other datasets' clinical metadata as well
@@ -8,16 +20,22 @@ curatedPCaData v0.9.32 (Release date: 2022-09-15)
 curatedPCaData v0.9.31 (Release date: 2022-09-08)
 ==============
 
+Changes:
+
 * CNA GISTIC for Hieronymus et al. replacing the old log-ratios MAE slot
 * Fixes in landscapes.Rmd
 
 curatedPCaData v0.9.30 (Release date: 2022-09-06)
 ==============
 
+Changes:
+
 * CNA landscape plots (original code thanks to Mike)
 
 curatedPCaData v0.9.29 (Release date: 2022-09-05)
 ==============
+
+Changes:
 
 * cBioPortal processing pipeline revised
 * MAEs and corresponding raw data revised
@@ -25,6 +43,8 @@ curatedPCaData v0.9.29 (Release date: 2022-09-05)
 
 curatedPCaData v0.9.28 (Release date: 2022-07-25)
 ==============
+
+Changes:
 
 * Reprocessed data
 
