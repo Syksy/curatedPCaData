@@ -20,6 +20,8 @@ addSlotMAE <- function(
 	nams <- names(vals)
 	# Iterate over ellipsis slot additions
 	for(nam in nams){
+		# Subset to samples available on the sample_name of metadata
+		vals[[nam]] <- vals[[nam]][,which(colnames(vals[[nam]]) %in% MultiAssayExperiment::colData(mae)[,"sample_name"])]
 		# New slot
 		if(!nam %in% names(mae)){
 			eval(parse(text=paste("mae <- c(mae,", nam,"=vals[[nam]])", collapse="")))
@@ -31,6 +33,18 @@ addSlotMAE <- function(
 	# Return the MultiAssayExperiment object
 	mae
 }
+
+# Notes from the immunedeconv-package:
+# https://omnideconv.org/immunedeconv/articles/immunedeconv.html
+#
+# "Input Data
+# The input data is a gene × sample gene expression matrix. In general values should be
+# 
+# - TPM-normalized
+# - not log-transformed.
+# For xCell and MCP-counter this is not so important. xCell works on the ranks of the gene expression only and MCP-counter sums up the gene expression values."
+#
+# -> While not TPM-normalized, for most data we take the 2^x if data has since been log-transformed (i.e. most array normalization methods have done this by default)
 
 ## AGGREGATE LOAD
 ## Load temporary MAE-objects so the whole script can be run and output saved over all iterated 
@@ -423,21 +437,21 @@ if(FALSE){
 }
 
 # Chandran et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_chandran[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_chandran[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_chandran <- addSlotMAE(mae_chandran, epic = tmp)
 
 # Friedrich et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_friedrich[["gex.logq"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_friedrich[["gex.logq"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_friedrich <- addSlotMAE(mae_friedrich, epic = tmp)
 
 # ICGCCA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_icgcca[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_icgcca[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -458,7 +472,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_ren <- addSlotMAE(mae_ren, epic = tmp)
 
 # Sun et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_sun[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -466,7 +480,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_sun <- addSlotMAE(mae_sun, epic = tmp)
 
 # Taylor et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_taylor[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_taylor[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -474,7 +488,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_taylor <- addSlotMAE(mae_taylor, epic = tmp)
 
 # TCGA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.rsem.log"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_tcga[["gex.rsem.log"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -482,7 +496,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_tcga <- addSlotMAE(mae_tcga, epic = tmp)
 
 # Wang et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_wang[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_wang[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -490,7 +504,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_wang <- addSlotMAE(mae_wang, epic = tmp)
 
 # Kim et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_kim[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_kim[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -498,28 +512,28 @@ tmp <- as.matrix(tmp[,-1])
 mae_kim <- addSlotMAE(mae_kim, epic = tmp)
 
 # Wallace et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_wallace[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_wallace[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_wallace <- addSlotMAE(mae_wallace, epic = tmp)
 
 # IGC
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_igc[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_igc[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_igc <- addSlotMAE(mae_igc, epic = tmp)
 
 # Wang et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_wang[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_wang[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_wang <- addSlotMAE(mae_wang, epic = tmp)
 
 # Weiner et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_weiner[["gex.rma"]], method="epic"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_weiner[["gex.rma"]], method="epic"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -556,35 +570,35 @@ tmp <- as.matrix(tmp[,-1])
 mae_barbieri <- addSlotMAE(mae_barbieri, quantiseq = tmp)
 
 # Barwick et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_barwick[["gex.logq"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_barwick[["gex.logq"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_barwick <- addSlotMAE(mae_barwick, quantiseq = tmp)
 
 # Chandran et al.  
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_chandran[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_chandran[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_chandran <- addSlotMAE(mae_chandran, quantiseq = tmp)
 
 # Friedrich et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_friedrich[["gex.logq"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_friedrich[["gex.logq"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_friedrich <- addSlotMAE(mae_friedrich, quantiseq = tmp)
 
 # ICGCCA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_icgcca[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_icgcca[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_icgcca <- addSlotMAE(mae_icgcca, quantiseq = tmp)
 
 # Kunderfranco et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_kunderfranco[["gex.logr"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_kunderfranco[["gex.logr"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -598,7 +612,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_ren <- addSlotMAE(mae_ren, quantiseq = tmp)
 
 # Sun et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_sun[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_sun[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -606,7 +620,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_sun <- addSlotMAE(mae_sun, quantiseq = tmp)
 
 # Taylor et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_taylor[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_taylor[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -614,7 +628,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_taylor <- addSlotMAE(mae_taylor, quantiseq = tmp)
 
 # TCGA
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_tcga[["gex.rsem.log"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_tcga[["gex.rsem.log"]], method="quantiseq"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -622,7 +636,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_tcga <- addSlotMAE(mae_tcga, quantiseq = tmp)
 
 # Wang et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_wang[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_wang[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -630,7 +644,7 @@ tmp <- as.matrix(tmp[,-1])
 mae_wang <- addSlotMAE(mae_wang, quantiseq = tmp)
 
 # Kim et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_kim[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_kim[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -638,35 +652,35 @@ tmp <- as.matrix(tmp[,-1])
 mae_kim <- addSlotMAE(mae_kim, quantiseq = tmp)
 
 # Wallace et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_wallace[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_wallace[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_wallace <- addSlotMAE(mae_wallace, quantiseq = tmp)
 
 # IGC
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_igc[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_igc[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_igc <- addSlotMAE(mae_igc, quantiseq = tmp)
 
 # Wang et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_wang[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_wang[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_wang <- addSlotMAE(mae_wang, quantiseq = tmp)
 
 # Weiner et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_weiner[["gex.rma"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(2^mae_weiner[["gex.rma"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_weiner <- addSlotMAE(mae_weiner, quantiseq = tmp)
 
 # True et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_true[["gex.logr"]], method="quantiseq"))
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_true[["gex.logr"]], method="quantiseq", arrays=TRUE))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
@@ -724,6 +738,21 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_icgcca <- addSlotMAE(mae_icgcca, mcp = tmp)
 
+# IGC
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_igc[["gex.rma"]], method="mcp_counter"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+mae_igc <- addSlotMAE(mae_igc, mcp = tmp)
+
+# Kim et al.
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_kim[["gex.rma"]], method="mcp_counter"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+# Concatenate the new results to the MAE-object
+mae_kim <- addSlotMAE(mae_kim, mcp = tmp)
+
 # Kunderfranco et al.
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_kunderfranco[["gex.logr"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
@@ -762,6 +791,13 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_tcga <- addSlotMAE(mae_tcga, mcp = tmp)
 
+# True et al.
+tmp <- as.data.frame(immunedeconv::deconvolute(mae_true[["gex.logr"]], method="mcp_counter"))
+rownames(tmp) <- tmp$cell_type
+# Omit cell type column and store only data of cell type populations
+tmp <- as.matrix(tmp[,-1])
+mae_true <- addSlotMAE(mae_true, mcp = tmp)
+
 # Wang et al.
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_wang[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
@@ -770,27 +806,12 @@ tmp <- as.matrix(tmp[,-1])
 # Concatenate the new results to the MAE-object
 mae_wang <- addSlotMAE(mae_wang, mcp = tmp)
 
-# Kim et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_kim[["gex.rma"]], method="mcp_counter"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-# Concatenate the new results to the MAE-object
-mae_kim <- addSlotMAE(mae_kim, mcp = tmp)
-
 # Wallace et al.
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_wallace[["gex.rma"]], method="mcp_counter"))
 rownames(tmp) <- tmp$cell_type
 # Omit cell type column and store only data of cell type populations
 tmp <- as.matrix(tmp[,-1])
 mae_wallace <- addSlotMAE(mae_wallace, mcp = tmp)
-
-# IGC
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_igc[["gex.rma"]], method="mcp_counter"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_igc <- addSlotMAE(mae_igc, mcp = tmp)
 
 # Weiner et al.
 tmp <- as.data.frame(immunedeconv::deconvolute(mae_weiner[["gex.rma"]], method="mcp_counter"))
@@ -799,12 +820,84 @@ rownames(tmp) <- tmp$cell_type
 tmp <- as.matrix(tmp[,-1])
 mae_weiner <- addSlotMAE(mae_weiner, mcp = tmp)
 
+
+
+
+#####
+##
+## ESTIMATE
+## (Available from immunedeconv >= 2.1.0, built from GitHub
+##
+#####
+
+# Abida et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_abida[["gex.relz"]]))
+mae_abida <- addSlotMAE(mae_abida, estimate = tmp)
+
+# Barbieri et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_barbieri[["gex.relz"]]))
+mae_barbieri <- addSlotMAE(mae_barbieri, estimate = tmp)
+
+# Barwick et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_barwick[["gex.logq"]]))
+mae_barwick <- addSlotMAE(mae_barwick, estimate = tmp)
+
+# Chandran et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_chandran[["gex.rma"]]))
+mae_chandran <- addSlotMAE(mae_chandran, estimate = tmp)
+
+# Friedrich et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_friedrich[["gex.logq"]]))
+mae_friedrich <- addSlotMAE(mae_friedrich, estimate = tmp)
+
+# ICGCCA
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_icgcca[["gex.rma"]]))
+mae_icgcca <- addSlotMAE(mae_icgcca, estimate = tmp)
+
+# IGC
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_igc[["gex.rma"]]))
+mae_igc <- addSlotMAE(mae_igc, estimate = tmp)
+
+# Kim et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_kim[["gex.rma"]]))
+mae_kim <- addSlotMAE(mae_kim, estimate = tmp)
+
+# Kunderfranco et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_kunderfranco[["gex.logr"]]))
+mae_kunderfranco <- addSlotMAE(mae_kunderfranco, estimate = tmp)
+
+# Ren et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_ren[["gex.relz"]]))
+mae_ren <- addSlotMAE(mae_ren, estimate = tmp)
+
+# Sun et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_sun[["gex.rma"]]))
+mae_sun <- addSlotMAE(mae_sun, estimate = tmp)
+
+# Taylor et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_taylor[["gex.rma"]]))
+mae_taylor <- addSlotMAE(mae_taylor, estimate = tmp)
+
+# TCGA
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_tcga[["gex.rsem.log"]]))
+mae_tcga <- addSlotMAE(mae_tcga, estimate = tmp)
+
 # True et al.
-tmp <- as.data.frame(immunedeconv::deconvolute(mae_true[["gex.logr"]], method="mcp_counter"))
-rownames(tmp) <- tmp$cell_type
-# Omit cell type column and store only data of cell type populations
-tmp <- as.matrix(tmp[,-1])
-mae_true <- addSlotMAE(mae_true, mcp = tmp)
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_true[["gex.logr"]]))
+mae_true <- addSlotMAE(mae_true, estimate = tmp)
+
+# Wang et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_wang[["gex.rma"]]))
+mae_wang <- addSlotMAE(mae_wang, estimate = tmp)
+
+# Wallace et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_wallace[["gex.rma"]]))
+mae_wallace <- addSlotMAE(mae_wallace, estimate = tmp)
+
+# Weiner et al.
+tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_weiner[["gex.rma"]]))
+mae_weiner <- addSlotMAE(mae_weiner, estimate = tmp)
+
 
 
 

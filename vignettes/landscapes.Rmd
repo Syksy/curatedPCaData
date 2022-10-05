@@ -8,7 +8,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 
 ## Functions and Rmd from Mike Orman
 
