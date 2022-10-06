@@ -7,7 +7,7 @@
 \format{
 A MAE object spanning 104 tumor samples
 \describe{
-  \item{cna.logr}{matrix with 22895 rows and 104 columns, for the log-ratios for copy number alteration data}
+  \item{cna.gistic}{matrix with 18026 rows and 104 columns, from GISTIC discretized copy number alteration calls}
 }
 }
 \source{

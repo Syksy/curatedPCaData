@@ -7,14 +7,14 @@
 \format{
 An MAE object spanning 266 men with prostate cancer
 \describe{
-\item{gex.rma}{matrix with 17638 rows and 266 columns, of gene expression data}
-\item{cibersort}{matrix with 22 rows and 266 columns, of cibersort based deconvolution data}
-\item{xcell}{matrix with 39 rows and 266 columns, of xcell based deconvolution data}
-\item{epic}{matrix with 8 rows and 266 columns, of epic based deconvolution data}
-\item{mcp}{matrix with 11 rows and 266 columns, of mcp-counter based deconvolution data}
-\item{quantiseq}{matrix with 11 rows and 266 columns, of quantiseq based deconvolution data}
-\item{scores}{matrix with 2 rows and 266 columns, of Prolaris risk scores and AR scores}
-
+  \item{gex.rma}{matrix with 17638 rows and 266 columns, of gene expression data}
+  \item{cibersort}{matrix with 22 rows and 266 columns, of cibersort based deconvolution data}
+  \item{xcell}{matrix with 39 rows and 266 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 266 columns, of epic based deconvolution data}
+  \item{mcp}{matrix with 11 rows and 266 columns, of mcp-counter based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 266 columns, of quantiseq based deconvolution data}
+  \item{scores}{matrix with 2 rows and 266 columns, of risk scores and AR scores}
+  \item{estimate}{data.frame with 4 rows and 266 columns, of cell types based on ESTIMATE method}
 }
 }
 \source{

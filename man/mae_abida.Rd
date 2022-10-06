@@ -7,15 +7,16 @@
 \format{
 A MAE object spanning 444 castrate resistant prostate cancer samples.
 \describe{
-   \item{cna.gistic}{a matrix with 18359 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
-   \item{gex.relz}{a matrix with 18376 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
-   \item{mut}{RaggedExperiment with 60148 rows and 444 columns, mutation data from cbioportal}
-   \item{cibersort}{matrix with 22 rows and 266 columns, of cibersort based deconvolution data}
-   \item{xcell}{matrix with 39 rows and 266 columns, of xcell based deconvolution data}
-   \item{epic}{matrix with 8 rows and 266 columns, of epic based deconvolution data}
-   \item{quantiseq}{matrix with 11 rows and 266 columns, of quantiseq based deconvolution data}
-   \item{mcp}{matrix with 11 rows and 266 columns, of mcp-counter based deconvolution data}
-   \item{scores}{matrix with 2 rows and 266 columns, of Prolaris risk scores and AR scores}
+   \item{cna.gistic}{matrix with 20291 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
+   \item{gex.relz}{matrix with 18971 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
+   \item{mut}{RaggedExperiment with 63184 rows and 444 columns, mutation data from cbioportal}
+   \item{cibersort}{matrix with 22 rows and 261 columns, of cibersort based deconvolution data}
+   \item{xcell}{matrix with 39 rows and 261 columns, of xcell based deconvolution data}
+   \item{epic}{matrix with 8 rows and 261 columns, of epic based deconvolution data}
+   \item{quantiseq}{matrix with 11 rows and 261 columns, of quantiseq based deconvolution data}
+   \item{mcp}{mmatrix with 11 rows and 261 columns, of mcp-counter based deconvolution data}
+   \item{scores}{matrix with 4 rows and 261 columns, of risk scores and AR scores}
+   \item{estimate}{data.frame with 4 rows and 261 columns, of cell types based on ESTIMATE method}
    
 }
 }
