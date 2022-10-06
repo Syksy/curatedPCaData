@@ -8,10 +8,11 @@
 A MAE object spanning 146 prostate cancer samples.
 \describe{
   \item{gex.logq}{matrix with 482 rows and 146 columns, for the log-quantile normalized gene expression data}
-  \item{cibersort}{matrix with 22 rows and 146 columns, of cibersort based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 146 columns, of quantiseq based deconvolution data}
-  \item{mcp}{matrix with 4 rows and 146 columns, of mcp-counter based deconvolution data}
-  \item{scores}{matrix with 2 rows and 146 columns, of Prolaris risk scores and AR scores}
+  \item{cibersort}{matrix with 22 rows and 139 columns, of cibersort based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 139 columns, of quantiseq based deconvolution data}
+  \item{mcp}{matrix with 4 rows and 139 columns, of mcp-counter based deconvolution data}
+  \item{scores}{matrix with 3 rows and 139 columns, of risk scores and AR scores}
+  \item{estimate}{data.frame with 4 rows and 139 columns, of cell types based on ESTIMATE method}
 }
 }
 \source{
