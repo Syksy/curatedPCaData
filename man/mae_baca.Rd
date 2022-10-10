@@ -7,8 +7,8 @@
 \format{
 A MAE object spanning 56 prostate cancer samples.
 \describe{
-  \item{cna.gistic}{matrix with 17387 rows and 56 columns, from GISTIC discretized copy number alteration calls.}
-  \item{mut}{RaggedExperiment with 2622 rows and 57 columns, mutation data from cbioportal}
+  \item{cna.gistic}{matrix with 20124 rows and 56 columns, from GISTIC discretized copy number alteration calls.}
+  \item{mut}{RaggedExperiment with 2734 rows and 57 columns, mutation data from cbioportal}
 }
 }
 \source{

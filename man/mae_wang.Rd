@@ -13,7 +13,8 @@ An MAE object spanning 148 men with prostate cancer
   \item{epic}{matrix with 8 rows and 148 columns, of epic based deconvolution data}
   \item{quantiseq}{matrix with 11 rows and 148 columns, of quantiseq based deconvolution data}
   \item{mcp}{matrix with 11 rows and 148 columns, of mcp-counter based deconvolution data}
-  \item{scores}{matrix with 2 rows and 148 columns, of Prolaris risk scores and AR scores}
+  \item{scores}{matrix with 4 rows and 148 columns, of risk scores and AR scores}
+  \item{estimate}{data.frame with 4 rows and 148 columns, of cell types based on ESTIMATE method}
 }
 }
 \source{
