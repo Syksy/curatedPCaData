@@ -272,3 +272,147 @@ unwrap <- function(
 			unlist(lapply(strsplit(z, split=valsep, fixed=TRUE), FUN=function(q) { q[2] }))
 	}))
 }
+
+#' A wrapper function for sorting alterations in oncoprint
+#'
+#' @param alt_matrix Alteration matrix of copy-number,mutations and ERG fusions
+#'
+#' @return A sorted alteration matrix for oncoprints
+#'
+#' @examples
+#' wrapper_sortonco(alt_matrix)
+#'
+#' @noRd
+#' @keywords internal
+
+wrapper_sortonco<-function(alt_matrix){
+  
+  order<-c("Amplification;fusion","Amplification;Missense Mutation;fusion","Amplification;Missense Mutation","Amplification;Frameshift Mutation;fusion",
+           "Amplification;Frameshift Mutation","Amplification;Splice Mutation;fusion","Amplification;Splice Mutation",
+           "Amplification;Inframe Mutation;fusion","Amplification;Inframe Mutation",
+           "Deep deletion;fusion","Deep deletion;Missense Mutation;fusion","Deep deletion;Missense Mutation","Deep deletion;Frameshift Mutation;fusion",
+           "Deep deletion;Frameshift Mutation","Deep deletion;Splice Mutation;fusion","Deep deletion;Splice Mutation",
+           "Deep deletion;Inframe Mutation;fusion","Deep deletion;Inframe Mutation",
+           "Gain;fusion","Gain;Missense Mutation;fusion","Gain;Missense Mutation","Gain;Frameshift Mutation;fusion","Gain;Frameshift Mutation",
+           "Gain;Splice Mutation;fusion","Gain;Splice Mutation","Gain;Inframe Mutation;fusion","Gain;Inframe Mutation",
+           "Shallow deletion;fusion","Shallow deletion;Missense Mutation;fusion","Shallow deletion;Missense Mutation","Shallow deletion;Frameshift Mutation;fusion",
+           "Shallow deletion;Frameshift Mutation","Shallow deletion;Splice Mutation","Shallow deletion;Splice Mutation;fusion",
+           "Shallow deletion;Inframe Mutation;fusion","Shallow deletion;Inframe Mutation",";fusion","Amplification;","Amplification",
+           "Deep deletion;","Deep deletion","Gain;","Gain","Shallow deletion;","Shallow deletion",
+           ";Missense Mutation;fusion",";Missense Mutation",";Frameshift Mutation;fusion",";Frameshift Mutation",
+           ";Splice Mutation;fusion",";Splice Mutation",";Inframe Mutation;fusion",";Inframe Mutation",";","")
+  
+  value<-c(1:55)
+  
+  order_df<-data.frame(order=order,value=value)
+  alt_matrix_t<-as.data.frame(t(alt_matrix))
+  
+  order1<-alt_matrix_t[ order(match(alt_matrix_t[,1], order_df$order)), ]
+  
+  df <- data.frame(matrix(ncol = ncol(order1), nrow = 0))
+  colnames(df) <- colnames(order1)
+  
+  
+  if (ncol(alt_matrix_t)>=2){
+    
+    for (i in 1:nrow(order_df)){    
+      if(nrow(order1[order1[,1]==order_df[i,1],])!=0){
+        col1<-order1[order1[,1]==order_df[i,1],]
+        col1<-col1[ order(match(col1[,2], order_df$order)), ]
+        
+        if  (ncol(alt_matrix_t)==2){
+          df<-rbind(df,col1)
+        }
+        
+        if (ncol(alt_matrix_t)>=3){
+          for (j in 1:nrow(order_df)){
+            if(nrow(col1[col1[,2]==order_df[j,1],])!=0){
+              col2<-col1[col1[,2]==order_df[j,1],]
+              col2<-col2[ order(match(col2[,3], order_df$order)), ]
+              
+              if  (ncol(alt_matrix_t)==3){
+                df<-rbind(df,col2)
+              }
+              
+              if (ncol(alt_matrix_t)>=4){
+                for (k in 1:nrow(order_df)){
+                  if(nrow(col2[col2[,3]==order_df[k,1],])!=0){
+                    col3<-col2[col2[,3]==order_df[k,1],]
+                    col3<-col3[ order(match(col3[,4], order_df$order)), ]
+                    
+                    if  (ncol(alt_matrix_t)==4){
+                      df<-rbind(df,col3)
+                    }
+                    
+                    if (ncol(alt_matrix_t)>=5){
+                      for (l in 1:nrow(order_df)){
+                        
+                        if(nrow(col3[col3[,4]==order_df[l,1],])!=0){
+                          col4<-col3[col3[,4]==order_df[l,1],]
+                          col4<-col4[ order(match(col4[,5], order_df$order)), ]
+                          
+                          if  (ncol(alt_matrix_t)==5){
+                            df<-rbind(df,col4)
+                          }
+                          
+                          if (ncol(alt_matrix_t)>=6){
+                            for (m in 1:nrow(order_df)){
+                              
+                              if(nrow(col4[col4[,5]==order_df[m,1],])!=0){
+                                col5<-col4[col4[,5]==order_df[m,1],]
+                                col5<-col5[ order(match(col5[,6], order_df$order)), ]
+                                if  (ncol(alt_matrix_t)==6){
+                                  df<-rbind(df,col5)
+                                }
+                                
+                                if (ncol(alt_matrix_t)>=7){
+                                  
+                                  for (n in 1:nrow(order_df)){
+                                    
+                                    if(nrow(col5[col5[,6]==order_df[n,1],])!=0){
+                                      col6<-col5[col5[,6]==order_df[n,1],]
+                                      col6<-col6[ order(match(col6[,7], order_df$order)), ]
+                                      if  (ncol(alt_matrix_t)==7){
+                                        df<-rbind(df,col6)
+                                      }
+                                      
+                                      if (ncol(alt_matrix_t)>=8){
+                                        for (o in 1:nrow(order_df)){
+                                          
+                                          if(nrow(col6[col6[,7]==order_df[o,1],])!=0){
+                                            col7<-col6[col6[,7]==order_df[o,1],]
+                                            col7<-col7[ order(match(col7[,8], order_df$order)), ]
+                                            if  (ncol(alt_matrix_t)==8){
+                                              df<-rbind(df,col7)
+                                            }
+                                            
+                                            if (ncol(alt_matrix_t)>=9){
+                                              
+                                              for (p in 1:nrow(order_df)){
+                                                
+                                                if(nrow(col7[col7[,8]==order_df[p,1],])!=0){
+                                                  col8<-col7[col7[,8]==order_df[p,1],]
+                                                  col8<-col8[ order(match(col8[,9], order_df$order)), ]
+                                                  
+                                                  if  (ncol(alt_matrix_t)==9){
+                                                    df<-rbind(df,col8)
+                                                  }
+                                                  
+                                                  if (ncol(alt_matrix_t)>=10){
+                                                    
+                                                    for (q in 1:nrow(order_df)){
+                                                      
+                                                      if(nrow(col8[col8[,9]==order_df[q,1],])!=0){
+                                                        col9<-col8[col8[,9]==order_df[q,1],]
+                                                        col9<-col9[ order(match(col9[,10], order_df$order)), ]
+                                                        
+                                                        if  (ncol(alt_matrix_t)==10){
+                                                          df<-rbind(df,col9)
+                                                        }
+                                                        
+                                                        
+                                                      }}} }}} }}} }}} }}} }}} }}} }}} }}}
+  
+  return(df)
+}
+
