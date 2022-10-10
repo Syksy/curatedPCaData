@@ -67,7 +67,9 @@ curatedPCaData_genes <- biomaRt::getBM(
 	attributes = 
 		c(
 			# Hugo
-			'hgnc_symbol','entrezgene_id',
+			'hgnc_symbol',
+			# Entrez gene IDs
+			'entrezgene_id',
 			# ENSEMBL
 			'ensembl_gene_id', 'ensembl_transcript_id',
 			# RefSeq
@@ -84,7 +86,7 @@ curatedPCaData_genes <- biomaRt::getBM(
 
 ###
 #
-# Array specific annotation sets
+# Array specific annotation sets; most popular array types for convenience
 #
 ###
 
