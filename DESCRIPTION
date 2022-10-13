@@ -29,7 +29,8 @@ Imports:
     methods,
     magrittr,
     rlang,
-    stats
+    stats,
+    dplyr
 Suggests: 
     ggplot2,
     knitr,
