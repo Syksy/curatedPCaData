@@ -307,7 +307,7 @@ wrapper_sortonco<-function(alt_matrix){
   order_df<-data.frame(order=order,value=value)
   alt_matrix_t<-as.data.frame(t(alt_matrix))
   
-  order1<-alt_matrix_t[ order(match(alt_matrix_t[,1], order_df$order)), ]
+  order1<-alt_matrix_t[ order(match(alt_matrix_t[,1], order_df$order)),,drop=F ]
   
   df <- data.frame(matrix(ncol = ncol(order1), nrow = 0))
   colnames(df) <- colnames(order1)
@@ -412,6 +412,9 @@ wrapper_sortonco<-function(alt_matrix){
                                                         
                                                         
                                                       }}} }}} }}} }}} }}} }}} }}} }}} }}}
+  else{
+    return(order1)
+  }
   
   return(df)
 }
