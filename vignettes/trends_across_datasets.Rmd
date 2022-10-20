@@ -346,23 +346,23 @@ volcano_plot_matrix<-function(gex,mae,dataset){
 
 gex_tcga=curatedPCaData::mae_tcga[["gex.rsem.log"]]
 mae_tcga<-curatedPCaData::mae_tcga
-df_tcga=volcano_plot_matrix(gex_tcga,mae_tcga,"TCGA")
+df_tcga<-volcano_plot_matrix(gex_tcga,mae_tcga,"TCGA")
 
 gex_taylor=curatedPCaData::mae_taylor[["gex.rma"]]
 mae_taylor<-curatedPCaData::mae_taylor
-df_taylor=volcano_plot_matrix(gex_taylor,mae_taylor,"taylor")
+df_taylor<-volcano_plot_matrix(gex_taylor,mae_taylor,"taylor")
 
 gex_friedrich=curatedPCaData::mae_friedrich[["gex.logq"]]
 mae_friedrich<-curatedPCaData::mae_friedrich
-df_friedrich=volcano_plot_matrix(gex_friedrich,mae_friedrich,"friedrich")
+df_friedrich<-volcano_plot_matrix(gex_friedrich,mae_friedrich,"friedrich")
 
 gex_igc=curatedPCaData::mae_igc[["gex.rma"]]
 mae_igc<-curatedPCaData::mae_igc
-df_igc=volcano_plot_matrix(gex_igc,mae_igc,"igc")
+df_igc<-volcano_plot_matrix(gex_igc,mae_igc,"igc")
 
 gex_weiner=curatedPCaData::mae_weiner[["gex.rma"]]
 mae_weiner<-curatedPCaData::mae_weiner
-df_weiner=volcano_plot_matrix(gex_weiner,mae_weiner,"weiner")
+df_weiner<-volcano_plot_matrix(gex_weiner,mae_weiner,"weiner")
 
 
 ```
@@ -1044,6 +1044,7 @@ fusion<-fusion[,c("sample_name","ERG")]
 
 genes<-c("ERG","NKX3-1","USP10","PTEN","TP53","CHD1","MAP3K7","FOXA1","SPOP")
 
+
 mae_baca<-curatedPCaData::mae_baca
 alt_matrix_baca<-alt_matrix(mae_baca,genes)
 
@@ -1067,17 +1068,12 @@ alt_matrix_taylor<-alt_matrix(mae_taylor,genes)
 load("alt_matrices_oncoprint.RData")
 ```
 
-### Baca
-
-```{r, dpi=150, fig.width=8, fig.height=3, out.width="100%",message=FALSE}
-
-df<-curatedPCaData:::wrapper_sortonco(alt_matrix_baca)
+```{r}
 
 cols<-c("Shallow Deletion"="light blue","Deep Deletion"="blue","Gain"="pink","Amplification"="red","missense_variant"="#008000","frameshift_variant"="black","inframe_deletion"="#6d0200","splice_acceptor_variant"="sienna2","synonymous_variant"="#4f1f4c","other_mut"="yellow","ERG_fusion"="#990099")
   
 alter_fun = list(
   background = alter_graphic("rect", fill = "#A3A3A3"),   
-  #XYZ = alter_graphic("rect", fill = cols["XYZ"]),
   "Shallow deletion" = alter_graphic("rect",fill = cols["Shallow Deletion"]),
   "Deep deletion" = alter_graphic("rect", fill = cols["Deep Deletion"]),
   "Gain" = alter_graphic("rect",fill = cols["Gain"]),
@@ -1091,10 +1087,20 @@ alter_fun = list(
   "fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
 )
 
+```
+
+
+### Baca
+
+```{r, dpi=150, fig.width=8, fig.height=3, out.width="100%",message=FALSE}
+
+df<-curatedPCaData:::wrapper_sortonco(alt_matrix_baca)
+
 col_order<-rownames(df)
 row_order<-colnames(df)
 
-ComplexHeatmap::oncoPrint(alt_matrix_baca,alter_fun = alter_fun,col = cols,top_annotation = NULL,right_annotation = NULL,column_order=col_order,row_order = row_order)
+ComplexHeatmap::oncoPrint(alt_matrix_baca,alter_fun = alter_fun,col = cols,
+  right_annotation = NULL,column_order=col_order,row_order = row_order,top_annotation = NULL)
 
 
 
@@ -1107,28 +1113,10 @@ ComplexHeatmap::oncoPrint(alt_matrix_baca,alter_fun = alter_fun,col = cols,top_a
 
 df<-curatedPCaData:::wrapper_sortonco(alt_matrix_barbieri)
 
-cols<-c("Shallow Deletion"="light blue","Deep Deletion"="blue","Gain"="pink","Amplification"="red","missense_variant"="#008000","frameshift_variant"="black","inframe_deletion"="#6d0200","splice_acceptor_variant"="sienna2","synonymous_variant"="#4f1f4c","other_mut"="yellow","ERG_fusion"="#990099")
-  
-alter_fun = list(
-  background = alter_graphic("rect", fill = "#A3A3A3"),   
-  #XYZ = alter_graphic("rect", fill = cols["XYZ"]),
-  "Shallow deletion" = alter_graphic("rect",fill = cols["Shallow Deletion"]),
-  "Deep deletion" = alter_graphic("rect", fill = cols["Deep Deletion"]),
-  "Gain" = alter_graphic("rect",fill = cols["Gain"]),
-  "Amplification" = alter_graphic("rect",fill = cols["Amplification"]),
-  "Missense Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["missense_variant"]),
-  "Frameshift Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["frameshift_variant"]),
-  "Splice Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["splice_acceptor_variant"]),
-  "synonymous_variant" = alter_graphic("rect",  height = 0.33,fill = cols["synonymous_variant"]),
-  "Inframe Mutation"=alter_graphic("rect",  height = 0.33,fill = cols["inframe_deletion"]),
-  "other_mut" = alter_graphic("rect",  height = 0.33,fill = cols["other_mut"]),
-  "fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
-)
-
 col_order<-rownames(df)
 row_order<-colnames(df)
 
-ComplexHeatmap::oncoPrint(alt_matrix_barbieri,alter_fun = alter_fun,col = cols,top_annotation = NULL,column_order=col_order,right_annotation = NULL,row_order = row_order)
+ComplexHeatmap::oncoPrint(alt_matrix_barbieri,alter_fun = alter_fun,col = cols,column_order=col_order,row_order = row_order,right_annotation = NULL,top_annotation = NULL)
 
 
 
@@ -1144,28 +1132,10 @@ alt_matrix_tcga["FOXA1","TCGA.HC.7742.01"]<-""
 
 df<-curatedPCaData:::wrapper_sortonco(alt_matrix_tcga)
 
-# Define oncoprint colors
-cols<-c("Shallow Deletion"="light blue","Deep Deletion"="blue","Gain"="pink","Amplification"="red","missense_variant"="#008000","frameshift_variant"="black","inframe_deletion"="#6d0200","splice_acceptor_variant"="sienna2","synonymous_variant"="#4f1f4c","ERG_fusion"="#990099")
-  
-alter_fun = list(
-  background = alter_graphic("rect", fill = "#A3A3A3"),   
-  #XYZ = alter_graphic("rect", fill = cols["XYZ"]),
-  "Shallow deletion" = alter_graphic("rect",fill = cols["Shallow Deletion"]),
-  "Deep deletion" = alter_graphic("rect", fill = cols["Deep Deletion"]),
-  "Gain" = alter_graphic("rect",fill = cols["Gain"]),
-  "Amplification" = alter_graphic("rect",fill = cols["Amplification"]),
-  "Missense Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["missense_variant"]),
-  "Frameshift Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["frameshift_variant"]),
-  "Splice Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["splice_acceptor_variant"]),
-  "synonymous_variant" = alter_graphic("rect",  height = 0.33,fill = cols["synonymous_variant"]),
-  "Inframe Mutation"=alter_graphic("rect",  height = 0.33,fill = cols["inframe_deletion"]),
-  "fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
-)
-
 col_order<-rownames(df)
 row_order<-colnames(df)
 
-ComplexHeatmap::oncoPrint(alt_matrix_tcga,alter_fun = alter_fun,col = cols,top_annotation = NULL,column_order=col_order,right_annotation = NULL,row_order = row_order)
+ComplexHeatmap::oncoPrint(alt_matrix_tcga,alter_fun = alter_fun,col = cols,column_order=col_order,right_annotation = NULL,row_order = row_order,top_annotation = NULL)
 
 ```
 
@@ -1179,25 +1149,6 @@ df<-curatedPCaData:::wrapper_sortonco(alt_matrix_abida)
 # Genes that had 2 mut in same sample:
 #FOXA1 - SC_9026.Tumor - Inframe Mutation Frameshift Mutation
 #TP53 - WCM650_Z1 - Missense Mutation Splice Mutation
-
-
-cols<-c("Shallow Deletion"="light blue","Deep Deletion"="blue","Gain"="pink","Amplification"="red","missense_variant"="#008000","frameshift_variant"="black","inframe_deletion"="#6d0200","splice_acceptor_variant"="sienna2","synonymous_variant"="#4f1f4c","ERG_fusion"="#990099")
-  
-alter_fun = list(
-  background = alter_graphic("rect", fill = "#A3A3A3"),   
-  #XYZ = alter_graphic("rect", fill = cols["XYZ"]),
-  "Shallow deletion" = alter_graphic("rect",fill = cols["Shallow Deletion"]),
-  "Deep deletion" = alter_graphic("rect", fill = cols["Deep Deletion"]),
-  "Gain" = alter_graphic("rect",fill = cols["Gain"]),
-  "Amplification" = alter_graphic("rect",fill = cols["Amplification"]),
-  "Missense Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["missense_variant"]),
-  "Frameshift Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["frameshift_variant"]),
-  "Splice Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["splice_acceptor_variant"]),
-  "synonymous_variant" = alter_graphic("rect",  height = 0.33,fill = cols["synonymous_variant"]),
-  "Inframe Mutation"=alter_graphic("rect",  height = 0.33,fill = cols["inframe_deletion"]),
-  "fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
-  
-)
 
 col_order<-rownames(df)
 row_order<-colnames(df)
@@ -1213,23 +1164,6 @@ ComplexHeatmap::oncoPrint(alt_matrix_abida,alter_fun = alter_fun,col = cols,top_
 ```{r, dpi=150,fig.height=2,fig.width=6,out.width="100%", message=FALSE}
 
 df<-curatedPCaData:::wrapper_sortonco(alt_matrix_taylor)
-
-cols<-c("Shallow Deletion"="light blue","Deep Deletion"="blue","Gain"="pink","Amplification"="red","missense_variant"="#008000","frameshift_variant"="black","inframe_deletion"="#6d0200","splice_acceptor_variant"="sienna2","synonymous_variant"="#4f1f4c","other_mut"="yellow","ERG_fusion"="#990099")
-  
-alter_fun = list(
-  background = alter_graphic("rect", fill = "#A3A3A3"),   
-  "Shallow deletion" = alter_graphic("rect",fill = cols["Shallow Deletion"]),
-  "Deep deletion" = alter_graphic("rect", fill = cols["Deep Deletion"]),
-  "Gain" = alter_graphic("rect",fill = cols["Gain"]),
-  "Amplification" = alter_graphic("rect",fill = cols["Amplification"]),
-  "Missense Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["missense_variant"]),
-  "Frameshift Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["frameshift_variant"]),
-  "Splice Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["splice_acceptor_variant"]),
-  "synonymous_variant" = alter_graphic("rect",  height = 0.33,fill = cols["synonymous_variant"]),
-  "Inframe Mutation"=alter_graphic("rect",  height = 0.33,fill = cols["inframe_deletion"]),
-  "other_mut" = alter_graphic("rect",  height = 0.33,fill = cols["other_mut"]),
-  "fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
-)
 
 col_order<-rownames(df)
 row_order<-colnames(df)
