@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+Load all the required packages 
 
 ```{r packages,results=FALSE,message=FALSE}
 library(curatedPCaData)
@@ -36,9 +37,11 @@ library(RColorBrewer)
 
 ## Correlation in gene expression between datasets
 
-AR and ERG are 2 genes that have shown to play an important role in mediating prostate cancer development. Understanding the correlation of the expression of these genes with other genes across the different PCa datasets would provide an insight on the overall trend. Given that the curatedPCadata package has a variety of prostate cancer datasets with primary and metastatic patient information, it can be leveraged to study these trends.
+AR and ERG are 2 genes that have shown to play an important role in mediating prostate cancer development. Understanding the correlation of the expression of these genes with other genes across the different PCa data sets would provide an insight on the overall trend. Given that the curatedPCadata package has a variety of prostate cancer data sets with primary and metastatic patient information, it can be leveraged to study these trends.
 
-```{r, results=FALSE, eval = FALSE}
+The function below can be used to calculate this correlation across all the data sets in the curatedPCadata package which had primary samples with respect to any gene of interest. 
+
+```{r, results=FALSE}
 
 calculate_correlation<-function(dataset,gene){
   name=deparse(substitute(dataset))
@@ -62,7 +65,6 @@ calculate_correlation<-function(dataset,gene){
   colnames=as.vector(colnames)
   cor_matrix[,1]=colnames
   cor_matrix[,2]=cor_values
-  #paste0("spearman_correlation_coeff_",deparse(substitute(dataset)))
   colnames(cor_matrix)=c("gene",name)
   return(cor_matrix)
 }
@@ -167,6 +169,11 @@ correlation_of_correlations_primary<-function(gene){
   return(combined_cor_list)
 }
 
+```
+
+This function can now be used to calculate the correlation in expression of all genes with respect to AR and ERG as shown below
+```{r, eval = FALSE}
+
 combined_cor_list_AR=correlation_of_correlations_primary("AR")
 corr_of_corr_AR = cor(combined_cor_list_AR)
 
@@ -175,12 +182,14 @@ corr_of_corr_ERG = cor(combined_cor_list_ERG)
 
 ```
 
+Since these calculations are time consuming, the results from the chunk above have been stored in the following RData object and called to save time
 ```{r load_workspace}
 load("correlation_AR_and_ERG.RData")
 
 ```
 
 ### Correlation of AR gene expression across primary samples
+
 ```{r,dpi=150, fig.width=15, fig.height=15, out.width="100%"}
 corrplot.mixed(corr_of_corr_AR,order = 'AOE', lower.col = COL2('PiYG'),upper.col =COL2('PiYG'))
 ```
@@ -189,7 +198,7 @@ corrplot.mixed(corr_of_corr_AR,order = 'AOE', lower.col = COL2('PiYG'),upper.col
 ```{r, dpi=150, fig.width=15, fig.height=15, out.width="100%"}
 corrplot.mixed(corr_of_corr_ERG,order = 'AOE', lower.col = COL2('PiYG'),upper.col =COL2('PiYG'))
 ```
-
+A similar function can be written to calculate the same correlation in metastatic samples across Abida, Taylor and Chandran which had that information as shown below
 ```{r, results=FALSE,eval=FALSE}
 correlation_of_correlations_met<-function(gene){
   
@@ -253,6 +262,8 @@ corrplot.mixed(corr_of_corr_ERG,order = 'AOE', lower.col = COL2('PiYG'),upper.co
 ## Differentially expressed genes between patients with higher vs lower gleason grades
 
 Gleason grade has proven to be of great importance in prostate cancer patients since it is highly correlated with patient survival. Genes that are consistently deferentially expressed in patients across different datasets with high and low gleason grades can be important therapeutic targets. Shown below are volcano plots of logFC of patients with gleason grade below 6 and above 8.
+
+The volcano_plot_matrix function below is used to create a matrix with the logFC and FDR values required to generate the volcano plots. 
 
 ```{r}
 
@@ -342,25 +353,26 @@ volcano_plot_matrix<-function(gex,mae,dataset){
 
 ```
 
+We can now use the function defined above to create the matrices for all the datasets as shown below
 ```{r,results=FALSE,eval=FALSE}
 
-gex_tcga=curatedPCaData::mae_tcga[["gex.rsem.log"]]
+gex_tcga<-curatedPCaData::mae_tcga[["gex.rsem.log"]]
 mae_tcga<-curatedPCaData::mae_tcga
 df_tcga<-volcano_plot_matrix(gex_tcga,mae_tcga,"TCGA")
 
-gex_taylor=curatedPCaData::mae_taylor[["gex.rma"]]
+gex_taylor<-curatedPCaData::mae_taylor[["gex.rma"]]
 mae_taylor<-curatedPCaData::mae_taylor
 df_taylor<-volcano_plot_matrix(gex_taylor,mae_taylor,"taylor")
 
-gex_friedrich=curatedPCaData::mae_friedrich[["gex.logq"]]
+gex_friedrich<-curatedPCaData::mae_friedrich[["gex.logq"]]
 mae_friedrich<-curatedPCaData::mae_friedrich
 df_friedrich<-volcano_plot_matrix(gex_friedrich,mae_friedrich,"friedrich")
 
-gex_igc=curatedPCaData::mae_igc[["gex.rma"]]
+gex_igc<-curatedPCaData::mae_igc[["gex.rma"]]
 mae_igc<-curatedPCaData::mae_igc
 df_igc<-volcano_plot_matrix(gex_igc,mae_igc,"igc")
 
-gex_weiner=curatedPCaData::mae_weiner[["gex.rma"]]
+gex_weiner<-curatedPCaData::mae_weiner[["gex.rma"]]
 mae_weiner<-curatedPCaData::mae_weiner
 df_weiner<-volcano_plot_matrix(gex_weiner,mae_weiner,"weiner")
 
@@ -456,6 +468,7 @@ plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#
 
 Loss or gain in function of genes has known to drive cancers in general. Knowledge of whether genes important for a certain cancer type are altered together or not, provides insight on whether they work together to affect important pathways. Mutual exclusivity plots for different data sets shown below, provide information on whether or not a set of important genes in PCa are significantly altered together.
 
+The odds_ratio function below calculates the odds ratio for any binary alteration matrix where 1 stands for any alteration in copy number or mutations that are not silent, and 0 stands for no alteration.
 ```{r}
 # Input = binary alteration matrix. Features = rows, Samples = Columns
 odds_ratio = function(input){
@@ -482,6 +495,7 @@ odds_ratio = function(input){
 }
 ```
 
+The alt_matrix function below generates the binary alteration matrix described above from the copy number and mutation information in the MAEs.
 ```{r}
 
 alt_matrix<-function(mae,dataset,genes){
@@ -891,11 +905,13 @@ draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
 
 ## Oncoprints
 
-Alterations in oncogenes play an important rule in driving cancer. Visualizing these genomic alterations using oncoprints can provide useful information about how much a particular gene is altered and what those alterations are across different patients. Given curatedPCadata has multiple prostate cancer datasets, oncoprints across different PCa datasets can be generated as follows:  
+Alterations in oncogenes play an important rule in driving cancer. Visualizing these genomic alterations using oncoprints can provide useful information about how much a particular gene is altered and what those alterations are across different patients. Given curatedPCadata has multiple prostate cancer datasets, oncoprints across different PCa datasets can be generated as shown below.
+
+In order to create an alteration matrix with copy number, mutations and fusions from the MAE, the function below can be used.
 
 ```{r}
 alt_matrix<-function(mae,genes){
-  
+  #Pull cna and mutations from mae and run inbuilt wrapper function
   cna<-mae[["cna.gistic"]]
   cna<-as.data.frame(cna)
   mut<-mae[["mut"]]
@@ -905,17 +921,19 @@ alt_matrix<-function(mae,genes){
   cna<-as.data.frame(cna)
   mut<-mut[genes,]
   
+  # If there are NAs in gene names, dont keep them
   cna <- cna[grepl("^NA", rownames(cna))==F,]
-  cna <- cna[grepl("MAP3K7CL", rownames(cna))==F,]
+  #cna <- cna[grepl("MAP3K7CL", rownames(cna))==F,]
   mut <- mut[grepl("^NA", rownames(mut))==F,]
-  mut <- mut[grepl("MAP3K7CL", rownames(mut))==F,]
+  #mut <- mut[grepl("MAP3K7CL", rownames(mut))==F,]
   
+  # remove all silent mutations
   mut[] <- lapply(mut, function(x) ifelse(x=="Silent", "", x))
   mut[] <- lapply(mut, function(x) ifelse(x=="Intron", "", x))
   mut[] <- lapply(mut, function(x) ifelse(x=="3'UTR", "", x))
   mut[] <- lapply(mut, function(x) ifelse(x=="5'UTR", "", x))
  
-
+  # rename values in the cna matrix
   cna[] <- lapply(cna, function(x) ifelse(x==0, "", x))
   cna[] <- lapply(cna, function(x) ifelse(x==-1, "Shallow deletion", x))
   cna[] <- lapply(cna, function(x) ifelse(x==1, "Gain", x))
@@ -926,23 +944,25 @@ alt_matrix<-function(mae,genes){
   
   cna=as.data.frame(t(cna))
   mut=as.data.frame(t(mut))
-  
+  #Pull fusions from the clinical data
   clinical<-as.data.frame(as.matrix(colData(mae)))
   fusion<-clinical[,c("sample_name","ERG_fusion_GEX","ERG_fusion_CNA","ERG_fusion_IHC")]
   
-fusion<-fusion%>%mutate(
-ERG = case_when(
-  ERG_fusion_GEX == 1 |  ERG_fusion_CNA==1 | ERG_fusion_IHC==1 ~ "fusion"
-  ))
+  # If there is a fusion from GEX/CNA/IHC, call it a fusion
+  fusion<-fusion%>%mutate(
+  ERG = case_when(
+    ERG_fusion_GEX == 1 |  ERG_fusion_CNA==1 | ERG_fusion_IHC==1 ~ "Fusion"
+    ))
 
-fusion<-fusion[,c("sample_name","ERG")]
+  fusion<-fusion[,c("sample_name","ERG")]
   
   rownames(fusion)<-fusion$sample_name
   fusion<-fusion[,-1,drop=F]
-  
+  #If there is a 0 or NA, call it no fusion
   fusion[] <- lapply(fusion, function(x) ifelse(x=="0", "", x))
   fusion[] <- lapply(fusion, function(x) ifelse(is.na(x), "", x))
   
+  # Merge CNA, mut and fusion matrix
   merged1=merge(cna,mut,by=0,all=T)
   merged<-merge(merged1,fusion,by.x=1,by.y=0,all=T)
   
@@ -952,7 +972,7 @@ fusion<-fusion[,c("sample_name","ERG")]
   
   merged$gene=rownames(merged)
   merged$gene=gsub("\\..*","",merged$gene)
-  
+  # Collapse duplicate genes to one
   collapse_mut_cna=merged %>% 
     dplyr::group_by(gene) %>% 
     dplyr::summarise_all(toString)
@@ -960,6 +980,7 @@ fusion<-fusion[,c("sample_name","ERG")]
   rownames(collapse_mut_cna)=collapse_mut_cna$gene
   collapse_mut_cna=collapse_mut_cna[,-1]
   
+  ## Clean up matrix by renaming some fields
   for (i in 1:nrow(collapse_mut_cna)){
     collapse_mut_cna[i,]<-gsub(", ",";",collapse_mut_cna[i,])}
   
@@ -1068,8 +1089,10 @@ alt_matrix_taylor<-alt_matrix(mae_taylor,genes)
 load("alt_matrices_oncoprint.RData")
 ```
 
-```{r}
+Define colors for all alterations to display in the oncoprints as shown below
 
+```{r}
+# Define colors for alterations to display in the oncoprints 
 cols<-c("Shallow Deletion"="light blue","Deep Deletion"="blue","Gain"="pink","Amplification"="red","missense_variant"="#008000","frameshift_variant"="black","inframe_deletion"="#6d0200","splice_acceptor_variant"="sienna2","synonymous_variant"="#4f1f4c","other_mut"="yellow","ERG_fusion"="#990099")
   
 alter_fun = list(
@@ -1084,7 +1107,7 @@ alter_fun = list(
   "synonymous_variant" = alter_graphic("rect",  height = 0.33,fill = cols["synonymous_variant"]),
   "Inframe Mutation"=alter_graphic("rect",  height = 0.33,fill = cols["inframe_deletion"]),
   "other_mut" = alter_graphic("rect",  height = 0.33,fill = cols["other_mut"]),
-  "fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
+  "Fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
 )
 
 ```

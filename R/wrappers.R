@@ -287,20 +287,20 @@ unwrap <- function(
 
 wrapper_sortonco<-function(alt_matrix){
   
-  order<-c("Amplification;fusion","Amplification;Missense Mutation;fusion","Amplification;Missense Mutation","Amplification;Frameshift Mutation;fusion",
-           "Amplification;Frameshift Mutation","Amplification;Splice Mutation;fusion","Amplification;Splice Mutation",
-           "Amplification;Inframe Mutation;fusion","Amplification;Inframe Mutation",
-           "Deep deletion;fusion","Deep deletion;Missense Mutation;fusion","Deep deletion;Missense Mutation","Deep deletion;Frameshift Mutation;fusion",
-           "Deep deletion;Frameshift Mutation","Deep deletion;Splice Mutation;fusion","Deep deletion;Splice Mutation",
-           "Deep deletion;Inframe Mutation;fusion","Deep deletion;Inframe Mutation",
-           "Gain;fusion","Gain;Missense Mutation;fusion","Gain;Missense Mutation","Gain;Frameshift Mutation;fusion","Gain;Frameshift Mutation",
-           "Gain;Splice Mutation;fusion","Gain;Splice Mutation","Gain;Inframe Mutation;fusion","Gain;Inframe Mutation",
-           "Shallow deletion;fusion","Shallow deletion;Missense Mutation;fusion","Shallow deletion;Missense Mutation","Shallow deletion;Frameshift Mutation;fusion",
-           "Shallow deletion;Frameshift Mutation","Shallow deletion;Splice Mutation","Shallow deletion;Splice Mutation;fusion",
-           "Shallow deletion;Inframe Mutation;fusion","Shallow deletion;Inframe Mutation",";fusion","Amplification;","Amplification",
+  order<-c("Amplification;Fusion","Amplification;Missense Mutation;Fusion","Amplification;Missense Mutation","Amplification;Frameshift Mutation;Fusion",
+           "Amplification;Frameshift Mutation","Amplification;Splice Mutation;Fusion","Amplification;Splice Mutation",
+           "Amplification;Inframe Mutation;Fusion","Amplification;Inframe Mutation",
+           "Deep deletion;Fusion","Deep deletion;Missense Mutation;Fusion","Deep deletion;Missense Mutation","Deep deletion;Frameshift Mutation;Fusion",
+           "Deep deletion;Frameshift Mutation","Deep deletion;Splice Mutation;Fusion","Deep deletion;Splice Mutation",
+           "Deep deletion;Inframe Mutation;Fusion","Deep deletion;Inframe Mutation",
+           "Gain;Fusion","Gain;Missense Mutation;Fusion","Gain;Missense Mutation","Gain;Frameshift Mutation;Fusion","Gain;Frameshift Mutation",
+           "Gain;Splice Mutation;Fusion","Gain;Splice Mutation","Gain;Inframe Mutation;Fusion","Gain;Inframe Mutation",
+           "Shallow deletion;Fusion","Shallow deletion;Missense Mutation;Fusion","Shallow deletion;Missense Mutation","Shallow deletion;Frameshift Mutation;Fusion",
+           "Shallow deletion;Frameshift Mutation","Shallow deletion;Splice Mutation","Shallow deletion;Splice Mutation;Fusion",
+           "Shallow deletion;Inframe Mutation;Fusion","Shallow deletion;Inframe Mutation",";Fusion","Amplification;","Amplification",
            "Deep deletion;","Deep deletion","Gain;","Gain","Shallow deletion;","Shallow deletion",
-           ";Missense Mutation;fusion",";Missense Mutation",";Frameshift Mutation;fusion",";Frameshift Mutation",
-           ";Splice Mutation;fusion",";Splice Mutation",";Inframe Mutation;fusion",";Inframe Mutation",";","")
+           ";Missense Mutation;Fusion",";Missense Mutation",";Frameshift Mutation;Fusion",";Frameshift Mutation",
+           ";Splice Mutation;Fusion",";Splice Mutation",";Inframe Mutation;Fusion",";Inframe Mutation",";","")
   
   value<-c(1:55)
   
