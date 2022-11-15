@@ -410,7 +410,7 @@ PathReview <- paste(gsub("-", ".", PathReview), ".01", sep="")
 RNAdegrade <- gsub("-", ".", RNAdegrade)
 RNAdegrade <- gsub(".01A", ".01", substr(RNAdegrade, start=0, stop=16))
 # Exclusion of low quality samples (3 normals, after the larger data was subset to provisional tumor samples)
-curated <- curated[which(!curated$sample_name %in% c(PathReview, RNAdegrade)),]
+#curated <- curated[which(!curated$sample_name %in% c(PathReview, RNAdegrade)),]
 
 ################################################################################################################
 # TCGA - Xenabrowser
@@ -535,7 +535,7 @@ curated4 <- curated4 %>%
 
 rownames(curated4) <- curated4$sample_name
 # Exclusion of low quality samples
-curated4 <- curated4[which(!curated4$sample_name %in% c(PathReview, RNAdegrade)),]
+#curated4 <- curated4[which(!curated4$sample_name %in% c(PathReview, RNAdegrade)),]
 
 # Append additional fields from the cgdsr 
 curated <- curated[rownames(curated4),]
