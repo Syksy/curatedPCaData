@@ -2669,12 +2669,19 @@ generate_xenabrowser <- function(
       #return(dat)
       # Small mutations (SNV / INDELs called by Mutect2)
     }else if(type == "mut"){
-      # Download the MuTect2 somatic mutation calls
+      #Download the MuTect2 somatic mutation calls
       file <- .xenabrowserDownload(urls[["mc3"]])
-      # Suitable for RaggedExperiment style data storage
-      dat <- read.table(file, sep="\t", header=TRUE)
-      if(cleanup) file.remove(file)
-      tcga_mut<-dat[,c(2:4,1,5:11)]
+      #Suitable for RaggedExperiment style data storage
+      dat <- read.table(file, sep="\t", header=TRUE, quote="<")
+      
+      # UCSCXenaTools::XenaGenerate(subset = XenaHostNames=="tcgaHub") %>% 
+      #   XenaFilter(filterDatasets = "PRAD")%>% XenaFilter(filterDatasets = "PRAD_mc3.txt") -> df_todo
+      # XenaQuery(df_todo) %>%
+      #   XenaDownload() -> xe_download
+      # dat<-XenaPrepare(xe_download)
+      
+      #if(cleanup) file.remove(file)
+      tcga_mut<-dat[,c(2:4,1,5:12)]
       colnames(tcga_mut)[1:3]<-c("seqnames","start","end")
       tcga_mut$sample<-gsub("-",".",tcga_mut$sample)
       tcga_mut$sample<-gsub("01A","01",tcga_mut$sample)
