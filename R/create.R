@@ -82,21 +82,27 @@ create_mae <- function(
   
   map <- map |>
     dplyr::left_join(pheno_object |>
-                       dplyr::select(primary = .data$patient_id, .data$sample_name) |>
-                       tidyr::separate(.data$sample_name, sample_num_names, sep = "\\|") |>
+                       #dplyr::select(primary = patient_id, sample_name) |>
+                       # Making replicates the primary unit, so e.g. separate Gleasons, T stage etc can be conserved
+                       dplyr::select(primary = sample_name, sample_name = sample_name) |>
+                       tidyr::separate(sample_name, sample_num_names, sep = "\\|") |>
                        dplyr::mutate_at(sample_num_names, ~ gsub(".*: ", "", .)) |>
                        dplyr::mutate_at(sample_num_names, ~ dplyr::na_if(., "NA")) |>
-                       tidyr::pivot_longer(!.data$primary, names_to = "omic", values_to = "sample_name") |>
+                       tidyr::pivot_longer(!primary, names_to = "omic", values_to = "sample_name") |>
                        dplyr::select(-omic), 
                      by = c("colname" = "sample_name")) 
-  
-  clinical_object <- pheno_object |>
-    dplyr::distinct(.data$patient_id, .keep_all = TRUE)
+## Changing to using sample names are the primary rather than patient ids                     
+                     
+  clinical_object <- pheno_object
+#  clinical_object <- pheno_object |>
+#    dplyr::distinct(.data$patient_id, .keep_all = TRUE)
   
   clinical_object <- clinical_object |>
-    dplyr::filter(.data$patient_id %in% map$primary)
-  
-  row.names(clinical_object) <- clinical_object$patient_id
+#    dplyr::filter(.data$patient_id %in% map$primary)
+    dplyr::filter(sample_name %in% map$primary)
+    
+#  row.names(clinical_object) <- clinical_object$patient_id
+  row.names(clinical_object) <- clinical_object$sample_name
   
   # Generate a MAE-object, generalization to various data compositions done above
   if(verb) print("Final reformatting")  
