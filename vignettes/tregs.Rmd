@@ -4,7 +4,9 @@ output:
   html_document: default
   pdf_document: default
 vignette: |
-  %\VignetteIndexEntry{T cell immune profiling in PCa survival} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{T cell immune profiling in PCa survival} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -441,10 +443,12 @@ Let us systematically test for differences between the Gleason groupings within 
 
 invisible(by(tregs_cibersort, INDICES=tregs_cibersort$dataset, FUN=function(dat){
 	cat(paste("\n====", unique(dat$dataset)[1], " / CIBERSORT ====\n"))
-	print("-- Kruskal-Wallis test --")
-	print(kruskal.test(value ~ grade_group, data = dat))
-	print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
-	print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
+	if(length(unique(dat$"grade_group"))>1){
+		print("-- Kruskal-Wallis test --")
+		print(kruskal.test(value ~ grade_group, data = dat))
+		print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
+		print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
+	}
 }))
 
 ```
@@ -492,11 +496,13 @@ Let us systematically test for differences between the Gleason groupings within 
 ```{r}
 
 invisible(by(tregs_quantiseq, INDICES=tregs_quantiseq$dataset, FUN=function(dat){
+	if(length(unique(dat$"grade_group"))>1){
 	cat(paste("\n====", unique(dat$dataset)[1], " / Quantiseq ====\n"))
-	print("-- Kruskal-Wallis test --")
-	print(kruskal.test(value ~ grade_group, data = dat))
-	print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
-	print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
+		print("-- Kruskal-Wallis test --")
+		print(kruskal.test(value ~ grade_group, data = dat))
+		print("-- Pairwise tests (Wilcoxon Rank Sum with FDR correction) --")
+		print(pairwise.wilcox.test(x=dat$"value", g=dat$"grade_group", p.adjust.method="fdr"))
+	}
 }))
 
 ```
