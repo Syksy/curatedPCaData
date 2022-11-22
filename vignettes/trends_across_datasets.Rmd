@@ -468,10 +468,33 @@ plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#
 
 Loss or gain in function of genes has known to drive cancers in general. Knowledge of whether genes important for a certain cancer type are altered together or not, provides insight on whether they work together to affect important pathways. Mutual exclusivity plots for different data sets shown below, provide information on whether or not a set of important genes in PCa are significantly altered together.
 
-The odds_ratio function below calculates the odds ratio for any binary alteration matrix where 1 stands for any alteration in copy number or mutations that are not silent, and 0 stands for no alteration.
+The odds_ratio function below calculates the odds ratio for any binary alteration matrix where 1 stands for any alteration in copy number or mutations that are not silent, and 0 stands for no alteration. The FDR_ME function then computes the adjusted mutual exclusivity/co-occurrence significance (Fisher's Hypergeometric Test, Benjamini-Hoschberg correction) for each pair of genes in the matrix.
 ```{r}
 # Input = binary alteration matrix. Features = rows, Samples = Columns
 odds_ratio = function(input){
+  data <- c()
+  for (i in 1:nrow(input)){
+    Gene_A <- as.numeric(input[i,])
+    vec <- c()
+    for (j in 1:nrow(input)){
+      Gene_B <- as.numeric(input[j,])
+      Gene_B[Gene_B==1] <- 2
+      ME.counts <- Gene_A + Gene_B
+      A_only <- sum(ME.counts == 1) 
+      B_only <- sum(ME.counts == 2) 
+      A_and_B <- sum(ME.counts == 3) 
+      Neither <- sum(ME.counts == 0) 
+      OR <- (A_and_B * Neither) / (B_only * A_only)
+      data <- append(data, OR)
+    }
+  }
+  output <- matrix(data, nrow = nrow(input), ncol = nrow(input), byrow = TRUE)
+  rownames(output) <- rownames(input)
+  colnames(output) <- rownames(input)
+  return(output)
+}
+
+pval_ME = function(input){
   data <- c()
   for (i in 1:nrow(input)){
     Gene_A <- as.numeric(input[i,])
@@ -484,21 +507,52 @@ odds_ratio = function(input){
       B_only <- sum(ME.counts == 2)
       A_and_B <- sum(ME.counts == 3)
       Neither <- sum(ME.counts == 0)
+      contingency.table <- matrix(c(A_and_B, A_only, B_only, Neither), nrow = 2, ncol = 2, byrow = TRUE)
       OR <- (A_and_B * Neither) / (B_only * A_only)
-      data <- append(data, OR)
+      if(OR>1){
+      pvalue <- fisher.test(contingency.table,alternative = "greater")$p.value
+      }
+      else{
+        pvalue <- fisher.test(contingency.table,alternative = "less")$p.value
+        }
+      
+      #pvalue <- fisher.test(contingency.table)$p.value
+      data <- append(data, pvalue)
     }
   }
+  #output <- p.adjust(as.numeric(data), method = "BH")
   output <- matrix(data, nrow = nrow(input), ncol = nrow(input), byrow = TRUE)
   rownames(output) <- rownames(input)
   colnames(output) <- rownames(input)
   return(output)
 }
+
+mat_fun <- function(m){
+  m2 <- apply(m,  2,  function(x) as.numeric(paste(x)))
+  colnames(m2) <- colnames(m)
+  rownames(m2) <- rownames(m)
+  return(m2)
+}
+
+fdr<-function(data){
+pval<-pval_ME(data)
+tri <- lower.tri(pval, diag = FALSE)
+pval[lower.tri(pval, diag = TRUE)] <- NA
+pval <- pval[nrow(pval):1,]
+
+fdr <- matrix(p.adjust(as.numeric(pval), method = "BH"),ncol=ncol(pval),nrow=nrow(pval))
+rownames(fdr) <- rownames(pval)
+colnames(fdr) <- colnames(pval)
+return(fdr)
+}
+
+#FDRs.ME<-fdr(Taylor2)
 ```
 
 The alt_matrix function below generates the binary alteration matrix described above from the copy number and mutation information in the MAEs.
 ```{r}
 
-alt_matrix<-function(mae,dataset,genes){
+alt_matrix_ME<-function(mae,dataset,genes){
   
   cna<-mae[["cna.gistic"]]
   cna<-as.data.frame(cna)
@@ -578,22 +632,30 @@ alt_matrix<-function(mae,dataset,genes){
 genes<-c("PTEN","SPOP","TP53","USP10","FOXA1","NKX3-1","CHD1","MAP3K7","ERG")
 
 barbieri_mae<-curatedPCaData::mae_barbieri
-Barbieri<-alt_matrix(barbieri_mae,"barbieri",genes)
+Barbieri<-alt_matrix_ME(barbieri_mae,"barbieri",genes)
 
 baca_mae<-curatedPCaData::mae_baca
-Baca<-alt_matrix(baca_mae,"baca",genes)
+Baca<-alt_matrix_ME(baca_mae,"baca",genes)
 
 tcga_mae<-curatedPCaData::mae_tcga
-TCGA<-alt_matrix(tcga_mae,"tcga",genes)
+TCGA<-alt_matrix_ME(tcga_mae,"tcga",genes)
 
 taylor_mae<-curatedPCaData::mae_taylor
-Taylor<-alt_matrix(taylor_mae,"taylor",genes)
+Taylor<-alt_matrix_ME(taylor_mae,"taylor",genes)
+
+# Keep only primary samples for Taylor and remove SPOP
+clinical<-as.data.frame(colData(taylor_mae))
+clinical<-clinical[clinical$sample_type =="primary",]
+vec<-clinical$sample_name
+Taylor2<-Taylor[,intersect(colnames(Taylor),vec)]
+Taylor2<-Taylor2[!(rownames(Taylor2)%in%"SPOP"),]
+
 
 abida_mae<-curatedPCaData::mae_abida
-Abida<-alt_matrix(abida_mae,"abida",genes)
+Abida<-alt_matrix_ME(abida_mae,"abida",genes)
 
 baca_mae<-curatedPCaData::mae_baca
-Baca<-alt_matrix(baca_mae,"baca",genes)
+Baca<-alt_matrix_ME(baca_mae,"baca",genes)
 
 ```
 
@@ -605,10 +667,10 @@ load("alt_matrices_ME.RData")
 ### BACA
 
 ```{r,results=FALSE}
-
+# Compute OR and Fisher's Test FDR
 OR.hm <- odds_ratio(Baca)
-FDRs.CO <- OR.hm
-FDRs.ME <- OR.hm
+FDRs.ME <- fdr(Baca)
+# Format Matrices for plotting
 tri <- lower.tri(OR.hm, diag = FALSE)
 OR.hm[tri] <- NA
 diag(OR.hm) <- NA
@@ -616,70 +678,36 @@ OR.hm <- log2(OR.hm)
 OR.hm <- round(OR.hm, 2)
 OR.hm <- OR.hm[nrow(OR.hm):1,]
 
-mat_fun <- function(m){
-  m2 <- apply(m,  2,  function(x) as.numeric(paste(x)))
-  colnames(m2) <- colnames(m)
-  rownames(m2) <- rownames(m)
-  return(m2)
-}
 Baca<-mat_fun(Baca)
-
-# FDRs for ME and CO by Redsicover
-p.ME <- getMutex(Baca, getPM(Baca), 
-                 lower.tail = TRUE, method = "Exact")@x
-
-p.ME <- p.adjust(p.ME, method = "fdr")
-FDRs.ME[upper.tri(FDRs.ME, diag = TRUE)] <- p.ME
-FDRs.ME[lower.tri(FDRs.ME, diag = TRUE)] <- NA
-FDRs.ME <- FDRs.ME[nrow(FDRs.ME):1,]
-FDRs.ME[FDRs.ME > 0.05 | FDRs.ME == 0] <- 0.5
-
-p.CO <- getMutex(Baca, getPM(Baca), 
-                 lower.tail = FALSE, method = "Exact")@x
-
-p.CO <- p.adjust(p.CO, method = "fdr")
-FDRs.CO[upper.tri(FDRs.CO, diag = TRUE)] <- p.CO
-FDRs.CO[lower.tri(FDRs.CO, diag = TRUE)] <- NA
-FDRs.CO <- FDRs.CO[nrow(FDRs.CO):1,]
-FDRs.CO[FDRs.CO > 0.05 | FDRs.CO == 0] <- 0.5
-
-
-
 ```
 
 
 ```{r, fig.height=7, fig.width=7,dpi=150, out.width="100%"}
+
 col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
 
-cell_fun = function(j, i, x, y, width, height, fill) {
-  if ((is.na(FDRs.CO[i, j]) == FALSE) & (FDRs.CO[i, j] <= 0.05) & (OR.hm[i, j] > 0)) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))}
-   if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05 & (OR.hm[i, j] < 0))) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
-    
-    }}
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Baca",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }
+          # if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i,j] > 0.05)) {
+          #   grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "black", lwd = 1))}
+          })
 
-ComplexHeatmap::Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Baca", cell_fun   = cell_fun)
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
 
-lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3),
-              labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), 
-              title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), 
-              grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
 draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
-
-
 
 
 ```
 
 ### TCGA
 ```{r,echo=FALSE}
-
-#----TCGA----
-# Odds Ratio matrix
+# Compute OR and Fisher's Test FDR
 OR.hm <- odds_ratio(TCGA)
-FDRs.CO <- OR.hm
-FDRs.ME <- OR.hm
+FDRs.ME <- fdr(TCGA)
+# Format Matrices for plotting
 tri <- lower.tri(OR.hm, diag = FALSE)
 OR.hm[tri] <- NA
 diag(OR.hm) <- NA
@@ -687,58 +715,31 @@ OR.hm <- log2(OR.hm)
 OR.hm <- round(OR.hm, 2)
 OR.hm <- OR.hm[nrow(OR.hm):1,]
 
-mat_fun <- function(m){
-  m2 <- apply(m,  2,  function(x) as.numeric(paste(x)))
-  colnames(m2) <- colnames(m)
-  rownames(m2) <- rownames(m)
-  return(m2)
-}
 TCGA<-mat_fun(TCGA)
-
-# FDRs for ME and CO by Redsicover
-p.ME <- getMutex(as.matrix(TCGA), getPM(as.matrix(TCGA)), 
-                 lower.tail = TRUE, method = "Exact")@x
-p.ME <- p.adjust(p.ME, method = "fdr")
-FDRs.ME[upper.tri(FDRs.ME, diag = TRUE)] <- p.ME
-FDRs.ME[lower.tri(FDRs.ME, diag = TRUE)] <- NA
-FDRs.ME <- FDRs.ME[nrow(FDRs.ME):1,]
-FDRs.ME[FDRs.ME > 0.05 | FDRs.ME == 0] <- 0.5
-p.CO <- getMutex(as.matrix(TCGA), getPM(as.matrix(TCGA)), 
-                 lower.tail = FALSE, method = "Exact")@x
-p.CO <- p.adjust(p.CO, method = "fdr")
-FDRs.CO[upper.tri(FDRs.CO, diag = TRUE)] <- p.CO
-FDRs.CO[lower.tri(FDRs.CO, diag = TRUE)] <- NA
-FDRs.CO <- FDRs.CO[nrow(FDRs.CO):1,]
-FDRs.CO[FDRs.CO > 0.05 | FDRs.CO == 0] <- 0.5
 ```
 
 ```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
 
-# Plot
 col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
 
-ComplexHeatmap::Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "TCGA",
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "TCGA",
         cell_fun = function(j, i, x, y, width, height, fill) {
-  if ((is.na(FDRs.CO[i, j]) == FALSE) & (FDRs.CO[i, j] <= 0.05) & (OR.hm[i, j] > 0)) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))}
-   if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05 & (OR.hm[i, j] < 0))) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
-    }})
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))}
+          })
 
-lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3),
-              labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), 
-              title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), 
-              grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
 draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
 ```
 
 ### Abida
 ```{r,echo=FALSE}
-#----Abida----
-# Odds Ratio matrix
+# Compute OR and Fisher's Test FDR
 OR.hm <- odds_ratio(Abida)
-FDRs.CO <- OR.hm
-FDRs.ME <- OR.hm
+FDRs.ME <- fdr(Abida)
+# Format Matrices for plotting
 tri <- lower.tri(OR.hm, diag = FALSE)
 OR.hm[tri] <- NA
 diag(OR.hm) <- NA
@@ -746,112 +747,64 @@ OR.hm <- log2(OR.hm)
 OR.hm <- round(OR.hm, 2)
 OR.hm <- OR.hm[nrow(OR.hm):1,]
 
-mat_fun <- function(m){
-  m2 <- apply(m,  2,  function(x) as.numeric(paste(x)))
-  colnames(m2) <- colnames(m)
-  rownames(m2) <- rownames(m)
-  return(m2)
-}
 Abida<-mat_fun(Abida)
-
-# FDRs for ME and CO by Redsicover
-p.ME <- getMutex(as.matrix(Abida), getPM(as.matrix(Abida)), 
-                 lower.tail = TRUE, method = "Exact")@x
-p.ME <- p.adjust(p.ME, method = "fdr")
-FDRs.ME[upper.tri(FDRs.ME, diag = TRUE)] <- p.ME
-FDRs.ME[lower.tri(FDRs.ME, diag = TRUE)] <- NA
-FDRs.ME <- FDRs.ME[nrow(FDRs.ME):1,]
-FDRs.ME[FDRs.ME > 0.05 | FDRs.ME == 0] <- 0.5
-p.CO <- getMutex(as.matrix(Abida), getPM(as.matrix(Abida)), 
-                 lower.tail = FALSE, method = "Exact")@x
-p.CO <- p.adjust(p.CO, method = "fdr")
-FDRs.CO[upper.tri(FDRs.CO, diag = TRUE)] <- p.CO
-FDRs.CO[lower.tri(FDRs.CO, diag = TRUE)] <- NA
-FDRs.CO <- FDRs.CO[nrow(FDRs.CO):1,]
-FDRs.CO[FDRs.CO > 0.05 | FDRs.CO == 0] <- 0.5
-```
-
-```{r, fig.height=7, fig.width=7,dpi=150, out.width="100%"}
-# Plot
-col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
-
-ComplexHeatmap::Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Abida",
-cell_fun = function(j, i, x, y, width, height, fill) {
-  if ((is.na(FDRs.CO[i, j]) == FALSE) & (FDRs.CO[i, j] <= 0.05) & (OR.hm[i, j] > 0)) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))}
-   if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05 & (OR.hm[i, j] < 0))) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
-    }})
-lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3),
-              labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), 
-              title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), 
-              grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
-draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
-```
-
-### Taylor
-```{r, echo=FALSE}
-#----Taylor----
-# Odds Ratio matrix
-OR.hm <- odds_ratio(Taylor)
-FDRs.CO <- OR.hm
-FDRs.ME <- OR.hm
-tri <- lower.tri(OR.hm, diag = FALSE)
-OR.hm[tri] <- NA
-diag(OR.hm) <- NA
-OR.hm <- log2(OR.hm)
-OR.hm <- round(OR.hm, 2)
-OR.hm <- OR.hm[nrow(OR.hm):1,]
-
-mat_fun <- function(m){
-  m2 <- apply(m,  2,  function(x) as.numeric(paste(x)))
-  colnames(m2) <- colnames(m)
-  rownames(m2) <- rownames(m)
-  return(m2)
-}
-Taylor<-mat_fun(Taylor)
-# FDRs for ME and CO by Redsicover
-p.ME <- getMutex(as.matrix(Taylor), getPM(as.matrix(Taylor)), 
-                 lower.tail = TRUE, method = "Exact")@x
-p.ME <- p.adjust(p.ME, method = "fdr")
-FDRs.ME[upper.tri(FDRs.ME, diag = TRUE)] <- p.ME
-FDRs.ME[lower.tri(FDRs.ME, diag = TRUE)] <- NA
-FDRs.ME <- FDRs.ME[nrow(FDRs.ME):1,]
-FDRs.ME[FDRs.ME > 0.05 | FDRs.ME == 0] <- 0.5
-p.CO <- getMutex(as.matrix(Taylor), getPM(as.matrix(Taylor)), 
-                 lower.tail = FALSE, method = "Exact")@x
-p.CO <- p.adjust(p.CO, method = "fdr")
-FDRs.CO[upper.tri(FDRs.CO, diag = TRUE)] <- p.CO
-FDRs.CO[lower.tri(FDRs.CO, diag = TRUE)] <- NA
-FDRs.CO <- FDRs.CO[nrow(FDRs.CO):1,]
-FDRs.CO[FDRs.CO > 0.05 | FDRs.CO == 0] <- 0.5
 ```
 
 ```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
-# Plot
+
 col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
 
-ComplexHeatmap::Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Taylor",
-cell_fun = function(j, i, x, y, width, height, fill) {
-  if ((is.na(FDRs.CO[i, j]) == FALSE) & (FDRs.CO[i, j] <= 0.05) & (OR.hm[i, j] > 0)) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))}
-   if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05 & (OR.hm[i, j] < 0))) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
-    }})
-lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3),
-              labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), 
-              title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), 
-              grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Abida",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }})
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
 draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
+```
+
+### Taylor
+```{r,echo=FALSE}
+# Compute OR and Fisher's Test FDR
+OR.hm <- odds_ratio(Taylor2)
+FDRs.ME <- fdr(Taylor2)
+
+# Format Matrices for plotting
+tri <- lower.tri(OR.hm, diag = FALSE)
+OR.hm[tri] <- NA
+diag(OR.hm) <- NA
+OR.hm <- log2(OR.hm)
+OR.hm <- round(OR.hm, 2)
+OR.hm <- OR.hm[nrow(OR.hm):1,]
+
+Taylor<-mat_fun(Taylor)
+```
+
+```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
+
+col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
+
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Taylor",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }})
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
+draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
 ```
 
 ### Barbieri
 ```{r,echo=FALSE}
-#----Barbieri----
-# Odds Ratio matrix
+# Compute OR and Fisher's Test FDR
 OR.hm <- odds_ratio(Barbieri)
-FDRs.CO <- OR.hm
-FDRs.ME <- OR.hm
+FDRs.ME <- fdr(Barbieri)
+# Format Matrices for plotting
 tri <- lower.tri(OR.hm, diag = FALSE)
 OR.hm[tri] <- NA
 diag(OR.hm) <- NA
@@ -859,46 +812,21 @@ OR.hm <- log2(OR.hm)
 OR.hm <- round(OR.hm, 2)
 OR.hm <- OR.hm[nrow(OR.hm):1,]
 
-mat_fun <- function(m){
-  m2 <- apply(m,  2,  function(x) as.numeric(paste(x)))
-  colnames(m2) <- colnames(m)
-  rownames(m2) <- rownames(m)
-  return(m2)
-}
 Barbieri<-mat_fun(Barbieri)
-# FDRs for ME and CO by Redsicover
-p.ME <- getMutex(as.matrix(Barbieri), getPM(as.matrix(Barbieri)), 
-                 lower.tail = TRUE, method = "Exact")@x
-p.ME <- p.adjust(p.ME, method = "fdr")
-FDRs.ME[upper.tri(FDRs.ME, diag = TRUE)] <- p.ME
-FDRs.ME[lower.tri(FDRs.ME, diag = TRUE)] <- NA
-FDRs.ME <- FDRs.ME[nrow(FDRs.ME):1,]
-FDRs.ME[FDRs.ME > 0.05 | FDRs.ME == 0] <- 0.5
-p.CO <- getMutex(as.matrix(Barbieri), getPM(as.matrix(Barbieri)), 
-                 lower.tail = FALSE, method = "Exact")@x
-p.CO <- p.adjust(p.CO, method = "fdr")
-FDRs.CO[upper.tri(FDRs.CO, diag = TRUE)] <- p.CO
-FDRs.CO[lower.tri(FDRs.CO, diag = TRUE)] <- NA
-FDRs.CO <- FDRs.CO[nrow(FDRs.CO):1,]
-FDRs.CO[FDRs.CO > 0.05 | FDRs.CO == 0] <- 0.5
 ```
 
-
 ```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
-# Plot
+
 col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
 
-ComplexHeatmap::Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Barbieri",
-cell_fun = function(j, i, x, y, width, height, fill) {
-  if ((is.na(FDRs.CO[i, j]) == FALSE) & (FDRs.CO[i, j] <= 0.05) & (OR.hm[i, j] > 0)) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))}
-   if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05 & (OR.hm[i, j] < 0))) {
-    grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
-    }})
-lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3),
-              labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), 
-              title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), 
-              grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Barbieri",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }})
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
 draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
 
 ```
@@ -910,7 +838,7 @@ Alterations in oncogenes play an important rule in driving cancer. Visualizing t
 In order to create an alteration matrix with copy number, mutations and fusions from the MAE, the function below can be used.
 
 ```{r}
-alt_matrix<-function(mae,genes){
+alt_matrix_onco<-function(mae,genes){
   #Pull cna and mutations from mae and run inbuilt wrapper function
   cna<-mae[["cna.gistic"]]
   cna<-as.data.frame(cna)
@@ -1040,6 +968,9 @@ alt_matrix<-function(mae,genes){
 
   for (i in 1:nrow(collapse_mut_cna)){
     collapse_mut_cna[i,]<-gsub("Inframe MutationFrameshift Mutation","Frameshift Mutation",collapse_mut_cna[i,])}
+  
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Nonstop_MutationFrameshift Mutation","Frameshift Mutation",collapse_mut_cna[i,])}
 
   for (i in 1:nrow(collapse_mut_cna)){
     collapse_mut_cna[i,]<-gsub("Missense MutationSplice Mutation","Splice Mutation",collapse_mut_cna[i,])}
@@ -1067,19 +998,33 @@ genes<-c("ERG","NKX3-1","USP10","PTEN","TP53","CHD1","MAP3K7","FOXA1","SPOP")
 
 
 mae_baca<-curatedPCaData::mae_baca
-alt_matrix_baca<-alt_matrix(mae_baca,genes)
+alt_matrix_baca<-alt_matrix_onco(mae_baca,genes)
 
 mae_barbieri<-curatedPCaData::mae_barbieri
-alt_matrix_barbieri<-alt_matrix(mae_barbieri,genes)
+alt_matrix_barbieri<-alt_matrix_onco(mae_barbieri,genes)
+Barbieri<-alt_matrix_ME(mae_barbieri,"barbieri",genes)
+alt_matrix_barbieri<-alt_matrix_barbieri[,colnames(Barbieri)]
 
 mae_tcga<-curatedPCaData::mae_tcga
-alt_matrix_tcga<-alt_matrix(mae_tcga,genes)
+alt_matrix_tcga<-alt_matrix_onco(mae_tcga,genes)
 
 mae_abida<-curatedPCaData::mae_abida
-alt_matrix_abida<-alt_matrix(mae_abida,genes)
+alt_matrix_abida<-alt_matrix_onco(mae_abida,genes)
 
 mae_taylor<-curatedPCaData::mae_taylor
-alt_matrix_taylor<-alt_matrix(mae_taylor,genes)
+alt_matrix_taylor<-alt_matrix_onco(mae_taylor,genes)
+
+Taylor<-alt_matrix_ME(mae_taylor,"taylor",genes)
+# Keep only primary samples for Taylor and remove SPOP
+clinical<-as.data.frame(colData(mae_taylor))
+clinical<-clinical[clinical$sample_type =="primary",]
+vec<-clinical$sample_name
+Taylor2<-Taylor[,intersect(colnames(Taylor),vec)]
+Taylor2<-Taylor2[!(rownames(Taylor2)%in%"SPOP"),]
+
+alt_matrix_taylor<-alt_matrix_taylor[,colnames(Taylor2)]
+alt_matrix_taylor<-alt_matrix_taylor[!(rownames(alt_matrix_taylor)%in%"SPOP"),]
+
 
 
 ```
@@ -1148,10 +1093,6 @@ ComplexHeatmap::oncoPrint(alt_matrix_barbieri,alter_fun = alter_fun,col = cols,c
 ### TCGA
 
 ```{r, dpi=150,out.width="100%", fig.width=8, fig.height=3,message=FALSE}
-
-# Remove mutation fields that did not look fine
-alt_matrix_tcga["FOXA1","TCGA.EJ.5494.01"]<-""
-alt_matrix_tcga["FOXA1","TCGA.HC.7742.01"]<-""
 
 df<-curatedPCaData:::wrapper_sortonco(alt_matrix_tcga)
 
