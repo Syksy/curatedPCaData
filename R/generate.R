@@ -404,7 +404,7 @@ generate_gex_geo <- function(
 		gz_files <- list.files()
 		gz_files <- gz_files[grep(".gz", gz_files)]
 
-		# Need phenodata as samples as from mixed cancers
+		# Need phenodata as samples are from mixed cancers
 		gset <- GEOquery::getGEO(geo_code, GSEMatrix = TRUE)
 		# Subset to just prostate cancer samples	
 		pca_gsm <- rownames(Biobase::pData(gset[[1]]))[grep("Prostate", Biobase::pData(gset[[1]])[,"title"])]
@@ -1514,23 +1514,6 @@ generate_cbioportaldata <- function(caselist,profile){
       
     }
     
-    # a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-    # symbols=c(symbols,a1)
-    
-    
-    # for (i in 2:length(vector)) {
-    #   a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-    #   symbols<- c(symbols,a2)
-    # }
-    
-    # create a df with the aliases and the associated hgnc_symbol
-    # no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
-    # 
-    # no_match <- no_match[!is.na(symbols),]
-    # symbols <- symbols[!is.na(symbols)]
-    # 
-    # rownames(no_match) <- make.names(symbols,unique = T)
-    
     # create a dictionary/df with the aliases and the associated hgnc_symbol
     no_match_dict<-data.frame(original_gene=original_gene,mapped_gene=symbols)
     # Remove those aliases that did not map to any hgnc_symbol
@@ -1580,7 +1563,8 @@ generate_cbioportaldata <- function(caselist,profile){
     # Remove rows with all NAs
     final_matrix<-final_matrix[rowSums(is.na(final_matrix)) != ncol(final_matrix), ]
     
-    return(final_matrix)
+    # Return sorted based on alphabetic rownames    
+    return(final_matrix[order(rownames(final_matrix)),])
     
   }
   

@@ -398,7 +398,6 @@ if(FALSE){
 	tmp <- as.matrix(tmp[,-1])
 	mae_true <- addSlotMAE(mae_true, xcell = tmp)
 	# Save the derived new 'assay' types to the mae-object
-	#usethis::use_data(mae_true, overwrite = TRUE)
 }
 
 
