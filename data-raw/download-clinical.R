@@ -967,9 +967,9 @@ curated <- curated %>%
                                                  TRUE ~ uncurated$'gleason score:ch1')) %>%
   dplyr::mutate(gleason_grade = as.numeric(gleason_grade)) %>% 
   dplyr::mutate(grade_group = dplyr::case_when(
-  	gleason_grade <= 1:6 ~ "<=6",
+  	gleason_grade <= 6 ~ "<=6",
   	gleason_grade == 7 ~ "7",
-  	gleason_grade >= 8:10 ~ ">=8"
+  	gleason_grade >= 8 ~ ">=8"
   )) %>%
   dplyr::mutate(race = 'caucasian') %>% 
   dplyr::mutate(tissue_source = 'prostatectomy') %>%
@@ -1590,7 +1590,7 @@ curated1 <- curated1 %>%
   dplyr::mutate(gleason_minor = as.numeric(substr(unlist(lapply(stringr::str_split(uncurated1$description, ' '), function(x) x[9])), 3, 3))) %>%
   dplyr::mutate(gleason_grade = gleason_major + gleason_minor) %>%
   dplyr::mutate(microdissected = 1) %>%
-  dplyr::mutate(gleason_group = dplyr::case_when(
+  dplyr::mutate(grade_group = dplyr::case_when(
     gleason_grade  %in%  4:6 ~ "<=6",
     gleason_major == 3 & gleason_minor == 4 ~ "3+4",
     gleason_major == 4 & gleason_minor == 3 ~ "4+3",
@@ -1608,7 +1608,7 @@ curated1[1, 'other_feature'] = paste(
                                      unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[6],
                                      unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[2],
                                      sep = '|')
-curated[1, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[3], 17, 17))
+curated1[1, 'grade_group'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[1,'Prostate Cancer patient 03-138A Gleason_Score:ch1'], ' '))[3], 17, 17))
 
 curated1[2,'psa'] = as.numeric(substr(unlist(stringr::str_split(uncurated1[2,'Prostate Cancer patient 03-135C Gleason_Score:ch1'], ' '))[5], 5, 8))
 curated1[2, 'tumor_margins_positive'] = 0
@@ -1965,7 +1965,7 @@ curated2 <- curated2 %>%
   dplyr::mutate(gleason_major = as.numeric(substr(unlist(lapply(stringr::str_split(uncurated2$description, ' '), function(x) x[9])), 1, 1))) %>%
   dplyr::mutate(gleason_minor = as.numeric(substr(unlist(lapply(stringr::str_split(uncurated2$description, ' '), function(x) x[9])), 3, 3))) %>%
   dplyr::mutate(gleason_grade = gleason_major + gleason_minor) %>%
-  dplyr::mutate(gleason_group = dplyr::case_when(
+  dplyr::mutate(grade_group = dplyr::case_when(
     gleason_grade  %in%  4:6 ~ "<=6",
     gleason_major == 3 & gleason_minor == 4 ~ "3+4",
     gleason_major == 4 & gleason_minor == 3 ~ "4+3",
@@ -2035,7 +2035,7 @@ curated <- curated %>%
   dplyr::mutate(grade_group = dplyr::case_when(
   	gleason_grade <= 6 ~ "<=6",
   	gleason_grade == 7 ~ "7",
-  	gleason_grade >= 8 ~ "8",
+  	gleason_grade >= 8 ~ ">=8",
   )) %>%
   dplyr::mutate(race = dplyr::case_when(
                                         uncurated$"race:ch1" == 'African American' ~ 'african_american',
