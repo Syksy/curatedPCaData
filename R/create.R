@@ -112,8 +112,12 @@ create_mae <- function(
     sampleMap = as.data.frame(map)
   )
 
-  if(verb) print(paste("Saving system date in attr 'mae_date' for sanity checking:", Sys.time()))
+  if(verb) print(paste("Checking in attr-fields 'mae_date':", Sys.time()))
   attr(mae_object, 'mae_date') <- Sys.time()
+  # attr(,"class") gets attached to some columns preventing casting DFrame to data.frame, clear these attr-fields just in case
+  for(colname in names(colData(mae_object))){
+  	attr(colData(mae_object)[,colname], "class") <- NULL
+  }
 
   if(verb) print(paste("MAE-object successfully created for", study_name))
   
