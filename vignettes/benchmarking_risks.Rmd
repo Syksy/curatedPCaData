@@ -1,14 +1,13 @@
 ---
 title: "Risk Score Benchmarking"
 author: "Curated Prostate Cancer Dataset"
-date: "2022-10-03"
+date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette:
-    toc:
-      true
-vignette: >
-  %\VignetteIndexEntry{Risk Score Benchmarking}
-  %\VignetteEngine{knitr::rmarkdown}
+  html_document: default
+  pdf_document: default
+vignette: |
+  %\VignetteIndexEntry{Risk Score Benchmarking} 
+  %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -22,7 +21,7 @@ knitr::opts_chunk$set(
 )
 ```
 
--   TCGA in package for scores has 417 samples but there are 461 gene expression samples
+-   TCGA in package for scores has 417 samples but there are `r ncol(mae_tcga[["gex.rsem.log"]])` gene expression samples
 
 # Overview
 
