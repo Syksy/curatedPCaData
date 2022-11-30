@@ -1,6 +1,6 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 0.9.34
+Version: 0.9.35
 Date: 2022-11-29
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
@@ -36,6 +36,7 @@ Suggests:
     rmarkdown,
     survival,
     survminer,
+    tidyverse,
     progress,
     cgdsr,
     biomaRt,
