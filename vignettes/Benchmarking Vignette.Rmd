@@ -70,20 +70,20 @@ Using the above functions, we can get the genes that we need and look up their a
 
 ```{r, eval = T, warning = F}
 # Prolaris
-prolaris_genes <- getProlarisGenes()
-prolaris_genes <- lapply(prolaris_genes, FUN=expandAliases)
+prolaris_genes <- curatedPCaData:::getProlarisGenes()
+prolaris_genes <- lapply(prolaris_genes, FUN=curatedPCaData:::expandAliases)
 
 # Oncotype DX
-oncotype_genes <- getOncotypeGenes()
-oncotype_genes <- lapply(oncotype_genes, FUN=expandAliases)
+oncotype_genes <- curatedPCaData:::getOncotypeGenes()
+oncotype_genes <- lapply(oncotype_genes, FUN=curatedPCaData:::expandAliases)
 
 # Decipher
-decipher_genes <- c(getDecipherOverGenes(),
-                    getDecipherUnderGenes())
-decipher_genes <- lapply(decipher_genes, FUN=expandAliases)
+decipher_genes <- c(curatedPCaData:::getDecipherOverGenes(),
+                    curatedPCaData:::getDecipherUnderGenes())
+decipher_genes <- lapply(decipher_genes, FUN=curatedPCaData:::expandAliases)
 
 #androgen receptor score
-ar_genes <- getARGenes()
+ar_genes <- curatedPCaData:::getARGenes()
 ```
 
 With expanded aliases, we can open all of the mae studies and look within their gene expression matrices for whether they have any intersection in the names of the risk score genes with the study gene names. As previously mentioned, it's important to note whether a study has matching gene names with the main gene as well as an alias for that gene. In some cases that we will see, the genes are actually on different chromosomes so we have to be careful about what we are considering aliases. In the past a gene may have been called one thing and now is renamed, and the original symbol used somewhere else - not an alias in the sense that the name now means the same thing, but through time the name has changed.
@@ -209,8 +209,8 @@ Now we are ready to begin Oncotype benchmarking. Oncotype DX score was originall
 
 ```{r, echo = F}
 # Oncotype DX
-oncotype_genes <- getOncotypeGenes()
-oncotype_genes <- lapply(oncotype_genes, FUN=expandAliases)
+oncotype_genes <- curatedPCaData:::getOncotypeGenes()
+oncotype_genes <- lapply(oncotype_genes, FUN=curatedPCaData:::expandAliases)
 ```
 
 The `oncotype_genes` list now has a vector of gene aliases within it for each of these main genes that are involved in calculating the Oncotype DX score. In order to benchmark, we need a dataset to test with. For this we went with the TCGA dataset within curatedPCaData package. The first table shows column score2 for TCGA saying Oncotype, meaning, TCGA has all of the main genes in the Oncotype DX score and none of them have multiple matches (none have an alias that also matches) which makes TCGA a good dataset to use for the benchmarking.
@@ -240,8 +240,8 @@ $$
 In order to estimate the impacts of missing genes on the final risk score for Oncotype DX, we need to establish a "ground truth" score using all of the genes found in the TCGA data.
 
 ```{r, echo = F}
-TCGA_gex = prepGEX(GEX = mae_tcga@ExperimentList$gex.rsem.log, gene_list = oncotype_genes, log_transform = TRUE)
-ground_truth = oncotype_score(TCGA_gex)
+TCGA_gex = curatedPCaData:::prepGEX(GEX = mae_tcga@ExperimentList$gex.rsem.log, gene_list = oncotype_genes, log_transform = TRUE)
+ground_truth = curatedPCaData:::oncotype_score(TCGA_gex)
 #matches what we would find in TCGA@ExperimentList$scores["oncotype",]
 ```
 
@@ -264,7 +264,7 @@ correlations = lapply(setNames(gene_range, gene_range), function(genes_to_remove
   names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
   #iterate over all combinations and test the scores robustness
   sapply(combos, function(genes_removed){
-    cor(ground_truth, TCGA_gex %>% select(-!!genes_removed) %>% oncotype_score)
+    cor(ground_truth, TCGA_gex %>% select(-!!genes_removed) %>% (curatedPCaData:::oncotype_score))
   })
 })
 
@@ -312,8 +312,8 @@ correlation_table %>%
 We can jump right into setting the Prolaris genes and looking through the data for the aliases. Prolaris has 34 genes used in calculating the risk score.
 
 ```{r}
-prolaris_genes <- getProlarisGenes()
-prolaris_genes <- lapply(prolaris_genes, FUN=expandAliases)
+prolaris_genes <- curatedPCaData:::getProlarisGenes()
+prolaris_genes <- lapply(prolaris_genes, FUN=curatedPCaData:::expandAliases)
 ```
 
 The dataset that looked most suited for use in determining impact of missing genes for Prolaris is Kunderfranco because it has all of the genes in the risk score match in the dataset, and only 2 genes have multiple alias matches. Will have to see how to handle aliases in the dataset as well but let's prepare the data. We do have an issue with this dataset though and that it is log-ratio values already. Nevertheless we can see the impact of removing genes on the calculated score.
@@ -374,10 +374,10 @@ The way that the score is calculated is as follows:
 -   Averaged values are log base 2 transformed
 
 ```{r}
-KUND_gex = prepGEX(mae_kunderfranco@ExperimentList$gex.logr, 
-                   lapply(getProlarisGenes(), expandAliases), 
+KUND_gex = curatedPCaData:::prepGEX(mae_kunderfranco@ExperimentList$gex.logr, 
+                   lapply(curatedPCaData:::getProlarisGenes(), curatedPCaData:::expandAliases), 
                    log_transform = FALSE)
-ground_truth = prolaris_score(KUND_gex)
+ground_truth = curatedPCaData:::prolaris_score(KUND_gex)
 ```
 
 Now we can run the benchmarks removing genes as we go randomly to see how that impacts the score results.
@@ -399,7 +399,7 @@ correlations = lapply(setNames(gene_range, gene_range), function(genes_to_remove
   names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
   #apply all combinations of genes to remove
   sapply(combos, function(genes_removed){    
-    cor(ground_truth, KUND_gex %>% select(-!!genes_removed) %>% prolaris_score())
+    cor(ground_truth, KUND_gex %>% select(-!!genes_removed) %>% curatedPCaData:::prolaris_score())
   })
 })
 #collapse all correlations to a single table for plotting
@@ -436,14 +436,14 @@ This shows that even up to 10 missing genes, using our log ratio'd data Prolaris
 The genes that are needed to broke into 2 different groups - an "up" group and a "down" group. With these genes we can then find all the aliases that may show up in our study.
 
 ```{r}
-decipher_genes_over <- lapply(getDecipherOverGenes(), expandAliases)
-decipher_genes_under <- lapply(getDecipherUnderGenes(), expandAliases)
+decipher_genes_over <- lapply(curatedPCaData:::getDecipherOverGenes(), curatedPCaData:::expandAliases)
+decipher_genes_under <- lapply(curatedPCaData:::getDecipherUnderGenes(), curatedPCaData:::expandAliases)
 ```
 
 For Decipher benchmarking, we will use the TCGA dataset again. In the tally table with the different genes per study it looks like Ren et. al. has a single gene more than TCGA so will stay with TCGA to maintain consistency with the Oncotype. The genes for Decipher need to be log2 transformed which is what Curated Prostate Cancer Data has the data as.
 
 ```{r}
-TCGA_gex = prepGEX(mae_tcga@ExperimentList$gex.rsem.log,
+TCGA_gex = curatedPCaData:::prepGEX(mae_tcga@ExperimentList$gex.rsem.log,
                    c(decipher_genes_over,
                      decipher_genes_under),
                    log_transform = FALSE)
@@ -458,7 +458,7 @@ To calculate the Decipher Score:
 -   "Down" genes average is subtracted from "Up" genes average
 
 ```{r}
-ground_truth = decipher_score(TCGA_gex)
+ground_truth = curatedPCaData:::decipher_score(TCGA_gex)
 ```
 
 Now we can start removing genes to see the impact that their removal has on the output score.
@@ -478,7 +478,7 @@ correlations = lapply(setNames(gene_range, gene_range)[1:6], function(genes_to_r
   names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
   #apply the combination of genes to the TCGA prepped data to calculate the affected risk score
   sapply(combos, function(genes_removed){
-    cor(ground_truth, decipher_score(TCGA_gex %>% select(-genes_removed)))
+    cor(ground_truth, curatedPCaData:::decipher_score(TCGA_gex %>% select(-genes_removed)))
   })
 })
 #collapse all correlations into a dataframe for plotting
@@ -515,7 +515,7 @@ It seems that removing maybe up to 3 of the Decipher genes/aliases still provide
 The AR risk score workflow is similar to the others. We first need to load the list of genes that are used for the AR score calculation and will use the TCGA dataset also here. We can check for gene/alias matches as well.
 
 ```{r}
-ar_genes = getARGenes()
+ar_genes = curatedPCaData:::getARGenes()
 TCGA_gex = mae_tcga@ExperimentList$gex.rsem.log %>%
   t() %>%
   data.frame(check.names=F)
@@ -566,10 +566,10 @@ For the Androgen Receptor score, the following is how it is calculated:
 -   Sum all genes by patient
 
 ```{r}
-TCGA_gex = prepGEX(mae_tcga@ExperimentList$gex.rsem.log,
+TCGA_gex = curatedPCaData:::prepGEX(mae_tcga@ExperimentList$gex.rsem.log,
                    ar_genes,
                    log_transform = F)
-ground_truth = ar_score(TCGA_gex)
+ground_truth = curatedPCaData:::ar_score(TCGA_gex)
 ```
 
 Let calculate the score while removing some of the genes and see the consequences of that.
@@ -588,7 +588,7 @@ correlations = lapply(setNames(gene_range, gene_range), function(genes_to_remove
   names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
   #apply the combination of genes to the TCGA prepped data to calculate the affected risk score
   sapply(combos, function(genes_removed){
-    cor(ground_truth, ar_score(TCGA_gex %>% select(-genes_removed)))
+    cor(ground_truth, curatedPCaData:::ar_score(TCGA_gex %>% select(-genes_removed)))
   })
 })
 
@@ -619,3 +619,9 @@ correlation_table %>%
 ```
 
 With the main AR score genes, appears that even up to half of them missing (10 of 20), the score is fairly robust. Hard to say exactly due to the sampling of combinations to 100, but looks like maybe at 6 removed the variation starts growing with some combinations having more impact than others (lower outliers). Numbers above x-axis are number of gene removal samples were used to create the respective boxes.
+
+# Session info
+
+```{r session}
+sessionInfo()
+```
