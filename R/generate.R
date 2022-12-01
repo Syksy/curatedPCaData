@@ -2618,7 +2618,7 @@ generate_xenabrowser <- function(
       # Download the FPKM-UQ values processed via HTSeq
       file <- .xenabrowserDownload(urls[["rsem.log"]])
       dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-      dat<-harmonize_matrix(dat)
+      dat <- harmonize_matrix(dat)
       
       # If column names should truncate last segment (sample -> patient id level truncation)
       if(truncate>=1){
@@ -2632,13 +2632,121 @@ generate_xenabrowser <- function(
         colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
         
       }
-      #return(dat)
-      # Copy number alterations (discretized by GISTIC)
+      # Low quality RNA samples omitted
+	# Utilize additional information of low quality samples from pathology review and RNA degradation
+	# Samples excluded in pathology review
+	PathReview <- c(
+		"TCGA-G9-6332",
+		"TCGA-HC-7738",
+		"TCGA-HC-7745",
+		"TCGA-HC-7819",
+		"TCGA-HC-8259",
+		"TCGA-EJ-A46B",
+		"TCGA-EJ-A46E",
+		"TCGA-EJ-A46H",
+		"TCGA-H9-A6BX",
+		"TCGA-HC-7817",
+		"TCGA-KK-A8IM",
+		"TCGA-V1-A8MK",
+		"TCGA-EJ-A8FO",
+		"TCGA-EJ-A8FP",
+		"TCGA-J4-A83J",
+		"TCGA-KK-A8I7"
+	)
+	# Samples indicated to suffer from RNA degradation
+	RNAdegrade <- c(
+		"TCGA-J4-A67O-01A-11R-A30B-07",
+		"TCGA-QU-A6IM-01A-11R-A31N-07",
+		"TCGA-QU-A6IL-01A-11R-A31N-07",
+		"TCGA-KK-A7AW-01A-11R-A32O-07",
+		"TCGA-G9-6347-01A-11R-A31N-07",
+		"TCGA-EJ-A46F-01A-31R-A250-07",
+		"TCGA-QU-A6IO-01A-11R-A31N-07",
+		"TCGA-J4-A67Q-01A-21R-A30B-07",
+		"TCGA-QU-A6IN-01A-11R-A31N-07",
+		"TCGA-G9-6379-01A-11R-A31N-07",
+		"TCGA-KK-A59V-01A-11R-A29R-07",
+		"TCGA-EJ-7325-01B-11R-A32O-07",
+		"TCGA-HC-A6HX-01A-11R-A31N-07",
+		"TCGA-G9-6362-01A-11R-1789-07",
+		"TCGA-J4-A67N-01A-11R-A30B-07",
+		"TCGA-FC-A6HD-01A-11R-A31N-07",
+		"TCGA-KK-A7AY-01A-11R-A33R-07",
+		"TCGA-G9-6498-01A-12R-A311-07",
+		"TCGA-KK-A7B0-01A-11R-A32O-07",
+		"TCGA-V1-A9OT-01A-11R-A41O-07",
+		"TCGA-HC-A6AQ-01A-11R-A30B-07",
+		"TCGA-EJ-A65D-01A-11R-A30B-07",
+		"TCGA-J4-A67R-01A-21R-A30B-07",
+		"TCGA-J4-A67M-01A-11R-A30B-07",
+		"TCGA-EJ-A65M-01A-11R-A29R-07",
+		"TCGA-MG-AAMC-01A-11R-A41O-07",
+		"TCGA-M7-A723-01A-12R-A32O-07",
+		"TCGA-EJ-A65B-01A-12R-A30B-07",
+		"TCGA-KK-A6E3-01A-21R-A30B-07",
+		"TCGA-H9-A6BY-01A-11R-A30B-07",
+		"TCGA-EJ-AB20-01A-12R-A41O-07",
+		"TCGA-J4-A67S-01A-11R-A30B-07",
+		"TCGA-HC-A6AP-01A-11R-A30B-07",
+		"TCGA-X4-A8KQ-01A-12R-A36G-07",
+		"TCGA-HC-7752-01A-11R-2118-07",
+		"TCGA-G9-6496-01A-11R-1789-07",
+		"TCGA-HC-A6AN-01A-11R-A30B-07",
+		"TCGA-FC-A66V-01A-21R-A30B-07",
+		"TCGA-HC-A6AS-01A-11R-A30B-07",
+		"TCGA-HC-A6AO-01A-11R-A30B-07",
+		"TCGA-HI-7169-01A-11R-2118-07",
+		"TCGA-J4-A67L-01A-11R-A30B-07",
+		"TCGA-HC-A6HY-01A-11R-A31N-07",
+		"TCGA-G9-6354-01A-11R-A311-07",
+		"TCGA-J4-A67K-01A-21R-A30B-07",
+		"TCGA-G9-6369-01A-21R-1965-07",
+		"TCGA-KK-A6E4-01A-11R-A30B-07",
+		"TCGA-KK-A6E7-01A-11R-A31N-07",
+		"TCGA-G9-6339-01A-12R-A311-07",
+		"TCGA-G9-6373-01A-11R-1789-07",
+		"TCGA-KK-A7AQ-01A-11R-A33R-07",
+		"TCGA-HC-A6AL-01A-11R-A30B-07",
+		"TCGA-ZG-A9L9-01A-11R-A41O-07",
+		"TCGA-KK-A6E8-01A-11R-A31N-07",
+		"TCGA-2A-A8VX-01A-11R-A37L-07",
+		"TCGA-G9-6343-01A-21R-1965-07",
+		"TCGA-KC-A7F5-01A-11R-A33R-07",
+		"TCGA-J9-A52E-01A-11R-A26U-07",
+		"TCGA-J9-A52C-01A-11R-A26U-07",
+		"TCGA-XJ-A9DX-01A-11R-A37L-07",
+		"TCGA-G9-6338-01A-12R-1965-07",
+		"TCGA-M7-A724-01A-12R-A32O-07",
+		"TCGA-KK-A7B2-01A-12R-A32O-07",
+		"TCGA-ZG-A9LB-01A-11R-A41O-07",
+		"TCGA-V1-A8MM-01A-11R-A37L-07",
+		"TCGA-M7-A71Z-01A-12R-A32O-07",
+		"TCGA-XK-AAK1-01A-11R-A41O-07",
+		"TCGA-VN-A88M-01A-11R-A352-07",
+		"TCGA-KK-A7AZ-01A-12R-A32O-07",
+		"TCGA-ZG-A9LM-01A-11R-A41O-07",
+		"TCGA-XJ-A83F-01A-11R-A352-07",
+		"TCGA-XJ-A9DQ-01A-11R-A37L-07",
+		"TCGA-ZG-A9LU-01A-11R-A41O-07",
+		"TCGA-G9-7525-01A-31R-2263-07",
+		"TCGA-G9-6496-11A-01R-1789-07", # Normal sample
+		"TCGA-G9-6362-11A-01R-1789-07", # Normal sample
+		"TCGA-G9-6348-11A-01R-1789-07" # Normal sample
+	)
+	# Substituting '-' with '.' due to R's variable name conventions
+	PathReview <- paste(gsub("-", ".", PathReview), ".01", sep="") # All pathology review samples with low quality ended in .01
+	RNAdegrade <- gsub("-", ".", RNAdegrade)
+	RNAdegrade <- gsub(".01A", ".01", substr(RNAdegrade, start=0, stop=16))
+	# Exclusion of low quality samples (3 normals, after the larger data was subset to provisional tumor samples)
+	dat <- dat[,which(!colnames(dat) %in% c(PathReview, RNAdegrade))]
+	# Alphabetic ordering
+      dat <- dat[order(rownames(dat)),]
+    # Copy number alterations (discretized by GISTIC)
     }else if(type == "cna"){
       # Download the copy number alteration values processed via GISTIC
       file <- .xenabrowserDownload(urls[["gistic"]])
       dat <- read.table(file, sep="\t", header=TRUE, row.names=1)
-      dat<-harmonize_matrix(dat)
+      dat <- harmonize_matrix(dat)
       # If column names should truncate last segment (sample -> patient id level truncation)
       if(truncate>=1){
         print("Truncating to 3 dot-separated names...")
@@ -2650,8 +2758,9 @@ generate_xenabrowser <- function(
         # Sub '.01A" with the default ".01"
         colnames(dat) <- gsub(".01A|.01B", ".01", colnames(dat))
       }
-      #return(dat)
-      # Small mutations (SNV / INDELs called by Mutect2)
+      # Alphabetic ordering
+      dat <- dat[order(rownames(dat)),]
+    # Small mutations (SNV / INDELs called by Mutect2)
     }else if(type == "mut"){
       #Download the MuTect2 somatic mutation calls
       file <- .xenabrowserDownload(urls[["mc3"]])
@@ -2665,15 +2774,15 @@ generate_xenabrowser <- function(
       # dat<-XenaPrepare(xe_download)
       
       #if(cleanup) file.remove(file)
-      tcga_mut<-dat[,c(2:4,1,5:12)]
-      colnames(tcga_mut)[1:3]<-c("seqnames","start","end")
-      tcga_mut$sample<-gsub("-",".",tcga_mut$sample)
-      tcga_mut$sample<-gsub("01A","01",tcga_mut$sample)
+      tcga_mut <- dat[,c(2:4,1,5:12)]
+      colnames(tcga_mut)[1:3] <-c ("seqnames","start","end")
+      tcga_mut$sample <- gsub("-",".",tcga_mut$sample)
+      tcga_mut$sample <- gsub("01A","01",tcga_mut$sample)
       names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
       #a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
       GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
-      ragexp_tcga<-RaggedExperiment::RaggedExperiment(GRL)
+      ragexp_tcga <- RaggedExperiment::RaggedExperiment(GRL)
       
       # Liftover from hg19 to hg38
       ch <- rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
