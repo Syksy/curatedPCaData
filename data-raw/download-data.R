@@ -371,8 +371,8 @@ save(cna.gistic_taylor, file="data-raw/cna.gistic_taylor.RData")
 # mut_taylor[which(mut_taylor=="NaN")] <- NA
 # # Grep down to using only patient samples, omitting cell lines etc
 # mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
-taylor_mut<- curatedPCaData:::generate_cbioportaldata("prad_mskcc","mut")
-save(taylor_mut, file="data-raw/mut_taylor.RData")
+mut_taylor<- curatedPCaData:::generate_cbioportaldata("prad_mskcc","mut")
+save(mut_taylor, file="data-raw/mut_taylor.RData")
 
 # Create MAE object
 mae_taylor <- curatedPCaData:::create_mae(study_name = "Taylor")

@@ -1,0 +1,626 @@
+---
+title: "Risk Score Benchmarking"
+author: "Curated Prostate Cancer Dataset"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+vignette: |
+  %\VignetteIndexEntry{Risk Score Benchmarking} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  cache = TRUE
+)
+```
+
+-   TCGA in package for scores has 417 samples but there are `r ncol(mae_tcga[["gex.rsem.log"]])` gene expression samples
+
+# Overview
+
+In this document we will go over the process used for benchmarking the robustness of the risk scores:
+
+-   Oncotype DX
+-   Prolaris
+-   Decipher
+-   Androgen Receptor (AR)
+
+The code was adapted from: <https://github.com/GerkeLab/prostatePrognosticPanels/blob/master/code/analysis.R>. The goal is to determine how many genes a study may have missing and still maintain a reliable risk score calculation for the above scores.
+
+# Loading Packages
+
+The packages that were used in this benchmarking were:
+
+```{r packages}
+library(curatedPCaData)
+library(tidyverse)
+library(parallel)
+library(ggpubr)
+```
+
+# Internal curatedPCaData Functions
+
+Within the `CuratedPCaData` package there is a function that is useful for collecting past aliases for HUGO symbols. This function is `expandAliases` - it takes a gene that will then searches `curatedPCaData:::curatedPCaData_genes$hgnc_symbol` to find aliases that gene had had in the past. There are also functions to get a list of the genes needed for the risk scores.
+
+* Oncotype
+  + getOncotypeGenes()
+* Prolaris
+  + getProlarisGenes()
+* Decipher
+  + getDecipherOverGenes()
+  + getDecipherUnderGenes()
+* AR
+  + getARGenes()
+  
+# Benchmarking
+
+## Identifying Appropriate Studies
+
+The different scores require different genes, not all of which are found in all of the studies. To see which studies that we can use as the "known" score when benchmarking, we tallied up the genes for each score in each study along with aliases to see which matches/missings we had to begin with. There are studies that have the main gene required by the risk score missing and therefore will need to be handled differently than a study where that mean gene is present. 
+
+Using the above functions, we can get the genes that we need and look up their aliases.
+
+```{r, eval = T, warning = F}
+# Prolaris
+prolaris_genes <- curatedPCaData:::getProlarisGenes()
+prolaris_genes <- lapply(prolaris_genes, FUN=curatedPCaData:::expandAliases)
+
+# Oncotype DX
+oncotype_genes <- curatedPCaData:::getOncotypeGenes()
+oncotype_genes <- lapply(oncotype_genes, FUN=curatedPCaData:::expandAliases)
+
+# Decipher
+decipher_genes <- c(curatedPCaData:::getDecipherOverGenes(),
+                    curatedPCaData:::getDecipherUnderGenes())
+decipher_genes <- lapply(decipher_genes, FUN=curatedPCaData:::expandAliases)
+
+#androgen receptor score
+ar_genes <- curatedPCaData:::getARGenes()
+```
+
+With expanded aliases, we can open all of the mae studies and look within their gene expression matrices for whether they have any intersection in the names of the risk score genes with the study gene names. As previously mentioned, it's important to note whether a study has matching gene names with the main gene as well as an alias for that gene. In some cases that we will see, the genes are actually on different chromosomes so we have to be careful about what we are considering aliases. In the past a gene may have been called one thing and now is renamed, and the original symbol used somewhere else - not an alias in the sense that the name now means the same thing, but through time the name has changed.
+
+```{r}
+mae_objects = ls("package:curatedPCaData") %>% grep("mae", ., value = TRUE)
+
+# identify those that have genes in the study for score -------------------
+
+all_genes = lapply(setNames(mae_objects, mae_objects), function(mae_name){
+  mae = get(mae_name)
+  GEX_slot = grep("gex", names(mae), value = TRUE)
+  
+  if(isEmpty(GEX_slot)){
+    message(paste0(mae_name, ": NO GEX SLOT!"))
+    prolaris = c("no match" = length(prolaris_genes))
+    oncotype = c("no match" = length(oncotype_genes))
+    decipher = c("no match" = length(decipher_genes))
+    AR = c("no match" = length(ar_genes))
+    
+    #set names unique
+    names(prolaris) = paste0("Prolaris : ", names(prolaris))
+    names(oncotype) = paste0("Oncotype : ", names(oncotype))
+    names(decipher) = paste0("Decipher : ", names(decipher))
+    names(AR) = paste0("AR : ", names(AR))
+    
+    return(c(sapply(prolaris, as.character),
+             sapply(oncotype, as.character),
+             sapply(decipher, as.character),
+             sapply(AR, as.character)))
+    
+  }
+  
+  #tally up missing, has, multiple matched for scores
+  prolaris = lapply(prolaris_genes, function(gene){
+    matched = length(intersect(colnames(t(mae@ExperimentList[[GEX_slot]])), unlist(prolaris_genes[gene])))
+    if(matched==1){
+      return("one match")
+    } else if(matched >1){
+      return("multiple matched")
+    } else {
+      return("no match")
+    }
+  }) %>% do.call(rbind, .) %>% 
+    table()
+  oncotype = lapply(oncotype_genes, function(gene){
+    matched = length(intersect(colnames(t(mae@ExperimentList[[GEX_slot]])), unlist(oncotype_genes[gene])))
+    if(matched==1){
+      return("one match")
+    } else if(matched >1){
+      return("multiple matched")
+    } else {
+      return("no match")
+    }
+  }) %>% do.call(rbind, .) %>% 
+    table()
+  decipher = lapply(decipher_genes, function(gene){
+    matched = length(intersect(colnames(t(mae@ExperimentList[[GEX_slot]])), unlist(decipher_genes[gene])))
+    if(matched==1){
+      return("one match")
+    } else if(matched >1){
+      return("multiple matched")
+    } else {
+      return("no match")
+    }
+  }) %>% do.call(rbind, .) %>% 
+    table()
+  AR = lapply(ar_genes, function(gene){
+    matched = length(intersect(colnames(t(mae@ExperimentList[[GEX_slot]])), gene))
+    if(matched==1){
+      return("one match")
+    } else if(matched >1){
+      return("multiple matched")
+    } else {
+      return("no match")
+    }
+  }) %>% do.call(rbind, .) %>%
+    table()
+  
+  #set names unique
+  names(prolaris) = paste0("Prolaris : ", names(prolaris))
+  names(oncotype) = paste0("Oncotype : ", names(oncotype))
+  names(decipher) = paste0("Decipher : ", names(decipher))
+  names(AR) = paste0("AR : ", names(AR))
+  
+  if(length(prolaris) == 1 & TRUE %in% grepl("one", names(prolaris))){
+    prolaris = c(prolaris, score1 ="prolaris")
+  }
+  if(length(oncotype) == 1 & TRUE %in% grepl("one", names(oncotype))){
+    oncotype = c(oncotype, score2 ="oncotype")
+  }
+  if(length(decipher) == 1 & TRUE %in% grepl("one", names(decipher))){
+    decipher = c(decipher, score3 ="decipher")
+  }
+  if(length(AR) == 1 & TRUE %in% grepl("one", names(AR))){
+    AR = c(AR, score4 ="AR")
+  }
+  
+  return(c(sapply(prolaris, as.character),
+           sapply(oncotype, as.character),
+           sapply(decipher, as.character),
+           sapply(AR, as.character)))
+})
+
+```
+
+In addition to tallying up number of genes that matched and whether there were multiple genes of an alias that matched, we added a tag for whether a study was a match for a score where there was only a single match with each alias list within the study (no need to account for multiple hits). Let's take a look at the table.
+
+```{r}
+final_table = do.call(bind_rows, all_genes) %>% 
+  relocate(!!grep("score", colnames(.), value = TRUE)) %>%
+  data.frame(check.names=F)
+
+rownames(final_table) = names(all_genes)
+final_table
+```
+
+We can see that, for example, TCGA is a good match for the Oncotype DX score because the Oncotype genes only had one match between a main gene and aliases. We also see that study like Kunderfranco et. al. didn't have any of the main Prolaris genes/aliases for the main gene missing (0 no match), but there were 2 genes for Prolaris that had more than a single hit within the gene expression matrix so we will look at that later.
+
+## Oncotype DX
+
+Now we are ready to begin Oncotype benchmarking. Oncotype DX score was originally calculated using real time quantitative PCR fold cycle threshold values - which cannot be direction assumed from sequencing gene expression values (inversely related). However, the Creed et. al. manuscript makes a fair case for it's reverse engineering. Let's get the genes that were used (<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7942810/>). In addition to getting the genes, we can go ahead and run the `expandAliases` function to pull those.
+
+```{r, echo = F}
+# Oncotype DX
+oncotype_genes <- curatedPCaData:::getOncotypeGenes()
+oncotype_genes <- lapply(oncotype_genes, FUN=curatedPCaData:::expandAliases)
+```
+
+The `oncotype_genes` list now has a vector of gene aliases within it for each of these main genes that are involved in calculating the Oncotype DX score. In order to benchmark, we need a dataset to test with. For this we went with the TCGA dataset within curatedPCaData package. The first table shows column score2 for TCGA saying Oncotype, meaning, TCGA has all of the main genes in the Oncotype DX score and none of them have multiple matches (none have an alias that also matches) which makes TCGA a good dataset to use for the benchmarking.
+
+Within the Oncotype DX there are what will we will refer to as 'modules'. These are calculations that are performed with a subset of genes before a final score calculation. In order to make these easier to call from within a loop, we created functions that calculate these along with a final function that will return the vector of Oncotype DX scores.
+
+$$
+Cellular\ Organization\ Module = 0.163(FLNC) + 0.504(GSN) + 0.421(TPM2) + 0.394(GSTM2)
+$$
+
+$$
+Stromal\ Module = 0.527(BGN) + 0.457(COL1A1) + 0.156(FRP4)
+$$
+
+$$
+Androgen\ Module = 0.634(FAM13C) + 1.079(KLK2) + 0.997(SRD5A2) + 0.642(AZGP1)
+$$
+
+$$
+Proliferation\ Module = max(TPX2,\ 5.0)
+$$
+
+$$
+Oncotype\ DX\ Score = 0.735(Stromal\ Module) - 0.368(Cellular\ Organization\ Module) - 0.352(Androgen\ Module) + 0.095(Proliferation\ Module)
+$$
+
+In order to estimate the impacts of missing genes on the final risk score for Oncotype DX, we need to establish a "ground truth" score using all of the genes found in the TCGA data.
+
+```{r, echo = F}
+TCGA_gex = curatedPCaData:::prepGEX(GEX = mae_tcga@ExperimentList$gex.rsem.log, gene_list = oncotype_genes, log_transform = TRUE)
+ground_truth = curatedPCaData:::oncotype_score(TCGA_gex)
+#matches what we would find in TCGA@ExperimentList$scores["oncotype",]
+```
+
+To test for the impact of missing genes, we selected up to 10 genes for all studies. We created randomly selected genes between 1 and 10 in length of the 12 for Oncotype DX, removed them from the data, then calculated the scores. The resulting score was than correlated back to the ground truth score with all of the genes with TCGA to assess the impact of that gene or genes being removed from the data. For reproducibility we set a seed of 333.
+
+```{r}
+#set seed for reproducibility
+set.seed(333)
+genes = colnames(TCGA_gex)
+gene_range = 1:10
+correlations = lapply(setNames(gene_range, gene_range), function(genes_to_remove){
+  #if removing single gene, need to make row rather than column
+  if(genes_to_remove == 1){
+    combos = data.frame(V1 = genes) %>% t() %>% data.frame()
+  } else {
+    #due to time/compute constraint, 50 samples 
+    combos = sapply(seq(100), function(x) sample(genes, genes_to_remove, replace = F)) %>% data.frame(check.names = FALSE)
+  }
+  #give names the combination of genes
+  names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
+  #iterate over all combinations and test the scores robustness
+  sapply(combos, function(genes_removed){
+    cor(ground_truth, TCGA_gex %>% select(-!!genes_removed) %>% (curatedPCaData:::oncotype_score))
+  })
+})
+
+#collapse into data frame with number of missing genes and the correlation to ground_truth
+correlation_table = lapply(seq(correlations), function(missing_n){
+  data.frame(Missing = as.factor(missing_n),
+             Correlation = correlations[[missing_n]])
+}) %>% do.call(rbind, .)
+```
+
+Visualizing the final correlations by the number of missing genes will give us an idea of how robust the *overall* score is when missing 1-10 genes. The numbers just above the x-axis represent the number of trials that were used to create the boxplot. For example, by removing 1 gene, there are only 12 ways that can be done (12 genes are used to calculate Oncotype DX). The second through 10th is 50 samples of all possible 2 gene combinations. This was done to decrease the time to run these benchmarks and as one could imagine, with more and more genes like the other risk scores, all possible gene combinations can be quite large.
+
+```{r, echo = F, fig.cap="Correlation of Oncotype DX risk score with all available genes in TCGA used vs removing genes. Values above the x-axis indicate the number of gene combinations that were used for the box above."}
+correlation_table %>%
+  ggplot() +
+  geom_boxplot(aes(x = Missing, y = Correlation)) +
+  lims(y = c(-0.05, 1)) +
+  theme_bw() +
+  theme(text = element_text(family = "Arial")) +
+  stat_summary(aes(x = Missing, y = Correlation),
+               fun.data = function(x) return(c(y = 0,
+                                               label = length(x))), 
+               geom = "text", fun = median,
+               position = position_dodge(width = 0.75),
+               vjust = 2) +
+  labs(title = "TCGA Oncotype Correlations from Removing Genes",
+       x = "Number of Genes Removed",
+       y = "Correlation with Oncotype DX with All Genes")
+```
+
+Looking at the Oncotype correlation plot, it doesn't appear to be too heavily weighed on a single gene and up to \~4 missing genes can be fairly reliable. With more then 4 missing genes the scores drop more and more, with some combinations of genes even producing a correlation \< 0.75 for a single outlier of 4 genes. We can look at the lowest 5 correlations for each number of missing genes to really see the impact of removing genes.
+
+```{r}
+correlation_table %>%
+  group_by(Missing) %>%
+  arrange(Correlation) %>%
+  dplyr::slice(1:5) %>%
+  mutate(rank = 1:n()) %>%
+  spread(Missing, Correlation) %>%
+  select(1:7)
+```
+
+## Prolaris
+
+We can jump right into setting the Prolaris genes and looking through the data for the aliases. Prolaris has 34 genes used in calculating the risk score.
+
+```{r}
+prolaris_genes <- curatedPCaData:::getProlarisGenes()
+prolaris_genes <- lapply(prolaris_genes, FUN=curatedPCaData:::expandAliases)
+```
+
+The dataset that looked most suited for use in determining impact of missing genes for Prolaris is Kunderfranco because it has all of the genes in the risk score match in the dataset, and only 2 genes have multiple alias matches. Will have to see how to handle aliases in the dataset as well but let's prepare the data. We do have an issue with this dataset though and that it is log-ratio values already. Nevertheless we can see the impact of removing genes on the calculated score.
+
+```{r}
+KUND = mae_kunderfranco
+KUND_gex = KUND@ExperimentList$gex.logr %>%
+  t() %>%
+  data.frame(check.names=F)
+
+lapply(prolaris_genes[c("FOXM1", "DLGAP5", "TK1", "SKA1", "ORC6", "CDK1")], function(genes){
+  intersect(genes, colnames(KUND_gex))
+})
+```
+
+Here we have included the genes that are either the 2 multimatching or it was an alias that matched with in the dataset rather than the main Prolaris gene. How should we deal with those that are matching along with an alias? Let start with that question and then we can generalize the answer to the other genes that only have an alias matching.
+
+```{r, echo = F, fig.width=8, fig.height = 3, fig.cap="Relationships between FOXM1 and MPP2 from Kunderfranco et. al."}
+g2g = KUND_gex %>%
+  ggplot() +
+  geom_point(aes(x = FOXM1, y = MPP2)) +
+  ggpubr::stat_cor(aes(x = FOXM1, y = MPP2), method = "pearson") +
+  labs(x = "FOXM1 (logr)",
+       y = "MPP2 (logr)") +
+  theme_bw() +
+  theme(text = element_text(family = "Arial"))
+f2a = KUND_gex %>%
+  ggplot() +
+  geom_point(aes(x = FOXM1, y = (FOXM1 + MPP2)/2)) +
+  ggpubr::stat_cor(aes(x = FOXM1, y = (FOXM1 + MPP2)/2),  method = "pearson") +
+  labs(x = "FOXM1 (logr)",
+       y = "FOXM1 and MPP2 Average (logr)") +
+  theme_bw() +
+  theme(text = element_text(family = "Arial"))
+m2a = KUND_gex %>%
+  ggplot() +
+  geom_point(aes(x = MPP2, y = (FOXM1 + MPP2)/2)) +
+  ggpubr::stat_cor(aes(x = MPP2, y = (FOXM1 + MPP2)/2), method = "pearson") +
+  labs(x = "MPP2 (logr)",
+       y = "FOXM1 and MPP2 Average (logr)") +
+  theme_bw() +
+  theme(text = element_text(family = "Arial"))
+
+ggarrange(g2g, f2a, m2a, nrow = 1, labels = c("A", "B", "C"))
+
+
+```
+
+From these plots we see that the relationship between FOXM1 and MPP2 is, if anything, negative (-0.26), and therefore likely not a good alias to use when FOXM1 is available. However, averaging the log ratio of these 2 genes, the correlation between FOXM1 and MPP2 is moderate with about 0.6 for both. If we use the score's main gene when available, or the average of all matching aliases we may end up with the best compromise.
+
+For the ground_truth of Prolaris within Kunderfranco data, we will remove MPP2 and TK2 from the alias matches and stick with only the main genes since we have them. But for calculation of the risk score in other datasets, looking for the main gene and if that is available, use it, otherwise take an average of the remaining aliases gene expression is recommended.
+
+The way that the score is calculated is as follows:
+
+-   Prolaris genes are median centered
+-   All values are squared
+-   Patient squared median centered values are averaged
+-   Averaged values are log base 2 transformed
+
+```{r}
+KUND_gex = curatedPCaData:::prepGEX(mae_kunderfranco@ExperimentList$gex.logr, 
+                   lapply(curatedPCaData:::getProlarisGenes(), curatedPCaData:::expandAliases), 
+                   log_transform = FALSE)
+ground_truth = curatedPCaData:::prolaris_score(KUND_gex)
+```
+
+Now we can run the benchmarks removing genes as we go randomly to see how that impacts the score results.
+
+```{r}
+#set seed for reproducible sampling
+set.seed(333)
+#apply 1 to 10 genes removed
+correlations = lapply(setNames(gene_range, gene_range), function(genes_to_remove){
+  #prepare combinations of genes to remove
+  if(genes_to_remove==1){
+    combos = names(prolaris_genes) %>% t() %>% data.frame(check.names = FALSE)
+  } else {
+    combos = sapply(1:50, function(n){
+      sample(names(prolaris_genes), genes_to_remove, replace = FALSE)
+    }) %>% data.frame()
+  }
+  #give name for reference looking back
+  names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
+  #apply all combinations of genes to remove
+  sapply(combos, function(genes_removed){    
+    cor(ground_truth, KUND_gex %>% select(-!!genes_removed) %>% curatedPCaData:::prolaris_score())
+  })
+})
+#collapse all correlations to a single table for plotting
+correlation_table = lapply(seq(correlations), function(missing_n){
+  data.frame(Missing = as.factor(missing_n),
+             Correlation = correlations[[missing_n]])
+}) %>% do.call(rbind, .)
+```
+
+Lets see how Prolaris risk score handles when we removed genes:
+
+```{r, echo = F, fig.cap="Correlation between 1 to 10 genes removed in calculating the Prolaris risk score. Numbers above the x-axis are the number of combinations used to create the box above."}
+correlation_table %>%
+  ggplot() +
+  geom_boxplot(aes(x = Missing, y = Correlation)) +
+  lims(y = c(0.75, 1)) +
+  theme_bw() +
+  theme(text = element_text(family = "Arial")) +
+  stat_summary(aes(x = Missing, y = Correlation),
+               fun.data = function(x) return(c(y = 0.825,
+                                               label = length(x))), 
+               geom = "text", fun = median,
+               position = position_dodge(width = 0.75),
+               vjust = 2) +
+  labs(title = "Kunderfranco Prolaris Correlations from Removing Genes",
+       x = "Number of Genes Removed",
+       y = "Correlation with Prolaris Score with Averaged Aliases")
+```
+
+This shows that even up to 10 missing genes, using our log ratio'd data Prolaris appears to be a very robust score. Granted, this is only removing up to 1/3rd of the genes but still very favorable correlations. Numbers above x-axis are number of gene removal samples were used to create the respective boxes.
+
+## Decipher
+
+The genes that are needed to broke into 2 different groups - an "up" group and a "down" group. With these genes we can then find all the aliases that may show up in our study.
+
+```{r}
+decipher_genes_over <- lapply(curatedPCaData:::getDecipherOverGenes(), curatedPCaData:::expandAliases)
+decipher_genes_under <- lapply(curatedPCaData:::getDecipherUnderGenes(), curatedPCaData:::expandAliases)
+```
+
+For Decipher benchmarking, we will use the TCGA dataset again. In the tally table with the different genes per study it looks like Ren et. al. has a single gene more than TCGA so will stay with TCGA to maintain consistency with the Oncotype. The genes for Decipher need to be log2 transformed which is what Curated Prostate Cancer Data has the data as.
+
+```{r}
+TCGA_gex = curatedPCaData:::prepGEX(mae_tcga@ExperimentList$gex.rsem.log,
+                   c(decipher_genes_over,
+                     decipher_genes_under),
+                   log_transform = FALSE)
+```
+
+For Decipher, if the genes overall are median centered and then the "Up" genes are averaged, and the "Down" genes are averaged. The difference between these averages is the Decipher score for that patient.
+
+To calculate the Decipher Score:
+
+-   Genes are median centered
+-   "Up" genes are averaged by patient, and "Down" genes are averaged by patient
+-   "Down" genes average is subtracted from "Up" genes average
+
+```{r}
+ground_truth = curatedPCaData:::decipher_score(TCGA_gex)
+```
+
+Now we can start removing genes to see the impact that their removal has on the output score.
+
+```{r}
+#set seed for reproducible sampling
+set.seed(335)
+correlations = lapply(setNames(gene_range, gene_range)[1:6], function(genes_to_remove){
+  #set up combination of genes in data frame
+  if(genes_to_remove==1){
+    combos = colnames(TCGA_gex) %>% t() %>% data.frame(check.names = FALSE)
+  } else {
+    combos = sapply(1:100, function(n){
+      sample(colnames(TCGA_gex), genes_to_remove, replace = FALSE)
+    }) %>% data.frame()
+  }
+  names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
+  #apply the combination of genes to the TCGA prepped data to calculate the affected risk score
+  sapply(combos, function(genes_removed){
+    cor(ground_truth, curatedPCaData:::decipher_score(TCGA_gex %>% select(-genes_removed)))
+  })
+})
+#collapse all correlations into a dataframe for plotting
+correlation_table = lapply(seq(correlations), function(missing_n){
+  data.frame(Missing = as.factor(missing_n),
+             Correlation = correlations[[missing_n]])
+}) %>% do.call(rbind, .)
+```
+
+Lets take a look at the results of removing genes and see what impact it has. Since there are only 6 genes that are present in the "under" or "down" genes, when we start removing too many we run into the issue that too many are removed (if not all) from the "down" genes. Here we stopped at removing 6 but the plot below paints a robust image.
+
+```{r, echo = F, fig.cap="Correlations for the Decipher risk score with removing genes for TCGA gene expression. The numbers above the x-axis indicate number of gene combinations used to create the box above."}
+correlation_table %>%
+  ggplot() +
+  geom_boxplot(aes(x = Missing, y = Correlation)) +
+  lims(y = c(0.1, 1)) +
+  theme_bw() +
+  theme(text = element_text(family = "Arial")) +
+  stat_summary(aes(x = Missing, y = Correlation),
+               fun.data = function(x) return(c(y = 0.15,
+                                               label = length(x))), 
+               geom = "text", fun = median,
+               position = position_dodge(width = 0.75),
+               vjust = 2) +
+  labs(title = "TCGA Decipher Correlations from Removing Genes",
+       x = "Number of Genes Removed",
+       y = "Correlation with 'True' Decipher Score")
+```
+
+It seems that removing maybe up to 3 of the Decipher genes/aliases still provides a strong score. This is just 100 randomly selected combinations of the genes, so 3 genes removed may have an outlier that falls below a correlation coefficient of 0.75. Numbers above x-axis are number of gene removal samples were used to create the respective boxes.
+
+## Androgen Receptor
+
+The AR risk score workflow is similar to the others. We first need to load the list of genes that are used for the AR score calculation and will use the TCGA dataset also here. We can check for gene/alias matches as well.
+
+```{r}
+ar_genes = curatedPCaData:::getARGenes()
+TCGA_gex = mae_tcga@ExperimentList$gex.rsem.log %>%
+  t() %>%
+  data.frame(check.names=F)
+
+lapply(ar_genes[3], function(genes){
+  intersect(genes, colnames(TCGA_gex))
+})
+```
+
+For the genes that are used to calculate the Androgen Receptor risk score, we only have a single that is doubled up with the main gene and an alias. Now these 2 genes when looking now are on different chromosomes and therefore we have to think about how we want to deal with the alias genes. Lets look at the correlation of just the two genes to see what we can observe.
+
+```{r, echo = F, fig.width=8, fig.height = 3, fig.cap="Relationships between FOXM1 and MPP2 from Kunderfranco et. al."}
+g2g = TCGA_gex %>%
+  ggplot() +
+  geom_point(aes(x = PMEPA1, y = STAG1)) +
+  ggpubr::stat_cor(aes(x = PMEPA1, y = STAG1), method = "pearson") +
+  labs(x = "PMEPA1 (rsem log)",
+       y = "STAG1 (rsem log)") +
+  theme_bw() +
+  theme(text = element_text(family = "Arial"))
+p2a = TCGA_gex %>%
+  ggplot() +
+  geom_point(aes(x = PMEPA1, y = (TCGA_gex$PMEPA1 + TCGA_gex$STAG1)/2)) +
+  ggpubr::stat_cor(aes(x = PMEPA1, y = (TCGA_gex$PMEPA1 + TCGA_gex$STAG1)/2),  method = "pearson") +
+  labs(x = "PMEPA1 (rsem log)",
+       y = "PMEPA1 and STAG1 Average (rsem log)") +
+  theme_bw() +
+  theme(text = element_text(family = "Arial"),
+        axis.title.y = element_text(size = 10))
+s2a = TCGA_gex %>%
+  ggplot() +
+  geom_point(aes(x = STAG1, y = (TCGA_gex$PMEPA1 + TCGA_gex$STAG1)/2)) +
+  ggpubr::stat_cor(aes(x = STAG1, y = (TCGA_gex$PMEPA1 + TCGA_gex$STAG1)/2), method = "pearson") +
+  labs(x = "STAG1 (rsem log)",
+       y = "PMEPA1 and STAG1 Average (rsem log)") +
+  theme_bw() +
+  theme(text = element_text(family = "Arial"),
+        axis.title.y = element_text(size = 10))
+
+ggarrange(g2g, p2a, s2a, nrow = 1, labels = c("A", "B", "C"))
+```
+
+Looks like PMEPA1 and STAG1 are weakly inversely correlated, and averaging only works well when PMEPA1 is being compared to. Since we have the main names for TCGA, we will use those when available and when datasets don't have all of the genes, they can have the aliases that do match, averaged.
+
+For the Androgen Receptor score, the following is how it is calculated:
+
+-   Z-scale genes
+-   Sum all genes by patient
+
+```{r}
+TCGA_gex = curatedPCaData:::prepGEX(mae_tcga@ExperimentList$gex.rsem.log,
+                   ar_genes,
+                   log_transform = F)
+ground_truth = curatedPCaData:::ar_score(TCGA_gex)
+```
+
+Let calculate the score while removing some of the genes and see the consequences of that.
+
+```{r}
+set.seed(333)
+correlations = lapply(setNames(gene_range, gene_range), function(genes_to_remove){
+  #set up combination of genes in data frame
+  if(genes_to_remove==1){
+    combos = colnames(TCGA_gex) %>% t() %>% data.frame(check.names = FALSE)
+  } else {
+    combos = sapply(1:100, function(n){
+      sample(colnames(TCGA_gex), genes_to_remove, replace = FALSE)
+    }) %>% data.frame()
+  }
+  names(combos) = combos %>% t() %>% data.frame() %>% unite("test", everything()) %>% pull(1)
+  #apply the combination of genes to the TCGA prepped data to calculate the affected risk score
+  sapply(combos, function(genes_removed){
+    cor(ground_truth, curatedPCaData:::ar_score(TCGA_gex %>% select(-genes_removed)))
+  })
+})
+
+correlation_table = lapply(seq(correlations), function(missing_n){
+  data.frame(Missing = as.factor(missing_n),
+             Correlation = correlations[[missing_n]])
+}) %>% do.call(rbind, .)
+```
+
+We can now look at a plot to see what the correlations were while removing some of the genes to compute the score.
+
+```{r, echo = F, fig.cap="Correlations between Androgen Receptor ground truth score and that of the score calculated with missing genes. Numbers above the x-axis indicates the number of gene combinations used for the respective boxes."}
+correlation_table %>%
+  ggplot() +
+  geom_boxplot(aes(x = Missing, y = Correlation)) +
+  lims(y = c(0.75, 1)) +
+  theme_bw() +
+  theme(text = element_text(family = "Arial")) +
+  stat_summary(aes(x = Missing, y = Correlation),
+               fun.data = function(x) return(c(y = 0.77,
+                                               label = length(x))), 
+               geom = "text", fun = median,
+               position = position_dodge(width = 0.75),
+               vjust = 2) +
+  labs(title = "TCGA AR Correlations from Removing Genes",
+       x = "Number of Genes Removed",
+       y = "Correlation with AR Score with Averaged Aliases")
+```
+
+With the main AR score genes, appears that even up to half of them missing (10 of 20), the score is fairly robust. Hard to say exactly due to the sampling of combinations to 100, but looks like maybe at 6 removed the variation starts growing with some combinations having more impact than others (lower outliers). Numbers above x-axis are number of gene removal samples were used to create the respective boxes.
+
+# Session info
+
+```{r session}
+sessionInfo()
+```

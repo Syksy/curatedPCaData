@@ -3,6 +3,7 @@ title: "T cell immune profiling in PCa survival"
 output:
   html_document: default
   pdf_document: default
+date: "`r Sys.Date()`"
 vignette: |
   %\VignetteIndexEntry{T cell immune profiling in PCa survival} 
   %\VignetteEngine{knitr::rmarkdown} 

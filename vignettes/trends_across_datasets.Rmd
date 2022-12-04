@@ -1,6 +1,7 @@
 ---
 title: "Trends across datasets"
 output: rmarkdown::html_vignette
+date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Trends across datasets}
   %\VignetteEngine{knitr::rmarkdown}
