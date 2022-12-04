@@ -4,6 +4,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
     number_sections: false
+date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Analysis examples in curatedPCaData}
   %\VignetteEngine{knitr::rmarkdown}
