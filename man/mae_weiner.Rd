@@ -12,9 +12,9 @@ An MAE spanning 838 prostate cancer samples of two cohorts
  \item{xcell}{matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
  \item{epic}{matrix with 8 rows and 838 columns, the epic deconvolution of the expression data}
  \item{quantiseq}{matrix with 11 rows and 838 columns, the quantiseq deconvolution of the expression data}
- \item{mcp}{matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
- \item{scores}{matrix with 4 rows and 838 columns, of risk scores and AR scores}
  \item{estimate}{data.frame with 4 rows and 838 columns, of cell types based on ESTIMATE method}
+ \item{scores}{matrix with 4 rows and 838 columns, of risk scores and AR scores}
+ \item{mcp}{matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
 }
 }
 \source{
