@@ -27,6 +27,7 @@ Other contributors:
   \item Federico Calboli \email{federico.calboli@utu.fi} [contributor]
   \item Kalaimathy Singaravelu \email{kalsin@utu.fi} [contributor]
   \item Michael Orman \email{michael.orman@cuanschutz.edu} [contributor]
+  \item Alex Soupir \email{Alex.Soupir@moffitt.org} [contributor]
 }
 
 }

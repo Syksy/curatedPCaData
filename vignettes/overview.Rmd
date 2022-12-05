@@ -360,7 +360,7 @@ for(mae in studies[,"MAE-object"]){
 		studies[w,"Notes"] <- "Also known as MSKCC"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GEX: GPL5188 [HuEx-1_0-st], CNA: GPL4091 Agilent CGH"		
 	}else if(mae == "mae_tcga"){
-		studies[w,"Data source"] <- "Genomics Data Commons (GDC)"
+		studies[w,"Data source"] <- "Xenabrowser"
 	}else if(mae == "mae_true"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL3834 FHCRC Human Prostate PEDB cDNA v3 / v4"		
