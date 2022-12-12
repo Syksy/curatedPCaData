@@ -1,3 +1,11 @@
+# curatedPCaData Version 0.9.38 _2022-12-12_
+
+* Old versioning
+* Removal of metadata specific to Bioc
+* Updates to low QC gene expression sample filtering in TCGA
+* Updates to corresponding downstream variables (such as immunedeconv) in TCGA
+* Updated Wallace et al. CIBERSORTx
+
 # curatedPCaData Version 0.99.0 _2022-10-06_
 
 * All content revised to conform to Bioconductor package policies
