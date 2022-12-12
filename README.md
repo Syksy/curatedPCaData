@@ -42,16 +42,16 @@ Simple example use of curated datasets and ’omics there-in:
     ## A MultiAssayExperiment object of 10 listed
     ##  experiments with user-defined names and respective classes.
     ##  Containing an ExperimentList class object of length 10:
-    ##  [1] cna.gistic: matrix with 23151 rows and 404 columns
+    ##  [1] cna.gistic: matrix with 23151 rows and 492 columns
     ##  [2] gex.rsem.log: matrix with 19658 rows and 461 columns
-    ##  [3] mut: RaggedExperiment with 15389 rows and 371 columns
-    ##  [4] cibersort: matrix with 22 rows and 417 columns
-    ##  [5] xcell: matrix with 39 rows and 417 columns
-    ##  [6] epic: matrix with 8 rows and 417 columns
-    ##  [7] quantiseq: matrix with 11 rows and 417 columns
-    ##  [8] mcp: matrix with 11 rows and 417 columns
-    ##  [9] scores: matrix with 4 rows and 417 columns
-    ##  [10] estimate: data.frame with 4 rows and 417 columns
+    ##  [3] mut: RaggedExperiment with 30897 rows and 495 columns
+    ##  [4] cibersort: matrix with 22 rows and 461 columns
+    ##  [5] xcell: matrix with 39 rows and 461 columns
+    ##  [6] epic: matrix with 8 rows and 461 columns
+    ##  [7] quantiseq: matrix with 11 rows and 461 columns
+    ##  [8] mcp: matrix with 11 rows and 461 columns
+    ##  [9] estimate: data.frame with 4 rows and 461 columns
+    ##  [10] scores: matrix with 4 rows and 461 columns
     ## Functionality:
     ##  experiments() - obtain the ExperimentList instance
     ##  colData() - the primary/phenotype DataFrame
@@ -62,26 +62,31 @@ Simple example use of curated datasets and ’omics there-in:
     ##  exportClass() - save data to flat files
 
     curatedPCaData::mae_tcga[["gex.rsem.log"]][1:4,1:4]
-    ##           TCGA.G9.6348.01 TCGA.CH.5766.01 TCGA.EJ.A65G.01 TCGA.EJ.5527.01
-    ## ARHGEF10L          8.8729          8.5581          9.2085          8.7699
-    ## HIF3A              5.9049          4.9716          6.7795          5.5978
-    ## RNF17              0.4008          0.7574          0.0000          2.5554
-    ## RNF10             12.3538         12.2950         11.9701         11.7983
+    ##          TCGA.G9.6348.01 TCGA.CH.5766.01 TCGA.EJ.A65G.01 TCGA.EJ.5527.01
+    ## A1BG              4.3733          6.0244          7.4927          3.7801
+    ## A1BG-AS1          4.5576          6.3326          6.7861          4.5912
+    ## A1CF              0.4008          0.7574          0.0000          0.0000
+    ## A2M              14.3952         12.8331         12.5017         14.2289
 
     curatedPCaData::mae_tcga[["cna.gistic"]][1:4,1:4]
-    ##         TCGA.2A.A8VL.01 TCGA.2A.A8VO.01 TCGA.2A.A8VT.01 TCGA.2A.A8VV.01
-    ## ACAP3                 0               0               0               0
-    ## ACTRT2                0               0               0               0
-    ## AGRN                  0               0               0               0
-    ## ANKRD65               0               0               0               0
+    ##       TCGA.2A.A8VL.01 TCGA.2A.A8VO.01 TCGA.2A.A8VT.01 TCGA.2A.A8VV.01
+    ## A1BG                0               0               0               0
+    ## A1CF                0               0              -1               0
+    ## A2M                 0               0              -1               0
+    ## A2ML1               0               0              -1               0
 
     MultiAssayExperiment::colData(curatedPCaData::mae_tcga)[1:3,1:5]
     ## DataFrame with 3 rows and 5 columns
-    ##               study_name   patient_id     sample_name        alt_sample_name overall_survival_status
-    ##              <character>  <character>     <character>            <character>               <integer>
-    ## TCGA.2A.A8VL        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
-    ## TCGA.2A.A8VO        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
-    ## TCGA.2A.A8VT        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
+    ##                  study_name   patient_id     sample_name
+    ##                 <character>  <character>     <character>
+    ## TCGA.2A.A8VL.01        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01
+    ## TCGA.2A.A8VO.01        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01
+    ## TCGA.2A.A8VT.01        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01
+    ##                        alt_sample_name overall_survival_status
+    ##                            <character>               <integer>
+    ## TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
+    ## TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
+    ## TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
 
     curatedPCaData::mae_taylor
     ## A MultiAssayExperiment object of 11 listed
@@ -95,9 +100,9 @@ Simple example use of curated datasets and ’omics there-in:
     ##  [6] xcell: matrix with 39 rows and 179 columns
     ##  [7] epic: matrix with 8 rows and 179 columns
     ##  [8] quantiseq: matrix with 11 rows and 179 columns
-    ##  [9] mcp: matrix with 11 rows and 179 columns
+    ##  [9] estimate: data.frame with 4 rows and 179 columns
     ##  [10] scores: matrix with 4 rows and 179 columns
-    ##  [11] estimate: data.frame with 4 rows and 179 columns
+    ##  [11] mcp: matrix with 11 rows and 179 columns
     ## Functionality:
     ##  experiments() - obtain the ExperimentList instance
     ##  colData() - the primary/phenotype DataFrame
@@ -116,9 +121,9 @@ Simple example use of curated datasets and ’omics there-in:
     ##  [3] xcell: matrix with 39 rows and 79 columns
     ##  [4] epic: matrix with 8 rows and 79 columns
     ##  [5] quantiseq: matrix with 11 rows and 79 columns
-    ##  [6] mcp: matrix with 11 rows and 79 columns
+    ##  [6] estimate: data.frame with 4 rows and 79 columns
     ##  [7] scores: matrix with 4 rows and 79 columns
-    ##  [8] estimate: data.frame with 4 rows and 79 columns
+    ##  [8] mcp: matrix with 11 rows and 79 columns
     ## Functionality:
     ##  experiments() - obtain the ExperimentList instance
     ##  colData() - the primary/phenotype DataFrame
