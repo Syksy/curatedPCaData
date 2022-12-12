@@ -236,11 +236,11 @@ correlation_of_correlations_met<-function(gene){
   return(combined_cor_list)
 }
 
-combined_cor_list_AR=correlation_of_correlations_met("AR")
-corr_of_corr_AR = cor(combined_cor_list_AR)
+combined_cor_list_AR <- correlation_of_correlations_met("AR")
+corr_of_corr_AR <- cor(combined_cor_list_AR)
 
-combined_cor_list_ERG=correlation_of_correlations_met("ERG")
-corr_of_corr_ERG = cor(combined_cor_list_ERG)
+combined_cor_list_ERG <- correlation_of_correlations_met("ERG")
+corr_of_corr_ERG <- cor(combined_cor_list_ERG)
 
 ```
 
@@ -392,7 +392,7 @@ plot<-ggplot(data=df_tcga, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) +
   geom_point() +
   gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
   theme_minimal() + theme_bw() + theme_classic()+
-  guides(size = "none")
+  guides(size = "none")+ ggtitle("TCGA")+ theme(plot.title = element_text(hjust = 0.5))
 
 # Assign shades of blue to downreg and shades of red to upreg genes
 plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
@@ -409,7 +409,7 @@ plot<-ggplot(data=df_taylor, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) +
   geom_point() +
   gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
   theme_minimal() + theme_bw() + theme_classic()+
-  guides(size = "none")
+  guides(size = "none")+ ggtitle("Taylor")+ theme(plot.title = element_text(hjust = 0.5))
 
 # Assign shades of blue to downreg and shades of red to upreg genes
 plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
@@ -426,7 +426,7 @@ plot<-ggplot(data=df_friedrich, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) 
   geom_point() +
   gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
   theme_minimal() + theme_bw() + theme_classic()+
-  guides(size = "none")
+  guides(size = "none")+ ggtitle("Friedrich")+ theme(plot.title = element_text(hjust = 0.5))
 
 # Assign shades of blue to downreg and shades of red to upreg genes
 plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
@@ -441,7 +441,7 @@ plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#
 plot<-ggplot(data=df_igc, aes(x=logfc, y=-log10(pval), color=gene,size=1)) +
   geom_point() +
   gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
-  theme_minimal() + theme_bw() + theme_classic()+guides(size = "none")
+  theme_minimal() + theme_bw() + theme_classic()+guides(size = "none")+ ggtitle("IGC")+ theme(plot.title = element_text(hjust = 0.5))
 
 # Assign shades of blue to downreg and shades of red to upreg genes
 plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
@@ -457,7 +457,7 @@ plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#
 plot<-ggplot(data=df_weiner, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) +
   geom_point() +
   gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
-  theme_minimal() + theme_bw() + theme_classic()+guides(size = "none")
+  theme_minimal() + theme_bw() + theme_classic()+guides(size = "none")+ ggtitle("Weiner")+ theme(plot.title = element_text(hjust = 0.5))
 
 plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
                                 "CDK1"="#FDDBC7","AFF3"="#D1E5F0","CD44"="#92C5DE",
@@ -1008,6 +1008,8 @@ alt_matrix_barbieri<-alt_matrix_barbieri[,colnames(Barbieri)]
 
 mae_tcga<-curatedPCaData::mae_tcga
 alt_matrix_tcga<-alt_matrix_onco(mae_tcga,genes)
+TCGA<-alt_matrix_ME(mae_tcga,"tcga",genes)
+alt_matrix_tcga<-alt_matrix_tcga[,colnames(TCGA)]
 
 mae_abida<-curatedPCaData::mae_abida
 alt_matrix_abida<-alt_matrix_onco(mae_abida,genes)
