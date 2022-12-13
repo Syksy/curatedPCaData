@@ -23,7 +23,6 @@ knitr::opts_chunk$set(
 
 # Silently load the material
 library(curatedPCaData)
-#curatedPCaData::loadPCa()
 
 ###
 #
@@ -35,9 +34,7 @@ library(curatedPCaData)
 maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
 
 # Currently used .csv template for clinical features to extract in all datasets (not possible but the ideal aim)
-#template <- utils::read.csv("data-raw/template_prad.csv")
 # Updated to be public exported for ease of use for authors and end-users
-#template <- curatedPCaData::template_prad
 template <- template_prad
 # Only loop through the optional fields
 fields <- template[which(template$requiredness=="optional" & !template$col.name=="alt_sample_name"),"col.name"]
@@ -124,11 +121,34 @@ for(i in 1:nrow(gleasons)){
 		}
 	}
 	# Other values
-	vals <- c(5:10, NA)
+	vals <- c(5:10, NA, NA_real_)
 	gleasons[i,ncol(gleasons)-1] <- paste0(sum(!gl %in% vals, na.rm=TRUE), " (", round(100*sum(!gl %in% vals, na.rm=TRUE)/length(gl),0), "%)")
 	# NA-values
 	gleasons[i,ncol(gleasons)] <- paste0(sum(is.na(gl), na.rm=TRUE), " (", round(100*sum(is.na(gl), na.rm=TRUE)/length(gl),0), "%)")
 }
+
+# Create a Grade group table; NA-value in addition to groups of <=6, 3+4, 4+3, 7 (if major+minor not separated), >=8, ; Other-values for debugging
+groups <- matrix(NA, nrow=length(maes), ncol=5+1+1)
+rownames(groups) <- paste(gsub("mae_", "", maes))
+colnames(groups) <- c("<=6", "3+4", "4+3", "7", ">=8", "Other", "N/A")
+for(i in 1:nrow(groups)){
+	eval(parse(text=paste0("gr <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$grade_group")))
+	# Iterate through Grade groups 
+	grs <- c("<=6", "3+4", "4+3", "7", ">=8")
+	for(j in 1:(ncol(groups)-2)){
+		if(!sum(gr==grs[j], na.rm=TRUE)==0){
+			groups[i,j] <- paste0(sum(gr==grs[j], na.rm=TRUE), " (", round(100*sum(gr==grs[j], na.rm=TRUE)/length(gr),0), "%)")	
+		}else{
+			groups[i,j] <- "-"
+		}
+	}
+	# Other values
+	vals <- c(grs, NA_character_, NA)
+	groups[i,ncol(groups)-1] <- paste0(sum(!gr %in% vals, na.rm=TRUE), " (", round(100*sum(!gr %in% vals, na.rm=TRUE)/length(gr),0), "%)")
+	# NA-values
+	groups[i,ncol(groups)] <- paste0(sum(is.na(gr), na.rm=TRUE), " (", round(100*sum(is.na(gr), na.rm=TRUE)/length(gr),0), "%)")
+}
+
 
 ###
 #
@@ -392,24 +412,28 @@ knitr::kable(template, caption="Template for Prostate Adecarcinoma clinical meta
 
 ### Clinical end-points
 
-Three primary clinical end-points were utilized and are offered in colData-slots in the MAE-objects:
+Three primary clinical end-points were utilized and are offered in colData-slots in the MAE-objects, if available:
 
-* Gleason grade/group
+* Gleason grade/Grade group(s)
 * Biochemical Recurrence (BCR)
-* Overall survival (OS)
+* Overall Survival (OS)
 
 Below are summaries for each of these endpoints for each study. Of note, OS had very few events, thus survival modelling for this end-point may be considered unreliable.
 
 ```{r gleasons, results = 'asis', echo=FALSE}
-knitr::kable(gleasons, caption="Gleason grades in curatedPCaData")
+knitr::kable(gleasons, caption="Gleason grades across datasets in curatedPCaData")
+```
+
+```{r groups, results = 'asis', echo=FALSE}
+knitr::kable(groups, caption="Grade groups across datasets in curatedPCaData")
 ```
 
 ```{r recurrences, results = 'asis', echo=FALSE}
-knitr::kable(recurrences, caption="Disease recurrence end point in curatedPCaData")
+knitr::kable(recurrences, caption="Disease recurrence end point across datasets in curatedPCaData")
 ```
 
 ```{r os, results = 'asis', echo=FALSE}
-knitr::kable(survivals, caption="Overall survival end point in curatedPCaData")
+knitr::kable(survivals, caption="Overall survival end point across datasets in curatedPCaData")
 ```
 
 ### Accessing primary data

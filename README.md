@@ -11,8 +11,11 @@ data resources concerning prostate cancer.
 
 ## Installation
 
-You can install `curatedPCaData` from GitHub with:
+A download link to the latest pre-built `curatedPCaData` tarball is
+available on the right-side in GitHub under
+[Releases](https://github.com/Syksy/curatedPCaData/releases).
 
+You can also install `curatedPCaData` from GitHub inside R with:
 
     # install.packages("devtools")
     devtools::install_github("Syksy/curatedPCaData")
@@ -24,14 +27,42 @@ terminal / command prompt while in the root of the project:
 
     R CMD build curatedPCaData
 
-It is possible to install the self-built tarball or download a premade
-latest package with (see Releases-page on GitHub):
+It is then possible to install the self-built tarball:
 
     R CMD INSTALL curatedPCaData_x.y.z.tar.gz
 
-<!--- add BioConductor once up --->
+Note that building the package locally will require dependencies to be
+present for the R installation.
 
 ## Usage
+
+### Vignettes
+
+`curatedPCaData` delivers with a number of vignettes displaying the
+package’s generic use as well as summaries and application examples
+across the prostate cancer datasets provided there-in. The vignette
+`overview` is intended for gaining a first-line comprehensive view into
+the package’s contents.
+
+The vignettes can be accessed via `vignette(package = "curatedPCaData")`
+or via `?curatedPCaData` section ‘*User guides, package vignettes and
+other documentation*’.
+
+A list of available vignettes, subset to suitable topics:
+
+
+    tools::getVignetteInfo("curatedPCaData")[,c("Topic", "Title")]
+    ##      Topic                     Title                                             
+    ## [1,] "analyses"                "Analysis examples in curatedPCaData"             
+    ## [2,] "correlation_between_gex" "Example correlations for genes in curatedPCaData"
+    ## [3,] "immunomarkers"           "Immunomarkers for Gleason and BCR"               
+    ## [4,] "overview"                "Overview to curatedPCaData"                      
+    ## [5,] "landscapes"              "PCa CNA landscapes with key gene annotations"    
+    ## [6,] "benchmarking_risks"      "Risk Score Benchmarking"                         
+    ## [7,] "tregs"                   "T cell immune profiling in PCa survival"         
+    ## [8,] "trends_across_datasets"  "Trends across datasets"
+
+### Brief example
 
 Simple example use of curated datasets and ’omics there-in:
 
@@ -77,16 +108,11 @@ Simple example use of curated datasets and ’omics there-in:
 
     MultiAssayExperiment::colData(curatedPCaData::mae_tcga)[1:3,1:5]
     ## DataFrame with 3 rows and 5 columns
-    ##                  study_name   patient_id     sample_name
-    ##                 <character>  <character>     <character>
-    ## TCGA.2A.A8VL.01        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01
-    ## TCGA.2A.A8VO.01        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01
-    ## TCGA.2A.A8VT.01        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01
-    ##                        alt_sample_name overall_survival_status
-    ##                            <character>               <integer>
-    ## TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
-    ## TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
-    ## TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
+    ##                  study_name   patient_id     sample_name        alt_sample_name overall_survival_status
+    ##                 <character>  <character>     <character>            <character>               <integer>
+    ## TCGA.2A.A8VL.01        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
+    ## TCGA.2A.A8VO.01        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
+    ## TCGA.2A.A8VT.01        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
 
     curatedPCaData::mae_taylor
     ## A MultiAssayExperiment object of 11 listed
@@ -133,10 +159,18 @@ Simple example use of curated datasets and ’omics there-in:
     ##  assays() - convert ExperimentList to a SimpleList of matrices
     ##  exportClass() - save data to flat files
 
+Note that the prefix `curatedPCaData::` is not currently required, as
+the setting for `LazyData: true` loads the MAE-objects into the active
+workspace as the package is loaded. Thus, writing just `mae_tcga` after
+`library(curatedPCaData)` would work just as well. The
+`pckgName::object` notation is provided here just for clarity, as
+different functions may be required to access different functionality of
+the `MultiAssayExperiment`-objects.
+
 ## R Shiny
 
-A web interface built with R Shiny for `curatedPCaData` can be launched
-via:
+A basic convenience web interface built with R Shiny for
+`curatedPCaData` can be launched via:
 
     curatedPCaData::shiny()
 
@@ -181,7 +215,7 @@ tarball, it’s also possible to directly download latest release tarball
 from
 <a href="https://github.com/Syksy/curatedPCaData/releases" class="uri">https://github.com/Syksy/curatedPCaData/releases</a>
 
-After this, the `curatedPCaData`R-package tarball can be installed
+After this, the `curatedPCaData` R-package tarball can be installed
 using:
 
     R CMD INSTALL curatedPCaData_x.y.z.tar.gz
@@ -189,5 +223,5 @@ using:
 Please note that some dependencies (such as the packages
 `MultiAssayExperiment` and `S4Vectors`) may produce an error during
 installation if they are not found for R. In this case these
-dependencies need to be installed from their respective repositories
-such as CRAN or BioConductor.
+dependencies need to be installed from their respective R package
+repositories such as CRAN or Bioconductor.
