@@ -1,3 +1,8 @@
+# curatedPCaData Version 0.9.39 _2022-12-13_
+
+* Fixed few special cases in Gleasons for Kim and Ren
+* Additional table(s) in Overview vignette
+
 # curatedPCaData Version 0.9.38 _2022-12-12_
 
 * Old versioning
