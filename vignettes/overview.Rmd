@@ -481,11 +481,12 @@ Tumor progression depends on the immune cell composition in the tumor microenvir
 
 In this package, we provide estimates of immune cell content from the following deconvolution methods:
 
-- quantiseq
-- xcell
-- epic
-- mcp (counter)
-- cibersort(x)
+- quanTIseq
+- xCell
+- EPIC
+- MCP counter
+- CIBERSORT(x)
+- ESTIMATE
 
 The estimates from each of these methods are stored in the MAE object as a seperate assay as shown for example in the Taylor dataset
 ```{r}

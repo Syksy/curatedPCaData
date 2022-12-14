@@ -1,3 +1,7 @@
+# curatedPCaData Version 0.9.40 _2022-12-14_
+
+* Endothelial cell score application vignettte
+
 # curatedPCaData Version 0.9.39 _2022-12-13_
 
 * Fixed few special cases in Gleasons for Kim and Ren
