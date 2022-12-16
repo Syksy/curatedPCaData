@@ -15,14 +15,14 @@ generate_gex_geo <- function(
 		"GSE18655",  # Barwick et al.
 		"GSE6919",   # Chandran et al., Yu et al. from three platforms combined
 		"GSE134051", # Friedrich et al.
+		"GSE2109",   # IGC
 		"GSE119616", # Kim et al.
 		"GSE14206",  # Kunderfranco et al.
-		"GSE2109",   # IGC
 		"GSE25136",  # Sun et al.
 		"GSE21032",  # Taylor et al. Alternative more specific accession code "GSE21034" for GEX
 		"GSE5132",   # True et al.
-		"GSE8218",   # Wang et al.
 		"GSE6956",   # Wallace et al.
+		"GSE8218",   # Wang et al.
 		"GSE157548"  # Weiner et al.
 		), 
 	# Indicate whether the 'oligo' or the 'affy' package should be the primary means for processing the CEL-data		
@@ -1219,10 +1219,10 @@ generate_cbioportal <- function(
                       ), # for cgdsr calls, platform and dataset specific string
   caseList = c("prad_tcga_pub_sequenced", # TCGA
                "prad_mskcc_sequenced", # Taylor et al.
-               "prad_broad_sequenced", # PRAD Broad
-               "prad_eururol_2017_sequenced", # PRAD Eururol
-               "prad_su2c_2019_sequenced",#Abida et al.
-               "prad_broad_2013_sequenced"#BACA
+               "prad_broad_sequenced", # Barbieri et al.
+               "prad_eururol_2017_sequenced", # Ren et al.
+               "prad_su2c_2019_sequenced", #Abida et al.
+               "prad_broad_2013_sequenced" #Baca et al.
                ), # for cgdsr calls, platform and dataset specific string
   delay = 0.05, 
   splitsize = 100, 
@@ -1578,23 +1578,6 @@ generate_cbioportaldata <- function(caselist,profile){
     vector<-rownames(no_match)
     symbols <- vector()
     #no_match_dict=data.frame(matrix(ncol=2))
-    
-    # if(length(vector)>1){
-    #   a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-    #   symbols=c(symbols,a1)
-    #   
-    #   for (i in 2:length(vector)) {
-    #     a2 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[i],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-    #     symbols<- c(symbols,a2)
-    #   }}else{
-    #     a1 <- curatedPCaData_genes[grep(paste0("(?<![^;])",vector[1],"(?![^;])"),curatedPCaData_genes$Aliases, value = FALSE, perl=TRUE)[1],"hgnc_symbol"]
-    #     symbols=c(symbols,a1)
-    #   }
-    # no_match_dict=data.frame(orig_gene=vector,mapped_gene=symbols)
-    # no_match <- no_match[!is.na(symbols),]
-    # symbols <- symbols[!is.na(symbols)]
-    # 
-    # rownames(no_match) <- make.names(symbols,unique = T)
     
     #curatedPCaData_genes<-curatedPCaData_genes
     # For those genes with no match try matching it to the aliase column and pull the hgnc_symbol associated with it.
