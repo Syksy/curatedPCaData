@@ -368,7 +368,7 @@ for(mae in studies[,"MAE-object"]){
 	}else if(mae == "mae_icgcca"){
 		studies[w,"Data source"] <- "ICGC Data Portal (PRAD-CA)"	
 		studies[w,"Notes"] <- "Canadian data from International Cancer Genome Collaboratory"
-		studies[w,"Reference(s)"] <- "ICGC-CA in Zhang et al."
+		studies[w,"Reference(s)"] <- "PRAD-CA in Zhang et al."
 	}else if(mae == "mae_igc"){
 		studies[w,"Data source"] <- "GEO"	
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL570 [HG-U133_Plus_2]"
