@@ -1,6 +1,10 @@
+# curatedPCaData Version 0.9.41 _2022-12-19_
+
+* Metadata sweeping vignette
+
 # curatedPCaData Version 0.9.40 _2022-12-14_
 
-* Endothelial cell score application vignettte
+* Endothelial cell score application vignette
 
 # curatedPCaData Version 0.9.39 _2022-12-13_
 
