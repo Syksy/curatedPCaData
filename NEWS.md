@@ -1,6 +1,7 @@
 # curatedPCaData Version 0.9.41 _2022-12-19_
 
 * Metadata sweeping vignette
+* Endothelial scores trends example in EPIC, MCP-counter and xCell
 
 # curatedPCaData Version 0.9.40 _2022-12-14_
 

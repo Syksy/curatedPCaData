@@ -147,11 +147,40 @@ Package `survminer` is used to plot Kaplan-Meier curves, while splitting accordi
 
 library(survminer)
 
-q_endo_xcell_tcga <- data.frame("AboveQuantile" = mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga], probs=2/3))
+q_endo_epic_tcga <- data.frame("AboveQuantile" = mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga], probs=2/3))
 q_endo_mcp_tcga <- data.frame("AboveQuantile" = mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga], probs=2/3))
+q_endo_xcell_tcga <- data.frame("AboveQuantile" = mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga], probs=2/3))
 
-fit_endo_xcell_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_xcell_tcga)
+fit_endo_epic_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_epic_tcga)
 fit_endo_mcp_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_mcp_tcga)
+fit_endo_xcell_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_xcell_tcga)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell score quantiles from EPIC applied in TCGA"}
+
+
+ggsurvplot(
+	fit_endo_mcp_tcga,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (days)",
+	title="Above quantile endothelial score (TCGA, EPIC)"
+)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell score quantiles from MCP counter applied in TCGA"}
+
+ggsurvplot(
+	fit_endo_mcp_tcga,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (days)",
+	title="Above quantile endothelial score (TCGA, MCP counter)"
+)
 
 ```
 
@@ -168,29 +197,17 @@ ggsurvplot(
 
 ```
 
-```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell score quantiles from MCP counter applied in TCGA"}
-
-
-ggsurvplot(
-	fit_endo_mcp_tcga,
-	pval=TRUE,
-	risk.table=TRUE,
-	ylab="BCR free proportion",
-	xlab="Time (days)",
-	title="Above quantile endothelial score (TCGA, MCP counter)"
-)
-
-```
-
 Let us test if this generalizes to the Taylor et al. datasets:
 
 ```{r}
 
-q_endo_xcell_taylor <- data.frame("AboveQuantile" = mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor], probs=c(2/3)))
-q_endo_mcp_taylor <- data.frame("AboveQuantile" = mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor], probs=c(2/3)))
+q_endo_epic_taylor <- data.frame("AboveQuantile" = mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor], probs=2/3))
+q_endo_mcp_taylor <- data.frame("AboveQuantile" = mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor], probs=2/3))
+q_endo_xcell_taylor <- data.frame("AboveQuantile" = mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor], probs=2/3))
 
-fit_endo_xcell_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_xcell_taylor)
+fit_endo_epic_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_epic_taylor)
 fit_endo_mcp_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_mcp_taylor)
+fit_endo_xcell_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_xcell_taylor)
 
 
 ```
@@ -227,17 +244,19 @@ We will construct data matrix for multipanel boxplots using `ggplot2`. Note howe
 
 ```{r}
 
-xcell_endo <- as.data.frame(rbind(
-	cbind(longFormat(mae_barbieri["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Barbieri et al."),
-	cbind(longFormat(mae_chandran["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Chandran et al."),
-	cbind(longFormat(mae_friedrich["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Friedrich et al."),
-	cbind(longFormat(mae_icgcca["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "ICGC Canadian"),
-	cbind(longFormat(mae_igc["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "IGC"),
-	cbind(longFormat(mae_ren["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Ren et al."),
-	cbind(longFormat(mae_taylor["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Taylor et al."),
-	cbind(longFormat(mae_tcga["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "TCGA"),
-	cbind(longFormat(mae_wallace["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Wallace et al.")
+epic_endo <- as.data.frame(rbind(
+	cbind(longFormat(mae_barbieri["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Barbieri et al."),
+	cbind(longFormat(mae_chandran["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Chandran et al."),
+	cbind(longFormat(mae_friedrich["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Friedrich et al."),
+	cbind(longFormat(mae_icgcca["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "ICGC Canadian"),
+	cbind(longFormat(mae_igc["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "IGC"),
+	cbind(longFormat(mae_ren["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Ren et al."),
+	cbind(longFormat(mae_taylor["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Taylor et al."),
+	cbind(longFormat(mae_tcga["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "TCGA"),
+	cbind(longFormat(mae_wallace["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Wallace et al.")
 ))
+epic_endo <- epic_endo[which(epic_endo$sample_type == "primary"),]
+
 mcp_endo <- as.data.frame(rbind(
 	cbind(longFormat(mae_barbieri["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Barbieri et al."),
 	cbind(longFormat(mae_chandran["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Chandran et al."),
@@ -249,8 +268,50 @@ mcp_endo <- as.data.frame(rbind(
 	cbind(longFormat(mae_tcga["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "TCGA"),
 	cbind(longFormat(mae_wallace["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Wallace et al.")
 ))
+mcp_endo <- mcp_endo[which(mcp_endo$sample_type == "primary"),]
+
+xcell_endo <- as.data.frame(rbind(
+	cbind(longFormat(mae_barbieri["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Barbieri et al."),
+	cbind(longFormat(mae_chandran["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Chandran et al."),
+	cbind(longFormat(mae_friedrich["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Friedrich et al."),
+	cbind(longFormat(mae_icgcca["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "ICGC Canadian"),
+	cbind(longFormat(mae_igc["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "IGC"),
+	cbind(longFormat(mae_ren["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Ren et al."),
+	cbind(longFormat(mae_taylor["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Taylor et al."),
+	cbind(longFormat(mae_tcga["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "TCGA"),
+	cbind(longFormat(mae_wallace["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Wallace et al.")
+))
+xcell_endo <- xcell_endo[which(xcell_endo$sample_type == "primary"),]
 
 library(ggplot2)
+
+```
+
+### EPIC boxplots
+
+EPIC, MCP-counter and xCell appeared to agree on endothelial cell connections to outcome.
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="EPIC endothelial cell scores across datasets in respect to Gleason grade groups"}
+
+p <- ggplot(epic_endo, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("Endothelial cell score (EPIC)")
+p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
+p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
+p <- p + facet_wrap(~dataset, scales="free_y")
+p
+
+```
+
+### MCP counter boxplots
+
+An increasing trend in endothelial cell score is noticed in MCP counter with higher grade groups.
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="MCP counter endothelial cell scores across datasets in respect to Gleason grade groups"}
+
+p <- ggplot(mcp_endo, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("Endothelial cell score (MCP counter)")
+p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
+p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
+p <- p + facet_wrap(~dataset, scales="free_y")
+p
 
 ```
 
@@ -267,21 +328,6 @@ p <- p + facet_wrap(~dataset, scales="free_y")
 p
 
 ```
-
-### MCP counter boxplots
-
-Similarly, an increasing trend in endothelial cell score is noticed in MCP counter with higher grade groups.
-
-```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="MCP counter endothelial cell scores across datasets in respect to Gleason grade groups"}
-
-p <- ggplot(mcp_endo, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("Endothelial cell score (MCP counter)")
-p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
-p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
-p <- p + facet_wrap(~dataset, scales="free_y")
-p
-
-```
-
 
 ## Tabulated endothelial scores vs. Gleason groups in other datasets
 
