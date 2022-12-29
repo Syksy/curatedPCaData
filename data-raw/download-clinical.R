@@ -521,7 +521,7 @@ curated <- curated %>%
     sample_type == "primary tumor" ~ "primary",
     sample_type == "cell line" ~ "cell.line",
     sample_type == "xenograft" ~ "xenograft",
-    sample_type == "metastatsis" ~ "metastasis",
+    sample_type == "metastatsis" ~ "metastatic",
     is.na(sample_type) ~ "normal",
     TRUE ~ sample_type
   )) %>%
@@ -548,9 +548,9 @@ uncurated_cbio <- uncurated_cbio[match(curated$patient_id, row.names(uncurated_c
 # Additional clinical parameters as recored in cBioPortal
 curated <- curated %>%
 	# Gleason grades reported in GEO seem to differ from cBioPortal even for same IDs; using the ones provided by cBio:
-	dplyr::mutate(gleason_grade = uncurated_cbio$GLEASON_SCORE) %>% 
-	dplyr::mutate(gleason_major = uncurated_cbio$GLEASON_SCORE_1) %>% 
-	dplyr::mutate(gleason_minor = uncurated_cbio$GLEASON_SCORE_2) %>% 
+	dplyr::mutate(gleason_grade = as.integer(uncurated_cbio$GLEASON_SCORE)) %>% 
+	dplyr::mutate(gleason_major = as.integer(uncurated_cbio$GLEASON_SCORE_1)) %>% 
+	dplyr::mutate(gleason_minor = as.integer(uncurated_cbio$GLEASON_SCORE_2)) %>% 
 	dplyr::mutate(grade_group = dplyr::case_when(
 		gleason_grade == 6 ~ "<=6",
 		gleason_grade %in% 8:10 ~ ">=8",
@@ -579,7 +579,7 @@ curated <- curated %>%
 	dplyr::mutate(genome_altered = uncurated_cbio$FRACTION_GENOME_ALTERED)
 
 # Leave out cell.line and xenograft samples
-curated <- curated[which(curated$sample_type %in% c("primary", "metastasis", "normal")),]
+curated <- curated[which(curated$sample_type %in% c("primary", "metastatic", "normal")),]
 curated <- curated[grep("PCA|PAN", curated$sample_name),]
 curated <- curated[order(curated$sample_name),]
 # Only include unique entries
@@ -1074,6 +1074,8 @@ clinical_chandran <- curated
 save(clinical_chandran, file = "data-raw/clinical_chandran.RData")
 
 ######################################################################
+#
+#  Barbieri et al.
 #cBioportal Barbieri Broad/Cornell Data
 #####################################################################
 mae <-cBioPortalData::cBioDataPack("prad_broad",ask = FALSE)
@@ -1991,11 +1993,11 @@ save(clinical_wallace, file = "data-raw/clinical_wallace.RData")
 
 
 ########################################################################
-########################################################################
 #
 # Weiner et al.
 #
-########################################################################
+# Source: GEO
+#
 ########################################################################
 
 gset <- getGEO("GSE157548", GSEMatrix =TRUE, getGPL=TRUE)
@@ -2064,7 +2066,11 @@ save(clinical_weiner, file = 'data-raw/clinical_weiner.RData')
 
 
 #######################################################################
-#Wang et al
+#
+# Wang et al.
+#
+# Source: GEO
+#
 ######################################################################
 
 gse <- GEOquery::getGEO("GSE8218", GSEMatrix = TRUE)
@@ -2241,7 +2247,11 @@ save(clinical_igc, file = "data-raw/clinical_igc.RData")
 
 
 #####################################################################################
-#cBioportal BACA
+# 
+# Baca et al.
+#
+# Source: cBioportal 
+#
 #####################################################################################
 
 mae <- cBioPortalData::cBioDataPack("prad_broad_2013", ask = FALSE)
