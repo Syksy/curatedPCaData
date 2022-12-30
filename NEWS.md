@@ -1,3 +1,7 @@
+# curatedPCaData Version 0.9.42 _2022-12-29_
+
+* Endothelial vignette revisions
+
 # curatedPCaData Version 0.9.41 _2022-12-19_
 
 * Metadata sweeping vignette
