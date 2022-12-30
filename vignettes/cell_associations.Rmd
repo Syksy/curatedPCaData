@@ -139,9 +139,10 @@ predict(coxnet_mcp_bcr_taylor, s=coxnet_cv_mcp_bcr_taylor$lambda.min, type="coef
 
 We notice a trend that across both TCGA and Taylor et al. datasets, high endothelial cell scores seem to correspond to higher BCR risk.
 
-xCell and MCP Counter methods are most robust against the specific type of data provided; therefore they may provide best insight across different gene expression platforms (i.e. RNA-seq from TCGA and RMA-normalized microarray expression in Taylor et al).
+xCell and MCP Counter methods are most robust against the specific type of data provided; therefore they may provide best insight across different gene expression platforms (i.e. RNA-seq from TCGA and RMA-normalized microarray expression in Taylor et al). 
+Furthermore, EPIC provides estimates for endothelial cells, thus it is also interesting for exploring this trend.
 
-Package `survminer` is used to plot Kaplan-Meier curves, while splitting according to suitable endothelial score quantiles for xCell and MCP counter:
+Package `survminer` is used to plot Kaplan-Meier curves, while splitting according to suitable endothelial score quantiles for xCell and MCP counter; we discretize the endothelial scores to top tertile vs the lower 2/3rds:
 
 ```{r}
 
@@ -161,11 +162,11 @@ fit_endo_xcell_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_xcell_t
 
 
 ggsurvplot(
-	fit_endo_mcp_tcga,
+	fit_endo_epic_tcga,
 	pval=TRUE,
 	risk.table=TRUE,
 	ylab="BCR free proportion",
-	xlab="Time (days)",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
 	title="Above quantile endothelial score (TCGA, EPIC)"
 )
 
@@ -178,7 +179,7 @@ ggsurvplot(
 	pval=TRUE,
 	risk.table=TRUE,
 	ylab="BCR free proportion",
-	xlab="Time (days)",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
 	title="Above quantile endothelial score (TCGA, MCP counter)"
 )
 
@@ -191,7 +192,7 @@ ggsurvplot(
 	pval=TRUE,
 	risk.table=TRUE,
 	ylab="BCR free proportion",
-	xlab="Time (days)",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
 	title="Above quantile endothelial score (TCGA, xCell)"
 )
 
@@ -209,18 +210,17 @@ fit_endo_epic_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_epic
 fit_endo_mcp_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_mcp_taylor)
 fit_endo_xcell_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_xcell_taylor)
 
-
 ```
 
-```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell quantiles from xCell applied in Taylor et al."}
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell quantiles from EPIC applied in Taylor et al."}
 
 ggsurvplot(
-	fit_endo_xcell_taylor,
+	fit_endo_epic_taylor,
 	pval=TRUE,
 	risk.table=TRUE,
 	ylab="BCR free proportion",
-	xlab="Time (days)",
-	title="Above quantile endothelial score (Taylor et al., xCell)"
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (Taylor et al., EPIC)"
 )
 
 ```
@@ -232,8 +232,21 @@ ggsurvplot(
 	pval=TRUE,
 	risk.table=TRUE,
 	ylab="BCR free proportion",
-	xlab="Time (days)",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
 	title="Above quantile endothelial score (Taylor et al., MCP counter)"
+)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell quantiles from xCell applied in Taylor et al."}
+
+ggsurvplot(
+	fit_endo_xcell_taylor,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (Taylor et al., xCell)"
 )
 
 ```
@@ -329,6 +342,49 @@ p
 
 ```
 
+## Correlations between methods
+
+Let us examine the estimated scores between the three methods; EPIC, MCP-counter, and xCell, and if they agree:
+
+```{r cors}
+
+endocors_tcga <- data.frame(
+	epic = mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga],
+	mcp = mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga],
+	xcell = mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga]
+)
+endocors_taylor <- data.frame(
+	epic = mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor],
+	mcp = mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor],
+	xcell = mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor]
+)
+
+```
+
+Correlations using Spearman rank correlation:
+
+```{r cors_spearman}
+
+cor(endocors_tcga, method="spearman")
+
+cor(endocors_taylor, method="spearman")
+
+```
+
+Scatterplots between the three methods agree, some with non-linear patterns which are captured by the rank correlation:
+
+```{r cors_scatter_tcga, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Agreement between methods for endothelial cell scores in TCGA"}
+
+plot(endocors_tcga, pch=16)
+
+```
+
+```{r cors_scatter_taylor, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Agreement between methods for endothelial cell scores in Taylor et al."}
+
+plot(endocors_taylor, pch=16)
+
+```
+
 ## Tabulated endothelial scores vs. Gleason groups in other datasets
 
 While other datasets lack such comprehensive information on biochemical recurrence, we can use Gleason as a proxy, as the grades are associated with a more aggressive disease.
@@ -337,7 +393,7 @@ Let us test tabulated grade groupings vs. chosen top quantiles of endothelial es
 
 ```{r}
 # Define a function able to construct a convenient data frame with top quantile endothelial scores from xCell, MCP counter, and connect them to Gleasons
-endofunc <- function(mae, q = 3/4){
+endofunc <- function(mae, q = 2/3){
 	pheno <- colData(mae) |>
 		# Filter down to primary samples
 		(\(x) { x[x$sample_type == "primary",] })() |>
@@ -345,80 +401,28 @@ endofunc <- function(mae, q = 3/4){
 		(\(x) { x[which(rownames(x) %in% colnames(mae[["xcell"]])),] })()
 	samps <- rownames(pheno)
 	
-	topq_xcell <- mae[["xcell"]]["Endothelial cell",samps] >= quantile(mae[["xcell"]]["Endothelial cell",samps], probs=q)
+	topq_epic <- mae[["epic"]]["Endothelial cell",samps] >= quantile(mae[["epic"]]["Endothelial cell",samps], probs=q)
 	topq_mcp <- mae[["mcp"]]["Endothelial cell",samps] >= quantile(mae[["mcp"]]["Endothelial cell",samps], probs=q)
+	topq_xcell <- mae[["xcell"]]["Endothelial cell",samps] >= quantile(mae[["xcell"]]["Endothelial cell",samps], probs=q)
 	
 	# Return list of tabulated results of endothelial scores vs. grade groups
 	list(
-		xcell_table = table(xCellTopQ = topq_xcell, Gleason = pheno$gleason_grade),
-		mcp_table = table(mcpTopQ = topq_mcp, Gleason = pheno$gleason_grade)
+		epic_table = table(epicTopQ = topq_epic, Gleason = pheno$gleason_grade),
+		mcp_table = table(mcpTopQ = topq_mcp, Gleason = pheno$gleason_grade),
+		xcell_table = table(xCellTopQ = topq_xcell, Gleason = pheno$gleason_grade)
 	)
 }
 
 ```
 
-### Barbieri et al.
-
-```{r}
-tabs_barbieri <- endofunc(mae_barbieri)
-tabs_barbieri
-fisher.test(tabs_barbieri$xcell_table)
-fisher.test(tabs_barbieri$mcp_table)
-```
-
-### Chandran et al.
-
-```{r}
-tabs_chandran <- endofunc(mae_chandran)
-tabs_chandran
-fisher.test(tabs_chandran$xcell_table)
-fisher.test(tabs_chandran$mcp_table)
-```
-
-### Friedrich et al.
-
-```{r}
-tabs_friedrich <- endofunc(mae_friedrich)
-tabs_friedrich
-fisher.test(tabs_friedrich$xcell_table)
-fisher.test(tabs_friedrich$mcp_table)
-```
-
-### ICGC Canada
-
-```{r}
-tabs_icgcca <- endofunc(mae_icgcca)
-tabs_icgcca
-fisher.test(tabs_icgcca$xcell_table)
-fisher.test(tabs_icgcca$mcp_table)
-```
-
-### IGC
-
-```{r}
-tabs_icgcca <- endofunc(mae_icgcca)
-tabs_icgcca
-fisher.test(tabs_icgcca$xcell_table)
-fisher.test(tabs_icgcca$mcp_table)
-```
-
-### Ren et al.
-
-```{r}
-tabs_ren <- endofunc(mae_ren)
-tabs_ren
-fisher.test(tabs_ren$xcell_table)
-fisher.test(tabs_ren$mcp_table)
-```
-
 ### Taylor et al.
-
 
 ```{r}
 tabs_taylor <- endofunc(mae_taylor)
 tabs_taylor
-fisher.test(tabs_taylor$xcell_table)
+fisher.test(tabs_taylor$epic_table)
 fisher.test(tabs_taylor$mcp_table)
+fisher.test(tabs_taylor$xcell_table)
 ```
 
 ### TCGA
@@ -426,18 +430,65 @@ fisher.test(tabs_taylor$mcp_table)
 ```{r}
 tabs_tcga <- endofunc(mae_tcga)
 tabs_tcga
-fisher.test(tabs_tcga$xcell_table)
+fisher.test(tabs_tcga$epic_table)
 fisher.test(tabs_tcga$mcp_table)
+fisher.test(tabs_tcga$xcell_table)
 ```
 
-### Wallace et al.
+## Cox model for endothelial cells with and without Gleason grades
 
-```{r}
-tabs_wallace <- endofunc(mae_wallace)
-tabs_wallace
-fisher.test(tabs_wallace$xcell_table)
-fisher.test(tabs_wallace$mcp_table)
+It is interesting to examine the hazard ratios with Cox proportional hazards models (function `coxph` from `survival`), but also to see if combining the endothelial scores into the same model together with Gleasons improves survival prediction.
+
+Just endothelial cell scores in both TCGA and Taylor et al.:
+
+```{r cox_justendo}
+
+coxph(y_bcr_tcga ~ mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga])
+coxph(y_bcr_tcga ~ mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga])
+coxph(y_bcr_tcga ~ mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga])
+
+coxph(y_bcr_taylor ~ mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor])
+coxph(y_bcr_taylor ~ mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor])
+coxph(y_bcr_taylor ~ mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor])
+
 ```
+
+If we discretize the endothelial cell scores to top tertile vs. rest:
+
+```{r cox_justendo_toptertile}
+
+endo_tcga_topq_epic <- mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga], probs=2/3)
+endo_tcga_topq_mcp <- mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga], probs=2/3)
+endo_tcga_topq_xcell <- mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga], probs=2/3)
+
+endo_taylor_topq_epic <- mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor], probs=2/3)
+endo_taylor_topq_mcp <- mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor], probs=2/3)
+endo_taylor_topq_xcell <- mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor], probs=2/3)
+
+coxph(y_bcr_tcga ~ endo_tcga_topq_epic)
+coxph(y_bcr_tcga ~ endo_tcga_topq_mcp)
+coxph(y_bcr_tcga ~ endo_tcga_topq_xcell)
+
+coxph(y_bcr_taylor ~ endo_taylor_topq_epic)
+coxph(y_bcr_taylor ~ endo_taylor_topq_mcp)
+coxph(y_bcr_taylor ~ endo_taylor_topq_xcell)
+
+```
+
+Coupled with Gleason grade in addition to endothelial cell scores:
+
+```{r cox_endogleason}
+
+coxph(y_bcr_tcga ~ mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga] + colData(mae_tcga)[samples_bcr_tcga, "gleason_grade"])
+coxph(y_bcr_tcga ~ mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga] + colData(mae_tcga)[samples_bcr_tcga, "gleason_grade"])
+coxph(y_bcr_tcga ~ mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga] + colData(mae_tcga)[samples_bcr_tcga, "gleason_grade"])
+
+coxph(y_bcr_taylor ~ mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor] + colData(mae_taylor)[samples_bcr_taylor, "gleason_grade"])
+coxph(y_bcr_taylor ~ mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor] + colData(mae_taylor)[samples_bcr_taylor, "gleason_grade"])
+coxph(y_bcr_taylor ~ mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor] + colData(mae_taylor)[samples_bcr_taylor, "gleason_grade"])
+
+```
+
 
 # Session info
 
