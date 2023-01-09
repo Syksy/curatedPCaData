@@ -1,3 +1,7 @@
+# curatedPCaData Version 0.9.43 _2023-01-09_
+
+* Clarifications to the descriptions provided in the template_prad
+
 # curatedPCaData Version 0.9.42 _2022-12-29_
 
 * Endothelial vignette revisions
