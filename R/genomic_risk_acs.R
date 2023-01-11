@@ -4,11 +4,12 @@
 #' Get list of genes to use for Prolaris Risk Score calculation
 #'
 #' @return list of genes for calculating Prolaris Risk Score
-#' @export
 #'
 #' @examples
 #' prolaris_genes = getProlarisGenes()
 #' 
+#' @noRd
+#' @keywords internal
 getProlarisGenes = function(){
   return(list(
     "FOXM1" = c("FOXM1"), 
@@ -51,11 +52,12 @@ getProlarisGenes = function(){
 #' Get Genes for Oncotype DX Risk Score calculation
 #'
 #' @return list of genes used for calculating Oncotype DX Risk Score
-#' @export
 #'
 #' @examples
 #' oncotype_genes = getOncotypeGenes()
 #' 
+#' @noRd
+#' @keywords internal
 getOncotypeGenes = function(){
   return(list(
     "AZGP1" = c("AZGP1"), 
@@ -79,11 +81,12 @@ getOncotypeGenes = function(){
 #' https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3691249/
 #'
 #' @return list of genes used for Decipher risk score calculation
-#' @export
 #'
 #' @examples
 #' decipher_over_genes = getDecipherOverGenes()
 #' 
+#' @noRd
+#' @keywords internal
 getDecipherOverGenes = function(){
   return(list(
     "CAMK2N1" = c("CAMK2N1"), 
@@ -106,11 +109,12 @@ getDecipherOverGenes = function(){
 #' https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3691249/
 #'
 #' @return list of genes used for Decipher risk score calculation
-#' @export
 #'
 #' @examples
 #' decipher_over_genes = getDecipherUnderGenes()
 #' 
+#' @noRd
+#' @keywords internal
 getDecipherUnderGenes = function(){
   return(list(		
     "ANO7" = c("ANO7"), 
@@ -128,11 +132,12 @@ getDecipherUnderGenes = function(){
 #' Get a list of genes for AR Risk Score calculation
 #'
 #' @return list of genes used to calculate AR Risk Score
-#' @export
 #'
 #' @examples
 #' ar_genes = getARGenes()
 #' 
+#' @noRd
+#' @keywords internal
 getARGenes = function(){
   return(list(
     "KLK3" = c("KLK3", "PSA", "APS", "KLK2A1"), # Possibly HK3; ambiguous
@@ -163,11 +168,12 @@ getARGenes = function(){
 #' @param gene single HUGO gene symbol
 #'
 #' @return vector of gene aliases for input HUGO symbol
-#' @export
 #'
 #' @examples
-#' p53_aliases = expandAliases("TP53)
+#' p53_aliases = expandAliases("TP53")
 #' 
+#' @noRd
+#' @keywords internal
 expandAliases <- function(gene){
   if(length(which(curatedPCaData:::curatedPCaData_genes$hgnc_symbol == gene))>0){
     unique(c(gene, 
@@ -187,14 +193,16 @@ expandAliases <- function(gene){
 #' @param gene_list list of genes to prepare
 #' @param log_transform whether the gene expression matrix should be log transformed or not
 #'
-#' @return
-#' @export
+#' @return Modified gene expression matrix
 #'
 #' @examples
 #' 
 #' GEX = mae_tcga@ExperimentList$gex.rsem.log
 #' gene_list = lapply(getOncotypeGenes, expandAliases)
 #' preppedGEX = prepGEX(GEX, gene_list, log_transform=FALSE)
+#'
+#' @noRd
+#' @keywords internal
 prepGEX = function(GEX, gene_list, log_transform = TRUE){
   #check if we get what we are expecting
   if(length(dim(GEX)) != 2){
@@ -265,7 +273,6 @@ proliferation_module = function(GEX_df){
 #' @param GEX_df gene expression matrix prepped with prepGEX
 #'
 #' @return vector of scores
-#' @export
 #'
 #' @examples
 #' 
@@ -273,6 +280,9 @@ proliferation_module = function(GEX_df){
 #' gene_list = lapply(getOncotypeGenes, expandAliases)
 #' preppedGEX = prepGEX(GEX, gene_list, log_transform=FALSE)
 #' oncotype = oncotype_score(preppedGEX)
+#'
+#' @noRd
+#' @keywords internal
 oncotype_score = function(GEX_df){
   risk_score = 0.735*stromal_module(GEX_df) - 
     0.368*cellular_organization_module(GEX_df) - 
@@ -289,7 +299,6 @@ oncotype_score = function(GEX_df){
 #' @param GEX_df gene expression matrix prepped with prepGEX
 #'
 #' @return vector of scores
-#' @export
 #'
 #' @examples
 #' 
@@ -297,6 +306,9 @@ oncotype_score = function(GEX_df){
 #' gene_list = lapply(getProlarisGenes, expandAliases)
 #' preppedGEX = prepGEX(GEX, gene_list, log_transform=FALSE)
 #' prolaris = prolaris_score(preppedGEX)
+#'
+#' @noRd
+#' @keywords internal
 prolaris_score = function(GEX_df){
   medians = apply(GEX_df, 2, stats::median)
   centered_dat = sweep(GEX_df, 2, medians)
@@ -315,7 +327,6 @@ prolaris_score = function(GEX_df){
 #' @param GEX_df gene expression matrix prepped with prepGEX
 #'
 #' @return vector of scores
-#' @export
 #'
 #' @examples
 #' 
@@ -324,6 +335,9 @@ prolaris_score = function(GEX_df){
 #'                      decipher_genes_under), expandAliases)
 #' preppedGEX = prepGEX(GEX, gene_list, log_transform=FALSE)
 #' decipher = decipher_score(preppedGEX) 
+#'
+#' @noRd
+#' @keywords internal
 decipher_score = function(GEX_df){
   over_genes = unlist(getDecipherOverGenes())
   under_genes = unlist(getDecipherUnderGenes())
@@ -341,7 +355,6 @@ decipher_score = function(GEX_df){
 #' @param GEX_df gene expression matrix prepped with prepGEX
 #'
 #' @return vector of scores
-#' @export
 #'
 #' @examples
 #' 
@@ -349,6 +362,9 @@ decipher_score = function(GEX_df){
 #' gene_list = lapply(getARGenes, expandAliases)
 #' preppedGEX = prepGEX(GEX, gene_list, log_transform=FALSE)
 #' ar = at_score(preppedGEX) 
+#'
+#' @noRd
+#' @keywords internal
 ar_score = function(GEX_df){
   rowSums(scale(GEX_df))
 }

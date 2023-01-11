@@ -521,7 +521,7 @@ curated <- curated %>%
     sample_type == "primary tumor" ~ "primary",
     sample_type == "cell line" ~ "cell.line",
     sample_type == "xenograft" ~ "xenograft",
-    sample_type == "metastatsis" ~ "metastasis",
+    sample_type == "metastatsis" ~ "metastatic",
     is.na(sample_type) ~ "normal",
     TRUE ~ sample_type
   )) %>%
@@ -548,9 +548,9 @@ uncurated_cbio <- uncurated_cbio[match(curated$patient_id, row.names(uncurated_c
 # Additional clinical parameters as recored in cBioPortal
 curated <- curated %>%
 	# Gleason grades reported in GEO seem to differ from cBioPortal even for same IDs; using the ones provided by cBio:
-	dplyr::mutate(gleason_grade = uncurated_cbio$GLEASON_SCORE) %>% 
-	dplyr::mutate(gleason_major = uncurated_cbio$GLEASON_SCORE_1) %>% 
-	dplyr::mutate(gleason_minor = uncurated_cbio$GLEASON_SCORE_2) %>% 
+	dplyr::mutate(gleason_grade = as.integer(uncurated_cbio$GLEASON_SCORE)) %>% 
+	dplyr::mutate(gleason_major = as.integer(uncurated_cbio$GLEASON_SCORE_1)) %>% 
+	dplyr::mutate(gleason_minor = as.integer(uncurated_cbio$GLEASON_SCORE_2)) %>% 
 	dplyr::mutate(grade_group = dplyr::case_when(
 		gleason_grade == 6 ~ "<=6",
 		gleason_grade %in% 8:10 ~ ">=8",
@@ -579,7 +579,7 @@ curated <- curated %>%
 	dplyr::mutate(genome_altered = uncurated_cbio$FRACTION_GENOME_ALTERED)
 
 # Leave out cell.line and xenograft samples
-curated <- curated[which(curated$sample_type %in% c("primary", "metastasis", "normal")),]
+curated <- curated[which(curated$sample_type %in% c("primary", "metastatic", "normal")),]
 curated <- curated[grep("PCA|PAN", curated$sample_name),]
 curated <- curated[order(curated$sample_name),]
 # Only include unique entries
@@ -1074,6 +1074,8 @@ clinical_chandran <- curated
 save(clinical_chandran, file = "data-raw/clinical_chandran.RData")
 
 ######################################################################
+#
+#  Barbieri et al.
 #cBioportal Barbieri Broad/Cornell Data
 #####################################################################
 mae <-cBioPortalData::cBioDataPack("prad_broad",ask = FALSE)
@@ -1142,22 +1144,22 @@ curated <- initial_curated_internal(
 curated <- curated %>% 
   dplyr::mutate(study_name = "Ren et al.") %>%
   dplyr::mutate(patient_id = rownames(uncurated)) %>%
-  dplyr::mutate(age_at_initial_diagnosis = as.integer(uncurated$AGE)) %>%
+  dplyr::mutate(age_at_initial_diagnosis = as.numeric(uncurated$AGE)) %>%
   dplyr::mutate(sample_name = rownames(uncurated)) %>%
   # From the publication: "The study sequenced whole-genome and transcriptome of tumor-benign paired tissues from 65 treatment-naive Chinese PCa patients"
   dplyr::mutate(sample_paired = 1) %>%
   dplyr::mutate(sample_type = "primary") %>%
   dplyr::mutate(race = "asian") %>%
   dplyr::mutate(patient_id = row.names(uncurated)) %>%
-  dplyr::mutate(psa = uncurated$PSA) %>%
-  dplyr::mutate(gleason_grade = uncurated$GLEASON_SCORE) %>%
-  dplyr::mutate(gleason_major = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,1,1))) %>%
-  dplyr::mutate(gleason_minor = as.integer(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
+  dplyr::mutate(psa = as.numeric(uncurated$PSA)) %>%
+  dplyr::mutate(gleason_grade = as.numeric(stringr::str_sub(uncurated$GLEASON_SCORE,1,1)) + as.numeric(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
+  dplyr::mutate(gleason_major = as.numeric(stringr::str_sub(uncurated$GLEASON_SCORE,1,1))) %>%
+  dplyr::mutate(gleason_minor = as.numeric(stringr::str_sub(uncurated$GLEASON_SCORE,3,3))) %>%
   dplyr::mutate(grade_group = dplyr::case_when(
-    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+3" ~ "<=6",
+    gleason_grade %in% 2:6 ~ "<=6",
     stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "3+4" ~ "3+4",
     stringr::str_sub(uncurated$GLEASON_SCORE,1,3) == "4+3" ~ "4+3",
-    stringr::str_sub(uncurated$GLEASON_SCORE,1,3) %in% c("4+4", "4+5") ~ ">=8"
+    gleason_grade %in% 8:10 ~ ">=8"
   )) %>%
   dplyr::mutate(age_at_initial_diagnosis = uncurated$AGE) %>%
   dplyr::mutate(T_clinical = readr::parse_number(uncurated$TNMSTAGE)) %>% 
@@ -1214,14 +1216,14 @@ curated <- curated %>%
   dplyr::mutate(tissue_source = gsub("prostate cancer biopsy", "biopsy", stringr::str_remove(uncurated$characteristics_ch1.10,"tissue:"))) %>%
   dplyr::mutate(age_at_initial_diagnosis = floor(as.numeric(uncurated$`age:ch1`))) %>%
   dplyr::mutate(psa = as.numeric(stringr::str_remove(uncurated$characteristics_ch1.6, "psa:"))) %>%
-  dplyr::mutate(gleason_major = stringr::str_remove(uncurated$characteristics_ch1.8,"primary gleason grade:")) %>%
-  dplyr::mutate(gleason_minor = stringr::str_remove(uncurated$characteristics_ch1.9,"secondary gleason grade:")) %>%
-  dplyr::mutate(gleason_grade = gsub(" ", "", paste(gleason_major,"+",gleason_minor))) %>%
+  dplyr::mutate(gleason_major = as.numeric(stringr::str_remove(uncurated$characteristics_ch1.8,"primary gleason grade:"))) %>%
+  dplyr::mutate(gleason_minor = as.numeric(stringr::str_remove(uncurated$characteristics_ch1.9,"secondary gleason grade:"))) %>%
+  dplyr::mutate(gleason_grade = as.numeric(gleason_major+gleason_minor)) %>%
   dplyr::mutate(grade_group = dplyr::case_when(
-    gleason_grade == "3+3" ~ "<=6",
-    gleason_grade == "3+4" ~ "3+4",
-    gleason_grade == "4+3" ~ "4+3",
-    gleason_grade %in% c("4+4", "4+5") ~ ">=8"
+    gleason_grade %in% 5:6 ~ "<=6",
+    gleason_major == "3" & gleason_minor == "4" ~ "3+4",
+    gleason_major == "4" & gleason_minor == "3" ~ "4+3",
+    gleason_grade %in% 8:10 ~ ">=8"
   )) %>%
   dplyr::mutate(T_clinical = readr::parse_number(uncurated$`tumor stage:ch1`)) %>% 
   dplyr::mutate(T_substage_clinical = stringr::str_extract(uncurated$`tumor stage:ch1`, "[a-c]+")) %>%
@@ -1235,8 +1237,7 @@ curated$other_sample <- apply(cbind(
 	paste0("nccn=", uncurated$"nccn:ch1"), 
 	paste0("percent_positive_cores=", round(as.numeric(uncurated$"percent positive cores:ch1"),4))
 	), MARGIN=1, FUN=function(x) { paste(x, collapse="|") })
-
-  
+ 
 clinical_kim <- curated
 
 save(clinical_kim, file = "data-raw/clinical_kim.RData")
@@ -1992,11 +1993,11 @@ save(clinical_wallace, file = "data-raw/clinical_wallace.RData")
 
 
 ########################################################################
-########################################################################
 #
 # Weiner et al.
 #
-########################################################################
+# Source: GEO
+#
 ########################################################################
 
 gset <- getGEO("GSE157548", GSEMatrix =TRUE, getGPL=TRUE)
@@ -2065,7 +2066,11 @@ save(clinical_weiner, file = 'data-raw/clinical_weiner.RData')
 
 
 #######################################################################
-#Wang et al
+#
+# Wang et al.
+#
+# Source: GEO
+#
 ######################################################################
 
 gse <- GEOquery::getGEO("GSE8218", GSEMatrix = TRUE)
@@ -2201,6 +2206,7 @@ curated <- curated %>%
   dplyr::mutate(sample_paired = 0) %>%
   dplyr::mutate(patient_id = rownames(uncurated_grep)) %>%
   dplyr::mutate(alt_sample_name = uncurated_grep$title) %>%
+  dplyr::mutate(sample_type = "primary") %>%
   dplyr::mutate(race = dplyr::case_when(
     uncurated_grep$ethnicity == "Caucasian" ~ "caucasian",
     uncurated_grep$ethnicity == "African-American" ~ "african-american",
@@ -2241,7 +2247,11 @@ save(clinical_igc, file = "data-raw/clinical_igc.RData")
 
 
 #####################################################################################
-#cBioportal BACA
+# 
+# Baca et al.
+#
+# Source: cBioportal 
+#
 #####################################################################################
 
 mae <- cBioPortalData::cBioDataPack("prad_broad_2013", ask = FALSE)

@@ -8,13 +8,13 @@
 An MAE object spanning 83 men with prostate cancer
 \describe{
   \item{gex.rma}{matrix with 12783 rows and 89 columns, of gene expression data}
-  \item{cibersort}{matrix with 22 rows and 69 columns, of cibersort based deconvolution data}
-  \item{xcell}{matrix with 39 rows and 75 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 75 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 75 columns, of quantiseq based deconvolution data}
-  \item{mcp}{matrix with 11 rows and 75 columns, of mcp-counter based deconvolution data}
-  \item{scores}{matrix with 4 rows and 75 columns, of risk scores and AR scores}
-  \item{estimate}{data.frame with 4 rows and 75 columns, of cell types based on ESTIMATE method}
+  \item{cibersort}{matrix with 22 rows and 83 columns, of cibersort based deconvolution data}
+  \item{xcell}{matrix with 39 rows and 89 columns, of xcell based deconvolution data}
+  \item{epic}{matrix with 8 rows and 89 columns, of epic based deconvolution data}
+  \item{quantiseq}{matrix with 11 rows and 89 columns, of quantiseq based deconvolution data}
+  \item{estimate}{data.frame with 4 rows and 89 columns, of cell types based on ESTIMATE method}
+  \item{scores}{matrix with 4 rows and 89 columns, of risk scores and AR scores}
+  \item{mcp}{matrix with 11 rows and 89 columns, of mcp-counter based deconvolution data}
 }
 }
 \source{

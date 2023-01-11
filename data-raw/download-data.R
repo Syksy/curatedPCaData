@@ -312,8 +312,8 @@ save(cna.gistic_ren, file="data-raw/cna.gistic_ren.RData")
 # ren_mut<-curatedPCaData:::generate_cbioportaldata_mut(
 #   caselist = "prad_eururol_2017"
 #   )
-ren_mut <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","mut")
-save(ren_mut, file="data-raw/mut_ren.RData")
+mut_ren <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","mut")
+save(mut_ren, file="data-raw/mut_ren.RData")
 
 # Create MAE object
 mae_ren <- curatedPCaData:::create_mae(study_name = "ren")

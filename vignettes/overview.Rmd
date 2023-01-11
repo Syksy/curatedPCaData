@@ -23,7 +23,6 @@ knitr::opts_chunk$set(
 
 # Silently load the material
 library(curatedPCaData)
-#curatedPCaData::loadPCa()
 
 ###
 #
@@ -35,9 +34,7 @@ library(curatedPCaData)
 maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
 
 # Currently used .csv template for clinical features to extract in all datasets (not possible but the ideal aim)
-#template <- utils::read.csv("data-raw/template_prad.csv")
 # Updated to be public exported for ease of use for authors and end-users
-#template <- curatedPCaData::template_prad
 template <- template_prad
 # Only loop through the optional fields
 fields <- template[which(template$requiredness=="optional" & !template$col.name=="alt_sample_name"),"col.name"]
@@ -124,11 +121,34 @@ for(i in 1:nrow(gleasons)){
 		}
 	}
 	# Other values
-	vals <- c(5:10, NA)
+	vals <- c(5:10, NA, NA_real_)
 	gleasons[i,ncol(gleasons)-1] <- paste0(sum(!gl %in% vals, na.rm=TRUE), " (", round(100*sum(!gl %in% vals, na.rm=TRUE)/length(gl),0), "%)")
 	# NA-values
 	gleasons[i,ncol(gleasons)] <- paste0(sum(is.na(gl), na.rm=TRUE), " (", round(100*sum(is.na(gl), na.rm=TRUE)/length(gl),0), "%)")
 }
+
+# Create a Grade group table; NA-value in addition to groups of <=6, 3+4, 4+3, 7 (if major+minor not separated), >=8, ; Other-values for debugging
+groups <- matrix(NA, nrow=length(maes), ncol=5+1+1)
+rownames(groups) <- paste(gsub("mae_", "", maes))
+colnames(groups) <- c("<=6", "3+4", "4+3", "7", ">=8", "Other", "N/A")
+for(i in 1:nrow(groups)){
+	eval(parse(text=paste0("gr <- MultiAssayExperiment::colData(curatedPCaData::", maes[i], ")$grade_group")))
+	# Iterate through Grade groups 
+	grs <- c("<=6", "3+4", "4+3", "7", ">=8")
+	for(j in 1:(ncol(groups)-2)){
+		if(!sum(gr==grs[j], na.rm=TRUE)==0){
+			groups[i,j] <- paste0(sum(gr==grs[j], na.rm=TRUE), " (", round(100*sum(gr==grs[j], na.rm=TRUE)/length(gr),0), "%)")	
+		}else{
+			groups[i,j] <- "-"
+		}
+	}
+	# Other values
+	vals <- c(grs, NA_character_, NA)
+	groups[i,ncol(groups)-1] <- paste0(sum(!gr %in% vals, na.rm=TRUE), " (", round(100*sum(!gr %in% vals, na.rm=TRUE)/length(gr),0), "%)")
+	# NA-values
+	groups[i,ncol(groups)] <- paste0(sum(is.na(gr), na.rm=TRUE), " (", round(100*sum(is.na(gr), na.rm=TRUE)/length(gr),0), "%)")
+}
+
 
 ###
 #
@@ -321,58 +341,77 @@ for(mae in studies[,"MAE-object"]){
 	# Annotate additional useful information and append to correct positions
 	if(mae == "mae_abida"){
 		studies[w,"Data source"] <- "cBioPortal"
+		studies[w,"Reference(s)"] <- "Abida et al."
 	}else if(mae == "mae_baca"){
 		studies[w,"Data source"] <- "cBioPortal"
+		studies[w,"Reference(s)"] <- "Baca et al."
 	}else if(mae == "mae_barbieri"){
 		studies[w,"Data source"] <- "cBioPortal"
+		studies[w,"Reference(s)"] <- "Barbieri et al."
 	}else if(mae == "mae_barwick"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "Custom DASL"
+		studies[w,"Reference(s)"] <- "Barwick et al."
 	}else if(mae == "mae_chandran"){
 		studies[w,"Data source"] <- "GEO"	
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL8300 [HG_U95Av2]"
+		studies[w,"Reference(s)"] <- "Chandran et al., Yu et al."
 	}else if(mae == "mae_friedrich"){
 		studies[w,"Data source"] <- "GEO"	
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "Custom Agilent array"
+		studies[w,"Reference(s)"] <- "Friedrich et al."
 	}else if(mae == "mae_hieronymus"){
 		studies[w,"Data source"] <- "GEO"	
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL8737 Agilent-021529 Human CGH"
 		studies[w,"Notes"] <- "CNA only"
+		studies[w,"Reference(s)"] <- "Hieronymus et al."
 	}else if(mae == "mae_icgcca"){
 		studies[w,"Data source"] <- "ICGC Data Portal (PRAD-CA)"	
 		studies[w,"Notes"] <- "Canadian data from International Cancer Genome Collaboratory"
+		studies[w,"Reference(s)"] <- "PRAD-CA in Zhang et al."
 	}else if(mae == "mae_igc"){
 		studies[w,"Data source"] <- "GEO"	
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL570 [HG-U133_Plus_2]"
+		studies[w,"Reference(s)"] <- "GEO accession code GSE2109"
 	}else if(mae == "mae_kim"){
 		studies[w,"Data source"] <- "GEO"	
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL5188 [HuEx-1_0-st]"
+		studies[w,"Reference(s)"] <- "Kim et al."
 	}else if(mae == "mae_kunderfranco"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL887 Agilent-012097 Human 1A Microarray (V2)"		
+		studies[w,"Reference(s)"] <- "Kunderfranco et al., Peraldo-Neia et al., Longoni et al."
 	}else if(mae == "mae_ren"){
 		studies[w,"Data source"] <- "cBioPortal"
+		studies[w,"Reference(s)"] <- "Ren et al."
 	}else if(mae == "mae_sun"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL96 [HG-U133A]"		
+		studies[w,"Reference(s)"] <- "Sun et al."
 	}else if(mae == "mae_taylor"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"Notes"] <- "Also known as MSKCC"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GEX: GPL5188 [HuEx-1_0-st], CNA: GPL4091 Agilent CGH"		
+		studies[w,"Reference(s)"] <- "Taylor et al."
 	}else if(mae == "mae_tcga"){
-		studies[w,"Data source"] <- "Genomics Data Commons (GDC)"
+		studies[w,"Data source"] <- "Xenabrowser"
+		studies[w,"Reference(s)"] <- "Cancer Genome Atlas Research Network, Goldman et al."
 	}else if(mae == "mae_true"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL3834 FHCRC Human Prostate PEDB cDNA v3 / v4"		
+		studies[w,"Reference(s)"] <- "True et al."
 	}else if(mae == "mae_wallace"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL571 [HG-U133A_2]"
+		studies[w,"Reference(s)"] <- "Wallace et al."
 	}else if(mae == "mae_wang"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL96 [HG-U133A]"	
+		studies[w,"Reference(s)"] <- "Wang et al., Jia et al."
 	}else if(mae == "mae_weiner"){
 		studies[w,"Data source"] <- "GEO"
 		studies[w,"GEX/CNA/MUT platform(s)"] <- "GPL5175 [HuEx-1_0-st]"	
+		studies[w,"Reference(s)"] <- "Weiner et al."
 	}
 
 }
@@ -387,29 +426,33 @@ The ```curatedPCaData```-package has been curated with an emphasis on the follow
 template <- curatedPCaData::template_prad
 # Add spaces to |-dividers for linechanges
 template <- do.call("cbind", lapply(template, FUN=function(x) { gsub("|", " | ", x, fixed=TRUE) }))
-knitr::kable(template, caption="Template for Prostate Adecarcinoma clinical metadata")
+knitr::kable(template, caption="Template for prostate adenocarcinoma clinical metadata")
 ```
 
 ### Clinical end-points
 
-Three primary clinical end-points were utilized and are offered in colData-slots in the MAE-objects:
+Three primary clinical end-points were utilized and are offered in colData-slots in the MAE-objects, if available:
 
-* Gleason grade/group
+* Gleason grade/Grade group(s)
 * Biochemical Recurrence (BCR)
-* Overall survival (OS)
+* Overall Survival (OS)
 
 Below are summaries for each of these endpoints for each study. Of note, OS had very few events, thus survival modelling for this end-point may be considered unreliable.
 
 ```{r gleasons, results = 'asis', echo=FALSE}
-knitr::kable(gleasons, caption="Gleason grades in curatedPCaData")
+knitr::kable(gleasons, caption="Gleason grades across datasets in curatedPCaData")
+```
+
+```{r groups, results = 'asis', echo=FALSE}
+knitr::kable(groups, caption="Grade groups across datasets in curatedPCaData")
 ```
 
 ```{r recurrences, results = 'asis', echo=FALSE}
-knitr::kable(recurrences, caption="Disease recurrence end point in curatedPCaData")
+knitr::kable(recurrences, caption="Disease recurrence end point across datasets in curatedPCaData")
 ```
 
 ```{r os, results = 'asis', echo=FALSE}
-knitr::kable(survivals, caption="Overall survival end point in curatedPCaData")
+knitr::kable(survivals, caption="Overall survival end point across datasets in curatedPCaData")
 ```
 
 ### Accessing primary data
@@ -457,11 +500,12 @@ Tumor progression depends on the immune cell composition in the tumor microenvir
 
 In this package, we provide estimates of immune cell content from the following deconvolution methods:
 
-- quantiseq
-- xcell
-- epic
-- mcp (counter)
-- cibersort(x)
+- quanTIseq
+- xCell
+- EPIC
+- MCP counter
+- CIBERSORT(x)
+- ESTIMATE
 
 The estimates from each of these methods are stored in the MAE object as a seperate assay as shown for example in the Taylor dataset
 ```{r}
@@ -501,7 +545,33 @@ Further, the 20-gene Androgen Receptor (AR) score is calculated as described in 
 
 - AR score ```(rowname: ar_score)``` [Cancer Genome Atlas Research Network, 2015]
 
-# Citations
+# Dataset references
+
+- Abida W, Cyrta J, Heller G, Prandi D, Armenia J, Coleman I, Cieslik M, Benelli M, Robinson D, Van Allen EM, Sboner A, Fedrizzi T, Mosquera JM, Robinson BD, De Sarkar N, Kunju LP, Tomlins S, Wu YM, Nava Rodrigues D, Loda M, Gopalan A, Reuter VE, Pritchard CC, Mateo J, Bianchini D, Miranda S, Carreira S, Rescigno P, Filipenko J, Vinson J, Montgomery RB, Beltran H, Heath EI, Scher HI, Kantoff PW, Taplin ME, Schultz N, deBono JS, Demichelis F, Nelson PS, Rubin MA, Chinnaiyan AM, Sawyers CL. Genomic correlates of clinical outcome in advanced prostate cancer. Proc Natl Acad Sci U S A. 2019 Jun 4;116(23):11428-11436. doi: 10.1073/pnas.1902651116. Epub 2019 May 6. PMID: 31061129; PMCID: PMC6561293.
+- Baca SC, Prandi D, Lawrence MS, Mosquera JM, Romanel A, Drier Y, Park K, Kitabayashi N, MacDonald TY, Ghandi M, Van Allen E, Kryukov GV, Sboner A, Theurillat JP, Soong TD, Nickerson E, Auclair D, Tewari A, Beltran H, Onofrio RC, Boysen G, Guiducci C, Barbieri CE, Cibulskis K, Sivachenko A, Carter SL, Saksena G, Voet D, Ramos AH, Winckler W, Cipicchio M, Ardlie K, Kantoff PW, Berger MF, Gabriel SB, Golub TR, Meyerson M, Lander ES, Elemento O, Getz G, Demichelis F, Rubin MA, Garraway LA. Punctuated evolution of prostate cancer genomes. Cell. 2013 Apr 25;153(3):666-77. doi: 10.1016/j.cell.2013.03.021. PMID: 23622249; PMCID: PMC3690918.
+- Barbieri CE, Baca SC, Lawrence MS, Demichelis F, Blattner M, Theurillat JP, White TA, Stojanov P, Van Allen E, Stransky N, Nickerson E, Chae SS, Boysen G, Auclair D, Onofrio RC, Park K, Kitabayashi N, MacDonald TY, Sheikh K, Vuong T, Guiducci C, Cibulskis K, Sivachenko A, Carter SL, Saksena G, Voet D, Hussain WM, Ramos AH, Winckler W, Redman MC, Ardlie K, Tewari AK, Mosquera JM, Rupp N, Wild PJ, Moch H, Morrissey C, Nelson PS, Kantoff PW, Gabriel SB, Golub TR, Meyerson M, Lander ES, Getz G, Rubin MA, Garraway LA. Exome sequencing identifies recurrent SPOP, FOXA1 and MED12 mutations in prostate cancer. Nat Genet. 2012 May 20;44(6):685-9. doi: 10.1038/ng.2279. PMID: 22610119; PMCID: PMC3673022.
+- Barwick BG, Abramovitz M, Kodani M, Moreno CS, Nam R, Tang W, Bouzyk M, Seth A, Leyland-Jones B. Prostate cancer genes associated with TMPRSS2-ERG gene fusion and prognostic of biochemical recurrence in multiple cohorts. Br J Cancer. 2010 Feb 2;102(3):570-6. doi: 10.1038/sj.bjc.6605519. Epub 2010 Jan 12. PMID: 20068566; PMCID: PMC2822948.
+- Cancer Genome Atlas Research Network. The Molecular Taxonomy of Primary Prostate Cancer. Cell. 2015 Nov 5;163(4):1011-25. doi: 10.1016/j.cell.2015.10.025. PMID: 26544944; PMCID: PMC4695400.
+- Chandran UR, Ma C, Dhir R, Bisceglia M, Lyons-Weiler M, Liang W, Michalopoulos G, Becich M, Monzon FA. Gene expression profiles of prostate cancer reveal involvement of multiple molecular pathways in the metastatic process. BMC Cancer. 2007 Apr 12;7:64. doi: 10.1186/1471-2407-7-64. PMID: 17430594; PMCID: PMC1865555.
+- Friedrich M, Wiedemann K, Reiche K, Puppel SH, Pfeifer G, Zipfel I, Binder S, Köhl U, Müller GA, Engeland K, Aigner A, Füssel S, Fröhner M, Peitzsch C, Dubrovska A, Rade M, Christ S, Schreiber S, Hackermüller J, Lehmann J, Toma MI, Muders MH, Sommer U, Baretton GB, Wirth M, Horn F. The Role of lncRNAs TAPIR-1 and -2 as Diagnostic Markers and Potential Therapeutic Targets in Prostate Cancer. Cancers (Basel). 2020 Apr 30;12(5):1122. doi: 10.3390/cancers12051122. PMID: 32365858; PMCID: PMC7280983.
+- Goldman MJ, Craft B, Hastie M, Repečka K, McDade F, Kamath A, Banerjee A, Luo Y, Rogers D, Brooks AN, Zhu J, Haussler D. Visualizing and interpreting cancer genomics data via the Xena platform. Nat Biotechnol. 2020 Jun;38(6):675-678. doi: 10.1038/s41587-020-0546-8. PMID: 32444850; PMCID: PMC7386072.
+- Hieronymus H, Schultz N, Gopalan A, Carver BS, Chang MT, Xiao Y, Heguy A, Huberman K, Bernstein M, Assel M, Murali R, Vickers A, Scardino PT, Sander C, Reuter V, Taylor BS, Sawyers CL. Copy number alteration burden predicts prostate cancer relapse. Proc Natl Acad Sci U S A. 2014 Jul 29;111(30):11139-44. doi: 10.1073/pnas.1411446111. Epub 2014 Jul 14. PMID: 25024180; PMCID: PMC4121784.
+- Jia Z, Wang Y, Sawyers A, Yao H, Rahmatpanah F, Xia XQ, Xu Q, Pio R, Turan T, Koziol JA, Goodison S, Carpenter P, Wang-Rodriguez J, Simoneau A, Meyskens F, Sutton M, Lernhardt W, Beach T, Monforte J, McClelland M, Mercola D. Diagnosis of prostate cancer using differentially expressed genes in stroma. Cancer Res. 2011 Apr 1;71(7):2476-87. doi: 10.1158/0008-5472.CAN-10-2585. PMID: 21459804; PMCID: PMC3071046.
+- Kim HL, Li P, Huang HC, Deheshi S, Marti T, Knudsen B, Abou-Ouf H, Alam R, Lotan TL, Lam LLC, du Plessis M, Davicioni E, Fleshner N, Lane BR, Ross AE, Davis JW, Mohler JL, Trock BJ, Klein EA, Tosoian JJ, Hyndman ME, Bismar TA. Validation of the Decipher Test for predicting adverse pathology in candidates for prostate cancer active surveillance. Prostate Cancer Prostatic Dis. 2019 Sep;22(3):399-405. doi: 10.1038/s41391-018-0101-6. Epub 2018 Dec 12. PMID: 30542054; PMCID: PMC6760567.
+- Kunderfranco P, Mello-Grand M, Cangemi R, Pellini S, Mensah A, Albertini V, Malek A, Chiorino G, Catapano CV, Carbone GM. ETS transcription factors control transcription of EZH2 and epigenetic silencing of the tumor suppressor gene Nkx3.1 in prostate cancer. PLoS One. 2010 May 10;5(5):e10547. doi: 10.1371/journal.pone.0010547. PMID: 20479932; PMCID: PMC2866657.
+- Longoni N, Kunderfranco P, Pellini S, Albino D, Mello-Grand M, Pinton S, D'Ambrosio G, Sarti M, Sessa F, Chiorino G, Catapano CV, Carbone GM. Aberrant expression of the neuronal-specific protein DCDC2 promotes malignant phenotypes and is associated with prostate cancer progression. Oncogene. 2013 May 2;32(18):2315-24, 2324.e1-4. doi: 10.1038/onc.2012.245. Epub 2012 Jun 25. PMID: 22733135.
+- Ren S, Wei GH, Liu D, Wang L, Hou Y, Zhu S, Peng L, Zhang Q, Cheng Y, Su H, Zhou X, Zhang J, Li F, Zheng H, Zhao Z, Yin C, He Z, Gao X, Zhau HE, Chu CY, Wu JB, Collins C, Volik SV, Bell R, Huang J, Wu K, Xu D, Ye D, Yu Y, Zhu L, Qiao M, Lee HM, Yang Y, Zhu Y, Shi X, Chen R, Wang Y, Xu W, Cheng Y, Xu C, Gao X, Zhou T, Yang B, Hou J, Liu L, Zhang Z, Zhu Y, Qin C, Shao P, Pang J, Chung LWK, Xu J, Wu CL, Zhong W, Xu X, Li Y, Zhang X, Wang J, Yang H, Wang J, Huang H, Sun Y. Whole-genome and Transcriptome Sequencing of Prostate Cancer Identify New Genetic Alterations Driving Disease Progression. Eur Urol. 2018 Mar;73(3):322-339. doi: 10.1016/j.eururo.2017.08.027. Epub 2017 Sep 18. PMID: 28927585.
+- Sun Y, Goodison S. Optimizing molecular signatures for predicting prostate cancer recurrence. Prostate. 2009 Jul 1;69(10):1119-27. doi: 10.1002/pros.20961. PMID: 19343730; PMCID: PMC3425355.
+- Taylor BS, Schultz N, Hieronymus H, Gopalan A, Xiao Y, Carver BS, Arora VK, Kaushik P, Cerami E, Reva B, Antipin Y, Mitsiades N, Landers T, Dolgalev I, Major JE, Wilson M, Socci ND, Lash AE, Heguy A, Eastham JA, Scher HI, Reuter VE, Scardino PT, Sander C, Sawyers CL, Gerald WL. Integrative genomic profiling of human prostate cancer. Cancer Cell. 2010 Jul 13;18(1):11-22. doi: 10.1016/j.ccr.2010.05.026. Epub 2010 Jun 24. PMID: 20579941; PMCID: PMC3198787.
+- True L, Coleman I, Hawley S, Huang CY, Gifford D, Coleman R, Beer TM, Gelmann E, Datta M, Mostaghel E, Knudsen B, Lange P, Vessella R, Lin D, Hood L, Nelson PS. A molecular correlate to the Gleason grading system for prostate adenocarcinoma. Proc Natl Acad Sci U S A. 2006 Jul 18;103(29):10991-6. doi: 10.1073/pnas.0603678103. Epub 2006 Jul 7. PMID: 16829574; PMCID: PMC1544162.
+- Peraldo-Neia C, Migliardi G, Mello-Grand M, Montemurro F, Segir R, Pignochino Y, Cavalloni G, Torchio B, Mosso L, Chiorino G, Aglietta M. Epidermal Growth Factor Receptor (EGFR) mutation analysis, gene expression profiling and EGFR protein expression in primary prostate cancer. BMC Cancer. 2011 Jan 25;11:31. doi: 10.1186/1471-2407-11-31. PMID: 21266046; PMCID: PMC3040720.
+- Wallace TA, Prueitt RL, Yi M, Howe TM, Gillespie JW, Yfantis HG, Stephens RM, Caporaso NE, Loffredo CA, Ambs S. Tumor immunobiological differences in prostate cancer between African-American and European-American men. Cancer Res. 2008 Feb 1;68(3):927-36. doi: 10.1158/0008-5472.CAN-07-2608. PMID: 18245496.
+- Wang Y, Xia XQ, Jia Z, Sawyers A, Yao H, Wang-Rodriquez J, Mercola D, McClelland M. In silico estimates of tissue components in surgical samples based on expression profiling data. Cancer Res. 2010 Aug 15;70(16):6448-55. doi: 10.1158/0008-5472.CAN-10-0021. Epub 2010 Jul 27. PMID: 20663908; PMCID: PMC4411177.
+- Weiner AB, Vidotto T, Liu Y, Mendes AA, Salles DC, Faisal FA, Murali S, McFarlane M, Imada EL, Zhao X, Li Z, Davicioni E, Marchionni L, Chinnaiyan AM, Freedland SJ, Spratt DE, Wu JD, Lotan TL, Schaeffer EM. Plasma cells are enriched in localized prostate cancer in Black men and are associated with improved outcomes. Nat Commun. 2021 Feb 10;12(1):935. doi: 10.1038/s41467-021-21245-w. PMID: 33568675; PMCID: PMC7876147.
+- Yu YP, Landsittel D, Jing L, Nelson J, Ren B, Liu L, McDonald C, Thomas R, Dhir R, Finkelstein S, Michalopoulos G, Becich M, Luo JH. Gene expression alterations in prostate cancer predicting tumor aggression and preceding development of malignancy. J Clin Oncol. 2004 Jul 15;22(14):2790-9. doi: 10.1200/JCO.2004.05.158. PMID: 15254046.
+- Zhang J, Bajari R, Andric D, Gerthoffert F, Lepsa A, Nahal-Bose H, Stein LD, Ferretti V. The International Cancer Genome Consortium Data Portal. Nat Biotechnol. 2019 Apr;37(4):367-369. doi: 10.1038/s41587-019-0055-9. PMID: 30877282.
+
+# Other citations
 
 - Ramos, M., Schiffer, L., Re, A., Azhar, R., Basunia, A., Rodriguez, C., Chan, T., Chapman, P., Davis, S. R., Gomez-Cabrero, D., Culhane, A. C., Haibe-Kains, B., Hansen, K. D., Kodali, H., Louis, M. S., Mer, A. S., Riester, M., Morgan, M., Carey, V., & Waldron, L. (2017). Software for the Integration of Multiomics Experiments in Bioconductor. Cancer research, 77(21), e39–e42. https://doi.org/10.1158/0008-5472.CAN-17-0344
 - Sturm, G., Finotello, F., Petitprez, F., Zhang, J. D., Baumbach, J., Fridman, W. H., List, M., & Aneichyk, T. (2019). Comprehensive evaluation of transcriptome-based cell-type quantification methods for immuno-oncology. Bioinformatics (Oxford, England), 35(14), i436–i445. https://doi.org/10.1093/bioinformatics/btz363
