@@ -1,3 +1,29 @@
+# curatedPCaData Version 0.9.42 _2022-12-29_
+
+* Endothelial vignette revisions
+
+# curatedPCaData Version 0.9.41 _2022-12-19_
+
+* Metadata sweeping vignette
+* Endothelial scores trends example in EPIC, MCP-counter and xCell
+
+# curatedPCaData Version 0.9.40 _2022-12-14_
+
+* Endothelial cell score application vignette
+
+# curatedPCaData Version 0.9.39 _2022-12-13_
+
+* Fixed few special cases in Gleasons for Kim and Ren
+* Additional table(s) in Overview vignette
+
+# curatedPCaData Version 0.9.38 _2022-12-12_
+
+* Old versioning
+* Removal of metadata specific to Bioc
+* Updates to low QC gene expression sample filtering in TCGA
+* Updates to corresponding downstream variables (such as immunedeconv) in TCGA
+* Updated Wallace et al. CIBERSORTx
+
 # curatedPCaData Version 0.99.0 _2022-10-06_
 
 * All content revised to conform to Bioconductor package policies

@@ -22,13 +22,13 @@ concerning prostate cancer.
 
 ## Installation
 
-You can install `curatedPCaData` from GitHub with: 
+A download link to the latest pre-built `curatedPCaData` tarball is available on the right-side in GitHub under [Releases](https://github.com/Syksy/curatedPCaData/releases).
 
-```r
+You can also install `curatedPCaData` from GitHub inside R with: 
 
+```
 # install.packages("devtools")
 devtools::install_github("Syksy/curatedPCaData")
-
 ```
 
 Above may fail depending on the connection stability, as the package is relatively large. In this case it's best to install via the tarball.
@@ -38,16 +38,31 @@ To build the package tarball from a cloned git repo, run the following in termin
 R CMD build curatedPCaData
 ```
 
-It is possible to install the self-built tarball or download a premade latest package with (see Releases-page on GitHub):
+It is then possible to install the self-built tarball:
 
 ```
 R CMD INSTALL curatedPCaData_x.y.z.tar.gz
 ```
 
-
-<!--- add BioConductor once up --->
+Note that building the package locally will require dependencies to be present for the R installation.
 
 ## Usage
+
+### Vignettes
+
+`curatedPCaData` delivers with a number of vignettes displaying the package's generic use as well as summaries and application examples across the prostate cancer datasets provided there-in. The vignette `overview` is intended for gaining a first-line comprehensive view into the package's contents.
+
+The vignettes can be accessed via `vignette(package = "curatedPCaData")` or via `?curatedPCaData` section '_User guides, package vignettes and other documentation_'.
+
+A list of available vignettes, subset to suitable topics:
+
+```{r vignettes, warning = FALSE, message = FALSE}
+
+tools::getVignetteInfo("curatedPCaData")[,c("Topic", "Title")]
+
+```
+
+### Brief example
 
 Simple example use of curated datasets and 'omics there-in:
 
@@ -69,9 +84,11 @@ curatedPCaData::mae_sun
 
 ```
 
+Note that the prefix `curatedPCaData::` is not currently required, as the setting for `LazyData: true` loads the MAE-objects into the active workspace as the package is loaded. Thus, writing just `mae_tcga` after `library(curatedPCaData)` would work just as well. The `pckgName::object` notation is provided here just for clarity, as different functions may be required to access different functionality of the `MultiAssayExperiment`-objects.
+
 ## R Shiny
 
-A web interface built with R Shiny for `curatedPCaData` can be launched via:
+A basic convenience web interface built with R Shiny for `curatedPCaData` can be launched via:
 
 ```
 curatedPCaData::shiny()
@@ -115,10 +132,10 @@ alternatively, to speed up package tarball building, add parameter ```--no-build
 
 Alternatively, if one does not wish to clone the git and build the tarball, it's also possible to directly download latest release tarball from https://github.com/Syksy/curatedPCaData/releases
 
-After this, the ```curatedPCaData```R-package tarball can be installed using:
+After this, the ```curatedPCaData``` R-package tarball can be installed using:
 
 ```
 R CMD INSTALL curatedPCaData_x.y.z.tar.gz
 ```
 
-Please note that some dependencies (such as the packages ```MultiAssayExperiment``` and ```S4Vectors```) may produce an error during installation if they are not found for R. In this case these dependencies need to be installed from their respective repositories such as CRAN or BioConductor.
+Please note that some dependencies (such as the packages ```MultiAssayExperiment``` and ```S4Vectors```) may produce an error during installation if they are not found for R. In this case these dependencies need to be installed from their respective R package repositories such as CRAN or Bioconductor.
