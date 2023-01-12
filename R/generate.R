@@ -1768,6 +1768,7 @@ generate_cbioportaldata <- function(caselist,profile){
     #system("gzip -d ./data-raw/hg19ToHg38.over.chain.gz")
     ch <- rtracklayer::import.chain("./data-raw/hg19ToHg38.over.chain")
     if(caselist=="prad_eururol_2017"){
+      
       # Liftover using chain file
       names(ch)<-gsub("chr","",names(ch))
       ranges <- rtracklayer::liftOver(rowRanges(ragexp), ch)
@@ -1775,9 +1776,24 @@ generate_cbioportaldata <- function(caselist,profile){
       ranges <- unlist(ranges)
       GenomeInfoDb::genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
+      
       # Run harmonize function to harmonize gene names
       final_ragexp<-harmonize_raggedexp(ragexp2)
-      return(final_ragexp)
+      # Add tumor barcode to metadata of the Grangelist
+      final_ragexp_df<-final_ragexp@assays
+      final_ragexp_df <- unlist(final_ragexp_df)
+      final_ragexp_df<-data.frame(final_ragexp_df,names=names(final_ragexp_df))
+      
+      final_ragexp_df$sample<-sub("^(.*)[.].*", "\\1", final_ragexp_df$names)
+      final_ragexp_df$gene<-sub('.*\\.', '', final_ragexp_df$names)
+      final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
+      
+      final_ragexp_df$Tumor_sample_barcode<-final_ragexp_df$sample
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_final2<-RaggedExperiment::RaggedExperiment(GRL)
+      return(ragexp_final2)
       
     }else if (caselist == "prad_broad"){
       # Liftover using chain file
@@ -1787,9 +1803,24 @@ generate_cbioportaldata <- function(caselist,profile){
       ranges <- unlist(ranges)
       GenomeInfoDb::genome(ranges) <- "GRCh38"
       rowRanges(ragexp2) <- ranges
+      
       # Run harmonize function to harmonize gene names
       final_ragexp<-harmonize_raggedexp(ragexp2)
-      return(final_ragexp)
+      # Add tumor barcode to metadata of the Grangelist
+      final_ragexp_df<-final_ragexp@assays
+      final_ragexp_df <- unlist(final_ragexp_df)
+      final_ragexp_df<-data.frame(final_ragexp_df,names=names(final_ragexp_df))
+      
+      final_ragexp_df$sample<-sub("^(.*)[.].*", "\\1", final_ragexp_df$names)
+      final_ragexp_df$gene<-sub('.*\\.', '', final_ragexp_df$names)
+      final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
+      
+      final_ragexp_df$Tumor_sample_barcode<-final_ragexp_df$sample
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_final2<-RaggedExperiment::RaggedExperiment(GRL)
+      return(ragexp_final2)
       
       
     }else if(caselist =="prad_su2c_2019"){
@@ -1807,10 +1838,23 @@ generate_cbioportaldata <- function(caselist,profile){
       ragexp2<-RaggedExperiment::RaggedExperiment(ranges2)
       # Assign gene names in the metadata to the rownames of the raggedexperiment object
       rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
-      
       # Run harmonize function to harmonize gene names
       final_ragexp<-harmonize_raggedexp(ragexp2)
-      return(final_ragexp)
+      # Add tumor barcode to metadata of the Grangelist
+      final_ragexp_df<-final_ragexp@assays
+      final_ragexp_df <- unlist(final_ragexp_df)
+      final_ragexp_df<-data.frame(final_ragexp_df,names=names(final_ragexp_df))
+      
+      final_ragexp_df$sample<-sub("^(.*)[.].*", "\\1", final_ragexp_df$names)
+      final_ragexp_df$gene<-sub('.*\\.', '', final_ragexp_df$names)
+      final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
+      
+      final_ragexp_df$Tumor_sample_barcode<-final_ragexp_df$sample
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_final2<-RaggedExperiment::RaggedExperiment(GRL)
+      return(ragexp_final2)
       
     }else if (caselist=="prad_mskcc"){
       
@@ -1836,6 +1880,7 @@ generate_cbioportaldata <- function(caselist,profile){
       
       #final_ragexp_df<-final_ragexp_df[final_ragexp_df$sample %like% "PCA", ]
       final_ragexp_df<-final_ragexp_df[data.table::`%like%`(final_ragexp_df$sample,"PCA"),]
+      final_ragexp_df$Tumor_sample_barcode<-final_ragexp_df$sample
       
       GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
@@ -1859,9 +1904,25 @@ generate_cbioportaldata <- function(caselist,profile){
       ragexp2<-RaggedExperiment::RaggedExperiment(ranges2)
       # Assign gene names in the metadata to the rownames of the raggedexperiment object
       rownames(ragexp2)<-ragexp2@assays@unlistData@elementMetadata@listData[["gene"]]
+      
       # Run harmonize function to harmonize gene names
       final_ragexp<-harmonize_raggedexp(ragexp2)
-      return(final_ragexp)
+      # Add tumor barcode to metadata of the Grangelist
+      final_ragexp_df<-final_ragexp@assays
+      final_ragexp_df <- unlist(final_ragexp_df)
+      final_ragexp_df<-data.frame(final_ragexp_df,names=names(final_ragexp_df))
+      
+      final_ragexp_df$sample<-sub("^(.*)[.].*", "\\1", final_ragexp_df$names)
+      final_ragexp_df$gene<-sub('.*\\.', '', final_ragexp_df$names)
+      final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
+      
+      final_ragexp_df$Tumor_sample_barcode<-final_ragexp_df$sample
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
+                                                         names.field = "gene",keep.extra.columns = TRUE)
+      ragexp_final2<-RaggedExperiment::RaggedExperiment(GRL)
+      
+      return(ragexp_final2)
       
     }
   }
@@ -2455,8 +2516,26 @@ generate_xenabrowser <- function(
       tcga_mut$sample <- gsub("-",".",tcga_mut$sample)
       tcga_mut$sample <- gsub("01A","01",tcga_mut$sample)
       names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
+      # Add tumor and normal sample barcodes
+      prof<-cBioPortalData::cBioDataPack("prad_tcga",ask = FALSE)
+      ragexp<-prof[["mutations"]]
+      
+      ragexp_df<-ragexp@assays
+      ragexp_df <- unlist(ragexp_df)
+      ragexp_df<-data.frame(ragexp_df,names=names(ragexp_df))
+      
+      ragexp_df$sample<-sub("\\..*", "", ragexp_df$names)
+      ragexp_df$gene<-gsub("^.*?\\.","", ragexp_df$names)
+      
+      ragexp_df$Tumor_sample_barcode<-ragexp_df$sample
+      ragexp_df$sample<-gsub("-",".",ragexp_df$sample)
+      
+      ragexp_df<-ragexp_df[,c("sample","Tumor_sample_barcode","Matched_Norm_Sample_Barcode")]
+      ragexp_df<-ragexp_df[!duplicated(ragexp_df$sample), ]
+      
+      merged<-merge(tcga_mut,ragexp_df,by="sample")
       #a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
-      GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "sample",
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(merged, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
       ragexp_tcga <- RaggedExperiment::RaggedExperiment(GRL)
       

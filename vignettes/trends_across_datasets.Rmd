@@ -33,6 +33,8 @@ library(maftools)
 library(Rediscover)
 library(circlize)
 library(RColorBrewer)
+library(limma)
+library(edgeR)
 ```
 
 
@@ -262,9 +264,9 @@ corrplot.mixed(corr_of_corr_ERG,order = 'AOE', lower.col = COL2('PiYG'),upper.co
 
 ## Differentially expressed genes between patients with higher vs lower gleason grades
 
-Gleason grade has proven to be of great importance in prostate cancer patients since it is highly correlated with patient survival. Genes that are consistently deferentially expressed in patients across different datasets with high and low gleason grades can be important therapeutic targets. Shown below are volcano plots of logFC of patients with gleason grade below 6 and above 8.
+Gleason grade has proven to be of great importance in prostate cancer patients since it is highly correlated with patient survival. Genes that are consistently deferentially expressed in patients across different datasets with high and low gleason grades can be important therapeutic targets. Shown below are volcano plots of logFC of patients with gleason grade below 6 and above 8, estimated using limma.
 
-The volcano_plot_matrix function below is used to create a matrix with the logFC and FDR values required to generate the volcano plots. 
+We first define all the required functions as shown.
 
 ```{r}
 
@@ -281,105 +283,213 @@ volcano_plot_matrix<-function(gex,mae,dataset){
   clinical<-clinical[,c("sample_name","grade_group")]
   clinical<-clinical%>%mutate(
     condition = case_when(
-      grade_group == "<=6" ~ "below 6",
-      grade_group == ">=8" ~ "above 8"
+      grade_group == "<=6" ~ "below_6",
+      grade_group == ">=8" ~ "above_8",
+      grade_group == "7" ~ "seven",
+      grade_group == "3+4" ~ "seven",
+      grade_group == "4+3" ~ "seven"
     ))
   }else{
     clinical<-clinical[,c("sample_name","gleason_grade")]
+    clinical$gleason_grade<-as.numeric(clinical$gleason_grade)
       clinical<-clinical%>%mutate(
       condition = case_when(
-      gleason_grade <=6 ~ "below 6",
-      gleason_grade >=8 ~ "above 8"
+      gleason_grade <=6 ~ "below_6",
+      gleason_grade >=8 ~ "above_8",
+      gleason_grade == 7 ~ "seven"
     ))
     }
   
   clinical2<-clinical[!is.na(clinical$condition), ]
   
-  a<-intersect(clinical2[clinical2$condition=="above 8",]$sample_name,colnames(gex))
-  gex_above8<-gex[,a]
-  
-  b<-intersect(clinical2[clinical2$condition=="below 6",]$sample_name,colnames(gex))
-  gex_below6<-gex[,b]
-  
-  my_vec<-vector()
-  d<-t.test(gex_above8[1,],gex_below6[1,])$p.value
-  my_vec<-c(my_vec,d)
-  
-  for(i in 2:nrow(gex_below6)){
-    c<-t.test(gex_above8[i,],gex_below6[i,])$p.value
-    my_vec<-c(my_vec,c)
-  }
-  
-  df<-data.frame(matrix(NA, nrow = nrow(gex_below6), ncol = 2))
-  colnames<-rownames(gex)[1:nrow(gex_below6)]
-  colnames<-as.vector(colnames)
-  df[,1]<-colnames
-  df[,2]<-my_vec
-  
-  colnames(df)<-c("gene","pval")
-  
-  gex_above8<-log2(gex_above8)
-  gex_below6<-log2(gex_below6)
-  
-  gex_above8$mean<-rowMeans(gex_above8)
-  gex_below6$mean<-rowMeans(gex_below6)
-  
-  gex_above8_mean<-gex_above8[,ncol(gex_above8),drop=FALSE]
-  gex_below6_mean<-gex_below6[,ncol(gex_below6),drop=FALSE]
-  combine_mean<-merge(gex_above8_mean,gex_below6_mean,by<-0)
-  colnames(combine_mean)<-c("gene","mean_above8","mean_below6")
-  
-  rownames(combine_mean)<-combine_mean[,1]
-  combine_mean<-combine_mean[,-1]
-  
-  combine_mean$logfc<-(combine_mean$mean_above8)-(combine_mean$mean_below6)
-  
-  
-  df_all<-merge(combine_mean,df,by.x=0,by.y="gene")
-  df_all$fdr<-p.adjust(df_all$pval, method= 'fdr')
-  df_all_tcga<-df_all
-  
-  
-  df_all$gene <- NA
-  vec<-c("WNT5A","CDK1","HMMR","VCAN","TK1","CD44","SMAD4","CEACAM1","AFF3","FOSB")
-  
-  df_all$gene[which(df_all$Row.names %in% vec)]<-df_all$Row.names[which(df_all$Row.names %in% vec)]
-
-  if (dataset=="tcga"){
-    df_all<-df_all[!(df_all$logfc=="-Inf") &! (df_all$logfc=="Inf" ),]}
-
-  return(df_all)
+  return(clinical2)
 }
 
+# Make and format desigb matric for limma
+design_matrix_format<-function(design,counts){
+
+  design[,3]<-NA
+  design[,4]<-NA
+  design[,5]<-NA
+  
+  colnames(design)[3]<-"below_6"
+  colnames(design)[4]<-"above_8"
+  colnames(design)[5]<-"seven"
+  
+  design<-design%>%mutate(
+        below_6 = case_when(
+        condition == "below_6" ~ "1",
+        condition == "above_8" ~ "0",
+        condition == "seven" ~ "0"
+      ))
+  
+  design<-design%>%mutate(
+        above_8 = case_when(
+        condition == "below_6" ~ "0",
+        condition == "above_8" ~ "1",
+        condition == "seven" ~ "0"
+      ))
+  
+  design<-design%>%mutate(
+        seven = case_when(
+        condition == "below_6" ~ "0",
+        condition == "above_8" ~ "0",
+        condition == "seven" ~ "1"
+      ))
+  
+  rownames(design)<-design$sample_name
+  design<-design[,-c(1,2)]
+  
+  
+  row_names_df_to_remove<-setdiff(rownames(design),colnames(counts))
+  design<-design[!(row.names(design) %in% row_names_df_to_remove),]
+  
+  design<-design[colnames(counts),]
+  
+  return(design)
+}
+
+# test if sample order in gex and design match perfectly
+test_match_order <- function(x,y) {
+
+if (all(x==y)) print('Perfect match in same order')
+
+if (!all(x==y) && all(sort(x)==sort(y))) print('Perfect match in wrong order')
+
+if (!all(x==y) && !all(sort(x)==sort(y))) print('No match')
+}
+
+# Function to run limma steps
+limma<-function(counts,design,dataset){
+  if(dataset=="tcga"){
+  counts<-2^counts
+  counts<-counts-1
+  }
+  df2 <- mutate_all(counts, function(x) as.numeric(as.character(x)))
+  df2<-as.matrix(df2)
+  
+  design$below_6<-as.numeric(design$below_6)
+  design$above_8<-as.numeric(design$above_8)
+  design$seven<-as.numeric(design$seven)
+  design<-as.matrix(design)
+  
+  #since TCGA's gex values could be converted back to raw counts, use normal limma pipeline
+  if(dataset=="tcga"){
+  dge <- DGEList(counts=df2)
+  keep <- filterByExpr(dge, design, min.total.count=500)
+  dge <- dge[keep,,keep.lib.sizes=FALSE]
+  dim(dge)
+  dge <- calcNormFactors(dge)
+  v <- voom(dge, design, plot=F)
+  fit <- lmFit(v, design)
+  cont <- makeContrasts(above_8-below_6, levels=design)
+  fit2 <- contrasts.fit(fit, cont)
+  fit <- eBayes(fit2, trend=TRUE)
+  topTable<- topTable(fit, n=nrow(dge))
+  # For other datasets skip voom normalization
+  }else{
+  fit <- lmFit(df2, design)
+  cont <- makeContrasts(above_8-below_6, levels=design)
+  fit2 <- contrasts.fit(fit, cont)
+  fit <- eBayes(fit2, trend=TRUE)
+  topTable<- topTable(fit, n=nrow(df2))
+    
+  }
+  
+  return(topTable)
+    
+}
+```
+
+```{r}
+genes<-c("COMP","PRR16","ASPN","RRM2","PPFIA2","SLC22A3","CD38","MYBPC1","ACTG2","ANPEP")
+```
+
+Limma is run using the GEX matrix from curatedPCaData and the design matrix generated to get the list of DE genes with their FDR values.
+
+#TCGA
+```{r, results=FALSE,eval=FALSE}
+counts_tcga<-as.data.frame(curatedPCaData::mae_tcga[["gex.rsem.log"]])
+
+design<-volcano_plot_matrix(counts_tcga,curatedPCaData::mae_tcga,"tcga")
+design<-design[,-2]
+counts_tcga<-counts_tcga[,intersect(colnames(counts_tcga),design$sample_name)]
+design<-design_matrix_format(design,counts_tcga)
+
+test_match_order(rownames(design),colnames(counts_tcga))
+
+topTable_tcga<-limma(counts_tcga,design,"tcga")
+
+colnames(topTable_tcga)<-paste(colnames(topTable_tcga),"tcga",sep="_")
+
+topTable_tcga$gene<-NA
+topTable_tcga$gene[which(rownames(topTable_tcga) %in% genes)]<-rownames(topTable_tcga)[which(rownames(topTable_tcga) %in% genes)]
+
 
 ```
 
-We can now use the function defined above to create the matrices for all the datasets as shown below
-```{r,results=FALSE,eval=FALSE}
+#Taylor
+```{r, results=FALSE,eval=FALSE}
+counts_taylor<-as.data.frame(curatedPCaData::mae_taylor[["gex.rma"]])
 
-gex_tcga<-curatedPCaData::mae_tcga[["gex.rsem.log"]]
-mae_tcga<-curatedPCaData::mae_tcga
-df_tcga<-volcano_plot_matrix(gex_tcga,mae_tcga,"TCGA")
+design<-volcano_plot_matrix(counts_taylor,curatedPCaData::mae_taylor,"taylor")
+design<-design[,-2]
+counts_taylor<-counts_taylor[,intersect(colnames(counts_taylor),design$sample_name)]
+design<-design_matrix_format(design,counts_taylor)
 
-gex_taylor<-curatedPCaData::mae_taylor[["gex.rma"]]
-mae_taylor<-curatedPCaData::mae_taylor
-df_taylor<-volcano_plot_matrix(gex_taylor,mae_taylor,"taylor")
+test_match_order(rownames(design),colnames(counts_taylor))
 
-gex_friedrich<-curatedPCaData::mae_friedrich[["gex.logq"]]
-mae_friedrich<-curatedPCaData::mae_friedrich
-df_friedrich<-volcano_plot_matrix(gex_friedrich,mae_friedrich,"friedrich")
+topTable_taylor<-limma(counts_taylor,design,"taylor")
 
-gex_igc<-curatedPCaData::mae_igc[["gex.rma"]]
-mae_igc<-curatedPCaData::mae_igc
-df_igc<-volcano_plot_matrix(gex_igc,mae_igc,"igc")
+colnames(topTable_taylor)<-paste(colnames(topTable_taylor),"taylor",sep="_")
 
-gex_weiner<-curatedPCaData::mae_weiner[["gex.rma"]]
-mae_weiner<-curatedPCaData::mae_weiner
-df_weiner<-volcano_plot_matrix(gex_weiner,mae_weiner,"weiner")
+topTable_taylor$gene<-NA
+topTable_taylor$gene[which(rownames(topTable_taylor) %in% genes)]<-rownames(topTable_taylor)[which(rownames(topTable_taylor) %in% genes)]
 
 
 ```
 
+#IGC
+```{r, results=FALSE,eval=FALSE}
+counts_igc<-as.data.frame(curatedPCaData::mae_igc[["gex.rma"]])
+
+design<-volcano_plot_matrix(counts_igc,curatedPCaData::mae_igc,"igc")
+design<-design[,-2]
+counts_igc<-counts_igc[,intersect(colnames(counts_igc),design$sample_name)]
+design<-design_matrix_format(design,counts_igc)
+
+test_match_order(rownames(design),colnames(counts_igc))
+
+topTable_igc<-limma(counts_igc,design,"igc")
+colnames(topTable_igc)<-paste(colnames(topTable_igc),"igc",sep="_")
+
+topTable_igc$gene<-NA
+topTable_igc$gene[which(rownames(topTable_igc) %in% genes)]<-rownames(topTable_igc)[which(rownames(topTable_igc) %in% genes)]
+
+
+```
+
+#Weiner
+```{r, results=FALSE,eval=FALSE}
+counts_weiner<-as.data.frame(curatedPCaData::mae_weiner[["gex.rma"]])
+
+design<-volcano_plot_matrix(counts_weiner,curatedPCaData::mae_weiner,"weiner")
+design<-design[,-2]
+counts_weiner<-counts_weiner[,intersect(colnames(counts_weiner),design$sample_name)]
+design<-design_matrix_format(design,counts_weiner)
+
+test_match_order(rownames(design),colnames(counts_weiner))
+
+topTable_weiner<-limma(counts_weiner,design,"weiner")
+colnames(topTable_weiner)<-paste(colnames(topTable_weiner),"weiner",sep="_")
+
+topTable_weiner$gene<-NA
+topTable_weiner$gene[which(rownames(topTable_weiner) %in% genes)]<-rownames(topTable_weiner)[which(rownames(topTable_weiner) %in% genes)]
+
+
+```
+
+All the tables from limma are stored in an RData object to save time. Volcano plots are then generated as shown.
 ```{r load_workspace3}
 load("volcano_plot_matrices.RData")
 ```
@@ -388,81 +498,69 @@ load("volcano_plot_matrices.RData")
 
 ```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
 
-plot<-ggplot(data=df_tcga, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) +
+plot<-ggplot(data=topTable_tcga, aes(x=logFC_tcga, y=-log10(adj.P.Val_tcga), color=gene,size=1)) +
   geom_point() +
   gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
   theme_minimal() + theme_bw() + theme_classic()+
-  guides(size = "none")+ ggtitle("TCGA")+ theme(plot.title = element_text(hjust = 0.5))
+  guides(size = "none")+ ggtitle("TCGA")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
 
 # Assign shades of blue to downreg and shades of red to upreg genes
-plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
-                                "CDK1"="#FDDBC7","AFF3"="#D1E5F0","CD44"="#92C5DE",
-                                "CEACAM1"="#4393C3","FOSB"="#2166AC",
-                                "SMAD4"="#053061")) 
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061")) 
 
 ```
 
 ### Taylor
 
 ```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
-plot<-ggplot(data=df_taylor, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) +
+plot<-ggplot(data=topTable_taylor, aes(x=logFC_taylor, y=-log10(adj.P.Val_taylor), color=gene,size=1)) +
   geom_point() +
-  gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
+  gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
   theme_minimal() + theme_bw() + theme_classic()+
-  guides(size = "none")+ ggtitle("Taylor")+ theme(plot.title = element_text(hjust = 0.5))
+  guides(size = "none")+ ggtitle("Taylor")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
 
 # Assign shades of blue to downreg and shades of red to upreg genes
-plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
-                                "CDK1"="#FDDBC7","AFF3"="#D1E5F0","CD44"="#92C5DE",
-                                "CEACAM1"="#4393C3","FOSB"="#2166AC",
-                                "SMAD4"="#053061")) 
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061")) 
 
 ```
 
-### Friedrich
-
-```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
-plot<-ggplot(data=df_friedrich, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) +
-  geom_point() +
-  gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
-  theme_minimal() + theme_bw() + theme_classic()+
-  guides(size = "none")+ ggtitle("Friedrich")+ theme(plot.title = element_text(hjust = 0.5))
-
-# Assign shades of blue to downreg and shades of red to upreg genes
-plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
-                                "CDK1"="#FDDBC7","AFF3"="#D1E5F0","CD44"="#92C5DE",
-                                "CEACAM1"="#4393C3","FOSB"="#2166AC",
-                                "SMAD4"="#053061"))
-```
 
 ### IGC
 
 ```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
-plot<-ggplot(data=df_igc, aes(x=logfc, y=-log10(pval), color=gene,size=1)) +
+plot<-ggplot(data=topTable_igc, aes(x=logFC_igc, y=-log10(adj.P.Val_igc), color=gene,size=1)) +
   geom_point() +
-  gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
-  theme_minimal() + theme_bw() + theme_classic()+guides(size = "none")+ ggtitle("IGC")+ theme(plot.title = element_text(hjust = 0.5))
+  gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
+  theme_minimal() + theme_bw() + theme_classic()+
+  guides(size = "none")+ ggtitle("IGC")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
 
 # Assign shades of blue to downreg and shades of red to upreg genes
-plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
-                                "CDK1"="#FDDBC7","AFF3"="#D1E5F0","CD44"="#92C5DE",
-                                "CEACAM1"="#4393C3","FOSB"="#2166AC",
-                                "SMAD4"="#053061"))
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061")) 
 
 ```
 
 ### Weiner
 
 ```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
-plot<-ggplot(data=df_weiner, aes(x=logfc, y=-log10(fdr), color=gene,size=1)) +
+plot<-ggplot(data=topTable_weiner, aes(x=logFC_weiner, y=-log10(adj.P.Val_weiner), color=gene,size=1)) +
   geom_point() +
-  gghighlight(!is.na(gene), use_direct_label = FALSE,unhighlighted_params=list(size=1))+
-  theme_minimal() + theme_bw() + theme_classic()+guides(size = "none")+ ggtitle("Weiner")+ theme(plot.title = element_text(hjust = 0.5))
+  gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
+  theme_minimal() + theme_bw() + theme_classic()+
+  guides(size = "none")+ ggtitle("Weiner")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
 
-plot+scale_color_manual(values = c("TK1" = "#67001F","VCAN"="#B2182B","WNT5A"="#D6604D","HMMR"="#F4A582",
-                                "CDK1"="#FDDBC7","AFF3"="#D1E5F0","CD44"="#92C5DE",
-                                "CEACAM1"="#4393C3","FOSB"="#2166AC",
-                                "SMAD4"="#053061")) 
+# Assign shades of blue to downreg and shades of red to upreg genes
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061"))  
 ```
 
 ## Mutual Exclusivity
@@ -655,8 +753,6 @@ Taylor2<-Taylor2[!(rownames(Taylor2)%in%"SPOP"),]
 abida_mae<-curatedPCaData::mae_abida
 Abida<-alt_matrix_ME(abida_mae,"abida",genes)
 
-baca_mae<-curatedPCaData::mae_baca
-Baca<-alt_matrix_ME(baca_mae,"baca",genes)
 
 ```
 
@@ -781,7 +877,7 @@ OR.hm <- log2(OR.hm)
 OR.hm <- round(OR.hm, 2)
 OR.hm <- OR.hm[nrow(OR.hm):1,]
 
-Taylor<-mat_fun(Taylor)
+Taylor2<-mat_fun(Taylor2)
 ```
 
 ```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
@@ -1112,10 +1208,6 @@ ComplexHeatmap::oncoPrint(alt_matrix_tcga,alter_fun = alter_fun,col = cols,colum
 
 
 df<-curatedPCaData:::wrapper_sortonco(alt_matrix_abida)
-
-# Genes that had 2 mut in same sample:
-#FOXA1 - SC_9026.Tumor - Inframe Mutation Frameshift Mutation
-#TP53 - WCM650_Z1 - Missense Mutation Splice Mutation
 
 col_order<-rownames(df)
 row_order<-colnames(df)

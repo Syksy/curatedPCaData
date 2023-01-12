@@ -3,7 +3,6 @@ title: "T cell immune profiling in PCa survival"
 output:
   html_document: default
   pdf_document: default
-date: "`r Sys.Date()`"
 vignette: |
   %\VignetteIndexEntry{T cell immune profiling in PCa survival} 
   %\VignetteEngine{knitr::rmarkdown} 
@@ -224,7 +223,7 @@ ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom
 ```{r ,dpi=150, fig.width=7,fig.height=7,out.width="100%", fig.cap="Gleason grade vs Tregs IGC"}
 
 igc <- as.data.frame(as.matrix(colData(mae_igc)))
-clinical <- igc[,c("sample_name", "grade_group", "sample_type")]
+clinical <- igc[,c("sample_name", "grade_group")]
 # Remember to subset to primary tumor samples
 #clinical <- clinical[which(clinical$sample_type == "primary"),]
 clinical <- clinical[!is.na(clinical$grade_group),]
@@ -320,7 +319,7 @@ ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom
 weiner <- as.data.frame(as.matrix(colData(mae_weiner)))
 clinical <- weiner[,c("sample_name", "grade_group", "sample_type")]
 # Remember to subset to primary tumor samples
-clinical <- clinical[which(clinical$sample_type == "primary"),]
+#clinical <- clinical[which(clinical$sample_type == "primary"),]
 clinical <- clinical[!is.na(clinical$grade_group),]
 
 cibersort <- mae_weiner[["cibersort"]]
@@ -366,7 +365,7 @@ ggplot(frequency_table, aes(x=condition,y=freq_frac,fill=`Gleason grade`)) +geom
 icgcca <- as.data.frame(as.matrix(colData(mae_icgcca)))
 clinical <- icgcca[,c("sample_name", "grade_group", "sample_type")]
 # Remember to subset to primary tumor samples
-clinical <- clinical[which(clinical$sample_type == "primary"),]
+#clinical <- clinical[which(clinical$sample_type == "primary"),]
 clinical <- clinical[!is.na(clinical$grade_group),]
 
 cibersort<- mae_icgcca[["cibersort"]]
