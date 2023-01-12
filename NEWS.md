@@ -1,3 +1,9 @@
+# curatedPCaData Version 0.9.43 _2023-01-09_
+
+* Clarifications to the descriptions provided in the template_prad
+* limma used for DE gene analysis in trends vignette
+* Mutation data barcodes added to 'mut' slots
+
 # curatedPCaData Version 0.9.42 _2022-12-29_
 
 * Endothelial vignette revisions
