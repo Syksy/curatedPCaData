@@ -2516,8 +2516,26 @@ generate_xenabrowser <- function(
       tcga_mut$sample <- gsub("-",".",tcga_mut$sample)
       tcga_mut$sample <- gsub("01A","01",tcga_mut$sample)
       names(tcga_mut)[names(tcga_mut) == 'effect'] <- "Variant_Classification"
+      # Add tumor and normal sample barcodes
+      prof<-cBioPortalData::cBioDataPack("prad_tcga",ask = FALSE)
+      ragexp<-prof[["mutations"]]
+      
+      ragexp_df<-ragexp@assays
+      ragexp_df <- unlist(ragexp_df)
+      ragexp_df<-data.frame(ragexp_df,names=names(ragexp_df))
+      
+      ragexp_df$sample<-sub("\\..*", "", ragexp_df$names)
+      ragexp_df$gene<-gsub("^.*?\\.","", ragexp_df$names)
+      
+      ragexp_df$Tumor_sample_barcode<-ragexp_df$sample
+      ragexp_df$sample<-gsub("-",".",ragexp_df$sample)
+      
+      ragexp_df<-ragexp_df[,c("sample","Tumor_sample_barcode","Matched_Norm_Sample_Barcode")]
+      ragexp_df<-ragexp_df[!duplicated(ragexp_df$sample), ]
+      
+      merged<-merge(tcga_mut,ragexp_df,by="sample")
       #a=subset(tcga_mut, Sample_ID %in% colnames(mae_tcga[["gex.fpkm"]]))
-      GRL <- GenomicRanges::makeGRangesListFromDataFrame(tcga_mut, split.field = "sample",
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(merged, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
       ragexp_tcga <- RaggedExperiment::RaggedExperiment(GRL)
       
