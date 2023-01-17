@@ -831,71 +831,71 @@ mae_weiner <- addSlotMAE(mae_weiner, mcp = tmp)
 
 # Abida et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_abida[["gex.relz"]]))
-mae_abida <- addSlotMAE(mae_abida, estimate = tmp)
+mae_abida <- addSlotMAE(mae_abida, estimate = as.matrix(tmp))
 
 # Barbieri et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_barbieri[["gex.relz"]]))
-mae_barbieri <- addSlotMAE(mae_barbieri, estimate = tmp)
+mae_barbieri <- addSlotMAE(mae_barbieri, estimate = as.matrix(tmp))
 
 # Barwick et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_barwick[["gex.logq"]]))
-mae_barwick <- addSlotMAE(mae_barwick, estimate = tmp)
+mae_barwick <- addSlotMAE(mae_barwick, estimate = as.matrix(tmp))
 
 # Chandran et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_chandran[["gex.rma"]]))
-mae_chandran <- addSlotMAE(mae_chandran, estimate = tmp)
+mae_chandran <- addSlotMAE(mae_chandran, estimate = as.matrix(tmp))
 
 # Friedrich et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_friedrich[["gex.logq"]]))
-mae_friedrich <- addSlotMAE(mae_friedrich, estimate = tmp)
+mae_friedrich <- addSlotMAE(mae_friedrich, estimate = as.matrix(tmp))
 
 # ICGCCA
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_icgcca[["gex.rma"]]))
-mae_icgcca <- addSlotMAE(mae_icgcca, estimate = tmp)
+mae_icgcca <- addSlotMAE(mae_icgcca, estimate = as.matrix(tmp))
 
 # IGC
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_igc[["gex.rma"]]))
-mae_igc <- addSlotMAE(mae_igc, estimate = tmp)
+mae_igc <- addSlotMAE(mae_igc, estimate = as.matrix(tmp))
 
 # Kim et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_kim[["gex.rma"]]))
-mae_kim <- addSlotMAE(mae_kim, estimate = tmp)
+mae_kim <- addSlotMAE(mae_kim, estimate = as.matrix(tmp))
 
 # Kunderfranco et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_kunderfranco[["gex.logr"]]))
-mae_kunderfranco <- addSlotMAE(mae_kunderfranco, estimate = tmp)
+mae_kunderfranco <- addSlotMAE(mae_kunderfranco, estimate = as.matrix(tmp))
 
 # Ren et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_ren[["gex.relz"]]))
-mae_ren <- addSlotMAE(mae_ren, estimate = tmp)
+mae_ren <- addSlotMAE(mae_ren, estimate = as.matrix(tmp))
 
 # Sun et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_sun[["gex.rma"]]))
-mae_sun <- addSlotMAE(mae_sun, estimate = tmp)
+mae_sun <- addSlotMAE(mae_sun, estimate = as.matrix(tmp))
 
 # Taylor et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_taylor[["gex.rma"]]))
-mae_taylor <- addSlotMAE(mae_taylor, estimate = tmp)
+mae_taylor <- addSlotMAE(mae_taylor, estimate = as.matrix(tmp))
 
 # TCGA
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_tcga[["gex.rsem.log"]]))
-mae_tcga <- addSlotMAE(mae_tcga, estimate = tmp)
+mae_tcga <- addSlotMAE(mae_tcga, estimate = as.matrix(tmp))
 
 # True et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_true[["gex.logr"]]))
-mae_true <- addSlotMAE(mae_true, estimate = tmp)
+mae_true <- addSlotMAE(mae_true, estimate = as.matrix(tmp))
 
 # Wang et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_wang[["gex.rma"]]))
-mae_wang <- addSlotMAE(mae_wang, estimate = tmp)
+mae_wang <- addSlotMAE(mae_wang, estimate = as.matrix(tmp))
 
 # Wallace et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_wallace[["gex.rma"]]))
-mae_wallace <- addSlotMAE(mae_wallace, estimate = tmp)
+mae_wallace <- addSlotMAE(mae_wallace, estimate = as.matrix(tmp))
 
 # Weiner et al.
 tmp <- as.data.frame(immunedeconv::deconvolute_estimate(mae_weiner[["gex.rma"]]))
-mae_weiner <- addSlotMAE(mae_weiner, estimate = tmp)
+mae_weiner <- addSlotMAE(mae_weiner, estimate = as.matrix(tmp))
 
 
 

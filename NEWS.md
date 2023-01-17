@@ -1,3 +1,7 @@
+# curatedPCaData Version 0.9.44 _2023-01-17_
+
+* Fixed character string being introduced to gleason_grade in Taylor clinical metadata
+
 # curatedPCaData Version 0.9.43 _2023-01-09_
 
 * Clarifications to the descriptions provided in the template_prad
