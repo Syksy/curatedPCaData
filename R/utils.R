@@ -111,7 +111,8 @@ filterToProteinCoding <- function(x){
 #' @examples
 #' loadPCa()
 #'
-#' @export
+#' @noRd
+#' @keywords internal
 loadPCa <- function(){
 	# List of MAE objects
 	maes <- grep("mae_", utils::data(package="curatedPCaData")$result[,"Item"], value=TRUE)
