@@ -32,35 +32,27 @@
 ## - Wallace et al.
 ## - Wang et al.
 ## - Weiner et al.
-## (to be updated)
 
 ## - Abida et al. -
 # GEX PolyA (FPKM) z-score normalized relative to paired normal
-# gex.relz_abida <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-#   geneticProfiles = "prad_su2c_2019_mrna_seq_fpkm_polya_all_sample_Zscores", # Omics profile
-#   caseList = "prad_su2c_2019_all" # Case list
-# )
-gex.relz_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","gex")
+gex.relz_abida <- curatedPCaData:::generate_cbioportaldata(
+	"prad_su2c_2019",
+	"gex"
+)
 save(gex.relz_abida, file="data-raw/gex.relz_abida.RData")
 
-# CNA (discretized GISTIC)
-# cna.gistic_abida <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-#   geneticProfiles="prad_su2c_2019_gistic", 
-#   caseList="prad_su2c_2019_sequenced"
-# )
-cna.gistic_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019","cna")
+# CNA (GISTIC)
+cna.gistic_abida <- curatedPCaData:::generate_cbioportaldata(
+	"prad_su2c_2019",
+	"cna"
+)
 save(cna.gistic_abida, file="data-raw/cna.gistic_abida.RData")
 
 # Mutations
-# mut_abida <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-#   geneticProfiles="prad_su2c_2019_mutations", 
-#   caseList="prad_su2c_2019_sequenced"
-# )
-# mut_abida[which(mut_abida=="NaN")] <- NA
-mut_abida <- curatedPCaData:::generate_cbioportaldata("prad_su2c_2019", "mut")
+mut_abida <- curatedPCaData:::generate_cbioportaldata(
+	"prad_su2c_2019", 
+	"mut"
+)
 save(mut_abida, file="data-raw/mut_abida.RData")
 # To check: Fusions separately?
 
@@ -72,13 +64,11 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 
 
 ## - Baca et al. -
-# CNA
-# cna.gistic_baca <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-#   geneticProfiles="prad_broad_2013_cna", 
-#   caseList="prad_broad_2013_sequenced"
-# )
-cna.gistic_baca <-curatedPCaData:::generate_cbioportaldata("prad_broad_2013","cna")
+# CNA (GISTIC)
+cna.gistic_baca <- curatedPCaData:::generate_cbioportaldata(
+	"prad_broad_2013",
+	"cna"
+)
 save(cna.gistic_baca, file="data-raw/cna.gistic_baca.RData")
 
 # Mutations
@@ -94,12 +84,10 @@ usethis::use_data(mae_baca, overwrite = TRUE)
 
 ## - Barbieri et al. -
 # GEX expression z-score normalized relative to paired normal
-# gex.relz_barbieri <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-#   geneticProfiles = "prad_broad_mrna", # Omics profile
-#   caseList = "prad_broad_sequenced" # Case list
-# )
-gex.relz_barbieri <- curatedPCaData:::generate_cbioportaldata("prad_broad","gex")
+gex.relz_barbieri <- curatedPCaData:::generate_cbioportaldata(
+	"prad_broad",
+	"gex"
+)
 save(gex.relz_barbieri, file="data-raw/gex.relz_barbieri.RData")
 
 # CNA
@@ -112,17 +100,10 @@ cna.gistic_barbieri <- curatedPCaData:::generate_cbioportaldata("prad_broad","cn
 save(cna.gistic_barbieri, file="data-raw/cna.gistic_barbieri.RData")
 
 # MUT
-# mut_barbieri <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-#   geneticProfiles="prad_broad_mutations", 
-#   caseList="prad_broad_sequenced"
-# )
-# mut_barbieri[which(mut_barbieri=="NaN")] <- NA
-
-# barbieri_mut<-curatedPCaData:::generate_cbioportaldata_mut(
-#   caselist = "prad_broad"
-#   )
-mut_barbieri <- curatedPCaData:::generate_cbioportaldata("prad_broad","mut")
+mut_barbieri <- curatedPCaData:::generate_cbioportaldata(
+	"prad_broad",
+	"mut"
+)
 save(mut_barbieri, file="data-raw/mut_barbieri.RData")
 
 # Create MAE object
@@ -294,25 +275,17 @@ gex.relz_ren <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","ge
 save(gex.relz_ren, file="data-raw/gex.relz_ren.RData")
 
 # CNA
-# cna.gistic_ren <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-#   geneticProfiles="prad_eururol_2017_cna", 
-#   caseList="prad_eururol_2017_sequenced"
-# )
-cna.gistic_ren <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","cna")
+cna.gistic_ren <- curatedPCaData:::generate_cbioportaldata(
+	"prad_eururol_2017",
+	"cna"
+)
 save(cna.gistic_ren, file="data-raw/cna.gistic_ren.RData")
 
 # Mutations
-# mut_ren <- curatedPCaData:::generate_cbioportal(
-#   genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)), # All unique gene symbols
-#   geneticProfiles = "prad_eururol_2017_mutations", # Omics profile
-#   caseList = "prad_eururol_2017_sequenced" # Case list
-# )
-# mut_ren[which(mut_ren=="NaN")] <- NA
-# ren_mut<-curatedPCaData:::generate_cbioportaldata_mut(
-#   caselist = "prad_eururol_2017"
-#   )
-mut_ren <- curatedPCaData:::generate_cbioportaldata("prad_eururol_2017","mut")
+mut_ren <- curatedPCaData:::generate_cbioportaldata(
+	"prad_eururol_2017",
+	"mut"
+)
 save(mut_ren, file="data-raw/mut_ren.RData")
 
 # Create MAE object
@@ -350,27 +323,19 @@ gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
 )
 save(gex.rma_taylor, file="data-raw/gex.rma_taylor.RData")
 
-# CNA
+# CNA (Log-ratios)
 cna.logr_taylor <- curatedPCaData:::generate_cna_geo(
 	geo_code = "GSE21035"
 )
 save(cna.logr_taylor, file="data-raw/cna.logr_taylor.RData")
 
+# CNA (GISTIC)
 cna.gistic_taylor <- curatedPCaData:::generate_cbioportaldata(
   "prad_mskcc","cna"
 )
 save(cna.gistic_taylor, file="data-raw/cna.gistic_taylor.RData")
 
-# Mutations - notice this is downloaded from cBioPortal rather than processed from GEO
-# mut_taylor <- curatedPCaData:::generate_cbioportal(
-# 	genes = sort(unique(curatedPCaData:::curatedPCaData_genes$hgnc_symbol)),
-# 	geneticProfiles = "prad_mskcc_mutations",
-# 	caseList="prad_mskcc_sequenced"
-# ) 
-# # Save NA values as truly NA instead of "NaN" even if other instances exist on column
-# mut_taylor[which(mut_taylor=="NaN")] <- NA
-# # Grep down to using only patient samples, omitting cell lines etc
-# mut_taylor <- mut_taylor[,grep("PCA", colnames(mut_taylor))]
+# Mutations
 mut_taylor<- curatedPCaData:::generate_cbioportaldata("prad_mskcc","mut")
 save(mut_taylor, file="data-raw/mut_taylor.RData")
 

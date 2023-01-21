@@ -6,6 +6,7 @@
 #' @importFrom utils read.table data
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
+#' @importFrom stats median
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage

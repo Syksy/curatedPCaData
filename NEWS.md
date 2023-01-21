@@ -1,3 +1,9 @@
+# curatedPCaData Version 1.0.0 _2023-01-18_
+
+* Updated content and style for first full version 1.0
+* Cleaned up deposited code used for reproduciblity
+* Latest roxygenized documentation and knitr README.Rmd
+
 # curatedPCaData Version 0.9.44 _2023-01-17_
 
 * Fixed character string being introduced to gleason_grade in Taylor clinical metadata
