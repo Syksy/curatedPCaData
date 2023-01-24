@@ -3,46 +3,10 @@ library(magrittr)
 library(dplyr)
 library(MultiAssayExperiment)
 
-# Formatting the initial data frames based on the clinical metadata template
-initial_curated_df <- function(
-  df_rownames,
-  template_name
-){
-  # import template - drafted by Jim & Svitlana 
-  template <- utils::read.csv(template_name, as.is=TRUE)
-  output <- matrix(NA,
-                   ncol = nrow(template),
-                   nrow = length(df_rownames))
-  colnames(output) <- template$col.name
-  rownames(output) <- df_rownames
-  output <- data.frame(output)
-  for (i in 1:ncol(output)){
-    class(output[,i]) <- template[i,"var.class"]
-  }
-  output$sample_name <- df_rownames
-  return(output)
-}
-initial_curated_internal <- function(
-	df_rownames
-){
-	template <- curatedPCaData::template_prad
-	output <- matrix(NA, ncol=nrow(template), nrow=length(df_rownames))
-	colnames(output) <- template$col.name
-	rownames(output) <- df_rownames
-	output <- data.frame(output)
-	for(i in 1:ncol(output)){
-		class(output[,i]) <- template[i,"var.class"]
-	}
-	output$sample_name <- df_rownames
-	output
-}
-
 ## Prostate cancer clinical fields latest PRAD template ideally filled for all studies
 #
 # Store template_prad.csv as a data frame inside the package instead of a hidden .csv file
 template_prad <- read.csv("data-raw/template_prad.csv", as.is=TRUE)
-# Omit two extra (empty) columns
-template_prad <- template_prad[,-c(7:8)]
 usethis::use_data(template_prad, overwrite = TRUE)
 
 ###

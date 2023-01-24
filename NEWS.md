@@ -3,6 +3,7 @@
 * Updated content and style for first full version 1.0
 * Cleaned up deposited code used for reproduciblity
 * Latest roxygenized documentation and knitr README.Rmd
+* Clinical metadata pre-formatted df generation via internal function
 
 # curatedPCaData Version 0.9.44 _2023-01-17_
 
