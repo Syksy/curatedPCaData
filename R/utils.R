@@ -124,3 +124,48 @@ loadPCa <- function(){
 	utils::data("template_prad")
 }
 
+#' Pre-format clinical metadata matrix based on template_prad; csv-file read in as df version
+#'
+#' Used in data-raw/download-clinical.R
+#'
+#' @noRd
+#' @keywords internal
+initial_curated_df <- function(
+  df_rownames,
+  template_name
+){
+  # import template - drafted by Jim & Svitlana 
+  template <- utils::read.csv(template_name, as.is=TRUE)
+  output <- matrix(NA,
+                   ncol = nrow(template),
+                   nrow = length(df_rownames))
+  colnames(output) <- template$col.name
+  rownames(output) <- df_rownames
+  output <- data.frame(output)
+  for (i in 1:ncol(output)){
+    class(output[,i]) <- template[i,"var.class"]
+  }
+  output$sample_name <- df_rownames
+  return(output)
+}
+
+#' Pre-format clinical metadata matrix based on template_prad; package's own exported df version
+#'
+#' Used in data-raw/download-clinical.R
+#'
+#' @noRd
+#' @keywords internal
+initial_curated_internal <- function(
+	df_rownames
+){
+	template <- curatedPCaData::template_prad
+	output <- matrix(NA, ncol=nrow(template), nrow=length(df_rownames))
+	colnames(output) <- template$col.name
+	rownames(output) <- df_rownames
+	output <- data.frame(output)
+	for(i in 1:ncol(output)){
+		class(output[,i]) <- template[i,"var.class"]
+	}
+	output$sample_name <- df_rownames
+	output
+}
