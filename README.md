@@ -202,7 +202,7 @@ the `MultiAssayExperiment`-objects.
 A basic convenience web interface built with R Shiny for
 `curatedPCaData` can be launched via:
 
-    curatedPCaData::shiny()
+    curatedPCaData::shinyPCa()
 
 ## Known issues
 
