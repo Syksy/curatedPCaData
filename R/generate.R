@@ -1613,10 +1613,16 @@ generate_cbioportaldata <- function(caselist,profile){
       final_ragexp_df<-final_ragexp_df[ , -which(names(final_ragexp_df) %in% "names")]
       
       final_ragexp_df$Tumor_sample_barcode<-final_ragexp_df$sample
+      sift<-rio::import("./data-raw/mut_abida_edited.txt.hg38_multianno.txt")
+      add_sift<-cbind(final_ragexp_df,sift)
+      add_sift$Matched_Norm_Sample_Barcode<-gsub("-",".",add_sift$Matched_Norm_Sample_Barcode)
+      add_sift<-add_sift[ , -which(names(add_sift) %in% c("Chr","Start","End","Ref","Alt"))]
       
-      GRL <- GenomicRanges::makeGRangesListFromDataFrame(final_ragexp_df, split.field = "sample",
+      
+      GRL <- GenomicRanges::makeGRangesListFromDataFrame(add_sift, split.field = "sample",
                                                          names.field = "gene",keep.extra.columns = TRUE)
       ragexp_final2<-RaggedExperiment::RaggedExperiment(GRL)
+      
       return(ragexp_final2)
       
     }else if (caselist=="prad_mskcc"){
