@@ -1,3 +1,12 @@
+# curatedPCaData Version 1.0.2 _2023-02-17_
+
+* SIFT / PolyPhen scores for Abida mutation data
+
+# curatedPCaData Version 1.0.1 _2023-01-13_
+
+* Metadata template generation functions as internal functions rather than code files in data-raw
+* estimate-deconvolution results as matrix rather than data.frame
+
 # curatedPCaData Version 1.0.0 _2023-01-18_
 
 * Updated content and style for first full version 1.0
