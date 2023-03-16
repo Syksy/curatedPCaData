@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 1.0.3
-Date: 2023-03-01
+Version: 1.0.4
+Date: 2023-03-16
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -16,6 +16,7 @@ License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 VignetteBuilder: knitr
+biocViews: ExperimentData, ProstateCancerData, CancerData, Homo_sapiens_Data, MicroarrayData, RNASeqData, ExpressionData, CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
 LazyData: true
 LazyDataCompression: xz
 URL: https://github.com/Syksy/curatedPCaData
