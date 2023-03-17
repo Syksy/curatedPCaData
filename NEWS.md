@@ -1,3 +1,8 @@
+# curatedPCaData Version 1.0.4 _2023-03-16_
+
+* metadata.csv exporting for ExperimentHub
+* biocViews field re-added to DESCRIPTION
+
 # curatedPCaData Version 1.0.2 _2023-02-17_
 
 * SIFT / PolyPhen scores for Abida mutation data
