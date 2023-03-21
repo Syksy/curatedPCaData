@@ -16,7 +16,7 @@ License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 VignetteBuilder: knitr
-biocViews: ExperimentData, ProstateCancerData, CancerData, Homo_sapiens_Data, MicroarrayData, RNASeqData, ExpressionData, CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
+biocViews: ExperimentHub, ExperimentData, ProstateCancerData, CancerData, Homo_sapiens_Data, MicroarrayData, RNASeqData, ExpressionData, CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
 LazyData: true
 LazyDataCompression: xz
 URL: https://github.com/Syksy/curatedPCaData
