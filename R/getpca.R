@@ -38,18 +38,16 @@
 
 #' Create a MultiAssayExperiment from specific assays and cohorts
 #'
-#' @description curatedPCaData probides \linkS4class{MultiAssayExperiment} 
+#' @description curatedPCaData provides \linkS4class{MultiAssayExperiment} 
 #' container objects that are constructed from ExperimentHub.
 #' User provides PCa data set name (see list XXXX) and YYYY.
 #'
 #' @details This function will check against available resources in
 #' ExperimentHub. 
-#' Use the \code{dry.run = FALSE} to download remote datasets and
-#' build an integrative \linkS4class{MultiAssayExperiment} object.
 #' For a list of datasets, see the XXXX
 #'
 #' @param dataset character() of PCa cancer cohort names
-#'     (e.g., `abida`)
+#'     (e.g., 'abida')
 #'
 #' @param slots character() A vector of PCa assays. If not included, returns all
 #'     available for the selected dataset;
@@ -75,14 +73,14 @@
 #' ExperimentList data types   Description
 #' ----------------------------------------------------------------------------
 #' 
-#'   gex.rma	               Gene expression values
+#'   gex.rma            Gene expression values
 #'   gex.logq              	   
 #'   gex.relz			
-#'	 gex.logr
+#'   gex.logr
 #'   gex.rsem.log
-#'	 cna.gistic				   Copy number alteration
+#'   cna.gistic         Copy number alteration
 #'   cna.logr
-#'   mut					   Mutation
+#'   mut                Somatic mutations
 #'   cibersort				
 #'   xcell
 #'   epic
@@ -90,6 +88,7 @@
 #'   mcp
 #'   estimate
 #'   scores      
+#' }
 #'
 #' @section timestamp: XXXXXX
 #' The timestamp is updated in case the data is updated. In this case, this 
@@ -102,15 +101,15 @@
 #'
 #' @examples
 #'
-#' curatedPCaMAE(
-#'     dataset = "abida", timestamp = "20230215"
+#' mae_taylor <- getPCa(
+#'     dataset = "taylor", timestamp = "20230215"
 #' )
 #'
 #'
 #' @md
 #'
 #' @export getPCa
-getPCa <-  function(
+getPCa <- function(
 	# Dataset name
 	dataset, 
 	# Data slots to retrieve (i.e. user can subset to just desired data)
@@ -118,13 +117,13 @@ getPCa <-  function(
 	# Timestamps of data from ExperimentHub; allowed values: '20230215'
 	timestamp,
 	# Verbosity
-	verbose = TRUE, 
+	verbose = FALSE, 
 	# Additional parameters
 	...
 )
 {
 	if(missing(dataset)){
-		stop("Select dataset; see ?curatedPCaData") # XXXX Where is the list?
+		stop("Select dataset; see ?curatedPCaData")
 	}
 
 	if(length(dataset)>1){
@@ -160,10 +159,8 @@ getPCa <-  function(
 
 	assaysAvail <- unique(eh_assays_sep[,2])  # Get available assays for selected dataset
 
-	# Select user specified assays (or all if nothing specified)
-	if(missing(slots)){ # If nothing specific requested, return all
-
-	}else{
+	# Select user specified assays
+	if(!missing(slots)){ # If nothing specific requested, return all
 	   if(any(!slots %in% assaysAvail)){ # If user asks for something that is not available, 
 		  stop(paste0(c("At least one of asked slots is not available. The available slots for this dataset are:",assaysAvail),collapse="  "))
 	   }else{ # Select only requested assays
@@ -237,11 +234,14 @@ getPCa <-  function(
 	eh_experiments <- ExperimentList(assay_list[-c(cD_idx,sM_idx)])
 	names(eh_experiments) <- gsub("(^[a-z]*)_(.*)_(.*)", "\\2", names(eh_experiments))
 
+	# Inform user
+	cat(paste0("\nConstructing MultiAssayExperiment for study ", dataset, " from local cache downloaded from ExperimentHub"))
+
 	# Return MAE
 	MultiAssayExperiment::MultiAssayExperiment(
 		experiments = eh_experiments,
 		colData = assay_list[cD_idx][[1]],
 		sampleMap = assay_list[sM_idx][[1]]
-	)
+	)	
 }
 

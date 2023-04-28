@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 1.0.4
-Date: 2023-03-16
+Version: 2.0.0
+Date: 2023-04-27
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -11,17 +11,15 @@ Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c
              person("Michael", "Orman", email = "michael.orman@cuanschutz.edu", role = "ctb"),
              person("Alex", "Soupir", email = "Alex.Soupir@moffitt.org", role = "ctb")
            )
-Description: The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables. The studies are offered as MultiAssayExperiment (MAE) objects, and comprise of clinical characteristics tied to gene expression, copy number alteration and somatic mutation data. Further, downstream features computed from these multi-omics data are offered inside the MAE objects. Multiple vignettes help grasp characteristics of the various studies and provide example exploratory and meta-analysis of leveraging the multiple studies provided here-in.
+Description: The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables. The studies are offered as MultiAssayExperiment (MAE) objects via ExperimentHub, and comprise of clinical characteristics tied to gene expression, copy number alteration and somatic mutation data. Further, downstream features computed from these multi-omics data are offered. Multiple vignettes help grasp characteristics of the various studies and provide example exploratory and meta-analysis of leveraging the multiple studies provided here-in.
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 biocViews: ExperimentHub, ExperimentData, ProstateCancerData, CancerData, Homo_sapiens_Data, MicroarrayData, RNASeqData, ExpressionData, CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
-LazyData: true
-LazyDataCompression: xz
 URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
-Depends: R (>= 4.2.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, RaggedExperiment
+Depends: R (>= 4.2.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, RaggedExperiment, ExperimentHub
 Imports: 
     shiny, 
     DT,
@@ -94,4 +92,3 @@ Suggests:
     circlize,
     RColorBrewer,
     Rediscover
-    
