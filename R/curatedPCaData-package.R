@@ -2,6 +2,7 @@
 #' @import S4Vectors
 #' @import MultiAssayExperiment
 #' @import RaggedExperiment
+#' @import ExperimentHub
 #' @importFrom methods slot is
 #' @importFrom utils read.table data
 #' @importFrom magrittr %>%
