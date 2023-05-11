@@ -77,9 +77,9 @@ curatedPCaData_genes <- biomaRt::getBM(
 			# Chromosomal information
 			'chromosome_name','start_position','end_position',
 			# For identifying protein coding regions
-			'transcript_biotype',
+			'transcript_biotype'#,
 			# Description
-			'description'
+			#'description'
 		),
 	mart = mart
 )
@@ -91,27 +91,27 @@ curatedPCaData_genes <- biomaRt::getBM(
 ###
 
 # Affymetrix HG U133A
-curatedPCaData_genes_affy_hg_u133a <- biomaRt::getBM(
-	attributes = 
-		c(
-			# Hugo
-			'hgnc_symbol',
-			# Affymetrix HG U133A
-			'affy_hg_u133a'
-		),
-	mart = mart
-)
+#curatedPCaData_genes_affy_hg_u133a <- biomaRt::getBM(
+#	attributes = 
+#		c(
+#			# Hugo
+#			'hgnc_symbol',
+#			# Affymetrix HG U133A
+#			'affy_hg_u133a'
+#		),
+#	mart = mart
+#)
 # Affymetrix HG U133A v2
-curatedPCaData_genes_affy_hg_u133a_2 <- biomaRt::getBM(
-	attributes = 
-		c(
-			# Hugo
-			'hgnc_symbol',
-			# Affymetrix HG U133A v2
-			'affy_hg_u133a_2'
-		),
-	mart = mart
-)
+#curatedPCaData_genes_affy_hg_u133a_2 <- biomaRt::getBM(
+#	attributes = 
+#		c(
+#			# Hugo
+#			'hgnc_symbol',
+#			# Affymetrix HG U133A v2
+#			'affy_hg_u133a_2'
+#		),
+#	mart = mart
+#)
 
 # Sort the generic list first using chromosomes and then bp locations
 curatedPCaData_genes <- curatedPCaData_genes[order(curatedPCaData_genes$chromosome_name, curatedPCaData_genes$start_position, curatedPCaData_genes$end_position),]
@@ -131,16 +131,16 @@ curatedPCaData_genes[,"Aliases"] <- unlist(lapply(curatedPCaData_genes$hgnc_symb
 rownames(curatedPCaData_genes) <- NULL
 # Save gene information extraction date as an attribute 'date' to all gene annotation objects for versioning purposes
 attr(curatedPCaData_genes, 'date') <- Sys.time()
-attr(curatedPCaData_genes_affy_hg_u133a, 'date') <- Sys.time()
-attr(curatedPCaData_genes_affy_hg_u133a_2, 'date') <- Sys.time()
+#attr(curatedPCaData_genes_affy_hg_u133a, 'date') <- Sys.time()
+#attr(curatedPCaData_genes_affy_hg_u133a_2, 'date') <- Sys.time()
 # Save the time stamped gene level data
 usethis::use_data(
-	# Save the list of genes
+	# Save the list of genes and metadata
 	curatedPCaData_genes,
 	# Array specific annotations
-	curatedPCaData_genes_affy_hg_u133a,
-	curatedPCaData_genes_affy_hg_u133a_2,
+	#curatedPCaData_genes_affy_hg_u133a,
+	#curatedPCaData_genes_affy_hg_u133a_2,
 	# Saving parameters
-	internal = TRUE, overwrite = TRUE
+	internal = TRUE, overwrite = TRUE, compress="xz"
 )
 
