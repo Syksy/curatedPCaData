@@ -5,7 +5,6 @@
 #' @import ExperimentHub
 #' @importFrom methods slot is
 #' @importFrom utils read.table data
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @importFrom stats median
 "_PACKAGE"
