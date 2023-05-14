@@ -31,6 +31,19 @@ library(survminer)
 
 # Example analyses with curatedPCaData
 
+## Downloading example datasets from ExperimentHub
+
+```{r exphub_tcga}
+mae_abida <- getPCa("abida")
+mae_barwick <- getPCa("barwick")
+mae_ren <- getPCa("ren")
+mae_sun <- getPCa("sun")
+mae_tcga <- getPCa("tcga")
+mae_taylor <- getPCa("taylor")
+```
+
+The datasets are either downloaded from the `ExperimentHub` cloud, or loaded from a local cache. 
+
 ## Brief overview to MultiAssayExperiment functions
 
 A handy guide for use of MAE objects is provided in: https://bioconductor.org/packages/release/bioc/vignettes/MultiAssayExperiment/inst/doc/QuickStartMultiAssay.html
