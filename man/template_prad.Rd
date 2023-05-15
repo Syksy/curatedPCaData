@@ -15,6 +15,7 @@ This data frame contains the clinical fields which were the aim for extraction w
 Variable types, ranges, and description is reported.
 }
 \examples{
+data(template_prad)
 head(template_prad)
 }
 \keyword{datasets}

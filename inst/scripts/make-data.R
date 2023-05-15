@@ -30,4 +30,7 @@
 # write.csv(curatedPCaData:::export_metadata(timestamp = "20230215"), file="metadata.csv", quote=TRUE, row.names=FALSE)
 ## -> Creates the ExperimentHub-friendly metadata.csv
 
-# 
+## The R code and functions required for running above data curation scripts are located under the folder:
+# .../data-raw/R/*.R
+
+## Note that these require an extensive amount of dependencies, which have been omitted from curatedPCaData to avoid bloat.

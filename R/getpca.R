@@ -6,6 +6,9 @@
 #
 ###
 
+## Functions adjusted from curatedTCGAData package on Bioconductor
+## https://bioconductor.org/packages/release/data/experiment/html/curatedTCGAData.html
+
 .conditionToIndex <- function(startVec, testVec, FUN) {
   logmat <- vapply(startVec, FUN, logical(length(testVec)))
   apply(logmat, 1L, any)
@@ -16,7 +19,7 @@
   resources <- lapply(resTable[["Title"]], function(res) {
     if (verbose)
       message("Working on: ", gsub("\\.rds", "", basename(res)))
-    query(ExperimentHub, res)[[1L]]
+    AnnotationHub::query(ExperimentHub, res)[[1L]]
  
   })
   
@@ -36,7 +39,7 @@
   })
 }
 
-#' Create a MultiAssayExperiment from specific assays and cohorts
+#' Get Prostate Cancer omics and metadata for a MultiAssayExperiment object from specific assays and cohort
 #'
 #' @description curatedPCaData provides \linkS4class{MultiAssayExperiment} 
 #' container objects that are constructed from ExperimentHub.
@@ -100,14 +103,12 @@
 #' cancer code
 #'
 #' @examples
-#'
 #' mae_taylor <- getPCa(
 #'     dataset = "taylor", timestamp = "20230215"
 #' )
 #'
-#'
-#' @md
-#'
+#' @importFrom utils read.csv
+#' @importFrom AnnotationHub query
 #' @export getPCa
 getPCa <- function(
 	# Dataset name

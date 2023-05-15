@@ -2,7 +2,7 @@
 % Please edit documentation in R/getpca.R
 \name{getPCa}
 \alias{getPCa}
-\title{Create a MultiAssayExperiment from specific assays and cohorts}
+\title{Get Prostate Cancer omics and metadata for a MultiAssayExperiment object from specific assays and cohort}
 \usage{
 getPCa(dataset, slots, timestamp, verbose = FALSE, ...)
 }
@@ -14,8 +14,8 @@ getPCa(dataset, slots, timestamp, verbose = FALSE, ...)
 available for the selected dataset;
 see below for more details}
 
-\item{timestamp}{character(1) "20230215" indicating the data version to obtain
-from \code{ExperimentHub}. See \code{version} section details. XXXXXXXXXXXXXXX}
+\item{timestamp}{character(1) "20230215" indicating the data version to obtain 
+from `ExperimentHub`. See `version` section details. XXXXXXXXXXXXXXX}
 
 \item{verbose}{logical(1) Whether to show the dataset currenlty being
 (down)loaded (default TRUE)}
@@ -29,21 +29,21 @@ a \linkS4class{MultiAssayExperiment} of the specified assays and
 cancer code
 }
 \description{
-curatedPCaData provides \linkS4class{MultiAssayExperiment}
+curatedPCaData provides \linkS4class{MultiAssayExperiment} 
 container objects that are constructed from ExperimentHub.
 User provides PCa data set name (see list XXXX) and YYYY.
 }
 \details{
 This function will check against available resources in
-ExperimentHub.
+ExperimentHub. 
 For a list of datasets, see the XXXX
 }
 \section{Available Assays}{
 
 
 Thelist of ExperimentList assay names and their descriptions.
-These assays can be entered as part of the \code{slots} argument in the
-main function.
+These assays can be entered as part of the \code{slots} argument in the 
+main function. 
 \preformatted{
 
 ExperimentList data types   Description
@@ -69,16 +69,14 @@ ExperimentList data types   Description
 
 \section{timestamp}{
  XXXXXX
-The timestamp is updated in case the data is updated. In this case, this
+The timestamp is updated in case the data is updated. In this case, this 
 section describes the changes made for new timestamps.
 }
 
 \examples{
-
 mae_taylor <- getPCa(
     dataset = "taylor", timestamp = "20230215"
 )
-
 
 }
 \seealso{
