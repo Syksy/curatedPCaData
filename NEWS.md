@@ -1,3 +1,7 @@
+# curatedPCaData Version 2.0 _2023-05-11_
+
+* Revising everything to work with data from ExperimentHub
+
 # curatedPCaData Version 1.0.4 _2023-03-16_
 
 * metadata.csv exporting for ExperimentHub

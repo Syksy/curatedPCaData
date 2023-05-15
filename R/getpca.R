@@ -235,7 +235,7 @@ getPCa <- function(
 	names(eh_experiments) <- gsub("(^[a-z]*)_(.*)_(.*)", "\\2", names(eh_experiments))
 
 	# Inform user
-	cat(paste0("\nConstructing MultiAssayExperiment for study ", dataset, " from local cache downloaded from ExperimentHub"))
+	cat(paste0("\nConstructing MultiAssayExperiment for study ", dataset, " from local cache downloaded from ExperimentHub.\n"))
 
 	# Return MAE
 	MultiAssayExperiment::MultiAssayExperiment(
