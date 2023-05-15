@@ -4,5 +4,6 @@
 #' Variable types, ranges, and description is reported.
 #'
 #' @examples
+#' data(template_prad)
 #' head(template_prad)
 "template_prad"

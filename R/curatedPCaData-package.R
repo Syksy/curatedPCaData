@@ -1,3 +1,9 @@
+#' curatedPCaData
+#'
+#' Description
+#'
+#' @docType package
+#' @name curatedPCaData
 #' @keywords internal
 #' @import S4Vectors
 #' @import MultiAssayExperiment
