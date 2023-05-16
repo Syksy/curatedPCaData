@@ -64,24 +64,24 @@ mart <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensemb
 
 # Gene type annotations
 curatedPCaData_genes <- biomaRt::getBM(
-    attributes =
-        c(
-            # Hugo
-            "hgnc_symbol",
-            # Entrez gene IDs
-            "entrezgene_id",
-            # ENSEMBL
-            "ensembl_gene_id", "ensembl_transcript_id",
-            # RefSeq
-            "refseq_mrna",
-            # Chromosomal information
-            "chromosome_name", "start_position", "end_position",
-            # For identifying protein coding regions
-            "transcript_biotype" # ,
-            # Description
-            #' description'
-        ),
-    mart = mart
+  attributes =
+    c(
+      # Hugo
+      "hgnc_symbol",
+      # Entrez gene IDs
+      "entrezgene_id",
+      # ENSEMBL
+      "ensembl_gene_id", "ensembl_transcript_id",
+      # RefSeq
+      "refseq_mrna",
+      # Chromosomal information
+      "chromosome_name", "start_position", "end_position",
+      # For identifying protein coding regions
+      "transcript_biotype" # ,
+      # Description
+      #' description'
+    ),
+  mart = mart
 )
 
 ###
@@ -120,12 +120,12 @@ db.con <- org.Hs.eg.db::org.Hs.eg_dbconn()
 # SQL query
 aliases <- DBI::dbGetQuery(db.con, "SELECT * FROM alias, gene_info WHERE alias._id == gene_info._id;")
 curatedPCaData_genes[, "Aliases"] <- unlist(lapply(curatedPCaData_genes$hgnc_symbol, FUN = function(g) {
-    w <- which(aliases[, "symbol"] == g)
-    if (length(w) > 0) {
-        paste0(aliases[w, "alias_symbol"], collapse = ";")
-    } else {
-        ""
-    }
+  w <- which(aliases[, "symbol"] == g)
+  if (length(w) > 0) {
+    paste0(aliases[w, "alias_symbol"], collapse = ";")
+  } else {
+    ""
+  }
 }))
 # Omit row names (wrong order indices)
 rownames(curatedPCaData_genes) <- NULL
@@ -135,11 +135,11 @@ attr(curatedPCaData_genes, "date") <- Sys.time()
 # attr(curatedPCaData_genes_affy_hg_u133a_2, 'date') <- Sys.time()
 # Save the time stamped gene level data
 usethis::use_data(
-    # Save the list of genes and metadata
-    curatedPCaData_genes,
-    # Array specific annotations
-    # curatedPCaData_genes_affy_hg_u133a,
-    # curatedPCaData_genes_affy_hg_u133a_2,
-    # Saving parameters
-    internal = TRUE, overwrite = TRUE, compress = "xz"
+  # Save the list of genes and metadata
+  curatedPCaData_genes,
+  # Array specific annotations
+  # curatedPCaData_genes_affy_hg_u133a,
+  # curatedPCaData_genes_affy_hg_u133a_2,
+  # Saving parameters
+  internal = TRUE, overwrite = TRUE, compress = "xz"
 )

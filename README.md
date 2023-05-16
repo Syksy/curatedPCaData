@@ -27,6 +27,19 @@ here](https://www.biorxiv.org/content/10.1101/2023.01.17.524403v1)):
 
 ## Installation
 
+### Bioconductor installation
+
+In order to install the package from Bioconductor, make sure
+`BiocManager` is installed and then call the function to install
+`curatedPCaData`:
+
+    if (!require("BiocManager", quietly = TRUE))
+        install.packages("BiocManager")
+
+    BiocManager::install("curatedPCaData")
+
+### GitHub installation
+
 A download link to the latest pre-built `curatedPCaData` tarball is
 available on the right-side in GitHub under
 [Releases](https://github.com/Syksy/curatedPCaData/releases).
@@ -36,10 +49,8 @@ You can also install `curatedPCaData` from GitHub inside R with:
     # install.packages("devtools")
     devtools::install_github("Syksy/curatedPCaData")
 
-Above may fail depending on the connection stability, as the package is
-relatively large. In this case it’s best to install via the tarball. To
-build the package tarball from a cloned git repo, run the following in
-terminal / command prompt while in the root of the project:
+To build the package tarball from a cloned git repo, run the following
+in terminal / command prompt while in the root of the project:
 
     R CMD build curatedPCaData
 
@@ -66,35 +77,28 @@ other documentation*’.
 
 A list of available vignettes, subset to suitable topics:
 
-
-    tools::getVignetteInfo("curatedPCaData")[,c("Topic", "Title")]
-    ##      Topic                    
-    ## [1,] "analyses"               
-    ## [2,] "cell_associations"      
-    ## [3,] "metadata_sweep"         
-    ## [4,] "correlation_between_gex"
-    ## [5,] "overview"               
-    ## [6,] "landscapes"             
-    ## [7,] "benchmarking_risks"     
-    ## [8,] "trends_across_datasets" 
-    ##      Title                                             
-    ## [1,] "Analysis examples in curatedPCaData"             
-    ## [2,] "Cells associated with BCR and Gleason"           
-    ## [3,] "Clinical metadata sweep across datasets"         
-    ## [4,] "Example correlations for genes in curatedPCaData"
-    ## [5,] "Overview to curatedPCaData"                      
-    ## [6,] "PCa CNA landscapes with key gene annotations"    
-    ## [7,] "Risk Score Benchmarking"                         
-    ## [8,] "Trends across datasets"
+    tools::getVignetteInfo("curatedPCaData")[, c("Topic", "Title")]
+    ##      Topic      Title                                
+    ## [1,] "analyses" "Analysis examples in curatedPCaData"
+    ## [2,] "overview" "Overview to curatedPCaData"
 
 ### Brief example
 
 Simple example use of curated datasets and ’omics there-in:
 
-
     library(curatedPCaData)
 
-    curatedPCaData::mae_tcga
+    mae_tcga <- getPCa("tcga")
+    ## 
+    ## Constructing MultiAssayExperiment for study tcga from local cache downloaded from ExperimentHub.
+    mae_taylor <- getPCa("taylor")
+    ## 
+    ## Constructing MultiAssayExperiment for study taylor from local cache downloaded from ExperimentHub.
+    mae_sun <- getPCa("sun")
+    ## 
+    ## Constructing MultiAssayExperiment for study sun from local cache downloaded from ExperimentHub.
+
+    mae_tcga
     ## A MultiAssayExperiment object of 10 listed
     ##  experiments with user-defined names and respective classes.
     ##  Containing an ExperimentList class object of length 10:
@@ -106,7 +110,7 @@ Simple example use of curated datasets and ’omics there-in:
     ##  [6] epic: matrix with 8 rows and 461 columns
     ##  [7] quantiseq: matrix with 11 rows and 461 columns
     ##  [8] mcp: matrix with 11 rows and 461 columns
-    ##  [9] estimate: data.frame with 4 rows and 461 columns
+    ##  [9] estimate: matrix with 4 rows and 461 columns
     ##  [10] scores: matrix with 4 rows and 461 columns
     ## Functionality:
     ##  experiments() - obtain the ExperimentList instance
@@ -117,34 +121,29 @@ Simple example use of curated datasets and ’omics there-in:
     ##  assays() - convert ExperimentList to a SimpleList of matrices
     ##  exportClass() - save data to flat files
 
-    curatedPCaData::mae_tcga[["gex.rsem.log"]][1:4,1:4]
+    mae_tcga[["gex.rsem.log"]][1:4, 1:4]
     ##          TCGA.G9.6348.01 TCGA.CH.5766.01 TCGA.EJ.A65G.01 TCGA.EJ.5527.01
     ## A1BG              4.3733          6.0244          7.4927          3.7801
     ## A1BG-AS1          4.5576          6.3326          6.7861          4.5912
     ## A1CF              0.4008          0.7574          0.0000          0.0000
     ## A2M              14.3952         12.8331         12.5017         14.2289
 
-    curatedPCaData::mae_tcga[["cna.gistic"]][1:4,1:4]
+    mae_tcga[["cna.gistic"]][1:4, 1:4]
     ##       TCGA.2A.A8VL.01 TCGA.2A.A8VO.01 TCGA.2A.A8VT.01 TCGA.2A.A8VV.01
     ## A1BG                0               0               0               0
     ## A1CF                0               0              -1               0
     ## A2M                 0               0              -1               0
     ## A2ML1               0               0              -1               0
 
-    MultiAssayExperiment::colData(curatedPCaData::mae_tcga)[1:3,1:5]
+    colData(mae_tcga)[1:3, 1:5]
     ## DataFrame with 3 rows and 5 columns
-    ##                  study_name   patient_id     sample_name
-    ##                 <character>  <character>     <character>
-    ## TCGA.2A.A8VL.01        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01
-    ## TCGA.2A.A8VO.01        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01
-    ## TCGA.2A.A8VT.01        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01
-    ##                        alt_sample_name overall_survival_status
-    ##                            <character>               <integer>
-    ## TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
-    ## TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
-    ## TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
+    ##                  study_name   patient_id     sample_name        alt_sample_name overall_survival_status
+    ##                 <character>  <character>     <character>            <character>               <integer>
+    ## TCGA.2A.A8VL.01        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
+    ## TCGA.2A.A8VO.01        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
+    ## TCGA.2A.A8VT.01        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
 
-    curatedPCaData::mae_taylor
+    mae_taylor
     ## A MultiAssayExperiment object of 11 listed
     ##  experiments with user-defined names and respective classes.
     ##  Containing an ExperimentList class object of length 11:
@@ -168,7 +167,7 @@ Simple example use of curated datasets and ’omics there-in:
     ##  assays() - convert ExperimentList to a SimpleList of matrices
     ##  exportClass() - save data to flat files
 
-    curatedPCaData::mae_sun
+    mae_sun
     ## A MultiAssayExperiment object of 8 listed
     ##  experiments with user-defined names and respective classes.
     ##  Containing an ExperimentList class object of length 8:
@@ -177,7 +176,7 @@ Simple example use of curated datasets and ’omics there-in:
     ##  [3] xcell: matrix with 39 rows and 79 columns
     ##  [4] epic: matrix with 8 rows and 79 columns
     ##  [5] quantiseq: matrix with 11 rows and 79 columns
-    ##  [6] estimate: data.frame with 4 rows and 79 columns
+    ##  [6] estimate: matrix with 4 rows and 79 columns
     ##  [7] scores: matrix with 4 rows and 79 columns
     ##  [8] mcp: matrix with 11 rows and 79 columns
     ## Functionality:
@@ -189,69 +188,5 @@ Simple example use of curated datasets and ’omics there-in:
     ##  assays() - convert ExperimentList to a SimpleList of matrices
     ##  exportClass() - save data to flat files
 
-Note that the prefix `curatedPCaData::` is not currently required, as
-the setting for `LazyData: true` loads the MAE-objects into the active
-workspace as the package is loaded. Thus, writing just `mae_tcga` after
-`library(curatedPCaData)` would work just as well. The
-`pckgName::object` notation is provided here just for clarity, as
-different functions may be required to access different functionality of
-the `MultiAssayExperiment`-objects.
-
-## R Shiny
-
-A basic convenience web interface built with R Shiny for
-`curatedPCaData` can be launched via:
-
-    curatedPCaData::shinyPCa()
-
-## Known issues
-
-Large R-packages directly installed using `devtools::install_github`
-sometimes result in error:
-
-    Error in utils::download.file( ...
-        download from ' ... ' failed.
-
-There are few options to fix this:
-
-### Adjusting download options
-
-For Windows users, it’s known that setting
-
-    options(download.file.method = "wininet")
-
-may fix this GitHub direct download/install issue. Alternatively,
-especially in other OSes, the following download method may fix this
-issue:
-
-    options(download.file.method = "libcurl")
-
-### Direct cloning, building, or downloading and installing the package tarball
-
-A more hands-on approach is to use Git to clone the package and then
-build and install it using R tools. In your terminal or command prompt,
-go to a suitable root directory for git repositories:
-
-    git clone https://github.com/Syksy/curatedPCaData.git
-    R CMD build curatedPCaData
-
-alternatively, to speed up package tarball building, add parameter
-`--no-build-vignettes`. This will produce a file
-`curatedPCaData_x.y.z.tar.gz` in your active directory, where `x.y.z`
-correspond to the current package version.
-
-Alternatively, if one does not wish to clone the git and build the
-tarball, it’s also possible to directly download latest release tarball
-from
-<a href="https://github.com/Syksy/curatedPCaData/releases" class="uri">https://github.com/Syksy/curatedPCaData/releases</a>
-
-After this, the `curatedPCaData` R-package tarball can be installed
-using:
-
-    R CMD INSTALL curatedPCaData_x.y.z.tar.gz
-
-Please note that some dependencies (such as the packages
-`MultiAssayExperiment` and `S4Vectors`) may produce an error during
-installation if they are not found for R. In this case these
-dependencies need to be installed from their respective R package
-repositories such as CRAN or Bioconductor.
+For further hands-on examples, please see for example the
+`analyses`-vignette.
