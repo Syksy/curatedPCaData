@@ -4,10 +4,10 @@
 setwd("/Users/varsha/Desktop/gex_cibersortx/changed_gex_latest")
 
 process_gex_cibersort <- function(gex) {
-    gex <- as.data.frame(gex)
-    gex[, ncol(gex) + 1] <- rownames(gex)
-    rownames(gex) <- NULL
-    gex <- gex[, c(ncol(gex), 1:(ncol(gex) - 1))]
+  gex <- as.data.frame(gex)
+  gex[, ncol(gex) + 1] <- rownames(gex)
+  rownames(gex) <- NULL
+  gex <- gex[, c(ncol(gex), 1:(ncol(gex) - 1))]
 }
 
 gex_barwick <- curatedPCaData::mae_barwick[["gex.logq"]]

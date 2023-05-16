@@ -36,22 +36,22 @@
 ## - Abida et al. -
 # GEX PolyA (FPKM) z-score normalized relative to paired normal
 gex.relz_abida <- curatedPCaData:::generate_cbioportaldata(
-    "prad_su2c_2019",
-    "gex"
+  "prad_su2c_2019",
+  "gex"
 )
 save(gex.relz_abida, file = "data-raw/gex.relz_abida.RData")
 
 # CNA (GISTIC)
 cna.gistic_abida <- curatedPCaData:::generate_cbioportaldata(
-    "prad_su2c_2019",
-    "cna"
+  "prad_su2c_2019",
+  "cna"
 )
 save(cna.gistic_abida, file = "data-raw/cna.gistic_abida.RData")
 
 # Mutations
 mut_abida <- curatedPCaData:::generate_cbioportaldata(
-    "prad_su2c_2019",
-    "mut"
+  "prad_su2c_2019",
+  "mut"
 )
 save(mut_abida, file = "data-raw/mut_abida.RData")
 # To check: Fusions separately?
@@ -66,8 +66,8 @@ usethis::use_data(mae_abida, overwrite = TRUE)
 ## - Baca et al. -
 # CNA (GISTIC)
 cna.gistic_baca <- curatedPCaData:::generate_cbioportaldata(
-    "prad_broad_2013",
-    "cna"
+  "prad_broad_2013",
+  "cna"
 )
 save(cna.gistic_baca, file = "data-raw/cna.gistic_baca.RData")
 
@@ -85,8 +85,8 @@ usethis::use_data(mae_baca, overwrite = TRUE)
 ## - Barbieri et al. -
 # GEX expression z-score normalized relative to paired normal
 gex.relz_barbieri <- curatedPCaData:::generate_cbioportaldata(
-    "prad_broad",
-    "gex"
+  "prad_broad",
+  "gex"
 )
 save(gex.relz_barbieri, file = "data-raw/gex.relz_barbieri.RData")
 
@@ -101,8 +101,8 @@ save(cna.gistic_barbieri, file = "data-raw/cna.gistic_barbieri.RData")
 
 # MUT
 mut_barbieri <- curatedPCaData:::generate_cbioportaldata(
-    "prad_broad",
-    "mut"
+  "prad_broad",
+  "mut"
 )
 save(mut_barbieri, file = "data-raw/mut_barbieri.RData")
 
@@ -116,7 +116,7 @@ usethis::use_data(mae_barbieri, overwrite = TRUE)
 ## - Barwick et al.
 # GEX: GPL5858	DASL Human Cancer Panel by Gene
 gex.logq_barwick <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE18655"
+  geo_code = "GSE18655"
 )
 save(gex.logq_barwick, file = "data-raw/gex.logq_barwick.RData")
 
@@ -133,9 +133,9 @@ usethis::use_data(mae_barwick, overwrite = TRUE)
 # - GPL93	[HG_U95C] Affymetrix Human Genome U95C Array
 # - GPL8300	[HG_U95Av2] Affymetrix Human Genome U95 Version 2 Array
 gex.rma_chandran <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE6919",
-    pckg = "oligo",
-    filter_regex = "_RAW"
+  geo_code = "GSE6919",
+  pckg = "oligo",
+  filter_regex = "_RAW"
 )
 save(gex.rma_chandran, file = "data-raw/gex.rma_chandran.RData")
 
@@ -149,10 +149,10 @@ usethis::use_data(mae_chandran, internal = FALSE, overwrite = TRUE)
 ## - Friedrich et al. (2020) -
 # GEX: GPL26898	Agilent-058029 Custom human expression microarray (Probe Name version)
 gex.logq_friedrich <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE134051",
-    pckg = "limma",
-    filter_regex = "_RAW",
-    cleanup = FALSE
+  geo_code = "GSE134051",
+  pckg = "limma",
+  filter_regex = "_RAW",
+  cleanup = FALSE
 )
 save(gex.logq_friedrich, file = "data-raw/gex.logq_friedrich.RData")
 
@@ -215,10 +215,10 @@ save(gex_icgcfr, file = "data-raw/gex_icgcfr.RData")
 ## - IGC -
 # GEX: [HG-U133_Plus_2] Affymetrix Human Genome U133 Plus 2.0 Array
 gex.rma_igc <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE2109",
-    cleanup = FALSE,
-    # Do not download the batch files, filter the raw dump and filter down to prostate specific samples afterwards
-    filter_regex = "_RAW",
+  geo_code = "GSE2109",
+  cleanup = FALSE,
+  # Do not download the batch files, filter the raw dump and filter down to prostate specific samples afterwards
+  filter_regex = "_RAW",
 )
 save(gex.rma_igc, file = "data-raw/gex.rma_igc.RData")
 
@@ -232,9 +232,9 @@ usethis::use_data(mae_igc, overwrite = TRUE)
 ## - Kim et al. -
 # GEX: [HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [probe set (exon) version]
 gex.rma_kim <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE119616",
-    pckg = "oligo",
-    cleanup = FALSE
+  geo_code = "GSE119616",
+  pckg = "oligo",
+  cleanup = FALSE
 )
 save(gex.rma_kim, file = "data-raw/gex.rma_kim.RData")
 
@@ -249,9 +249,9 @@ usethis::use_data(mae_kim, overwrite = TRUE)
 # GEX: Agilent-012097 Human 1A Microarray (V2) G4110B (Feature Number version)
 # Global LOESS normalized log ratios between the two colour arrays combined by mean with flipped dye swap
 gex.logr_kunderfranco <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE14206",
-    pckg = "limma",
-    cleanup = FALSE
+  geo_code = "GSE14206",
+  pckg = "limma",
+  cleanup = FALSE
 )
 save(gex.logr_kunderfranco, file = "data-raw/gex.logr_kunderfranco.RData")
 
@@ -275,15 +275,15 @@ save(gex.relz_ren, file = "data-raw/gex.relz_ren.RData")
 
 # CNA
 cna.gistic_ren <- curatedPCaData:::generate_cbioportaldata(
-    "prad_eururol_2017",
-    "cna"
+  "prad_eururol_2017",
+  "cna"
 )
 save(cna.gistic_ren, file = "data-raw/cna.gistic_ren.RData")
 
 # Mutations
 mut_ren <- curatedPCaData:::generate_cbioportaldata(
-    "prad_eururol_2017",
-    "mut"
+  "prad_eururol_2017",
+  "mut"
 )
 save(mut_ren, file = "data-raw/mut_ren.RData")
 
@@ -297,9 +297,9 @@ usethis::use_data(mae_ren, overwrite = TRUE)
 ## - Sun et al.  -
 # GEX: [HG-U133A] Affymetrix Human Genome U133A Array
 gex.rma_sun <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE25136",
-    cleanup = FALSE,
-    pckg = "oligo"
+  geo_code = "GSE25136",
+  cleanup = FALSE,
+  pckg = "oligo"
 )
 save(gex.rma_sun, file = "data-raw/gex.rma_sun.RData")
 
@@ -316,21 +316,21 @@ usethis::use_data(mae_sun, overwrite = TRUE)
 # - GPL8227	Agilent-019118 Human miRNA Microarray 2.0 G4470B (miRNA ID version)
 # - GPL10264	Affymetrix Human Exon 1.0 ST Array [CDF: HuEx_1_0_st_v2_main_A20071112_EP.cdf]
 gex.rma_taylor <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE21032",
-    cleanup = FALSE,
-    pckg = "oligo"
+  geo_code = "GSE21032",
+  cleanup = FALSE,
+  pckg = "oligo"
 )
 save(gex.rma_taylor, file = "data-raw/gex.rma_taylor.RData")
 
 # CNA (Log-ratios)
 cna.logr_taylor <- curatedPCaData:::generate_cna_geo(
-    geo_code = "GSE21035"
+  geo_code = "GSE21035"
 )
 save(cna.logr_taylor, file = "data-raw/cna.logr_taylor.RData")
 
 # CNA (GISTIC)
 cna.gistic_taylor <- curatedPCaData:::generate_cbioportaldata(
-    "prad_mskcc", "cna"
+  "prad_mskcc", "cna"
 )
 save(cna.gistic_taylor, file = "data-raw/cna.gistic_taylor.RData")
 
@@ -348,26 +348,26 @@ usethis::use_data(mae_taylor, overwrite = TRUE)
 ## - TCGA -
 # GEX
 gex.rsem.log_tcga <- curatedPCaData:::generate_xenabrowser(
-    id = "TCGA-PRAD",
-    type = "gex",
-    digits = 4,
-    truncate = 0 # '.01A' -> '.01' suffix
+  id = "TCGA-PRAD",
+  type = "gex",
+  digits = 4,
+  truncate = 0 # '.01A' -> '.01' suffix
 )
 save(gex.rsem.log_tcga, file = "data-raw/gex.rsem.log_tcga.RData")
 
 # CNA (GISTIC)
 cna.gistic_tcga <- curatedPCaData:::generate_xenabrowser(
-    id = "TCGA-PRAD",
-    type = "cna",
-    truncate = 0 # '.01A' -> '.01' suffix
+  id = "TCGA-PRAD",
+  type = "cna",
+  truncate = 0 # '.01A' -> '.01' suffix
 )
 save(cna.gistic_tcga, file = "data-raw/cna.gistic_tcga.RData")
 
 # Mutations
 mut_tcga <- curatedPCaData:::generate_xenabrowser(
-    id = "TCGA-PRAD",
-    type = "mut",
-    truncate = 0 # '.01A' -> '.01' suffix
+  id = "TCGA-PRAD",
+  type = "mut",
+  truncate = 0 # '.01A' -> '.01' suffix
 )
 save(mut_tcga, file = "data-raw/mut_tcga.RData")
 
@@ -382,10 +382,10 @@ usethis::use_data(mae_tcga, overwrite = TRUE)
 # 	GPL3834	FHCRC Human Prostate PEDB cDNA Array v4
 # 	GPL3836	FHCRC Human Prostate PEDB cDNA Array v3 (-> single sample only! 11th, GSM115769)
 gex.logr_true <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE5132",
-    pckg = "limma",
-    cleanup = FALSE,
-    filter_regex = "_RAW"
+  geo_code = "GSE5132",
+  pckg = "limma",
+  cleanup = FALSE,
+  filter_regex = "_RAW"
 )
 save(gex.logr_true, file = "data-raw/gex.logr_true.RData")
 
@@ -399,9 +399,9 @@ usethis::use_data(mae_true, internal = FALSE, overwrite = TRUE)
 ## - Wallace et al. -
 # GEX: [HG-U133A_2] Affymetrix Human Genome U133A 2.0 Array
 gex.rma_wallace <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE6956",
-    pckg = "oligo",
-    cleanup = FALSE
+  geo_code = "GSE6956",
+  pckg = "oligo",
+  cleanup = FALSE
 )
 save(gex.rma_wallace, file = "data-raw/gex.rma_wallace.RData")
 
@@ -415,8 +415,8 @@ usethis::use_data(mae_wallace, internal = FALSE, overwrite = TRUE)
 # - Wang et al. -
 # GEX: [HG-U133A] Affymetrix Human Genome U133A Array
 gex.rma_wang <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE8218",
-    pckg = "oligo"
+  geo_code = "GSE8218",
+  pckg = "oligo"
 )
 save(gex.rma_wang, file = "data-raw/gex.rma_wang.RData")
 
@@ -436,8 +436,8 @@ usethis::use_data(mae_wang, overwrite = TRUE)
 # - Weiner et al. -
 # GEX: GPL5175	[HuEx-1_0-st] Affymetrix Human Exon 1.0 ST Array [transcript (gene) version]
 gex.rma_weiner <- curatedPCaData:::generate_gex_geo(
-    geo_code = "GSE157548",
-    pckg = "oligo"
+  geo_code = "GSE157548",
+  pckg = "oligo"
 )
 save(gex.rma_weiner, file = "data-raw/gex.rma_weiner.RData")
 

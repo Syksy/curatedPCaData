@@ -13,11 +13,11 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-    collapse = TRUE,
-    comment = "#>",
-    warning = FALSE,
-    message = FALSE,
-    cache = TRUE
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  cache = TRUE
 )
 ```
 
@@ -248,27 +248,27 @@ genes <- c("TP53", "PTEN", "FGFR3", "BRCA2")
 
 # Define how the alterations are shown in the oncoprint
 alter_fun <- list(
-    background = function(x, y, w, h) {
-        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "#CCCCCC", col = NA))
-    },
-    # Amplifications
-    "Gain" = function(x, y, w, h) {
-        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "orange", col = NA))
-    },
-    "High gain" = function(x, y, w, h) {
-        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "red", col = NA))
-    },
-    # Deletions
-    "Deep deletion" = function(x, y, w, h) {
-        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "blue", col = NA))
-    },
-    "Deletion" = function(x, y, w, h) {
-        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "cyan", col = NA))
-    },
-    # Missense SNV
-    "Missense_Mutation" = function(x, y, w, h) {
-        grid.rect(x, y, w * 0.7, h * 0.7, gp = gpar(fill = "green", col = NA))
-    }
+  background = function(x, y, w, h) {
+    grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "#CCCCCC", col = NA))
+  },
+  # Amplifications
+  "Gain" = function(x, y, w, h) {
+    grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "orange", col = NA))
+  },
+  "High gain" = function(x, y, w, h) {
+    grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "red", col = NA))
+  },
+  # Deletions
+  "Deep deletion" = function(x, y, w, h) {
+    grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "blue", col = NA))
+  },
+  "Deletion" = function(x, y, w, h) {
+    grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "cyan", col = NA))
+  },
+  # Missense SNV
+  "Missense_Mutation" = function(x, y, w, h) {
+    grid.rect(x, y, w * 0.7, h * 0.7, gp = gpar(fill = "green", col = NA))
+  }
 )
 
 # Wrapper function helps sweep over omics in a MAE object

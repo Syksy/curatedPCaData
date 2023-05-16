@@ -28,54 +28,54 @@ updateAnno <- function( # Matrix of gene expression, with rownames corresponding
                        omitNAempty = TRUE,
                        # Additional parameters
                        ...) {
-    genes <- curatedPCaData_genes
-    # First argument
-    type <- type[1]
-    # Row splitting known aliases
-    if (type == "Aliases") {
-        gs <- lapply(genes[, type], FUN = function(g) {
-            stringr::str_to_upper(strsplit(g, ";")[[1]])
-        })
-        names(gs) <- genes[, main]
-        # Take each hugo symbol instance only once
-        gs <- gs[unique(names(gs))]
-        genenames <- lapply(rownames(x), FUN = function(g) {
-            # TRUE/FALSE whether one or more of the aliases matched the name
-            names(gs)[which(unlist(lapply(gs, FUN = function(q) {
-                any(q %in% stringr::str_to_upper(g))
-            })))]
-        })
-        indices <- unlist(lapply(1:nrow(x), FUN = function(i) {
-            rep(rownames(x)[i], times = length(genenames[[i]]))
-        }))
-        # Extract mapped rows
-        x <- x[indices, ]
-        # Replace old names with the new mapped aliases
-        rownames(x) <- unlist(genenames)
+  genes <- curatedPCaData_genes
+  # First argument
+  type <- type[1]
+  # Row splitting known aliases
+  if (type == "Aliases") {
+    gs <- lapply(genes[, type], FUN = function(g) {
+      stringr::str_to_upper(strsplit(g, ";")[[1]])
+    })
+    names(gs) <- genes[, main]
+    # Take each hugo symbol instance only once
+    gs <- gs[unique(names(gs))]
+    genenames <- lapply(rownames(x), FUN = function(g) {
+      # TRUE/FALSE whether one or more of the aliases matched the name
+      names(gs)[which(unlist(lapply(gs, FUN = function(q) {
+        any(q %in% stringr::str_to_upper(g))
+      })))]
+    })
+    indices <- unlist(lapply(1:nrow(x), FUN = function(i) {
+      rep(rownames(x)[i], times = length(genenames[[i]]))
+    }))
+    # Extract mapped rows
+    x <- x[indices, ]
+    # Replace old names with the new mapped aliases
+    rownames(x) <- unlist(genenames)
 
-        # Other synonym/annotation systems
-    } else if (type == "ensembl_gene_id") {
+    # Other synonym/annotation systems
+  } else if (type == "ensembl_gene_id") {
 
-    } else if (type == "ensembl_transcript_id") {
+  } else if (type == "ensembl_transcript_id") {
 
-    } else if (type == "refseq_mrna") {
+  } else if (type == "refseq_mrna") {
 
-    } else {
-        stop(paste("Unknown 'type':", type))
-    }
+  } else {
+    stop(paste("Unknown 'type':", type))
+  }
 
-    # If collapse function has been defined (i.e. non-missing) collapse duplicates
-    if (!missing(collapse_fun)) {
-        x <- do.call("rbind", by(as.matrix(x), INDICES = rownames(x), FUN = collapse_fun))
-    }
+  # If collapse function has been defined (i.e. non-missing) collapse duplicates
+  if (!missing(collapse_fun)) {
+    x <- do.call("rbind", by(as.matrix(x), INDICES = rownames(x), FUN = collapse_fun))
+  }
 
-    # Omit "" or NA rows
-    if (omitNAempty) {
-        # Include those that are not NA or equal to ""
-        x <- x[which(!(is.na(rownames(x)) | rownames(x) == "" | rownames(x) == "NA")), ]
-    }
+  # Omit "" or NA rows
+  if (omitNAempty) {
+    # Include those that are not NA or equal to ""
+    x <- x[which(!(is.na(rownames(x)) | rownames(x) == "" | rownames(x) == "NA")), ]
+  }
 
-    x
+  x
 }
 
 #' Function that filters rownames based on curatedPCaData's annotated gene list down to protein coding genes
@@ -88,7 +88,7 @@ updateAnno <- function( # Matrix of gene expression, with rownames corresponding
 #' @noRd
 #' @keywords internal
 filterToProteinCoding <- function(x) {
-    x[which(rownames(x) %in% curatedPCaData_genes[which(curatedPCaData_genes$transcript_biotype == "protein_coding"), "hgnc_symbol"]), ]
+  x[which(rownames(x) %in% curatedPCaData_genes[which(curatedPCaData_genes$transcript_biotype == "protein_coding"), "hgnc_symbol"]), ]
 }
 
 #' Pre-format clinical metadata matrix based on template_prad; csv-file read in as df version
@@ -100,20 +100,20 @@ filterToProteinCoding <- function(x) {
 initial_curated_df <- function(
     df_rownames,
     template_name) {
-    # import template - drafted by Jim & Svitlana
-    template <- utils::read.csv(template_name, as.is = TRUE)
-    output <- matrix(NA,
-        ncol = nrow(template),
-        nrow = length(df_rownames)
-    )
-    colnames(output) <- template$col.name
-    rownames(output) <- df_rownames
-    output <- data.frame(output)
-    for (i in 1:ncol(output)) {
-        class(output[, i]) <- template[i, "var.class"]
-    }
-    output$sample_name <- df_rownames
-    return(output)
+  # import template - drafted by Jim & Svitlana
+  template <- utils::read.csv(template_name, as.is = TRUE)
+  output <- matrix(NA,
+    ncol = nrow(template),
+    nrow = length(df_rownames)
+  )
+  colnames(output) <- template$col.name
+  rownames(output) <- df_rownames
+  output <- data.frame(output)
+  for (i in 1:ncol(output)) {
+    class(output[, i]) <- template[i, "var.class"]
+  }
+  output$sample_name <- df_rownames
+  return(output)
 }
 
 #' Pre-format clinical metadata matrix based on template_prad; package's own exported df version
@@ -123,14 +123,14 @@ initial_curated_df <- function(
 #' @noRd
 #' @keywords internal
 initial_curated_internal <- function(df_rownames) {
-    template <- curatedPCaData::template_prad
-    output <- matrix(NA, ncol = nrow(template), nrow = length(df_rownames))
-    colnames(output) <- template$col.name
-    rownames(output) <- df_rownames
-    output <- data.frame(output)
-    for (i in 1:ncol(output)) {
-        class(output[, i]) <- template[i, "var.class"]
-    }
-    output$sample_name <- df_rownames
-    output
+  template <- curatedPCaData::template_prad
+  output <- matrix(NA, ncol = nrow(template), nrow = length(df_rownames))
+  colnames(output) <- template$col.name
+  rownames(output) <- df_rownames
+  output <- data.frame(output)
+  for (i in 1:ncol(output)) {
+    class(output[, i]) <- template[i, "var.class"]
+  }
+  output$sample_name <- df_rownames
+  output
 }

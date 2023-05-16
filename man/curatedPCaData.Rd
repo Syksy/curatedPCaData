@@ -6,7 +6,16 @@
 \alias{curatedPCaData-package}
 \title{curatedPCaData}
 \description{
-Description
+The package curatedPCaData offers a selection of annotated 
+prostate cancer datasets featuring multiple omics, manually 
+curated metadata, and derived downstream variables. The studies 
+are offered as MultiAssayExperiment (MAE) objects via ExperimentHub, 
+and comprise of clinical characteristics tied to gene expression, 
+copy number alteration and somatic mutation data. Further, downstream 
+features computed from these multi-omics data are offered. Multiple 
+vignettes help grasp characteristics of the various studies and provide 
+example exploratory and meta-analysis of leveraging the multiple 
+studies provided here-in.
 }
 \seealso{
 Useful links:
@@ -28,6 +37,7 @@ Other contributors:
   \item Kalaimathy Singaravelu \email{kalsin@utu.fi} [contributor]
   \item Michael Orman \email{michael.orman@cuanschutz.edu} [contributor]
   \item Alex Soupir \email{Alex.Soupir@moffitt.org} [contributor]
+  \item Anni Halkola \email{ansuha@utu.fi} [contributor]
 }
 
 }

@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 2.0.4
-Date: 2023-05-16
+Version: 2.0.6
+Date: 2023-05-17
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7016-7354")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -9,7 +9,8 @@ Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c
              person("Federico", "Calboli", email = "federico.calboli@utu.fi", role = "ctb"),
              person("Kalaimathy", "Singaravelu", email = "kalsin@utu.fi", role = "ctb"),
              person("Michael", "Orman", email = "michael.orman@cuanschutz.edu", role = "ctb"),
-             person("Alex", "Soupir", email = "Alex.Soupir@moffitt.org", role = "ctb")
+             person("Alex", "Soupir", email = "Alex.Soupir@moffitt.org", role = "ctb"),
+             person("Anni", "Halkola", email = "ansuha@utu.fi", role = "ctb")
            )
 Description: The package curatedPCaData offers a selection of annotated prostate cancer datasets featuring multiple omics, manually curated metadata, and derived downstream variables. The studies are offered as MultiAssayExperiment (MAE) objects via ExperimentHub, and comprise of clinical characteristics tied to gene expression, copy number alteration and somatic mutation data. Further, downstream features computed from these multi-omics data are offered. Multiple vignettes help grasp characteristics of the various studies and provide example exploratory and meta-analysis of leveraging the multiple studies provided here-in.
 License: GPL-3

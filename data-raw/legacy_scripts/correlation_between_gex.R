@@ -7,87 +7,87 @@
 library(curatedPCaData)
 
 calculate_correlation <- function(dataset, gene) {
-    name <- deparse(substitute(dataset))
-    data_subset <- as.data.frame(t(dataset[gene, ]))
+  name <- deparse(substitute(dataset))
+  data_subset <- as.data.frame(t(dataset[gene, ]))
 
-    data_subset$sample <- rownames(data_subset)
-    data_subset[, 1] <- as.numeric(data_subset[, 1])
+  data_subset$sample <- rownames(data_subset)
+  data_subset[, 1] <- as.numeric(data_subset[, 1])
 
-    dataset <- as.data.frame(t(dataset))
+  dataset <- as.data.frame(t(dataset))
 
 
-    cor_values <- numeric(0)
+  cor_values <- numeric(0)
 
-    for (i in 1:ncol(dataset)) {
-        indvidual_cor_values <- print(cor(dataset[, i], data_subset[, 1], method = "spearman"))
-        cor_values <- c(cor_values, indvidual_cor_values)
-    }
+  for (i in 1:ncol(dataset)) {
+    indvidual_cor_values <- print(cor(dataset[, i], data_subset[, 1], method = "spearman"))
+    cor_values <- c(cor_values, indvidual_cor_values)
+  }
 
-    cor_matrix <- data.frame(matrix(NA, nrow = ncol(dataset), ncol = 2))
-    colnames <- colnames(dataset)[1:ncol(dataset)]
-    colnames <- as.vector(colnames)
-    cor_matrix[, 1] <- colnames
-    cor_matrix[, 2] <- cor_values
-    # paste0("spearman_correlation_coeff_",deparse(substitute(dataset)))
-    colnames(cor_matrix) <- c("gene", name)
-    return(cor_matrix)
+  cor_matrix <- data.frame(matrix(NA, nrow = ncol(dataset), ncol = 2))
+  colnames <- colnames(dataset)[1:ncol(dataset)]
+  colnames <- as.vector(colnames)
+  cor_matrix[, 1] <- colnames
+  cor_matrix[, 2] <- cor_values
+  # paste0("spearman_correlation_coeff_",deparse(substitute(dataset)))
+  colnames(cor_matrix) <- c("gene", name)
+  return(cor_matrix)
 }
 
 
 correlation_of_correlations <- function(gene) {
-    tcga <- as.data.frame(curatedPCaData::mae_tcga[["gex.fpkm"]])
-    taylor <- as.data.frame(curatedPCaData::mae_taylor[["gex.rma"]])
-    abida <- as.data.frame(curatedPCaData::mae_abida[["gex.relz"]])
-    ren <- as.data.frame(curatedPCaData::mae_ren[["gex.relz"]])
-    barbieri <- as.data.frame(curatedPCaData::mae_barbieri[["gex.relz"]])
-    igc <- as.data.frame(curatedPCaData::mae_igc[["gex.rma"]])
-    friedrich <- as.data.frame(curatedPCaData::mae_friedrich[["gex.logq"]])
-    barwick <- as.data.frame(curatedPCaData::mae_barwick[["gex.logq"]])
-    chandran <- as.data.frame(curatedPCaData::mae_chandran[["gex.rma"]])
-    icgcca <- as.data.frame(curatedPCaData::mae_icgcca[["gex.rma"]])
-    kim <- as.data.frame(curatedPCaData::mae_kim[["gex.rma"]])
-    kunderfranco <- as.data.frame(curatedPCaData::mae_kunderfranco[["gex.logr"]])
-    sun <- as.data.frame(curatedPCaData::mae_sun[["gex.rma"]])
-    true <- as.data.frame(curatedPCaData::mae_true[["gex.logr"]])
-    wallace <- as.data.frame(curatedPCaData::mae_wallace[["gex.rma"]])
-    wang <- as.data.frame(curatedPCaData::mae_wang[["gex.rma"]])
-    weiner <- as.data.frame(curatedPCaData::mae_weiner[["gex.rma"]])
+  tcga <- as.data.frame(curatedPCaData::mae_tcga[["gex.fpkm"]])
+  taylor <- as.data.frame(curatedPCaData::mae_taylor[["gex.rma"]])
+  abida <- as.data.frame(curatedPCaData::mae_abida[["gex.relz"]])
+  ren <- as.data.frame(curatedPCaData::mae_ren[["gex.relz"]])
+  barbieri <- as.data.frame(curatedPCaData::mae_barbieri[["gex.relz"]])
+  igc <- as.data.frame(curatedPCaData::mae_igc[["gex.rma"]])
+  friedrich <- as.data.frame(curatedPCaData::mae_friedrich[["gex.logq"]])
+  barwick <- as.data.frame(curatedPCaData::mae_barwick[["gex.logq"]])
+  chandran <- as.data.frame(curatedPCaData::mae_chandran[["gex.rma"]])
+  icgcca <- as.data.frame(curatedPCaData::mae_icgcca[["gex.rma"]])
+  kim <- as.data.frame(curatedPCaData::mae_kim[["gex.rma"]])
+  kunderfranco <- as.data.frame(curatedPCaData::mae_kunderfranco[["gex.logr"]])
+  sun <- as.data.frame(curatedPCaData::mae_sun[["gex.rma"]])
+  true <- as.data.frame(curatedPCaData::mae_true[["gex.logr"]])
+  wallace <- as.data.frame(curatedPCaData::mae_wallace[["gex.rma"]])
+  wang <- as.data.frame(curatedPCaData::mae_wang[["gex.rma"]])
+  weiner <- as.data.frame(curatedPCaData::mae_weiner[["gex.rma"]])
 
-    cor_matrix_tcga <- calculate_correlation(tcga, gene)
-    cor_matrix_taylor <- calculate_correlation(taylor, gene)
-    cor_matrix_abida <- calculate_correlation(abida, gene)
-    cor_matrix_ren <- calculate_correlation(ren, gene)
-    cor_matrix_barbieri <- calculate_correlation(barbieri, gene)
-    cor_matrix_igc <- calculate_correlation(igc, gene)
-    cor_matrix_friedrich <- calculate_correlation(friedrich, gene)
-    cor_matrix_barwick <- calculate_correlation(barwick, gene)
-    cor_matrix_chandran <- calculate_correlation(chandran, gene)
-    cor_matrix_icgcca <- calculate_correlation(icgcca, gene)
-    cor_matrix_kim <- calculate_correlation(kim, gene)
-    cor_matrix_kunderfranco <- calculate_correlation(kunderfranco, gene)
-    cor_matrix_sun <- calculate_correlation(sun, gene)
-    cor_matrix_true <- calculate_correlation(true, gene)
-    cor_matrix_wallace <- calculate_correlation(wallace, gene)
-    cor_matrix_wang <- calculate_correlation(wang, gene)
-    cor_matrix_weiner <- calculate_correlation(weiner, gene)
+  cor_matrix_tcga <- calculate_correlation(tcga, gene)
+  cor_matrix_taylor <- calculate_correlation(taylor, gene)
+  cor_matrix_abida <- calculate_correlation(abida, gene)
+  cor_matrix_ren <- calculate_correlation(ren, gene)
+  cor_matrix_barbieri <- calculate_correlation(barbieri, gene)
+  cor_matrix_igc <- calculate_correlation(igc, gene)
+  cor_matrix_friedrich <- calculate_correlation(friedrich, gene)
+  cor_matrix_barwick <- calculate_correlation(barwick, gene)
+  cor_matrix_chandran <- calculate_correlation(chandran, gene)
+  cor_matrix_icgcca <- calculate_correlation(icgcca, gene)
+  cor_matrix_kim <- calculate_correlation(kim, gene)
+  cor_matrix_kunderfranco <- calculate_correlation(kunderfranco, gene)
+  cor_matrix_sun <- calculate_correlation(sun, gene)
+  cor_matrix_true <- calculate_correlation(true, gene)
+  cor_matrix_wallace <- calculate_correlation(wallace, gene)
+  cor_matrix_wang <- calculate_correlation(wang, gene)
+  cor_matrix_weiner <- calculate_correlation(weiner, gene)
 
 
 
-    # put all data frames into list
-    df_list <- list(
-        cor_matrix_tcga, cor_matrix_taylor, cor_matrix_abida, cor_matrix_ren,
-        cor_matrix_barbieri, cor_matrix_igc, cor_matrix_friedrich, cor_matrix_barwick,
-        cor_matrix_chandran, cor_matrix_icgcca, cor_matrix_kim,
-        cor_matrix_kunderfranco, cor_matrix_sun, cor_matrix_true, cor_matrix_wallace,
-        cor_matrix_wang, cor_matrix_weiner
-    )
+  # put all data frames into list
+  df_list <- list(
+    cor_matrix_tcga, cor_matrix_taylor, cor_matrix_abida, cor_matrix_ren,
+    cor_matrix_barbieri, cor_matrix_igc, cor_matrix_friedrich, cor_matrix_barwick,
+    cor_matrix_chandran, cor_matrix_icgcca, cor_matrix_kim,
+    cor_matrix_kunderfranco, cor_matrix_sun, cor_matrix_true, cor_matrix_wallace,
+    cor_matrix_wang, cor_matrix_weiner
+  )
 
-    combined_cor_list <- Reduce(function(x, y) merge(x, y, all = F), df_list)
-    rownames(combined_cor_list) <- combined_cor_list[, "gene"]
-    combined_cor_list <- combined_cor_list[, -1]
+  combined_cor_list <- Reduce(function(x, y) merge(x, y, all = F), df_list)
+  rownames(combined_cor_list) <- combined_cor_list[, "gene"]
+  combined_cor_list <- combined_cor_list[, -1]
 
-    combined_cor_list[, c(1:17)] <- sapply(combined_cor_list[, c(1:17)], as.numeric)
-    return(combined_cor_list)
+  combined_cor_list[, c(1:17)] <- sapply(combined_cor_list[, c(1:17)], as.numeric)
+  return(combined_cor_list)
 }
 
 library(corrplot)
