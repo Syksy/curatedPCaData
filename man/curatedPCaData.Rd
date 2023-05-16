@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi}
+\strong{Maintainer}: Teemu Daniel Laajala \email{teelaa@utu.fi} (\href{https://orcid.org/0000-0002-7016-7354}{ORCID})
 
 Other contributors:
 \itemize{

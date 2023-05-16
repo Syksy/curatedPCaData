@@ -13,11 +13,11 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  warning = FALSE,
-  message = FALSE,
-  cache = TRUE
+    collapse = TRUE,
+    comment = "#>",
+    warning = FALSE,
+    message = FALSE,
+    cache = TRUE
 )
 ```
 
@@ -60,26 +60,26 @@ Traditional Gleason grade is the sum of Gleason major and Gleason minor. This ca
 
 ```{r gleason_tcga, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason grade group vs BCR (TCGA)"}
 clin_tcga <- as.data.frame(colData(mae_tcga))
-bcr_tcga <- Surv(time=clin_tcga$days_to_disease_specific_recurrence, event=clin_tcga$disease_specific_recurrence_status)
+bcr_tcga <- Surv(time = clin_tcga$days_to_disease_specific_recurrence, event = clin_tcga$disease_specific_recurrence_status)
 
 fit_gleason_tcga <- survfit(bcr_tcga ~ clin_tcga$grade_group)
-ggsurvplot(fit_gleason_tcga, risk.table = TRUE, data = clin_tcga, pval=TRUE, title="TCGA BCR vs Gleason grade groups", xscale = "d_y", break.time.by = 365.25*2, xlim=365.25*c(0,10), xlab="Time (years)")
+ggsurvplot(fit_gleason_tcga, risk.table = TRUE, data = clin_tcga, pval = TRUE, title = "TCGA BCR vs Gleason grade groups", xscale = "d_y", break.time.by = 365.25 * 2, xlim = 365.25 * c(0, 10), xlab = "Time (years)")
 ```
 
 ```{r gleason_taylor, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason grade group vs BCR (Taylor et al.)"}
 clin_taylor <- as.data.frame(colData(mae_taylor))
-bcr_taylor <- Surv(time=clin_taylor$days_to_disease_specific_recurrence, event=clin_taylor$disease_specific_recurrence_status)
+bcr_taylor <- Surv(time = clin_taylor$days_to_disease_specific_recurrence, event = clin_taylor$disease_specific_recurrence_status)
 
 fit_gleason_taylor <- survfit(bcr_taylor ~ clin_taylor$grade_group)
-ggsurvplot(fit_gleason_taylor, risk.table = TRUE, data = clin_taylor, pval=TRUE, title="Taylor et al. BCR vs Gleason grade groups", xscale = "d_y",, break.time.by = 365.25*2, xlim=365.25*c(0,10), xlab="Time (years)")
+ggsurvplot(fit_gleason_taylor, risk.table = TRUE, data = clin_taylor, pval = TRUE, title = "Taylor et al. BCR vs Gleason grade groups", xscale = "d_y", , break.time.by = 365.25 * 2, xlim = 365.25 * c(0, 10), xlab = "Time (years)")
 ```
 
 ```{r gleason_barwick, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason score vs BCR (Barwick et al.)"}
 clin_barwick <- as.data.frame(as.matrix(colData(mae_barwick)))
-bcr_barwick <- Surv(time=as.numeric(clin_barwick$days_to_disease_specific_recurrence), event=as.integer(clin_barwick$disease_specific_recurrence_status))
+bcr_barwick <- Surv(time = as.numeric(clin_barwick$days_to_disease_specific_recurrence), event = as.integer(clin_barwick$disease_specific_recurrence_status))
 
 fit_gleason_barwick <- survfit(bcr_barwick ~ clin_barwick$gleason_grade)
-ggsurvplot(fit_gleason_barwick, risk.table = TRUE, data = clin_barwick, pval=TRUE, title="Barwick et al. BCR vs Gleason grade groups")
+ggsurvplot(fit_gleason_barwick, risk.table = TRUE, data = clin_barwick, pval = TRUE, title = "Barwick et al. BCR vs Gleason grade groups")
 ```
 
 #### Gleason and survival
@@ -88,24 +88,24 @@ One must consider the distribution of events when conducting survival modelling.
 
 ```{r gleason_abida_death, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason grade vs OS (Abida et al.)"}
 clin_abida <- as.data.frame(as.matrix(colData(mae_abida)))
-os_abida <- Surv(time=as.numeric(clin_abida$days_to_overall_survival), event=as.integer(clin_abida$overall_survival_status))
+os_abida <- Surv(time = as.numeric(clin_abida$days_to_overall_survival), event = as.integer(clin_abida$overall_survival_status))
 
 fit_gleason_abida <- survfit(os_abida ~ clin_abida$gleason_grade)
-ggsurvplot(fit_gleason_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs Gleason grade", xscale = "d_y", break.time.by = 365.25, xlim=365.25*c(0,6), xlab="Time (years)")
+ggsurvplot(fit_gleason_abida, risk.table = TRUE, data = clin_abida, pval = TRUE, title = "Abida et al. OS vs Gleason grade", xscale = "d_y", break.time.by = 365.25, xlim = 365.25 * c(0, 6), xlab = "Time (years)")
 ```
 
 Rather than Gleason grade in the metastatic disease, the site of metastasis maybe of more interest:
 
 ```{r metassite_abida_death, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Metastasis site vs OS (Abida et al.)"}
 fit_metassite_abida <- survfit(os_abida ~ clin_abida$metastatic_site)
-ggsurvplot(fit_metassite_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs Metastasis site", xscale = "d_y", break.time.by = 365.25, xlim=365.25*c(0,6), xlab="Time (years)")
+ggsurvplot(fit_metassite_abida, risk.table = TRUE, data = clin_abida, pval = TRUE, title = "Abida et al. OS vs Metastasis site", xscale = "d_y", break.time.by = 365.25, xlim = 365.25 * c(0, 6), xlab = "Time (years)")
 ```
 
 Further, TMPRSS2-ERG fusion status (determined using gene expression) may be of interest:
 
 ```{r erg_abida_death, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Metastasis site vs OS (Abida et al.)"}
 fit_erg_abida <- survfit(os_abida ~ clin_abida$ERG_fusion_GEX)
-ggsurvplot(fit_erg_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title="Abida et al. OS vs ERG-fusion", xscale = "d_y", break.time.by = 365.25, xlim=365.25*c(0,6), xlab="Time (years)")
+ggsurvplot(fit_erg_abida, risk.table = TRUE, data = clin_abida, pval = TRUE, title = "Abida et al. OS vs ERG-fusion", xscale = "d_y", break.time.by = 365.25, xlim = 365.25 * c(0, 6), xlab = "Time (years)")
 ```
 
 #### Genomic risk score
@@ -114,9 +114,9 @@ ggsurvplot(fit_erg_abida, risk.table = TRUE, data = clin_abida, pval=TRUE, title
 Sun et al. reports recurrence statuses (YES/NO, i.e. 1/0), but no follow-up times. We can still inspect a tabular representation of reported recurrence vs. transcriptome-calculated risk scores:
 
 ```{r gleason_sun_risks}
-table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, DecipherAboveMedian = mae_sun[["scores"]]["decipher",] > median(mae_sun[["scores"]]["decipher",]))
-table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, OncotypeAboveMedian = mae_sun[["scores"]]["oncotype",] > median(mae_sun[["scores"]]["oncotype",]))
-table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, ProlarisAboveMedian = mae_sun[["scores"]]["prolaris",] > median(mae_sun[["scores"]]["prolaris",]))
+table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, DecipherAboveMedian = mae_sun[["scores"]]["decipher", ] > median(mae_sun[["scores"]]["decipher", ]))
+table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, OncotypeAboveMedian = mae_sun[["scores"]]["oncotype", ] > median(mae_sun[["scores"]]["oncotype", ]))
+table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, ProlarisAboveMedian = mae_sun[["scores"]]["prolaris", ] > median(mae_sun[["scores"]]["prolaris", ]))
 ```
 
 ## Cox proportional hazard models
@@ -124,19 +124,19 @@ table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, Prolaris
 ### Decipher vs. BCR
 
 ```{r tcga_decipher_bcr}
-common <- intersect(colnames(mae_tcga[["scores"]]), colData(mae_tcga)[,"sample_name"])
-clin_tcga_subset <- clin_tcga[match(common, clin_tcga$sample_name),]
-bcr_tcga_subset <- Surv(time=clin_tcga_subset$days_to_disease_specific_recurrence, event=clin_tcga_subset$disease_specific_recurrence_status)
-tcga_decipher <- mae_tcga[["scores"]]["decipher",clin_tcga_subset[,"sample_name"]]
+common <- intersect(colnames(mae_tcga[["scores"]]), colData(mae_tcga)[, "sample_name"])
+clin_tcga_subset <- clin_tcga[match(common, clin_tcga$sample_name), ]
+bcr_tcga_subset <- Surv(time = clin_tcga_subset$days_to_disease_specific_recurrence, event = clin_tcga_subset$disease_specific_recurrence_status)
+tcga_decipher <- mae_tcga[["scores"]]["decipher", clin_tcga_subset[, "sample_name"]]
 coxph_tcga_decipher <- coxph(bcr_tcga_subset ~ tcga_decipher)
 summary(coxph_tcga_decipher)
 ```
 
 ```{r taylor_decipher_bcr}
-common <- intersect(colnames(mae_taylor[["scores"]]), colData(mae_taylor)[,"sample_name"])
-clin_taylor_subset <- clin_taylor[match(common, clin_taylor$sample_name),]
-bcr_taylor_subset <- Surv(time=clin_taylor_subset$days_to_disease_specific_recurrence, event=clin_taylor_subset$disease_specific_recurrence_status)
-taylor_decipher <- mae_taylor[["scores"]]["decipher",clin_taylor_subset[,"sample_name"]]
+common <- intersect(colnames(mae_taylor[["scores"]]), colData(mae_taylor)[, "sample_name"])
+clin_taylor_subset <- clin_taylor[match(common, clin_taylor$sample_name), ]
+bcr_taylor_subset <- Surv(time = clin_taylor_subset$days_to_disease_specific_recurrence, event = clin_taylor_subset$disease_specific_recurrence_status)
+taylor_decipher <- mae_taylor[["scores"]]["decipher", clin_taylor_subset[, "sample_name"]]
 coxph_taylor_decipher <- coxph(bcr_taylor_subset ~ taylor_decipher)
 summary(coxph_taylor_decipher)
 ```
@@ -144,13 +144,13 @@ summary(coxph_taylor_decipher)
 ### Oncotype DX vs. BCR
 
 ```{r tcga_oncotype_bcr}
-tcga_oncotype <- mae_tcga[["scores"]]["oncotype",clin_tcga_subset[,"sample_name"]]
+tcga_oncotype <- mae_tcga[["scores"]]["oncotype", clin_tcga_subset[, "sample_name"]]
 coxph_tcga_oncotype <- coxph(bcr_tcga_subset ~ tcga_oncotype)
 summary(coxph_tcga_oncotype)
 ```
 
 ```{r taylor_oncotype_bcr}
-taylor_oncotype <- mae_taylor[["scores"]]["oncotype",clin_taylor_subset[,"sample_name"]]
+taylor_oncotype <- mae_taylor[["scores"]]["oncotype", clin_taylor_subset[, "sample_name"]]
 coxph_taylor_oncotype <- coxph(bcr_taylor_subset ~ taylor_oncotype)
 summary(coxph_taylor_oncotype)
 ```
@@ -158,13 +158,13 @@ summary(coxph_taylor_oncotype)
 ### Prolaris vs. BCR
 
 ```{r tcga_prolaris_bcr}
-tcga_prolaris <- mae_tcga[["scores"]]["prolaris",clin_tcga_subset[,"sample_name"]]
+tcga_prolaris <- mae_tcga[["scores"]]["prolaris", clin_tcga_subset[, "sample_name"]]
 coxph_tcga_prolaris <- coxph(bcr_tcga_subset ~ tcga_prolaris)
 summary(coxph_tcga_prolaris)
 ```
 
 ```{r taylor_prolaris_bcr}
-taylor_prolaris <- mae_taylor[["scores"]]["prolaris",clin_taylor_subset[,"sample_name"]]
+taylor_prolaris <- mae_taylor[["scores"]]["prolaris", clin_taylor_subset[, "sample_name"]]
 coxph_taylor_prolaris <- coxph(bcr_taylor_subset ~ taylor_prolaris)
 summary(coxph_taylor_prolaris)
 ```
@@ -174,7 +174,7 @@ summary(coxph_taylor_prolaris)
 ### Risk scores, and AR score
 
 ```{r purity_risks_ar, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Correlations risk scores and AR score in TCGA"}
-correlations <- cor(as.matrix(wideFormat(mae_tcga[,,"scores"])[,2:5]), use="na.or.complete")
+correlations <- cor(as.matrix(wideFormat(mae_tcga[, , "scores"])[, 2:5]), use = "na.or.complete")
 corrplot::corrplot(correlations)
 ```
 
@@ -185,7 +185,7 @@ corrplot::corrplot(correlations)
 We choose SPOP as a concept example for mutation and copy-number alteration (i.e. deletion) tied to an endpoint (BCR) as well as as an example to exemplify connections between copy number alteration and transcriptome expression.
 
 ```{r tcga_spop}
-spop_tcga <- wideFormat(mae_tcga["SPOP",,c("gex.rsem.log", "cna.gistic", "mut")])
+spop_tcga <- wideFormat(mae_tcga["SPOP", , c("gex.rsem.log", "cna.gistic", "mut")])
 spop_tcga <- as.data.frame(spop_tcga)
 ```
 
@@ -193,14 +193,14 @@ Subsetting to just primary tumor samples:
 
 ```{r tcga_primary}
 table(colData(mae_tcga)$sample_type)
-spop_tcga <- spop_tcga[spop_tcga[,"primary"] %in% rownames(colData(mae_tcga)[which(colData(mae_tcga)$sample_type == "primary"),]),]
+spop_tcga <- spop_tcga[spop_tcga[, "primary"] %in% rownames(colData(mae_tcga)[which(colData(mae_tcga)$sample_type == "primary"), ]), ]
 ```
 
 For example, it may be worth inspecting if the GISTIC2 discretized values {-2,-1,0,1,2} corresponding to deep deletion, shallow deletion, no somatic copy number change, low gain, and high gain, seem to correlate with the overall gene expression level:
 
 ```{r tcga_spop_gex_cna, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="SPOP GEX vs CNA in TCGA"}
-boxplot(spop_tcga[,"gex.rsem.log_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], main="TCGA CNA vs. GEX in SPOP", xlab="GISTIC2", ylab="Gene expression")
-stripchart(spop_tcga[,"gex.rsem.log_SPOP"] ~ spop_tcga[,"cna.gistic_SPOP"], pch=16, add=TRUE, vertical=TRUE)
+boxplot(spop_tcga[, "gex.rsem.log_SPOP"] ~ spop_tcga[, "cna.gistic_SPOP"], main = "TCGA CNA vs. GEX in SPOP", xlab = "GISTIC2", ylab = "Gene expression")
+stripchart(spop_tcga[, "gex.rsem.log_SPOP"] ~ spop_tcga[, "cna.gistic_SPOP"], pch = 16, add = TRUE, vertical = TRUE)
 ```
 
 As expected, samples with deletions called by GISTIC2 exhibit lower expression in general, while samples with copy number gains called by GISTIC2 have overall higher SPOP expression levels.
@@ -208,7 +208,7 @@ As expected, samples with deletions called by GISTIC2 exhibit lower expression i
 Let us pick an another gene of interest, PTEN. We can examine this also in other datasets; as an example, Ren et al with an N=65:
 
 ```{r ren_pten}
-pten_ren <- wideFormat(mae_ren["PTEN",,c("gex.relz", "mut")])
+pten_ren <- wideFormat(mae_ren["PTEN", , c("gex.relz", "mut")])
 pten_ren <- as.data.frame(pten_ren)
 ```
 
@@ -223,18 +223,17 @@ table(colData(mae_ren)$sample_type)
 Let us build a multivariable Cox regression model, which takes into account multiple omics as well as a couple clinical variables:
 
 ```{r tcga_multivar}
-subset_tcga <- wideFormat(mae_tcga[c("SPOP", "PTEN", "TP53"),,c("gex.rsem.log", "cna.gistic")], colDataCols=c("psa", "ERG_fusion_GEX", "disease_specific_recurrence_status", "days_to_disease_specific_recurrence", "sample_type"))
+subset_tcga <- wideFormat(mae_tcga[c("SPOP", "PTEN", "TP53"), , c("gex.rsem.log", "cna.gistic")], colDataCols = c("psa", "ERG_fusion_GEX", "disease_specific_recurrence_status", "days_to_disease_specific_recurrence", "sample_type"))
 subset_tcga <- as.data.frame(subset_tcga)
-subset_tcga <- subset_tcga[subset_tcga$sample_type == "primary",]
+subset_tcga <- subset_tcga[subset_tcga$sample_type == "primary", ]
 
-x <- subset_tcga[,c("psa", "ERG_fusion_GEX", "gex.rsem.log_SPOP", "gex.rsem.log_PTEN", "gex.rsem.log_TP53", "cna.gistic_SPOP", "cna.gistic_PTEN", "cna.gistic_TP53")]
+x <- subset_tcga[, c("psa", "ERG_fusion_GEX", "gex.rsem.log_SPOP", "gex.rsem.log_PTEN", "gex.rsem.log_TP53", "cna.gistic_SPOP", "cna.gistic_PTEN", "cna.gistic_TP53")]
 x <- as.matrix(x)
 
-y <- Surv(time=subset_tcga$days_to_disease_specific_recurrence, event=subset_tcga$disease_specific_recurrence_status)
+y <- Surv(time = subset_tcga$days_to_disease_specific_recurrence, event = subset_tcga$disease_specific_recurrence_status)
 
 coxph_example_tcga <- coxph(y ~ x)
 summary(coxph_example_tcga)
-
 ```
 
 ### Oncoprints
@@ -248,38 +247,42 @@ library(ComplexHeatmap)
 genes <- c("TP53", "PTEN", "FGFR3", "BRCA2")
 
 # Define how the alterations are shown in the oncoprint
-alter_fun = list(
-    background = function(x, y, w, h) 
-        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "#CCCCCC", col = NA)),
+alter_fun <- list(
+    background = function(x, y, w, h) {
+        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "#CCCCCC", col = NA))
+    },
     # Amplifications
-    "Gain" = function(x, y, w, h) 
-        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "orange", col = NA)),
-    "High gain" = function(x, y, w, h) 
-        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "red", col = NA)),
+    "Gain" = function(x, y, w, h) {
+        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "orange", col = NA))
+    },
+    "High gain" = function(x, y, w, h) {
+        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "red", col = NA))
+    },
     # Deletions
-    "Deep deletion" = function(x, y, w, h) 
-        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "blue", col = NA)),
-    "Deletion" = function(x, y, w, h) 
-        grid.rect(x, y, w*0.9, h*0.9, gp = gpar(fill = "cyan", col = NA)),
+    "Deep deletion" = function(x, y, w, h) {
+        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "blue", col = NA))
+    },
+    "Deletion" = function(x, y, w, h) {
+        grid.rect(x, y, w * 0.9, h * 0.9, gp = gpar(fill = "cyan", col = NA))
+    },
     # Missense SNV
-    "Missense_Mutation" = function(x, y, w, h) 
-        grid.rect(x, y, w*0.7, h*0.7, gp = gpar(fill = "green", col = NA))
+    "Missense_Mutation" = function(x, y, w, h) {
+        grid.rect(x, y, w * 0.7, h * 0.7, gp = gpar(fill = "green", col = NA))
+    }
 )
 
 # Wrapper function helps sweep over omics in a MAE object
-taylor_oncoprint_1 <- curatedPCaData:::wrapper_oncoprintify(mae_taylor, genes=genes)
+taylor_oncoprint_1 <- curatedPCaData:::wrapper_oncoprintify(mae_taylor, genes = genes)
 
 # Draw the oncoprint
 ComplexHeatmap::oncoPrint(taylor_oncoprint_1, alter_fun = alter_fun)
-
 ```
 
 However, it should be noted that the overlap between omics is not perfect. Therefore, if one wishes to print an oncoprint with only fully present data, parameter ```join = "both"``` should be used:
 
 ```{r oncoprintify2, dpi=150, fig.width=7, fig.height=7, out.width="100%", fig.cap="Taylor et al. oncoprint with only intersection of genes and samples available on both omics visualized"}
-
 # Only samples with both CNA and mutation calls and for which all genes are present
-taylor_oncoprint_2 <- curatedPCaData:::wrapper_oncoprintify(mae_taylor, genes=genes, join = "both")
+taylor_oncoprint_2 <- curatedPCaData:::wrapper_oncoprintify(mae_taylor, genes = genes, join = "both")
 
 # Draw the oncoprint
 ComplexHeatmap::oncoPrint(taylor_oncoprint_2, alter_fun = alter_fun)
