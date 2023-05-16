@@ -10,8 +10,11 @@ An object of class \code{data.frame} with 68 rows and 6 columns.
 \usage{
 template_prad
 }
+\value{
+A data.frame of the PCa template
+}
 \description{
-This data frame contains the clinical fields which were the aim for extraction when gathering metadata for each dataset. 
+This data frame contains the clinical fields which were 
 Variable types, ranges, and description is reported.
 }
 \examples{

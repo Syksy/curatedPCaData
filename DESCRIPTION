@@ -1,8 +1,8 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
 Version: 2.0.4
-Date: 2023-05-15
-Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre")),
+Date: 2023-05-16
+Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7016-7354")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
              person("Varsha", "Sreekanth", email = "varsha.sreekanth@cuanschutz.edu", role = "ctb"), 
@@ -19,20 +19,23 @@ VignetteBuilder: knitr
 biocViews: ExperimentHub, ExperimentData, ProstateCancerData, CancerData, Homo_sapiens_Data, MicroarrayData, RNASeqData, ExpressionData, CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
 URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
-Depends: R (>= 4.3.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, RaggedExperiment, ExperimentHub, AnnotationHub
+Depends: R (>= 4.3.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, RaggedExperiment 
 Imports: 
+    ExperimentHub,
+    AnnotationHub,
     utils, 
     methods,
     rlang,
     stats,
     stringr,
-    dplyr
+    dplyr,
+    testthat    
 Suggests: 
+    BiocGenerics,
     knitr,
     ggplot2,
     rmarkdown,
     survival,
     survminer,
     ComplexHeatmap,
-    corrplot
-    
+    corrplot    
