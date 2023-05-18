@@ -1,0 +1,1239 @@
+---
+title: "Trends across datasets"
+output: rmarkdown::html_vignette
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Trends across datasets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Load all the required packages 
+
+```{r packages,results=FALSE,message=FALSE}
+library(curatedPCaData)
+library(MultiAssayExperiment)
+library(RaggedExperiment)
+library(survival)
+library(survminer)
+library(corrplot)
+library(dplyr)
+library(stringr)    
+library(ggrepel)  
+library(gghighlight)
+library(ComplexHeatmap)
+library(maftools)
+library(Rediscover)
+library(circlize)
+library(RColorBrewer)
+library(limma)
+library(edgeR)
+```
+
+
+## Correlation in gene expression between datasets
+
+AR and ERG are 2 genes that have shown to play an important role in mediating prostate cancer development. Understanding the correlation of the expression of these genes with other genes across the different PCa data sets would provide an insight on the overall trend. Given that the curatedPCadata package has a variety of prostate cancer data sets with primary and metastatic patient information, it can be leveraged to study these trends.
+
+The function below can be used to calculate this correlation across all the data sets in the curatedPCadata package which had primary samples with respect to any gene of interest. 
+
+```{r, results=FALSE}
+
+calculate_correlation<-function(dataset,gene){
+  name=deparse(substitute(dataset))
+  data_subset=as.data.frame(t(dataset[gene,]))
+  
+  data_subset$sample=rownames(data_subset)
+  data_subset[,1]=as.numeric(data_subset[,1])
+  
+  dataset=as.data.frame(t(dataset))
+  
+  
+  cor_values=numeric(0)
+  
+  for( i in 1:ncol(dataset)){
+    indvidual_cor_values=print(cor(dataset[,i],data_subset[,1],method = "spearman"))
+    cor_values <- c(cor_values, indvidual_cor_values) 
+  }
+  
+  cor_matrix=data.frame(matrix(NA, nrow = ncol(dataset), ncol = 2))
+  colnames=colnames(dataset)[1:ncol(dataset)]
+  colnames=as.vector(colnames)
+  cor_matrix[,1]=colnames
+  cor_matrix[,2]=cor_values
+  colnames(cor_matrix)=c("gene",name)
+  return(cor_matrix)
+}
+correlation_of_correlations_primary<-function(gene){
+  
+  mae_tcga<-curatedPCaData::mae_tcga
+  mae_taylor<-curatedPCaData::mae_taylor
+  mae_friedrich<-curatedPCaData::mae_friedrich
+  mae_weiner<-curatedPCaData::mae_weiner
+  mae_igc<-curatedPCaData::mae_igc
+  mae_ren<-curatedPCaData::mae_ren
+  mae_barbieri<-curatedPCaData::mae_barbieri
+  mae_barwick<-curatedPCaData::mae_barwick
+  mae_chandran<-curatedPCaData::mae_chandran
+  mae_icgcca<-curatedPCaData::mae_icgcca
+  mae_kim<-curatedPCaData::mae_kim
+  mae_sun<-curatedPCaData::mae_sun
+  mae_kunderfranco<-curatedPCaData::mae_kunderfranco
+  mae_true<-curatedPCaData::mae_true
+  mae_wallace<-curatedPCaData::mae_wallace
+  mae_wang<-curatedPCaData::mae_wang
+  
+  tcga_gex=as.data.frame(curatedPCaData::mae_tcga[["gex.rsem.log"]])
+  tcga_clinical=as.data.frame(as.matrix(colData(mae_tcga)))
+  pri_tcga=tcga_clinical[tcga_clinical$sample_type=="primary",]
+  tcga=tcga_gex[,colnames(tcga_gex) %in% pri_tcga$sample_name]
+  
+  
+  taylor_gex=as.data.frame(curatedPCaData::mae_taylor[["gex.rma"]])
+  taylor_clinical=as.data.frame(as.matrix(colData(mae_taylor)))
+  pri_taylor=taylor_clinical[taylor_clinical$sample_type=="primary",]
+  taylor=taylor_gex[,colnames(taylor_gex) %in% pri_taylor$sample_name]
+  
+  ren=as.data.frame(curatedPCaData::mae_ren[["gex.relz"]])
+  barbieri=as.data.frame(curatedPCaData::mae_barbieri[["gex.relz"]])
+  igc=as.data.frame(curatedPCaData::mae_igc[["gex.rma"]])
+  
+  friedrich_gex=as.data.frame(curatedPCaData::mae_friedrich[["gex.logq"]])
+  friedrich_clinical=as.data.frame(as.matrix(colData(mae_friedrich)))
+  pri_friedrich=friedrich_clinical[friedrich_clinical$sample_type=="primary",]
+  friedrich=friedrich_gex[,colnames(friedrich_gex) %in% pri_friedrich$sample_name]
+  
+  barwick=as.data.frame(curatedPCaData::mae_barwick[["gex.logq"]])
+  
+  chandran_gex=as.data.frame(curatedPCaData::mae_chandran[["gex.rma"]])
+  chandran_clinical=as.data.frame(as.matrix(colData(mae_chandran)))
+  pri_chandran=chandran_clinical[chandran_clinical$sample_type=="primary",]
+  chandran=chandran_gex[,colnames(chandran_gex) %in% pri_chandran$sample_name]
+  
+  icgcca=as.data.frame(curatedPCaData::mae_icgcca[["gex.rma"]])
+  kim=as.data.frame(curatedPCaData::mae_kim[["gex.rma"]])
+  
+  kunderfranco_gex=as.data.frame(curatedPCaData::mae_kunderfranco[["gex.logr"]])
+  kunderfranco_clinical=as.data.frame(as.matrix(colData(mae_kunderfranco)))
+  pri_kunderfranco=kunderfranco_clinical[kunderfranco_clinical$sample_type=="primary",]
+  kunderfranco=kunderfranco_gex[,colnames(kunderfranco_gex) %in% pri_kunderfranco$sample_name]
+  
+  sun=as.data.frame(curatedPCaData::mae_sun[["gex.rma"]])
+  true=as.data.frame(curatedPCaData::mae_true[["gex.logr"]])
+  
+  wallace_gex=as.data.frame(curatedPCaData::mae_wallace[["gex.rma"]])
+  wallace_clinical=as.data.frame(as.matrix(colData(mae_wallace)))
+  pri_wallace=wallace_clinical[wallace_clinical$sample_type=="primary",]
+  wallace=wallace_gex[,colnames(wallace_gex) %in% pri_wallace$sample_name]
+  
+  wang=as.data.frame(curatedPCaData::mae_wang[["gex.rma"]])
+  weiner=as.data.frame(curatedPCaData::mae_weiner[["gex.rma"]])
+  
+  cor_matrix_tcga = calculate_correlation(tcga,gene)
+  cor_matrix_taylor= calculate_correlation(taylor,gene)
+  #cor_matrix_abida= calculate_correlation(abida,gene)
+  cor_matrix_ren= calculate_correlation(ren,gene)
+  cor_matrix_barbieri= calculate_correlation(barbieri,gene)
+  cor_matrix_igc= calculate_correlation(igc,gene)
+  cor_matrix_friedrich= calculate_correlation(friedrich,gene)
+  cor_matrix_barwick= calculate_correlation(barwick,gene)
+  cor_matrix_chandran= calculate_correlation(chandran,gene)
+  cor_matrix_icgcca= calculate_correlation(icgcca,gene)
+  cor_matrix_kim= calculate_correlation(kim,gene)
+  cor_matrix_kunderfranco= calculate_correlation(kunderfranco,gene)
+  cor_matrix_sun= calculate_correlation(sun,gene)
+  cor_matrix_true= calculate_correlation(true,gene)
+  cor_matrix_wallace= calculate_correlation(wallace,gene)
+  cor_matrix_wang= calculate_correlation(wang,gene)
+  cor_matrix_weiner= calculate_correlation(weiner,gene)
+  
+  
+  
+  #put all data frames into list
+  df_list <- list(cor_matrix_tcga, cor_matrix_taylor,cor_matrix_ren,
+                  cor_matrix_barbieri,cor_matrix_igc,cor_matrix_friedrich,cor_matrix_barwick,
+                  cor_matrix_chandran,cor_matrix_icgcca,cor_matrix_kim,
+                  cor_matrix_kunderfranco,cor_matrix_sun,cor_matrix_true,cor_matrix_wallace,
+                  cor_matrix_wang,cor_matrix_weiner)
+  
+  combined_cor_list=Reduce(function(x, y) merge(x, y, all=F), df_list)  
+  rownames(combined_cor_list)=combined_cor_list[,"gene"]
+  combined_cor_list=combined_cor_list[,-1]
+  
+  combined_cor_list[,c(1:16)]=sapply( combined_cor_list[,c(1:16)], as.numeric )
+  combined_cor_list <- combined_cor_list[,colSums(is.na(combined_cor_list))<nrow(combined_cor_list)]
+  return(combined_cor_list)
+}
+
+```
+
+This function can now be used to calculate the correlation in expression of all genes with respect to AR and ERG as shown below
+```{r, eval = FALSE}
+
+combined_cor_list_AR=correlation_of_correlations_primary("AR")
+corr_of_corr_AR = cor(combined_cor_list_AR)
+
+combined_cor_list_ERG=correlation_of_correlations_primary("ERG")
+corr_of_corr_ERG = cor(combined_cor_list_ERG)
+
+```
+
+Since these calculations are time consuming, the results from the chunk above have been stored in the following RData object and called to save time
+```{r load_workspace}
+load("correlation_AR_and_ERG.RData")
+
+```
+
+### Correlation of AR gene expression across primary samples
+
+```{r,dpi=150, fig.width=15, fig.height=15, out.width="100%"}
+corrplot.mixed(corr_of_corr_AR,order = 'AOE', lower.col = COL2('PiYG'),upper.col =COL2('PiYG'))
+```
+
+### Correlation of ERG gene expression across primary samples
+```{r, dpi=150, fig.width=15, fig.height=15, out.width="100%"}
+corrplot.mixed(corr_of_corr_ERG,order = 'AOE', lower.col = COL2('PiYG'),upper.col =COL2('PiYG'))
+```
+A similar function can be written to calculate the same correlation in metastatic samples across Abida, Taylor and Chandran which had that information as shown below
+```{r, results=FALSE,eval=FALSE}
+correlation_of_correlations_met<-function(gene){
+  
+  mae_taylor<-curatedPCaData::mae_taylor
+  mae_chandran<-curatedPCaData::mae_chandran
+  mae_abida<-curatedPCaData::mae_abida
+    
+  taylor_gex=as.data.frame(curatedPCaData::mae_taylor[["gex.rma"]])
+  taylor_clinical=as.data.frame(colData(mae_taylor))
+  met_taylor=taylor_clinical[taylor_clinical$sample_type=="metastasis",]
+  taylor=taylor_gex[,colnames(taylor_gex) %in% met_taylor$sample_name]
+  
+  chandran_gex=as.data.frame(curatedPCaData::mae_chandran[["gex.rma"]])
+  chandran_clinical=as.data.frame(as.matrix(colData(mae_chandran)))
+  met_chandran=chandran_clinical[chandran_clinical$sample_type=="metastatic",]
+  chandran=chandran_gex[, colnames(chandran_gex) %in% met_chandran$sample_name]
+  
+  abida=as.data.frame(curatedPCaData::mae_abida[["gex.relz"]])
+  
+  cor_matrix_taylor= calculate_correlation(taylor,gene)
+  cor_matrix_abida= calculate_correlation(abida,gene)
+  cor_matrix_chandran= calculate_correlation(chandran,gene)
+  
+  #put all data frames into list
+  df_list<-list(cor_matrix_taylor,cor_matrix_abida,cor_matrix_chandran)
+  
+  
+  combined_cor_list=Reduce(function(x, y) merge(x, y, all=F), df_list)  
+  rownames(combined_cor_list)=combined_cor_list[,"gene"]
+  combined_cor_list=combined_cor_list[,-1]
+  
+  combined_cor_list[,c(1:3)]=sapply( combined_cor_list[,c(1:3)], as.numeric )
+  combined_cor_list <- combined_cor_list[,colSums(is.na(combined_cor_list))<nrow(combined_cor_list)]
+  return(combined_cor_list)
+}
+
+combined_cor_list_AR <- correlation_of_correlations_met("AR")
+corr_of_corr_AR <- cor(combined_cor_list_AR)
+
+combined_cor_list_ERG <- correlation_of_correlations_met("ERG")
+corr_of_corr_ERG <- cor(combined_cor_list_ERG)
+
+```
+
+```{r load_workspace2}
+load("correlation_AR_and_ERG_met.RData")
+```
+
+### Correlation of AR gene expression across metastatic samples
+```{r,dpi=150, fig.width=8, fig.height=8, out.width="100%"}
+corrplot.mixed(corr_of_corr_AR,order = 'AOE', lower.col = COL2('PiYG'),upper.col =COL2('PiYG'))
+```
+
+### Correlation of ERG gene expression across metastatic samples
+```{r,dpi=150, fig.width=8, fig.height=8, out.width="100%"}
+corrplot.mixed(corr_of_corr_ERG,order = 'AOE', lower.col = COL2('PiYG'),upper.col =COL2('PiYG'))
+
+```
+
+
+## Differentially expressed genes between patients with higher vs lower gleason grades
+
+Gleason grade has proven to be of great importance in prostate cancer patients since it is highly correlated with patient survival. Genes that are consistently deferentially expressed in patients across different datasets with high and low gleason grades can be important therapeutic targets. Shown below are volcano plots of logFC of patients with gleason grade below 6 and above 8, estimated using limma.
+
+We first define all the required functions as shown.
+
+```{r}
+
+volcano_plot_matrix<-function(gex,mae,dataset){
+
+  dataset<-tolower(dataset)
+  gex<-as.data.frame(gex)
+  
+  clinical<-colData(mae)
+  clinical<-as.matrix(clinical)
+  clinical<-as.data.frame(clinical)
+  
+  if(dataset=="igc"|dataset=="weiner"){
+  clinical<-clinical[,c("sample_name","grade_group")]
+  clinical<-clinical%>%mutate(
+    condition = case_when(
+      grade_group == "<=6" ~ "below_6",
+      grade_group == ">=8" ~ "above_8",
+      grade_group == "7" ~ "seven",
+      grade_group == "3+4" ~ "seven",
+      grade_group == "4+3" ~ "seven"
+    ))
+  }else{
+    clinical<-clinical[,c("sample_name","gleason_grade")]
+    clinical$gleason_grade<-as.numeric(clinical$gleason_grade)
+      clinical<-clinical%>%mutate(
+      condition = case_when(
+      gleason_grade <=6 ~ "below_6",
+      gleason_grade >=8 ~ "above_8",
+      gleason_grade == 7 ~ "seven"
+    ))
+    }
+  
+  clinical2<-clinical[!is.na(clinical$condition), ]
+  
+  return(clinical2)
+}
+
+# Make and format desigb matric for limma
+design_matrix_format<-function(design,counts){
+
+  design[,3]<-NA
+  design[,4]<-NA
+  design[,5]<-NA
+  
+  colnames(design)[3]<-"below_6"
+  colnames(design)[4]<-"above_8"
+  colnames(design)[5]<-"seven"
+  
+  design<-design%>%mutate(
+        below_6 = case_when(
+        condition == "below_6" ~ "1",
+        condition == "above_8" ~ "0",
+        condition == "seven" ~ "0"
+      ))
+  
+  design<-design%>%mutate(
+        above_8 = case_when(
+        condition == "below_6" ~ "0",
+        condition == "above_8" ~ "1",
+        condition == "seven" ~ "0"
+      ))
+  
+  design<-design%>%mutate(
+        seven = case_when(
+        condition == "below_6" ~ "0",
+        condition == "above_8" ~ "0",
+        condition == "seven" ~ "1"
+      ))
+  
+  rownames(design)<-design$sample_name
+  design<-design[,-c(1,2)]
+  
+  
+  row_names_df_to_remove<-setdiff(rownames(design),colnames(counts))
+  design<-design[!(row.names(design) %in% row_names_df_to_remove),]
+  
+  design<-design[colnames(counts),]
+  
+  return(design)
+}
+
+# test if sample order in gex and design match perfectly
+test_match_order <- function(x,y) {
+
+if (all(x==y)) print('Perfect match in same order')
+
+if (!all(x==y) && all(sort(x)==sort(y))) print('Perfect match in wrong order')
+
+if (!all(x==y) && !all(sort(x)==sort(y))) print('No match')
+}
+
+# Function to run limma steps
+limma<-function(counts,design,dataset){
+  if(dataset=="tcga"){
+  counts<-2^counts
+  counts<-counts-1
+  }
+  df2 <- mutate_all(counts, function(x) as.numeric(as.character(x)))
+  df2<-as.matrix(df2)
+  
+  design$below_6<-as.numeric(design$below_6)
+  design$above_8<-as.numeric(design$above_8)
+  design$seven<-as.numeric(design$seven)
+  design<-as.matrix(design)
+  
+  #since TCGA's gex values could be converted back to raw counts, use normal limma pipeline
+  if(dataset=="tcga"){
+  dge <- DGEList(counts=df2)
+  keep <- filterByExpr(dge, design, min.total.count=500)
+  dge <- dge[keep,,keep.lib.sizes=FALSE]
+  dim(dge)
+  dge <- calcNormFactors(dge)
+  v <- voom(dge, design, plot=F)
+  fit <- lmFit(v, design)
+  cont <- makeContrasts(above_8-below_6, levels=design)
+  fit2 <- contrasts.fit(fit, cont)
+  fit <- eBayes(fit2, trend=TRUE)
+  topTable<- topTable(fit, n=nrow(dge))
+  # For other datasets skip voom normalization
+  }else{
+  fit <- lmFit(df2, design)
+  cont <- makeContrasts(above_8-below_6, levels=design)
+  fit2 <- contrasts.fit(fit, cont)
+  fit <- eBayes(fit2, trend=TRUE)
+  topTable<- topTable(fit, n=nrow(df2))
+    
+  }
+  
+  return(topTable)
+    
+}
+```
+
+```{r}
+genes<-c("COMP","PRR16","ASPN","RRM2","PPFIA2","SLC22A3","CD38","MYBPC1","ACTG2","ANPEP")
+```
+
+Limma is run using the GEX matrix from curatedPCaData and the design matrix generated to get the list of DE genes with their FDR values.
+
+#TCGA
+```{r, results=FALSE,eval=FALSE}
+counts_tcga<-as.data.frame(curatedPCaData::mae_tcga[["gex.rsem.log"]])
+
+design<-volcano_plot_matrix(counts_tcga,curatedPCaData::mae_tcga,"tcga")
+design<-design[,-2]
+counts_tcga<-counts_tcga[,intersect(colnames(counts_tcga),design$sample_name)]
+design<-design_matrix_format(design,counts_tcga)
+
+test_match_order(rownames(design),colnames(counts_tcga))
+
+topTable_tcga<-limma(counts_tcga,design,"tcga")
+
+colnames(topTable_tcga)<-paste(colnames(topTable_tcga),"tcga",sep="_")
+
+topTable_tcga$gene<-NA
+topTable_tcga$gene[which(rownames(topTable_tcga) %in% genes)]<-rownames(topTable_tcga)[which(rownames(topTable_tcga) %in% genes)]
+
+
+```
+
+#Taylor
+```{r, results=FALSE,eval=FALSE}
+counts_taylor<-as.data.frame(curatedPCaData::mae_taylor[["gex.rma"]])
+
+design<-volcano_plot_matrix(counts_taylor,curatedPCaData::mae_taylor,"taylor")
+design<-design[,-2]
+counts_taylor<-counts_taylor[,intersect(colnames(counts_taylor),design$sample_name)]
+design<-design_matrix_format(design,counts_taylor)
+
+test_match_order(rownames(design),colnames(counts_taylor))
+
+topTable_taylor<-limma(counts_taylor,design,"taylor")
+
+colnames(topTable_taylor)<-paste(colnames(topTable_taylor),"taylor",sep="_")
+
+topTable_taylor$gene<-NA
+topTable_taylor$gene[which(rownames(topTable_taylor) %in% genes)]<-rownames(topTable_taylor)[which(rownames(topTable_taylor) %in% genes)]
+
+
+```
+
+#IGC
+```{r, results=FALSE,eval=FALSE}
+counts_igc<-as.data.frame(curatedPCaData::mae_igc[["gex.rma"]])
+
+design<-volcano_plot_matrix(counts_igc,curatedPCaData::mae_igc,"igc")
+design<-design[,-2]
+counts_igc<-counts_igc[,intersect(colnames(counts_igc),design$sample_name)]
+design<-design_matrix_format(design,counts_igc)
+
+test_match_order(rownames(design),colnames(counts_igc))
+
+topTable_igc<-limma(counts_igc,design,"igc")
+colnames(topTable_igc)<-paste(colnames(topTable_igc),"igc",sep="_")
+
+topTable_igc$gene<-NA
+topTable_igc$gene[which(rownames(topTable_igc) %in% genes)]<-rownames(topTable_igc)[which(rownames(topTable_igc) %in% genes)]
+
+
+```
+
+#Weiner
+```{r, results=FALSE,eval=FALSE}
+counts_weiner<-as.data.frame(curatedPCaData::mae_weiner[["gex.rma"]])
+
+design<-volcano_plot_matrix(counts_weiner,curatedPCaData::mae_weiner,"weiner")
+design<-design[,-2]
+counts_weiner<-counts_weiner[,intersect(colnames(counts_weiner),design$sample_name)]
+design<-design_matrix_format(design,counts_weiner)
+
+test_match_order(rownames(design),colnames(counts_weiner))
+
+topTable_weiner<-limma(counts_weiner,design,"weiner")
+colnames(topTable_weiner)<-paste(colnames(topTable_weiner),"weiner",sep="_")
+
+topTable_weiner$gene<-NA
+topTable_weiner$gene[which(rownames(topTable_weiner) %in% genes)]<-rownames(topTable_weiner)[which(rownames(topTable_weiner) %in% genes)]
+
+
+```
+
+All the tables from limma are stored in an RData object to save time. Volcano plots are then generated as shown.
+```{r load_workspace3}
+load("volcano_plot_matrices.RData")
+```
+
+### TCGA
+
+```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
+
+plot<-ggplot(data=topTable_tcga, aes(x=logFC_tcga, y=-log10(adj.P.Val_tcga), color=gene,size=1)) +
+  geom_point() +
+  gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
+  theme_minimal() + theme_bw() + theme_classic()+
+  guides(size = "none")+ ggtitle("TCGA")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
+
+# Assign shades of blue to downreg and shades of red to upreg genes
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061")) 
+
+```
+
+### Taylor
+
+```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
+plot<-ggplot(data=topTable_taylor, aes(x=logFC_taylor, y=-log10(adj.P.Val_taylor), color=gene,size=1)) +
+  geom_point() +
+  gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
+  theme_minimal() + theme_bw() + theme_classic()+
+  guides(size = "none")+ ggtitle("Taylor")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
+
+# Assign shades of blue to downreg and shades of red to upreg genes
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061")) 
+
+```
+
+
+### IGC
+
+```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
+plot<-ggplot(data=topTable_igc, aes(x=logFC_igc, y=-log10(adj.P.Val_igc), color=gene,size=1)) +
+  geom_point() +
+  gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
+  theme_minimal() + theme_bw() + theme_classic()+
+  guides(size = "none")+ ggtitle("IGC")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
+
+# Assign shades of blue to downreg and shades of red to upreg genes
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061")) 
+
+```
+
+### Weiner
+
+```{r,dpi=150,out.width="100%",fig.width=8, fig.height=8,message=FALSE}
+plot<-ggplot(data=topTable_weiner, aes(x=logFC_weiner, y=-log10(adj.P.Val_weiner), color=gene,size=1)) +
+  geom_point() +
+  gghighlight(!is.na(gene) , use_direct_label = FALSE,unhighlighted_params=list(size=1))+
+  theme_minimal() + theme_bw() + theme_classic()+
+  guides(size = "none")+ ggtitle("Weiner")+ theme(plot.title = element_text(hjust = 0.5))+ylab("-log10(FDR)")+xlab("logFC")
+
+# Assign shades of blue to downreg and shades of red to upreg genes
+plot+scale_color_manual(values = c("PRR16" = "#67001F","RRM2"="#B2182B","COMP"="#D6604D","ASPN"="#F4A582",
+                                "PPFIA2"="#FDDBC7","SLC22A3"="#D1E5F0","CD38"="#92C5DE",
+                                "MYBPC1"="#4393C3","ACTG2"="#2166AC",
+                                "ANPEP"="#053061"))  
+```
+
+## Mutual Exclusivity
+
+Loss or gain in function of genes has known to drive cancers in general. Knowledge of whether genes important for a certain cancer type are altered together or not, provides insight on whether they work together to affect important pathways. Mutual exclusivity plots for different data sets shown below, provide information on whether or not a set of important genes in PCa are significantly altered together.
+
+The odds_ratio function below calculates the odds ratio for any binary alteration matrix where 1 stands for any alteration in copy number or mutations that are not silent, and 0 stands for no alteration. The FDR_ME function then computes the adjusted mutual exclusivity/co-occurrence significance (Fisher's Hypergeometric Test, Benjamini-Hoschberg correction) for each pair of genes in the matrix.
+```{r}
+# Input = binary alteration matrix. Features = rows, Samples = Columns
+odds_ratio = function(input){
+  data <- c()
+  for (i in 1:nrow(input)){
+    Gene_A <- as.numeric(input[i,])
+    vec <- c()
+    for (j in 1:nrow(input)){
+      Gene_B <- as.numeric(input[j,])
+      Gene_B[Gene_B==1] <- 2
+      ME.counts <- Gene_A + Gene_B
+      A_only <- sum(ME.counts == 1) 
+      B_only <- sum(ME.counts == 2) 
+      A_and_B <- sum(ME.counts == 3) 
+      Neither <- sum(ME.counts == 0) 
+      OR <- (A_and_B * Neither) / (B_only * A_only)
+      data <- append(data, OR)
+    }
+  }
+  output <- matrix(data, nrow = nrow(input), ncol = nrow(input), byrow = TRUE)
+  rownames(output) <- rownames(input)
+  colnames(output) <- rownames(input)
+  return(output)
+}
+
+pval_ME = function(input){
+  data <- c()
+  for (i in 1:nrow(input)){
+    Gene_A <- as.numeric(input[i,])
+    vec <- c()
+    for (j in 1:nrow(input)){
+      Gene_B <- as.numeric(input[j,])
+      Gene_B[Gene_B==1] <- 2
+      ME.counts <- Gene_A + Gene_B
+      A_only <- sum(ME.counts == 1)
+      B_only <- sum(ME.counts == 2)
+      A_and_B <- sum(ME.counts == 3)
+      Neither <- sum(ME.counts == 0)
+      contingency.table <- matrix(c(A_and_B, A_only, B_only, Neither), nrow = 2, ncol = 2, byrow = TRUE)
+      OR <- (A_and_B * Neither) / (B_only * A_only)
+      if(OR>1){
+      pvalue <- fisher.test(contingency.table,alternative = "greater")$p.value
+      }
+      else{
+        pvalue <- fisher.test(contingency.table,alternative = "less")$p.value
+        }
+      
+      #pvalue <- fisher.test(contingency.table)$p.value
+      data <- append(data, pvalue)
+    }
+  }
+  #output <- p.adjust(as.numeric(data), method = "BH")
+  output <- matrix(data, nrow = nrow(input), ncol = nrow(input), byrow = TRUE)
+  rownames(output) <- rownames(input)
+  colnames(output) <- rownames(input)
+  return(output)
+}
+
+mat_fun <- function(m){
+  m2 <- apply(m,  2,  function(x) as.numeric(paste(x)))
+  colnames(m2) <- colnames(m)
+  rownames(m2) <- rownames(m)
+  return(m2)
+}
+
+fdr<-function(data){
+pval<-pval_ME(data)
+tri <- lower.tri(pval, diag = FALSE)
+pval[lower.tri(pval, diag = TRUE)] <- NA
+pval <- pval[nrow(pval):1,]
+
+fdr <- matrix(p.adjust(as.numeric(pval), method = "BH"),ncol=ncol(pval),nrow=nrow(pval))
+rownames(fdr) <- rownames(pval)
+colnames(fdr) <- colnames(pval)
+return(fdr)
+}
+
+#FDRs.ME<-fdr(Taylor2)
+```
+
+The alt_matrix function below generates the binary alteration matrix described above from the copy number and mutation information in the MAEs.
+```{r}
+
+alt_matrix_ME<-function(mae,dataset,genes){
+  
+  cna<-mae[["cna.gistic"]]
+  cna<-as.data.frame(cna)
+  mut<-mae[["mut"]]
+  mut<-curatedPCaData:::wrapper_raggedexp(mut)
+  
+  cna<-cna[genes,]
+  cna<-as.data.frame(cna)
+  mut<-mut[genes,]
+  
+  cna <- cna[grepl("^NA", rownames(cna))==F,]
+  cna <- cna[grepl("MAP3K7CL", rownames(cna))==F,]
+  mut <- mut[grepl("^NA", rownames(mut))==F,]
+  mut <- mut[grepl("MAP3K7CL", rownames(mut))==F,]
+  
+  mut[] <- lapply(mut, function(x) ifelse(x=="Silent", "", x))
+  mut[] <- lapply(mut, function(x) ifelse(x=="Intron", "", x))
+  mut[] <- lapply(mut, function(x) ifelse(x=="3'UTR", "", x))
+  mut[] <- lapply(mut, function(x) ifelse(x=="5'UTR", "", x))
+  
+  cna[] <- lapply(cna, function(x) ifelse(x>=2, "1", x))
+  cna[] <- lapply(cna, function(x) ifelse(x<=-2, "1", x))
+  cna[] <- lapply(cna, function(x) ifelse(x==1, "1", x))
+  cna[] <- lapply(cna, function(x) ifelse(x==-1, "1", x))
+  
+  cna=as.data.frame(t(cna))
+  mut=as.data.frame(t(mut))
+  merged=merge(cna,mut,by=0,all=T)
+  
+  
+  merged=as.data.frame(t(merged))
+  colnames(merged)=merged[1,]
+  merged=merged[-1,]
+  
+  merged$gene=rownames(merged)
+  merged$gene=gsub("\\..*","",merged$gene)
+  
+  collapse_mut_cna=merged %>% 
+    dplyr::group_by(gene) %>% 
+    dplyr::summarise_all(toString)
+  collapse_mut_cna=as.data.frame(collapse_mut_cna)
+  rownames(collapse_mut_cna)=collapse_mut_cna$gene
+  collapse_mut_cna=collapse_mut_cna[,-1]
+  
+  if(dataset=="baca"){
+  collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="NA, "|x=="NA", "0", x))
+  collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="0, "|x=="0"|x=="0, NA", "0", "1"))
+  
+  }
+  else if(dataset=="taylor"){
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="0, "|x=="0, NA", "0", x))
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="0, "|x=="0", "0", "1"))
+    
+  }
+  else if(dataset=="barbieri"){
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="NA, "|x=="NA", "0", x))
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="0, "|x=="0", "0", "1"))
+    
+  }
+  else if(dataset=="abida"){
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="NA, "|x=="NA", "0", x))
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="0, "|x=="0"|x=="0, NA", "0", "1"))
+  }
+  else if(dataset=="tcga"){
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="NA, "|x=="NA", "0", x))
+    collapse_mut_cna[] <- lapply(collapse_mut_cna, function(x) ifelse(x=="0, "|x=="0"|x=="0, NA", "0", "1"))
+  }
+  
+  return(as.data.frame(collapse_mut_cna))
+  
+
+}
+```
+
+```{r,results=FALSE,eval=FALSE}
+
+genes<-c("PTEN","SPOP","TP53","USP10","FOXA1","NKX3-1","CHD1","MAP3K7","ERG")
+
+barbieri_mae<-curatedPCaData::mae_barbieri
+Barbieri<-alt_matrix_ME(barbieri_mae,"barbieri",genes)
+
+baca_mae<-curatedPCaData::mae_baca
+Baca<-alt_matrix_ME(baca_mae,"baca",genes)
+
+tcga_mae<-curatedPCaData::mae_tcga
+TCGA<-alt_matrix_ME(tcga_mae,"tcga",genes)
+
+taylor_mae<-curatedPCaData::mae_taylor
+Taylor<-alt_matrix_ME(taylor_mae,"taylor",genes)
+
+# Keep only primary samples for Taylor and remove SPOP
+clinical<-as.data.frame(colData(taylor_mae))
+clinical<-clinical[clinical$sample_type =="primary",]
+vec<-clinical$sample_name
+Taylor2<-Taylor[,intersect(colnames(Taylor),vec)]
+Taylor2<-Taylor2[!(rownames(Taylor2)%in%"SPOP"),]
+
+
+abida_mae<-curatedPCaData::mae_abida
+Abida<-alt_matrix_ME(abida_mae,"abida",genes)
+
+
+```
+
+```{r load_workspace4}
+load("alt_matrices_ME.RData")
+```
+
+
+### BACA
+
+```{r,results=FALSE}
+# Compute OR and Fisher's Test FDR
+OR.hm <- odds_ratio(Baca)
+FDRs.ME <- fdr(Baca)
+# Format Matrices for plotting
+tri <- lower.tri(OR.hm, diag = FALSE)
+OR.hm[tri] <- NA
+diag(OR.hm) <- NA
+OR.hm <- log2(OR.hm)
+OR.hm <- round(OR.hm, 2)
+OR.hm <- OR.hm[nrow(OR.hm):1,]
+
+Baca<-mat_fun(Baca)
+```
+
+
+```{r, fig.height=7, fig.width=7,dpi=150, out.width="100%"}
+
+col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
+
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Baca",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }
+          # if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i,j] > 0.05)) {
+          #   grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "black", lwd = 1))}
+          })
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
+draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
+
+```
+
+### TCGA
+```{r,echo=FALSE}
+# Compute OR and Fisher's Test FDR
+OR.hm <- odds_ratio(TCGA)
+FDRs.ME <- fdr(TCGA)
+# Format Matrices for plotting
+tri <- lower.tri(OR.hm, diag = FALSE)
+OR.hm[tri] <- NA
+diag(OR.hm) <- NA
+OR.hm <- log2(OR.hm)
+OR.hm <- round(OR.hm, 2)
+OR.hm <- OR.hm[nrow(OR.hm):1,]
+
+TCGA<-mat_fun(TCGA)
+```
+
+```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
+
+col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
+
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "TCGA",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))}
+          })
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
+draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
+```
+
+### Abida
+```{r,echo=FALSE}
+# Compute OR and Fisher's Test FDR
+OR.hm <- odds_ratio(Abida)
+FDRs.ME <- fdr(Abida)
+# Format Matrices for plotting
+tri <- lower.tri(OR.hm, diag = FALSE)
+OR.hm[tri] <- NA
+diag(OR.hm) <- NA
+OR.hm <- log2(OR.hm)
+OR.hm <- round(OR.hm, 2)
+OR.hm <- OR.hm[nrow(OR.hm):1,]
+
+Abida<-mat_fun(Abida)
+```
+
+```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
+
+col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
+
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Abida",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }})
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
+draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
+```
+
+### Taylor
+```{r,echo=FALSE}
+# Compute OR and Fisher's Test FDR
+OR.hm <- odds_ratio(Taylor2)
+FDRs.ME <- fdr(Taylor2)
+
+# Format Matrices for plotting
+tri <- lower.tri(OR.hm, diag = FALSE)
+OR.hm[tri] <- NA
+diag(OR.hm) <- NA
+OR.hm <- log2(OR.hm)
+OR.hm <- round(OR.hm, 2)
+OR.hm <- OR.hm[nrow(OR.hm):1,]
+
+Taylor2<-mat_fun(Taylor2)
+```
+
+```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
+
+col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
+
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Taylor",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }})
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
+draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
+```
+
+### Barbieri
+```{r,echo=FALSE}
+# Compute OR and Fisher's Test FDR
+OR.hm <- odds_ratio(Barbieri)
+FDRs.ME <- fdr(Barbieri)
+# Format Matrices for plotting
+tri <- lower.tri(OR.hm, diag = FALSE)
+OR.hm[tri] <- NA
+diag(OR.hm) <- NA
+OR.hm <- log2(OR.hm)
+OR.hm <- round(OR.hm, 2)
+OR.hm <- OR.hm[nrow(OR.hm):1,]
+
+Barbieri<-mat_fun(Barbieri)
+```
+
+```{r,fig.height=7, fig.width=7,dpi=150, out.width="100%"}
+
+col_fun = colorRamp2(c(-3, 0, 3), c("blue", "white", "red"))
+
+Heatmap(OR.hm, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun, na_col = "white", show_heatmap_legend = FALSE, row_names_gp = gpar(fontsize = 20), column_names_gp = gpar(fontsize = 20), column_title = "Barbieri",
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if ((is.na(FDRs.ME[i, j]) == FALSE) & (FDRs.ME[i, j] <= 0.05)) {
+            grid.points(x = x, y = y, pch = 8, size = unit(5, "mm"))
+            }})
+
+lgd <- Legend(col_fun = col_fun, title = "-3 Log2(Odds Ratio) 3", title_position = "topcenter", direction = "horizontal", legend_width = unit(6, "cm"), at = c(-3, 3), labels = gt_render(c("Mutually Exclusive", "Co-occurring")), legend_gp = gpar(cex=2), title_gp = gpar(fontsize = 15), grid_height = unit(6, "mm"), grid_width = unit(6, "mm"), labels_gp = gpar(fontsize = 15), border = TRUE)
+
+draw(lgd, x = unit(2.5, "cm"), y = unit(16, "cm"), just = c("left", "top"))
+
+```
+
+## Oncoprints
+
+Alterations in oncogenes play an important rule in driving cancer. Visualizing these genomic alterations using oncoprints can provide useful information about how much a particular gene is altered and what those alterations are across different patients. Given curatedPCadata has multiple prostate cancer datasets, oncoprints across different PCa datasets can be generated as shown below.
+
+In order to create an alteration matrix with copy number, mutations and fusions from the MAE, the function below can be used.
+
+```{r}
+alt_matrix_onco<-function(mae,genes){
+  #Pull cna and mutations from mae and run inbuilt wrapper function
+  cna<-mae[["cna.gistic"]]
+  cna<-as.data.frame(cna)
+  mut<-mae[["mut"]]
+  mut<-curatedPCaData:::wrapper_raggedexp(mut)
+  
+  cna<-cna[genes,]
+  cna<-as.data.frame(cna)
+  mut<-mut[genes,]
+  
+  # If there are NAs in gene names, dont keep them
+  cna <- cna[grepl("^NA", rownames(cna))==F,]
+  #cna <- cna[grepl("MAP3K7CL", rownames(cna))==F,]
+  mut <- mut[grepl("^NA", rownames(mut))==F,]
+  #mut <- mut[grepl("MAP3K7CL", rownames(mut))==F,]
+  
+  # remove all silent mutations
+  mut[] <- lapply(mut, function(x) ifelse(x=="Silent", "", x))
+  mut[] <- lapply(mut, function(x) ifelse(x=="Intron", "", x))
+  mut[] <- lapply(mut, function(x) ifelse(x=="3'UTR", "", x))
+  mut[] <- lapply(mut, function(x) ifelse(x=="5'UTR", "", x))
+ 
+  # rename values in the cna matrix
+  cna[] <- lapply(cna, function(x) ifelse(x==0, "", x))
+  cna[] <- lapply(cna, function(x) ifelse(x==-1, "Shallow deletion", x))
+  cna[] <- lapply(cna, function(x) ifelse(x==1, "Gain", x))
+  
+  cna[] <- lapply(cna, function(x) ifelse(x>=2&!x%in%c("Shallow deletion","Gain"), "Amplification", x))
+  cna[] <- lapply(cna, function(x) ifelse(x<=-2&!x%in%"", "Deep deletion", x))
+  
+  
+  cna=as.data.frame(t(cna))
+  mut=as.data.frame(t(mut))
+  #Pull fusions from the clinical data
+  clinical<-as.data.frame(as.matrix(colData(mae)))
+  fusion<-clinical[,c("sample_name","ERG_fusion_GEX","ERG_fusion_CNA","ERG_fusion_IHC")]
+  
+  # If there is a fusion from GEX/CNA/IHC, call it a fusion
+  fusion<-fusion%>%mutate(
+  ERG = case_when(
+    ERG_fusion_GEX == 1 |  ERG_fusion_CNA==1 | ERG_fusion_IHC==1 ~ "Fusion"
+    ))
+
+  fusion<-fusion[,c("sample_name","ERG")]
+  
+  rownames(fusion)<-fusion$sample_name
+  fusion<-fusion[,-1,drop=F]
+  #If there is a 0 or NA, call it no fusion
+  fusion[] <- lapply(fusion, function(x) ifelse(x=="0", "", x))
+  fusion[] <- lapply(fusion, function(x) ifelse(is.na(x), "", x))
+  
+  # Merge CNA, mut and fusion matrix
+  merged1=merge(cna,mut,by=0,all=T)
+  merged<-merge(merged1,fusion,by.x=1,by.y=0,all=T)
+  
+  merged=as.data.frame(t(merged))
+  colnames(merged)=merged[1,]
+  merged=merged[-1,]
+  
+  merged$gene=rownames(merged)
+  merged$gene=gsub("\\..*","",merged$gene)
+  # Collapse duplicate genes to one
+  collapse_mut_cna=merged %>% 
+    dplyr::group_by(gene) %>% 
+    dplyr::summarise_all(toString)
+  collapse_mut_cna=as.data.frame(collapse_mut_cna)
+  rownames(collapse_mut_cna)=collapse_mut_cna$gene
+  collapse_mut_cna=collapse_mut_cna[,-1]
+  
+  ## Clean up matrix by renaming some fields
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub(", ",";",collapse_mut_cna[i,])}
+  
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("NA","",collapse_mut_cna[i,])}
+  
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub(";;",";",collapse_mut_cna[i,])}
+  
+  collapse_mut_cna<-collapse_mut_cna[match(genes, rownames(collapse_mut_cna)),]
+  collapse_mut_cna <- collapse_mut_cna[grepl("^NA", rownames(collapse_mut_cna))==F,]
+  
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Missense_Mutation Missense_Mutation","Missense Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Missense_Mutation","Missense Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Frame_Shift_Del","Frameshift Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Splice_Site","Splice Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Splice_Region","Splice Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Silent","",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Intron","",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("In_Frame_Del","Inframe Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Nonsense_Mutation","",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("3'UTR","",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("5'UTR","",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Frame_Shift_Ins","Frameshift Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Mutation ","Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("In_Frame_Ins","Inframe Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("; ",";",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Inframe MutationFrameshift Mutation","Frameshift Mutation",collapse_mut_cna[i,])}
+  
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Nonstop_MutationFrameshift Mutation","Frameshift Mutation",collapse_mut_cna[i,])}
+
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("Missense MutationSplice Mutation","Splice Mutation",collapse_mut_cna[i,])}
+  
+  for (i in 1:nrow(collapse_mut_cna)){
+    collapse_mut_cna[i,]<-gsub("; ",";",collapse_mut_cna[i,])}
+  
+  for (i in 1:nrow(collapse_mut_cna)){
+    for (j in 1:ncol(collapse_mut_cna)){
+      if(sub(".*Mutation;", "", collapse_mut_cna[i,j])==""){
+        collapse_mut_cna[i,j]<-gsub("Mutation;","Mutation",collapse_mut_cna[i,j])
+      }
+}}
+
+  
+  return(collapse_mut_cna)
+  
+}
+```
+
+
+```{r,results=FALSE,eval=FALSE}
+
+genes<-c("ERG","NKX3-1","USP10","PTEN","TP53","CHD1","MAP3K7","FOXA1","SPOP")
+
+
+mae_baca<-curatedPCaData::mae_baca
+alt_matrix_baca<-alt_matrix_onco(mae_baca,genes)
+
+mae_barbieri<-curatedPCaData::mae_barbieri
+alt_matrix_barbieri<-alt_matrix_onco(mae_barbieri,genes)
+Barbieri<-alt_matrix_ME(mae_barbieri,"barbieri",genes)
+alt_matrix_barbieri<-alt_matrix_barbieri[,colnames(Barbieri)]
+
+mae_tcga<-curatedPCaData::mae_tcga
+alt_matrix_tcga<-alt_matrix_onco(mae_tcga,genes)
+TCGA<-alt_matrix_ME(mae_tcga,"tcga",genes)
+alt_matrix_tcga<-alt_matrix_tcga[,colnames(TCGA)]
+
+mae_abida<-curatedPCaData::mae_abida
+alt_matrix_abida<-alt_matrix_onco(mae_abida,genes)
+
+mae_taylor<-curatedPCaData::mae_taylor
+alt_matrix_taylor<-alt_matrix_onco(mae_taylor,genes)
+
+Taylor<-alt_matrix_ME(mae_taylor,"taylor",genes)
+# Keep only primary samples for Taylor and remove SPOP
+clinical<-as.data.frame(colData(mae_taylor))
+clinical<-clinical[clinical$sample_type =="primary",]
+vec<-clinical$sample_name
+Taylor2<-Taylor[,intersect(colnames(Taylor),vec)]
+Taylor2<-Taylor2[!(rownames(Taylor2)%in%"SPOP"),]
+
+alt_matrix_taylor<-alt_matrix_taylor[,colnames(Taylor2)]
+alt_matrix_taylor<-alt_matrix_taylor[!(rownames(alt_matrix_taylor)%in%"SPOP"),]
+
+
+
+```
+
+
+```{r load_workspace5}
+load("alt_matrices_oncoprint.RData")
+```
+
+Define colors for all alterations to display in the oncoprints as shown below
+
+```{r}
+# Define colors for alterations to display in the oncoprints 
+cols<-c("Shallow Deletion"="light blue","Deep Deletion"="blue","Gain"="pink","Amplification"="red","missense_variant"="#008000","frameshift_variant"="black","inframe_deletion"="#6d0200","splice_acceptor_variant"="sienna2","synonymous_variant"="#4f1f4c","other_mut"="yellow","ERG_fusion"="#990099")
+  
+alter_fun = list(
+  background = alter_graphic("rect", fill = "#A3A3A3"),   
+  "Shallow deletion" = alter_graphic("rect",fill = cols["Shallow Deletion"]),
+  "Deep deletion" = alter_graphic("rect", fill = cols["Deep Deletion"]),
+  "Gain" = alter_graphic("rect",fill = cols["Gain"]),
+  "Amplification" = alter_graphic("rect",fill = cols["Amplification"]),
+  "Missense Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["missense_variant"]),
+  "Frameshift Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["frameshift_variant"]),
+  "Splice Mutation" = alter_graphic("rect",  height = 0.33,fill = cols["splice_acceptor_variant"]),
+  "synonymous_variant" = alter_graphic("rect",  height = 0.33,fill = cols["synonymous_variant"]),
+  "Inframe Mutation"=alter_graphic("rect",  height = 0.33,fill = cols["inframe_deletion"]),
+  "other_mut" = alter_graphic("rect",  height = 0.33,fill = cols["other_mut"]),
+  "Fusion"=alter_graphic("rect",  height = 0.5,fill = cols["ERG_fusion"])
+)
+
+```
+
+
+### Baca
+
+```{r, dpi=150, fig.width=8, fig.height=3, out.width="100%",message=FALSE}
+
+df<-curatedPCaData:::wrapper_sortonco(alt_matrix_baca)
+
+col_order<-rownames(df)
+row_order<-colnames(df)
+
+ComplexHeatmap::oncoPrint(alt_matrix_baca,alter_fun = alter_fun,col = cols,
+  right_annotation = NULL,column_order=col_order,row_order = row_order,top_annotation = NULL)
+
+
+
+```
+
+### Barbieri
+
+```{r, dpi=150, fig.width=8, fig.height=3, out.width="100%", message=FALSE}
+
+
+df<-curatedPCaData:::wrapper_sortonco(alt_matrix_barbieri)
+
+col_order<-rownames(df)
+row_order<-colnames(df)
+
+ComplexHeatmap::oncoPrint(alt_matrix_barbieri,alter_fun = alter_fun,col = cols,column_order=col_order,row_order = row_order,right_annotation = NULL,top_annotation = NULL)
+
+
+
+```
+
+### TCGA
+
+```{r, dpi=150,out.width="100%", fig.width=8, fig.height=3,message=FALSE}
+
+df<-curatedPCaData:::wrapper_sortonco(alt_matrix_tcga)
+
+col_order<-rownames(df)
+row_order<-colnames(df)
+
+ComplexHeatmap::oncoPrint(alt_matrix_tcga,alter_fun = alter_fun,col = cols,column_order=col_order,right_annotation = NULL,row_order = row_order,top_annotation = NULL)
+
+```
+
+### Abida
+
+```{r, dpi=150,out.width="100%",fig.width=8,fig.height=3, message=FALSE}
+
+
+df<-curatedPCaData:::wrapper_sortonco(alt_matrix_abida)
+
+col_order<-rownames(df)
+row_order<-colnames(df)
+
+ComplexHeatmap::oncoPrint(alt_matrix_abida,alter_fun = alter_fun,col = cols,top_annotation = NULL,column_order=col_order,right_annotation = NULL,row_order = row_order)
+
+
+
+```
+
+### Taylor
+
+```{r, dpi=150,fig.height=2,fig.width=6,out.width="100%", message=FALSE}
+
+df<-curatedPCaData:::wrapper_sortonco(alt_matrix_taylor)
+
+col_order<-rownames(df)
+row_order<-colnames(df)
+
+ComplexHeatmap::oncoPrint(alt_matrix_taylor,alter_fun = alter_fun,col = cols,top_annotation = NULL,column_order=col_order,right_annotation = NULL,row_order = row_order)
+
+
+```
+
+# Session info
+
+```{r session}
+sessionInfo()
+```

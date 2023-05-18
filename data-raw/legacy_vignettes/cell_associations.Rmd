@@ -1,0 +1,594 @@
+---
+title: "Cells associated with BCR and Gleason"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{Cells associated with BCR and Gleason}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  cache = TRUE,
+  tidy = TRUE,
+  width.cutoff = 70
+)
+
+# Silently load the package
+library(curatedPCaData)
+```
+
+# Introduction
+
+We will inspect associations between the estimated deconvolution derived features, such as specific cell popoulations, from gene expression and test associations with aggressiveness of the PCa samples.
+
+TCGA, Taylor et al., and Barwick et al. have biochemical recurrence (BCR) information; of these, Barwick has somewhat limited feature count, so not all deconvolution methods could be successfully run due to lack in gene overlap.
+
+Most studies have either Gleason grade or at least grade groups available, which may be used as a proxy for risk for recurrence or otherwise aggressive disease. 
+
+# Analyses
+
+## Cox models for biochemical recurrence using LASSO
+
+We will use LASSO-regularization to identify potentially predictive markers for biochemical recurrence from estimated immune deconvolution data matrices, which contain cell proportions or scores corresponding to specific cell type abundances.
+
+Cox proportional hazards models are a useful tool for evaluating follow-up based responses, such as biochemical recurrence with censoring. We will construct suitable response vectors and models with the help of the `survival` and `glmnet` packages, along with standard modeling frameworks such as cross-validation for selecting optimal feature sets:
+
+### TCGA
+
+```{r}
+
+library(survival)
+library(glmnet)
+
+pheno_bcr_tcga <- colData(mae_tcga) |> 
+	# Filter down to primary samples
+	(\(x) { x[x$sample_type == "primary",] })() |>
+	# Remove samples with NA for BCR event or follow-up time
+	(\(x) { x[!(is.na(x$disease_specific_recurrence_status) | is.na(x$days_to_disease_specific_recurrence)),] })() |>
+	# Only include samples for which gene expression data is available (and thus have deconvolution results)
+	(\(x) { x[which(rownames(x) %in% colnames(mae_tcga[["gex.rsem.log"]])),] })()
+
+# Add one day to response vector
+y_bcr_tcga <- Surv(event = pheno_bcr_tcga$disease_specific_recurrence_status, time = pheno_bcr_tcga$days_to_disease_specific_recurrence+1)
+
+samples_bcr_tcga <- rownames(pheno_bcr_tcga)
+
+cibersort_bcr_tcga <- mae_tcga[["cibersort"]][,samples_bcr_tcga]
+quantiseq_bcr_tcga <- mae_tcga[["quantiseq"]][,samples_bcr_tcga]
+xcell_bcr_tcga <- mae_tcga[["xcell"]][,samples_bcr_tcga]
+epic_bcr_tcga <- mae_tcga[["epic"]][,samples_bcr_tcga]
+mcp_bcr_tcga <- mae_tcga[["mcp"]][,samples_bcr_tcga]
+
+set.seed(123)
+coxnet_cibersort_bcr_tcga <- glmnet(y = y_bcr_tcga, x = t(cibersort_bcr_tcga), family="cox")
+coxnet_cv_cibersort_bcr_tcga <- cv.glmnet(y = y_bcr_tcga, x = t(cibersort_bcr_tcga), family="cox")
+
+coxnet_quantiseq_bcr_tcga <- glmnet(y = y_bcr_tcga, x = t(quantiseq_bcr_tcga), family="cox")
+coxnet_cv_quantiseq_bcr_tcga <- cv.glmnet(y = y_bcr_tcga, x = t(quantiseq_bcr_tcga), family="cox")
+
+coxnet_xcell_bcr_tcga <- glmnet(y = y_bcr_tcga, x = t(xcell_bcr_tcga), family="cox")
+coxnet_cv_xcell_bcr_tcga <- cv.glmnet(y = y_bcr_tcga, x = t(xcell_bcr_tcga), family="cox")
+
+coxnet_epic_bcr_tcga <- glmnet(y = y_bcr_tcga, x = t(epic_bcr_tcga), family="cox")
+coxnet_cv_epic_bcr_tcga <- cv.glmnet(y = y_bcr_tcga, x = t(epic_bcr_tcga), family="cox")
+
+coxnet_mcp_bcr_tcga <- glmnet(y = y_bcr_tcga, x = t(mcp_bcr_tcga), family="cox")
+coxnet_cv_mcp_bcr_tcga <- cv.glmnet(y = y_bcr_tcga, x = t(mcp_bcr_tcga), family="cox")
+
+predict(coxnet_cibersort_bcr_tcga, s=coxnet_cv_cibersort_bcr_tcga$lambda.min, type="coef")
+predict(coxnet_quantiseq_bcr_tcga, s=coxnet_cv_quantiseq_bcr_tcga$lambda.min, type="coef")
+predict(coxnet_xcell_bcr_tcga, s=coxnet_cv_xcell_bcr_tcga$lambda.min, type="coef")
+predict(coxnet_epic_bcr_tcga, s=coxnet_cv_epic_bcr_tcga$lambda.min, type="coef")
+predict(coxnet_mcp_bcr_tcga, s=coxnet_cv_mcp_bcr_tcga$lambda.min, type="coef")
+
+```
+
+### Taylor et al.
+
+```{r}
+
+pheno_bcr_taylor <- colData(mae_taylor) |> 
+	# Filter down to primary samples
+	(\(x) { x[x$sample_type == "primary",] })() |>
+	# Remove samples with NA for BCR event or follow-up time
+	(\(x) { x[!(is.na(x$disease_specific_recurrence_status) | is.na(x$days_to_disease_specific_recurrence)),] })() |>
+	# Only include samples for which gene expression data is available (and thus have immune deconvolution results)
+	(\(x) { x[which(rownames(x) %in% colnames(mae_taylor[["gex.rma"]])),] })()
+
+y_bcr_taylor <- Surv(event = pheno_bcr_taylor$disease_specific_recurrence_status, time = pheno_bcr_taylor$days_to_disease_specific_recurrence)
+
+samples_bcr_taylor <- rownames(pheno_bcr_taylor)
+
+cibersort_bcr_taylor <- mae_taylor[["cibersort"]][,samples_bcr_taylor]
+quantiseq_bcr_taylor <- mae_taylor[["quantiseq"]][,samples_bcr_taylor]
+xcell_bcr_taylor <- mae_taylor[["xcell"]][,samples_bcr_taylor]
+epic_bcr_taylor <- mae_taylor[["epic"]][,samples_bcr_taylor]
+mcp_bcr_taylor <- mae_taylor[["mcp"]][,samples_bcr_taylor]
+
+set.seed(123)
+coxnet_cibersort_bcr_taylor <- glmnet(y = y_bcr_taylor, x = t(cibersort_bcr_taylor), family="cox")
+coxnet_cv_cibersort_bcr_taylor <- cv.glmnet(y = y_bcr_taylor, x = t(cibersort_bcr_taylor), family="cox")
+
+coxnet_quantiseq_bcr_taylor <- glmnet(y = y_bcr_taylor, x = t(quantiseq_bcr_taylor), family="cox")
+coxnet_cv_quantiseq_bcr_taylor <- cv.glmnet(y = y_bcr_taylor, x = t(quantiseq_bcr_taylor), family="cox")
+
+coxnet_xcell_bcr_taylor <- glmnet(y = y_bcr_taylor, x = t(xcell_bcr_taylor), family="cox")
+coxnet_cv_xcell_bcr_taylor <- cv.glmnet(y = y_bcr_taylor, x = t(xcell_bcr_taylor), family="cox")
+
+coxnet_epic_bcr_taylor <- glmnet(y = y_bcr_taylor, x = t(epic_bcr_taylor), family="cox")
+coxnet_cv_epic_bcr_taylor <- cv.glmnet(y = y_bcr_taylor, x = t(epic_bcr_taylor), family="cox")
+
+coxnet_mcp_bcr_taylor <- glmnet(y = y_bcr_taylor, x = t(mcp_bcr_taylor), family="cox")
+coxnet_cv_mcp_bcr_taylor <- cv.glmnet(y = y_bcr_taylor, x = t(mcp_bcr_taylor), family="cox")
+
+predict(coxnet_cibersort_bcr_taylor, s=coxnet_cv_cibersort_bcr_taylor$lambda.min, type="coef")
+predict(coxnet_quantiseq_bcr_taylor, s=coxnet_cv_quantiseq_bcr_taylor$lambda.min, type="coef")
+predict(coxnet_xcell_bcr_taylor, s=coxnet_cv_xcell_bcr_taylor$lambda.min, type="coef")
+predict(coxnet_epic_bcr_taylor, s=coxnet_cv_epic_bcr_taylor$lambda.min, type="coef")
+predict(coxnet_mcp_bcr_taylor, s=coxnet_cv_mcp_bcr_taylor$lambda.min, type="coef")
+
+```
+
+We notice a trend that across both TCGA and Taylor et al. datasets, high endothelial cell scores seem to correspond to higher BCR risk.
+
+xCell and MCP Counter methods are most robust against the specific type of data provided; therefore they may provide best insight across different gene expression platforms (i.e. RNA-seq from TCGA and RMA-normalized microarray expression in Taylor et al). 
+Furthermore, EPIC provides estimates for endothelial cells, thus it is also interesting for exploring this trend.
+
+Package `survminer` is used to plot Kaplan-Meier curves, while splitting according to suitable endothelial score quantiles for xCell and MCP counter; we discretize the endothelial scores to top tertile vs the lower 2/3rds:
+
+```{r}
+
+library(survminer)
+
+q_endo_epic_tcga <- data.frame("AboveQuantile" = mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga], probs=2/3))
+q_endo_mcp_tcga <- data.frame("AboveQuantile" = mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga], probs=2/3))
+q_endo_xcell_tcga <- data.frame("AboveQuantile" = mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga], probs=2/3))
+
+fit_endo_epic_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_epic_tcga)
+fit_endo_mcp_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_mcp_tcga)
+fit_endo_xcell_tcga <- survfit(y_bcr_tcga ~ AboveQuantile, data = q_endo_xcell_tcga)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell score quantiles from EPIC applied in TCGA"}
+
+
+ggsurvplot(
+	fit_endo_epic_tcga,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (TCGA, EPIC)"
+)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell score quantiles from MCP counter applied in TCGA"}
+
+ggsurvplot(
+	fit_endo_mcp_tcga,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (TCGA, MCP counter)"
+)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell score quantiles from xCell applied in TCGA"}
+
+ggsurvplot(
+	fit_endo_xcell_tcga,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (TCGA, xCell)"
+)
+
+```
+
+Let us test if this generalizes to the Taylor et al. datasets:
+
+```{r}
+
+q_endo_epic_taylor <- data.frame("AboveQuantile" = mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor], probs=2/3))
+q_endo_mcp_taylor <- data.frame("AboveQuantile" = mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor], probs=2/3))
+q_endo_xcell_taylor <- data.frame("AboveQuantile" = mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor], probs=2/3))
+
+fit_endo_epic_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_epic_taylor)
+fit_endo_mcp_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_mcp_taylor)
+fit_endo_xcell_taylor <- survfit(y_bcr_taylor ~ AboveQuantile, data = q_endo_xcell_taylor)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell quantiles from EPIC applied in Taylor et al."}
+
+ggsurvplot(
+	fit_endo_epic_taylor,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (Taylor et al., EPIC)"
+)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell quantiles from MCP counter applied in Taylor et al."}
+
+ggsurvplot(
+	fit_endo_mcp_taylor,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (Taylor et al., MCP counter)"
+)
+
+```
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Endothelial cell quantiles from xCell applied in Taylor et al."}
+
+ggsurvplot(
+	fit_endo_xcell_taylor,
+	pval=TRUE,
+	risk.table=TRUE,
+	ylab="BCR free proportion",
+	xlab="Time (months)", xscale="d_m", break.x.by = 365.25, xlim=c(0,365.25*10),
+	title="Above quantile endothelial score (Taylor et al., xCell)"
+)
+
+```
+
+## Endothelial score boxplots
+
+We will construct data matrix for multipanel boxplots using `ggplot2`. Note however, that the scales within each facet will vary greatly, and are suited for each individual panel. Furthermore, interpretation of the cell scores vary for xCell and MCP counter, and are not strictly "cell proportions".
+
+```{r}
+
+epic_endo <- as.data.frame(rbind(
+	cbind(longFormat(mae_barbieri["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Barbieri et al."),
+	cbind(longFormat(mae_chandran["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Chandran et al."),
+	cbind(longFormat(mae_friedrich["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Friedrich et al."),
+	cbind(longFormat(mae_icgcca["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "ICGC Canadian"),
+	cbind(longFormat(mae_igc["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "IGC"),
+	cbind(longFormat(mae_ren["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Ren et al."),
+	cbind(longFormat(mae_taylor["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Taylor et al."),
+	cbind(longFormat(mae_tcga["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "TCGA"),
+	cbind(longFormat(mae_wallace["Endothelial cell",,"epic"], colDataCols=c("grade_group", "sample_type")), dataset = "Wallace et al.")
+))
+epic_endo <- epic_endo[which(epic_endo$sample_type == "primary"),]
+
+mcp_endo <- as.data.frame(rbind(
+	cbind(longFormat(mae_barbieri["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Barbieri et al."),
+	cbind(longFormat(mae_chandran["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Chandran et al."),
+	cbind(longFormat(mae_friedrich["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Friedrich et al."),
+	cbind(longFormat(mae_icgcca["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "ICGC Canadian"),
+	cbind(longFormat(mae_igc["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "IGC"),
+	cbind(longFormat(mae_ren["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Ren et al."),
+	cbind(longFormat(mae_taylor["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Taylor et al."),
+	cbind(longFormat(mae_tcga["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "TCGA"),
+	cbind(longFormat(mae_wallace["Endothelial cell",,"mcp"], colDataCols=c("grade_group", "sample_type")), dataset = "Wallace et al.")
+))
+mcp_endo <- mcp_endo[which(mcp_endo$sample_type == "primary"),]
+
+xcell_endo <- as.data.frame(rbind(
+	cbind(longFormat(mae_barbieri["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Barbieri et al."),
+	cbind(longFormat(mae_chandran["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Chandran et al."),
+	cbind(longFormat(mae_friedrich["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Friedrich et al."),
+	cbind(longFormat(mae_icgcca["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "ICGC Canadian"),
+	cbind(longFormat(mae_igc["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "IGC"),
+	cbind(longFormat(mae_ren["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Ren et al."),
+	cbind(longFormat(mae_taylor["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Taylor et al."),
+	cbind(longFormat(mae_tcga["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "TCGA"),
+	cbind(longFormat(mae_wallace["Endothelial cell",,"xcell"], colDataCols=c("grade_group", "sample_type")), dataset = "Wallace et al.")
+))
+xcell_endo <- xcell_endo[which(xcell_endo$sample_type == "primary"),]
+
+library(ggplot2)
+
+```
+
+### EPIC boxplots
+
+EPIC, MCP-counter and xCell appeared to agree on endothelial cell connections to outcome.
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="EPIC endothelial cell scores across datasets in respect to Gleason grade groups"}
+
+p <- ggplot(epic_endo, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("Endothelial cell score (EPIC)")
+p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
+p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
+p <- p + facet_wrap(~dataset, scales="free_y")
+p
+
+```
+
+### MCP counter boxplots
+
+An increasing trend in endothelial cell score is noticed in MCP counter with higher grade groups.
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="MCP counter endothelial cell scores across datasets in respect to Gleason grade groups"}
+
+p <- ggplot(mcp_endo, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("Endothelial cell score (MCP counter)")
+p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
+p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
+p <- p + facet_wrap(~dataset, scales="free_y")
+p
+
+```
+
+### xCell boxplots
+
+Overall, an increasing trend in endothelial cell score in xCell is notable, with larger scores generally more prominent in the higher grade groups. 
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="xCell endothelial cell scores across datasets in respect to Gleason grade groups"}
+
+p <- ggplot(xcell_endo, aes(x=grade_group, y=value)) + geom_boxplot() + xlab("Gleason grade group") + ylab("Endothelial cell score (xCell)")
+p <- p + geom_jitter(shape=16, position=position_jitter(0.1))
+p <- p + scale_x_discrete(limits=c("<=6", "3+4", "4+3", "7", ">=8"))
+p <- p + facet_wrap(~dataset, scales="free_y")
+p
+
+```
+
+## Correlations between methods
+
+Let us examine the estimated scores between the three methods; EPIC, MCP-counter, and xCell, and if they agree:
+
+```{r cors}
+
+endocors_tcga <- data.frame(
+	epic = mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga],
+	mcp = mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga],
+	xcell = mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga]
+)
+endocors_taylor <- data.frame(
+	epic = mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor],
+	mcp = mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor],
+	xcell = mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor]
+)
+
+```
+
+Correlations using Spearman rank correlation:
+
+```{r cors_spearman}
+
+cor(endocors_tcga, method="spearman")
+
+cor(endocors_taylor, method="spearman")
+
+```
+
+Scatterplots between the three methods agree, some with non-linear patterns which are captured by the rank correlation:
+
+```{r cors_scatter_tcga, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Agreement between methods for endothelial cell scores in TCGA"}
+
+plot(endocors_tcga, pch=16)
+
+```
+
+```{r cors_scatter_taylor, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="Agreement between methods for endothelial cell scores in Taylor et al."}
+
+plot(endocors_taylor, pch=16)
+
+```
+
+## Tabulated endothelial scores vs. Gleason groups in other datasets
+
+While other datasets lack such comprehensive information on biochemical recurrence, we can use Gleason as a proxy, as the grades are associated with a more aggressive disease.
+
+Let us test tabulated grade groupings vs. chosen top quantiles of endothelial estimates over multiple other datasets, including the previously utilized TCGA and Taylor et al.; note that these choice of such quantiles is arbitrary (here set to lower 75% vs. top 25%):
+
+```{r}
+# Define a function able to construct a convenient data frame with top quantile endothelial scores from xCell, MCP counter, and connect them to Gleasons
+endofunc <- function(mae, q = 2/3){
+	pheno <- colData(mae) |>
+		# Filter down to primary samples
+		(\(x) { x[x$sample_type == "primary",] })() |>
+		# Only include samples for which xCell/MCP counter is available
+		(\(x) { x[which(rownames(x) %in% colnames(mae[["xcell"]])),] })()
+	samps <- rownames(pheno)
+	
+	topq_epic <- mae[["epic"]]["Endothelial cell",samps] >= quantile(mae[["epic"]]["Endothelial cell",samps], probs=q)
+	topq_mcp <- mae[["mcp"]]["Endothelial cell",samps] >= quantile(mae[["mcp"]]["Endothelial cell",samps], probs=q)
+	topq_xcell <- mae[["xcell"]]["Endothelial cell",samps] >= quantile(mae[["xcell"]]["Endothelial cell",samps], probs=q)
+	
+	# Return list of tabulated results of endothelial scores vs. grade groups
+	list(
+		epic_table = table(epicTopQ = topq_epic, Gleason = pheno$gleason_grade),
+		mcp_table = table(mcpTopQ = topq_mcp, Gleason = pheno$gleason_grade),
+		xcell_table = table(xCellTopQ = topq_xcell, Gleason = pheno$gleason_grade)
+	)
+}
+
+```
+
+### Taylor et al.
+
+```{r}
+tabs_taylor <- endofunc(mae_taylor)
+tabs_taylor
+fisher.test(tabs_taylor$epic_table)
+fisher.test(tabs_taylor$mcp_table)
+fisher.test(tabs_taylor$xcell_table)
+```
+
+### TCGA
+
+```{r}
+tabs_tcga <- endofunc(mae_tcga)
+tabs_tcga
+fisher.test(tabs_tcga$epic_table)
+fisher.test(tabs_tcga$mcp_table)
+fisher.test(tabs_tcga$xcell_table)
+```
+
+## Cox model for endothelial cells with and without Gleason grades
+
+It is interesting to examine the hazard ratios with Cox proportional hazards models (function `coxph` from `survival`), but also to see if combining the endothelial scores into the same model together with Gleasons improves survival prediction.
+
+Just endothelial cell scores in both TCGA and Taylor et al.:
+
+```{r cox_justendo}
+
+coxph(y_bcr_tcga ~ mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga])
+coxph(y_bcr_tcga ~ mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga])
+coxph(y_bcr_tcga ~ mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga])
+
+coxph(y_bcr_taylor ~ mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor])
+coxph(y_bcr_taylor ~ mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor])
+coxph(y_bcr_taylor ~ mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor])
+
+```
+
+If we discretize the endothelial cell scores to top tertile vs. rest:
+
+```{r cox_justendo_toptertile}
+
+endo_tcga_topq_epic <- mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga], probs=2/3)
+endo_tcga_topq_mcp <- mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga], probs=2/3)
+endo_tcga_topq_xcell <- mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga] >= quantile(mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga], probs=2/3)
+
+endo_taylor_topq_epic <- mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor], probs=2/3)
+endo_taylor_topq_mcp <- mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor], probs=2/3)
+endo_taylor_topq_xcell <- mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor] >= quantile(mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor], probs=2/3)
+
+coxph(y_bcr_tcga ~ endo_tcga_topq_epic)
+coxph(y_bcr_tcga ~ endo_tcga_topq_mcp)
+coxph(y_bcr_tcga ~ endo_tcga_topq_xcell)
+
+coxph(y_bcr_taylor ~ endo_taylor_topq_epic)
+coxph(y_bcr_taylor ~ endo_taylor_topq_mcp)
+coxph(y_bcr_taylor ~ endo_taylor_topq_xcell)
+
+```
+
+Coupled with Gleason grade in addition to endothelial cell scores:
+
+```{r cox_endogleason}
+
+coxph(y_bcr_tcga ~ mae_tcga[["epic"]]["Endothelial cell",samples_bcr_tcga] + colData(mae_tcga)[samples_bcr_tcga, "gleason_grade"])
+coxph(y_bcr_tcga ~ mae_tcga[["mcp"]]["Endothelial cell",samples_bcr_tcga] + colData(mae_tcga)[samples_bcr_tcga, "gleason_grade"])
+coxph(y_bcr_tcga ~ mae_tcga[["xcell"]]["Endothelial cell",samples_bcr_tcga] + colData(mae_tcga)[samples_bcr_tcga, "gleason_grade"])
+
+coxph(y_bcr_taylor ~ mae_taylor[["epic"]]["Endothelial cell",samples_bcr_taylor] + colData(mae_taylor)[samples_bcr_taylor, "gleason_grade"])
+coxph(y_bcr_taylor ~ mae_taylor[["mcp"]]["Endothelial cell",samples_bcr_taylor] + colData(mae_taylor)[samples_bcr_taylor, "gleason_grade"])
+coxph(y_bcr_taylor ~ mae_taylor[["xcell"]]["Endothelial cell",samples_bcr_taylor] + colData(mae_taylor)[samples_bcr_taylor, "gleason_grade"])
+
+```
+
+Create an aggregation of univariate Cox models' hazard ratios:
+
+```{r forestplotunivar}
+
+# Manually extracting univariate results and aggregating, inspired by http://www.sthda.com/english/wiki/cox-proportional-hazards-model
+
+coxformat <- \(x){ 
+	x <- summary(x)
+	p.value <- signif(x$wald["pvalue"], digits=4)
+	wald.test <- signif(x$wald["test"], digits=4)
+	beta <- signif(x$coef[1], digits=4); # coefficient beta
+	HR <- signif(x$coef[2], digits=4); # exp(beta)
+	HR.confint.lower <- signif(x$conf.int[,"lower .95"], 4)
+	HR.confint.upper <- signif(x$conf.int[,"upper .95"], 4)
+	HR.formatted <- paste0(HR, " (", HR.confint.lower, "-", HR.confint.upper, ")")
+	res<-c(beta, HR.formatted, HR, HR.confint.lower, HR.confint.upper, wald.test, p.value)
+	names(res)<-c("beta", "HR (95% CI for HR)", "HR", "CI.lower", "CI.upper", "wald.test", "p.value")
+	res
+}
+
+
+# TCGA
+gleasons_tcga <- colData(mae_tcga)[samples_bcr_tcga, "gleason_grade"]
+
+covariates <- c("endo_tcga_topq_epic", "endo_tcga_topq_mcp", "endo_tcga_topq_xcell", "gleasons_tcga")
+univ_formulas <- sapply(covariates, FUN=\(x) { as.formula(paste0("y_bcr_tcga ~ ", x))})
+univ_models <- lapply(univ_formulas, FUN=\(x) { survival::coxph(x) })
+univ_results <- lapply(univ_models, FUN=coxformat)
+unicox_tcga <- t(as.data.frame(univ_results, check.names = FALSE))
+as.data.frame(unicox_tcga)
+
+# Taylor
+gleasons_taylor <- colData(mae_taylor)[samples_bcr_taylor, "gleason_grade"]
+covariates <- c("endo_taylor_topq_epic", "endo_taylor_topq_mcp", "endo_taylor_topq_xcell", "gleasons_taylor")
+univ_formulas <- sapply(covariates, FUN=\(x) { as.formula(paste0("y_bcr_taylor ~ ", x))})
+univ_models <- lapply(univ_formulas, FUN=\(x) { survival::coxph(x) })
+univ_results <- lapply(univ_models, FUN=coxformat)
+unicox_taylor <- t(as.data.frame(univ_results, check.names = FALSE))
+as.data.frame(unicox_taylor)
+
+```
+
+Aggregate both datasets and manually plot forest plots, with HR and 95% CI whiskers for univariate Cox models:
+
+```{r, dpi=300, fig.width=9, fig.height=9,out.width="100%", fig.cap="xCell endothelial cell scores across datasets in respect to Gleason grade groups"}
+
+xlim <- extendrange(as.numeric(c(-2, unicox_tcga[,"CI.lower"], unicox_tcga[,"CI.upper"], unicox_taylor[,"CI.lower"], unicox_taylor[,"CI.upper"])))
+
+par(las=1, mar=c(4, 8, 0.5, 0))
+
+plot.new()
+plot.window(xlim=xlim, ylim=extendrange(1:8))
+title(xlab="Hazard Ratio", ylab="Univariate Cox model HR estimates\n\n\n")
+abline(v=c(1, 2, 3, 5, 8), lwd=c(2, 1, 1, 1, 1), col="grey")
+
+# TCGA
+for(i in 1:4){
+	ystep <- (8:5)[i]
+	# Left CI-whisker
+	arrows(y0=ystep, y1=ystep, x0=as.numeric(unicox_tcga[i,"HR"]), x1=as.numeric(unicox_tcga[i,"CI.lower"]), angle=90, length=0.1)
+	# Right CI-whisker
+	arrows(y0=ystep, y1=ystep, x0=as.numeric(unicox_tcga[i,"HR"]), x1=as.numeric(unicox_tcga[i,"CI.upper"]), angle=90, length=0.1)
+	# HR estimate
+	points(y=ystep, x=as.numeric(unicox_tcga[i,"HR"]), pch=15, cex=1.5)
+	# p-value
+	text(x=7, y=ystep+0.3, paste0("p=", unicox_tcga[i,"p.value"]))
+	# Formatted HR text
+	text(x=-2.5, y=ystep, unicox_tcga[i,"HR (95% CI for HR)"], cex=0.8, adj=0)
+}
+# Taylor
+for(i in 1:4){
+	ystep <- (4:1)[i]
+	# Left CI-whisker
+	arrows(y0=ystep, y1=ystep, x0=as.numeric(unicox_taylor[i,"HR"]), x1=as.numeric(unicox_taylor[i,"CI.lower"]), angle=90, length=0.1)
+	# Right CI-whisker
+	arrows(y0=ystep, y1=ystep, x0=as.numeric(unicox_taylor[i,"HR"]), x1=as.numeric(unicox_taylor[i,"CI.upper"]), angle=90, length=0.1)
+	# HR estimate
+	points(y=ystep, x=as.numeric(unicox_taylor[i,"HR"]), pch=15, cex=1.5)
+	# p-value
+	text(x=7, y=ystep+0.3, paste0("p=", unicox_taylor[i,"p.value"]))
+	# Formatted HR text
+	text(x=-2.5, y=ystep, unicox_taylor[i,"HR (95% CI for HR)"], cex=0.8, adj=0)
+}
+axis(1, at=c(1, 2, 3, 5, 8))
+axis(2, at=1:4, labels=c("Gleason", "xCell", "MCP-counter", "EPIC")) # Two separate y-axis labels for univariate models
+axis(2, at=5:8, labels=c("Gleason", "xCell", "MCP-counter", "EPIC")) # Two separate y-axis labels for univariate models
+text(x=1, y=8.35, adj=0, cex=1.1, "TCGA") # Dataset labels on right side, TCGA
+text(x=1, y=4.35, adj=0, cex=1.1, "Taylor et al.") # Dataset labels on right side, Taylor et al
+text(x=-2.5, y=8.3, cex=0.8, adj=0, "HR (95% CI for HR)")
+
+```
+
+
+# Session info
+
+```{r session}
+sessionInfo()
+```
+
+
+
+
+
