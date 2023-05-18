@@ -49,11 +49,11 @@
 #'
 #' @description curatedPCaData provides \linkS4class{MultiAssayExperiment}
 #' container objects that are constructed from ExperimentHub.
-#' User provides PCa data set name (see list XXXX) and YYYY.
+#' User provides PCa dataset name (see list on the overview-vignette or help files).
 #'
 #' @details This function will check against available resources in
 #' ExperimentHub.
-#' For a list of datasets, see the XXXX
+#' For a list of datasets, see the overview-vignette.
 #'
 #' @param dataset character() of PCa cancer cohort names
 #'     (e.g., 'abida')
@@ -63,7 +63,7 @@
 #'     see below for more details
 #'
 #' @param timestamp character(1) "20230215" indicating the data version to obtain
-#'     from `ExperimentHub`. See `version` section details. XXXXXXXXXXXXXXX
+#'     from `ExperimentHub`. See `version` section details.
 #'
 #' @param ... Additional arguments passed on to the
 #'     \code{\link[ExperimentHub:ExperimentHub-class]{ExperimentHub}}
@@ -99,9 +99,10 @@
 #'   scores
 #' }
 #'
-#' @section timestamp: XXXXXX
+#' @section timestamp: "20230215"
 #' The timestamp is updated in case the data is updated. In this case, this
-#' section describes the changes made for new timestamps.
+#' section describes the changes made for new timestamps. At this time, the
+#' only data deposit is from 2023, Feb 15th, indicated by "20230215".
 #'
 #' @seealso curatedPCaData-package
 #'

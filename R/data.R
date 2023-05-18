@@ -37,11 +37,10 @@
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_abida
-#' @docType data
 #' @examples
 #' mae_abida <- getPCa("abida")
 #' @name curatedPCaDatasets_abida
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Baca et al. MAE-object
@@ -61,7 +60,7 @@ NULL
 #' @examples
 #' mae_baca <- getPCa("baca")
 #' @name curatedPCaDatasets_baca
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Barbieri et al. MAE-object
@@ -88,11 +87,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_barbieri
-#' @docType data
 #' @examples
 #' mae_barbieri <- getPCa("barbieri")
 #' @name curatedPCaDatasets_barbieri
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Barwick et al. MAE-object
@@ -114,11 +112,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_barwick
-#' @docType data
 #' @examples
 #' mae_barwick <- getPCa("barwick")
 #' @name curatedPCaDatasets_barwick
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Chandran et al., Yu et al. MAE-object
@@ -141,11 +138,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_chandran
-#' @docType data
 #' @examples
 #' mae_chandran <- getPCa("chandran")
 #' @name curatedPCaDatasets_chandran
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Friedrich et al. MAE-object
@@ -169,11 +165,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_friedrich
-#' @docType data
 #' @examples
 #' mae_friedrich <- getPCa("friedrich")
 #' @name curatedPCaDatasets_friedrich
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Hieronymus et al. MAE-object
@@ -190,11 +185,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_hieronymus
-#' @docType data
 #' @examples
 #' mae_hieronymus <- getPCa("hieronymus")
 #' @name curatedPCaDatasets_hieronymus
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' ICGC CA MAE-object
@@ -218,11 +212,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_icgcca
-#' @docType data
 #' @examples
 #' mae_icgcca <- getPCa("icgcca")
 #' @name curatedPCaDatasets_icgcca
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' International Genomics Consortium (IGC) MAE-object
@@ -245,11 +238,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_igc
-#' @docType data
 #' @examples
 #' mae_igc <- getPCa("igc")
 #' @name curatedPCaDatasets_igc
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Kim et al. MAE-object
@@ -273,11 +265,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_kim
-#' @docType data
 #' @examples
 #' mae_kim <- getPCa("kim")
 #' @name curatedPCaDatasets_kim
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Kunderfranco et al. MAE-object
@@ -301,11 +292,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_kunderfranco
-#' @docType data
 #' @examples
 #' mae_kunderfranco <- getPCa("kunderfranco")
 #' @name curatedPCaDatasets_kunderfranco
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Ren et al. MAE-object
@@ -330,11 +320,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_ren
-#' @docType data
 #' @examples
 #' mae_ren <- getPCa("ren")
 #' @name curatedPCaDatasets_ren
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Sun et al. MAE-object
@@ -358,11 +347,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_sun
-#' @docType data
 #' @examples
 #' mae_sun <- getPCa("sun")
 #' @name curatedPCaDatasets_sun
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Taylor et al. MAE-object
@@ -391,11 +379,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_taylor
-#' @docType data
 #' @examples
 #' mae_taylor <- getPCa("taylor")
 #' @name curatedPCaDatasets_taylor
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' TCGA MAE-object
@@ -423,11 +410,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_tcga
-#' @docType data
 #' @examples
 #' mae_tcga <- getPCa("tcga")
 #' @name curatedPCaDatasets_tcga
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' True et al. MAE-object
@@ -449,11 +435,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_true
-#' @docType data
 #' @examples
 #' mae_true <- getPCa("true")
 #' @name curatedPCaDatasets_true
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Wallace et al. MAE-object
@@ -477,11 +462,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_wallace
-#' @docType data
 #' @examples
 #' mae_wallace <- getPCa("wallace")
 #' @name curatedPCaDatasets_wallace
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Wang et al. MAE-object
@@ -505,11 +489,10 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_wang
-#' @docType data
 #' @examples
 #' mae_wang <- getPCa("wang")
 #' @name curatedPCaDatasets_wang
-#' @keywords internal
+#' @keywords datasets
 NULL
 
 #' Weiner et al. MAE-object
@@ -532,9 +515,8 @@ NULL
 #' @return A MultiAssayExperiment corresponding to the study and its available omics.
 #'
 #' @rdname curatedPCaDatasets_weiner
-#' @docType data
 #' @examples
 #' mae_weiner <- getPCa("weiner")
 #' @name curatedPCaDatasets_weiner
-#' @keywords internal
+#' @keywords datasets
 NULL

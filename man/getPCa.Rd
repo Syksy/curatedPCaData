@@ -15,7 +15,7 @@ available for the selected dataset;
 see below for more details}
 
 \item{timestamp}{character(1) "20230215" indicating the data version to obtain
-from `ExperimentHub`. See `version` section details. XXXXXXXXXXXXXXX}
+from `ExperimentHub`. See `version` section details.}
 
 \item{verbose}{logical(1) Whether to show the dataset currenlty being
 (down)loaded (default TRUE)}
@@ -31,12 +31,12 @@ cancer code
 \description{
 curatedPCaData provides \linkS4class{MultiAssayExperiment}
 container objects that are constructed from ExperimentHub.
-User provides PCa data set name (see list XXXX) and YYYY.
+User provides PCa dataset name (see list on the overview-vignette or help files).
 }
 \details{
 This function will check against available resources in
 ExperimentHub.
-For a list of datasets, see the XXXX
+For a list of datasets, see the overview-vignette.
 }
 \section{Available Assays}{
 
@@ -68,14 +68,15 @@ ExperimentList data types   Description
 }
 
 \section{timestamp}{
- XXXXXX
+ "20230215"
 The timestamp is updated in case the data is updated. In this case, this
-section describes the changes made for new timestamps.
+section describes the changes made for new timestamps. At this time, the
+only data deposit is from 2023, Feb 15th, indicated by "20230215".
 }
 
 \examples{
 mae_taylor <- getPCa(
-    dataset = "taylor", timestamp = "20230215"
+  dataset = "taylor", timestamp = "20230215"
 )
 
 }

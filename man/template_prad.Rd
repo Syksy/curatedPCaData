@@ -14,7 +14,7 @@ template_prad
 A data.frame of the PCa template
 }
 \description{
-This data frame contains the clinical fields which were 
+This data frame contains the clinical fields which were
 Variable types, ranges, and description is reported.
 }
 \examples{

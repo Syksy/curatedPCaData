@@ -23,4 +23,4 @@ MultiAssayExperiment object containing copy number alteration (cna) and mutation
 \examples{
 mae_baca <- getPCa("baca")
 }
-\keyword{internal}
+\keyword{datasets}
