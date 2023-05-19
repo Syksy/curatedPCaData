@@ -15,7 +15,7 @@ available for the selected dataset;
 see below for more details}
 
 \item{timestamp}{character(1) "20230215" indicating the data version to obtain
-from `ExperimentHub`. See `version` section details.}
+from `ExperimentHub`. See `timestamp` section details.}
 
 \item{verbose}{logical(1) Whether to show the dataset currenlty being
 (down)loaded (default TRUE)}
@@ -26,7 +26,7 @@ constructor}
 }
 \value{
 a \linkS4class{MultiAssayExperiment} of the specified assays and
-cancer code
+cancer cohort
 }
 \description{
 curatedPCaData provides \linkS4class{MultiAssayExperiment}
@@ -36,12 +36,47 @@ User provides PCa dataset name (see list on the overview-vignette or help files)
 \details{
 This function will check against available resources in
 ExperimentHub.
-For a list of datasets, see the overview-vignette.
+For a list of datasets, see the overview-vignette or below dataset listing.
 }
+\section{Available datasets}{
+
+
+Following shortnames can be used with getPCa to query for their omics from
+ExperimentHub. For more detailed description of the studies, see their
+corresponding R documentation file. Further details are reported in the 
+overview-vignette.
+
+\preformatted{
+
+Shortname      Rd documentation file           Longer name(s)
+----------------------------------------------------------------------------
+
+  abida        curatedPCaDatasets_abida        Abida et al.
+  baca         curatedPCaDatasets_baca         Baca et al.
+  barbieri     curatedPCaDatasets_barbieri     Barbieri et al.
+  barwick      curatedPCaDatasets_barwick      Barwick et al.
+  chandran     curatedPCaDatasets_chandran     Chandran et al., Yu et al.     
+  friedrich    curatedPCaDatasets_friedrich    Friedrich et al.
+  hieronymus   curatedPCaDatasets_hieronymus   Hieronymus et al.
+  icgcca       curatedPCaDatasets_icgcca       ICGC Canadian subset
+  igc          curatedPCaDatasets_igc          International Genomics Consortium (PCa subset)
+  kim          curatedPCaDatasets_kim          Kim et al.
+  kunderfranco curatedPCaDatasets_kunderfranco Kunderfranco et al.
+  ren          curatedPCaDatasets_ren          Ren et al.
+  sun          curatedPCaDatasets_sun          Sun et al.
+  taylor       curatedPCaDatasets_taylor       Taylor et al.
+  tcga         curatedPCaDatasets_tcga         The Cancer Genome Atlas (PCa subset, PRAD-prefix)
+  true         curatedPCaDatasets_true         True et al.
+  wallace      curatedPCaDatasets_wallace      Wallace et al.
+  wang         curatedPCaDatasets_wang         Wang et al.
+  weiner       curatedPCaDatasets_weiner       Weiner et al.
+}
+}
+
 \section{Available Assays}{
 
 
-Thelist of ExperimentList assay names and their descriptions.
+The list of ExperimentList assay names and their descriptions.
 These assays can be entered as part of the \code{slots} argument in the
 main function.
 \preformatted{
@@ -49,21 +84,21 @@ main function.
 ExperimentList data types   Description
 ----------------------------------------------------------------------------
 
-  gex.rma            Gene expression values
-  gex.logq
-  gex.relz
-  gex.logr
-  gex.rsem.log
-  cna.gistic         Copy number alteration
-  cna.logr
-  mut                Somatic mutations
-  cibersort
-  xcell
-  epic
-  quantiseq
-  mcp
-  estimate
-  scores
+  gex.rma            Gene expression values (RMA normalized)
+  gex.logq                                  (Log-quantile)
+  gex.relz                                  (Relative z-scores)
+  gex.logr                                  (Log-ratios)
+  gex.rsem.log                              (Log-RSEM)
+  cna.gistic         Copy number alteration (GISTIC calls)
+  cna.logr                                  (Log-ratios)
+  mut                Somatic mutation calls
+  cibersort          Immune deconvolution as estimated by CIBERSORTx
+  xcell                                                   xCell
+  epic                                                    EPIC
+  quantiseq                                               quanTIseq
+  mcp                                                     MCP-counter
+  estimate                                                ESTIMATE
+  scores             Various risk and AR scores; see vignette references.
 }
 }
 

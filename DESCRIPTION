@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
 Version: 0.99.0
-Date: 2023-05-18
+Date: 2023-05-19
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7016-7354")),
              person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", role = "ctb"),
              person("Christelle", "Colin Leitzinger", email = "christelle.colinleitzinger@moffitt.org", role = "ctb"),
@@ -33,6 +33,7 @@ Imports:
     testthat    
 Suggests: 
     BiocGenerics,
+    BiocStyle,
     knitr,
     ggplot2,
     rmarkdown,

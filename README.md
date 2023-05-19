@@ -82,21 +82,29 @@ A list of available vignettes, subset to suitable topics:
     ## [1,] "analyses" "Analysis examples in curatedPCaData"
     ## [2,] "overview" "Overview to curatedPCaData"
 
-### Brief example
+### Downloading data
 
-Simple example use of curated datasets and ’omics there-in:
+The function `getPCa` with its main parameter with study shortname is
+the primary means of extracting data from a cohort. It will
+automatically create a `MultiAssayExperiment`-object of the study:
 
     library(curatedPCaData)
 
     mae_tcga <- getPCa("tcga")
-    ## 
-    ## Constructing MultiAssayExperiment for study tcga from local cache downloaded from ExperimentHub.
+
+    class(mae_tcga)
+    ## [1] "MultiAssayExperiment"
+    ## attr(,"package")
+    ## [1] "MultiAssayExperiment"
+    names(mae_tcga)
+    ##  [1] "cna.gistic"   "gex.rsem.log" "mut"          "cibersort"    "xcell"        "epic"         "quantiseq"    "mcp"          "estimate"     "scores"
+
+### Brief example
+
+Simple example use of curated datasets and ’omics there-in:
+
     mae_taylor <- getPCa("taylor")
-    ## 
-    ## Constructing MultiAssayExperiment for study taylor from local cache downloaded from ExperimentHub.
     mae_sun <- getPCa("sun")
-    ## 
-    ## Constructing MultiAssayExperiment for study sun from local cache downloaded from ExperimentHub.
 
     mae_tcga
     ## A MultiAssayExperiment object of 10 listed

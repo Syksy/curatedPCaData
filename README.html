@@ -645,19 +645,22 @@ devtools::install_github(&quot;Syksy/curatedPCaData&quot;)</code></pre>
 ##      Topic      Title                                
 ## [1,] &quot;analyses&quot; &quot;Analysis examples in curatedPCaData&quot;
 ## [2,] &quot;overview&quot; &quot;Overview to curatedPCaData&quot;</code></pre>
-<h3 id="brief-example">Brief example</h3>
-<p>Simple example use of curated datasets and ’omics there-in:</p>
+<h3 id="downloading-data">Downloading data</h3>
+<p>The function <code>getPCa</code> with its main parameter with study shortname is the primary means of extracting data from a cohort. It will automatically create a <code>MultiAssayExperiment</code>-object of the study:</p>
 <pre><code>library(curatedPCaData)
 
 mae_tcga &lt;- getPCa(&quot;tcga&quot;)
-## 
-## Constructing MultiAssayExperiment for study tcga from local cache downloaded from ExperimentHub.
-mae_taylor &lt;- getPCa(&quot;taylor&quot;)
-## 
-## Constructing MultiAssayExperiment for study taylor from local cache downloaded from ExperimentHub.
+
+class(mae_tcga)
+## [1] &quot;MultiAssayExperiment&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;MultiAssayExperiment&quot;
+names(mae_tcga)
+##  [1] &quot;cna.gistic&quot;   &quot;gex.rsem.log&quot; &quot;mut&quot;          &quot;cibersort&quot;    &quot;xcell&quot;        &quot;epic&quot;         &quot;quantiseq&quot;    &quot;mcp&quot;          &quot;estimate&quot;     &quot;scores&quot;</code></pre>
+<h3 id="brief-example">Brief example</h3>
+<p>Simple example use of curated datasets and ’omics there-in:</p>
+<pre><code>mae_taylor &lt;- getPCa(&quot;taylor&quot;)
 mae_sun &lt;- getPCa(&quot;sun&quot;)
-## 
-## Constructing MultiAssayExperiment for study sun from local cache downloaded from ExperimentHub.
 
 mae_tcga
 ## A MultiAssayExperiment object of 10 listed

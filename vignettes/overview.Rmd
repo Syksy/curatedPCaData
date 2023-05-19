@@ -1,9 +1,7 @@
 ---
 title: "Overview to curatedPCaData"
 output: 
-  rmarkdown::html_vignette:
-    toc: true
-    number_sections: false
+  BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{Overview to curatedPCaData}
   %\VignetteEngine{knitr::rmarkdown}
@@ -281,15 +279,16 @@ for (mult in multiomics) {
 # Package overview
 
 This overview provides insight into the available datasets (R package version `r utils::packageVersion("curatedPCaData")`) provided via `ExperimentHub` cloud services. 
+The main data class is a `MultiAssayExperiment` (MAE) object compatible with numerous Bioconductor packages.
 
 ***
 
 3 different omics base data types and accompanying clinical/phenotype data are currently available: 
 
-1. `gex_*` slots contain gene expression values, with the suffix wildcard indicating unit or method for gene expression
-2. `cna_*` slots contain copy number values, with the suffix wildcard indicating method for copy number alterations
+1. `gex.*` slots contain gene expression values, with the suffix wildcard indicating unit or method for gene expression
+2. `cna.*` slots contain copy number values, with the suffix wildcard indicating method for copy number alterations
 3. `mut` slots contain somatic mutation calls
-4. `MultiAssayExperiment::colData(maeobj)` contains the clinical metadata based on a pre-defined template
+4. `MultiAssayExperiment::colData(maeobj)` contains the clinical metadata curated based on a pre-defined template
 
 Their availability is subject to the study in question, and you will find coverage of the omics here-in. Furthermore, derived variables based on these base data types are provided in the constructed `MultiAssayExperiment` (MAE) class objects.
 
@@ -316,6 +315,8 @@ The datasets were manually selected based on various criteria, such as:
 - Design of the study
 
 ### Studies
+
+The function `getPCa` utilizes the studies' short name for identifying which data to extract. An overview into the main datasets is as follows:
 
 ```{r studies, results = 'asis', echo=FALSE}
 studies <- matrix("", nrow = length(maes), ncol = 7)
@@ -408,6 +409,8 @@ for (mae in studies[, "MAE-object"]) {
 }
 knitr::kable(studies, caption = "Key study characteristics")
 ```
+
+Please note that the TCGA PCa dataset is a subset of the TCGA pan-cancer initiative. For a package focused on TCGA exclusively beyond the PRAD subset, see the Bioconductor package [curatedTCGAData](https://bioconductor.org/packages/release/data/experiment/html/curatedTCGAData.html).
 
 ### Curated clinical variables
 

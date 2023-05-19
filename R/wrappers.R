@@ -6,11 +6,11 @@
 #'
 #' @examples
 #' mae_abida <- getPCa("abida")
-#' mut_abida <- curatedPCaData:::wrapper_raggedexp(mae_abida[["mut"]])
+#' mut_abida <- curatedPCaData:::wrapperRaggedexp(mae_abida[["mut"]])
 #'
 #' @noRd
 #' @keywords internal
-wrapper_raggedexp <- function(ragexp, field = "Variant_Classification") {
+wrapperRaggedexp <- function(ragexp, field = "Variant_Classification") {
   I <- RaggedExperiment::sparseAssay(ragexp, field)
   I[is.na(I)] <- ""
   I <- as.data.frame(I)
@@ -53,7 +53,7 @@ wrapper_raggedexp <- function(ragexp, field = "Variant_Classification") {
 #'
 #' @noRd
 #' @keywords internal
-wrapper_oncoprintify <- function(
+wrapperOncoprintify <- function(
     mae,
     genes,
     omics = c("mut", "cna.gistic"),
@@ -164,12 +164,12 @@ wrapper_oncoprintify <- function(
 #' @return A list of lists containing all hits for the queried gene
 #'
 #' @examples
-#' wrapper_genesweep("HLA")
-#' wrapper_genesweep("TP53", exact = TRUE)
+#' wrapperGenesweep("HLA")
+#' wrapperGenesweep("TP53", exact = TRUE)
 #'
 #' @noRd
 #' @keywords internal
-wrapper_genesweep <- function(
+wrapperGenesweep <- function(
     gene,
     aliases = FALSE,
     exact = FALSE,
@@ -203,7 +203,7 @@ wrapper_genesweep <- function(
   res
 }
 
-#' A wrapper function for sweeping a specific colData field over all datasets
+#' Wrapper function for sweeping a specific colData field over all datasets
 #'
 #' @param col Column name to query for (see template_prad for possible fields)
 #' @param exact Whether the query should be exact column name and not regular expression; defaults to FALSE
@@ -212,13 +212,13 @@ wrapper_genesweep <- function(
 #' @return A list of lists containing all hits for the queried gene
 #'
 #' @examples
-#' wrapper_metasweep("gleason")
-#' wrapper_metasweep("survival")
-#' wrapper_metasweep("sample_type", exact = TRUE)
+#' wrapperMetasweep("gleason")
+#' wrapperMetasweep("survival")
+#' wrapperMetasweep("sample_type", exact = TRUE)
 #'
 #' @noRd
 #' @keywords internal
-wrapper_metasweep <- function(
+wrapperMetasweep <- function(
     col,
     exact = FALSE,
     drop = FALSE) {
@@ -286,11 +286,11 @@ unwrap <- function(
 #' @return A sorted alteration matrix for oncoprints
 #'
 #' @examples
-#' wrapper_sortonco(alt_matrix)
+#' wrapperSortonco(alt_matrix)
 #'
 #' @noRd
 #' @keywords internal
-wrapper_sortonco <- function(alt_matrix) {
+wrapperSortonco <- function(alt_matrix) {
   order <- c(
     "Amplification;Fusion", "Amplification;Missense Mutation;Fusion", "Amplification;Missense Mutation", "Amplification;Frameshift Mutation;Fusion",
     "Amplification;Frameshift Mutation", "Amplification;Splice Mutation;Fusion", "Amplification;Splice Mutation",
