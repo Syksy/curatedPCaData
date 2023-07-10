@@ -55,7 +55,7 @@ Useful functions, among others, include `colData`, `experiments` `assays`, shapi
 
 ### Gleason and biochemical recurrence
 
-Traditional Gleason grade is the sum of Gleason major and Gleason minor. This can be exemplified as being clearly associated with biochemical recurrence (BCR) via lonk-rank tests in Kaplan-Meier curves:
+Traditional Gleason grade is the sum of Gleason major and Gleason minor. This can be exemplified as being clearly associated with biochemical recurrence (BCR) via log-rank tests in Kaplan-Meier curves:
 
 ```{r gleason_tcga, dpi=100, fig.width=7, fig.height=7, out.width="100%", fig.cap="Gleason grade group vs BCR (TCGA)"}
 clin_tcga <- as.data.frame(colData(mae_tcga))
@@ -123,19 +123,19 @@ table(Recurrence = colData(mae_sun)$disease_specific_recurrence_status, Prolaris
 ## Decipher vs. BCR
 
 ```{r tcga_decipher_bcr}
-common <- intersect(colnames(mae_tcga[["scores"]]), colData(mae_tcga)[, "sample_name"])
-clin_tcga_subset <- clin_tcga[match(common, clin_tcga$sample_name), ]
+matched_tcga <- MatchedAssayExperiment(mae_tcga)
+clin_tcga_subset <- clin_tcga[row.names(colData(matched_tcga)), ]
 bcr_tcga_subset <- Surv(time = clin_tcga_subset$days_to_disease_specific_recurrence, event = clin_tcga_subset$disease_specific_recurrence_status)
-tcga_decipher <- mae_tcga[["scores"]]["decipher", clin_tcga_subset[, "sample_name"]]
+tcga_decipher <- mae_tcga[["scores"]]["decipher", row.names(colData(matched_tcga))]
 coxph_tcga_decipher <- coxph(bcr_tcga_subset ~ tcga_decipher)
 summary(coxph_tcga_decipher)
 ```
 
 ```{r taylor_decipher_bcr}
-common <- intersect(colnames(mae_taylor[["scores"]]), colData(mae_taylor)[, "sample_name"])
-clin_taylor_subset <- clin_taylor[match(common, clin_taylor$sample_name), ]
+matched_taylor = MatchedAssayExperiment(mae_taylor)
+clin_taylor_subset <- clin_taylor[row.names(colData(matched_taylor)), ]
 bcr_taylor_subset <- Surv(time = clin_taylor_subset$days_to_disease_specific_recurrence, event = clin_taylor_subset$disease_specific_recurrence_status)
-taylor_decipher <- mae_taylor[["scores"]]["decipher", clin_taylor_subset[, "sample_name"]]
+taylor_decipher <- mae_taylor[["scores"]]["decipher", row.names(colData(matched_taylor))]
 coxph_taylor_decipher <- coxph(bcr_taylor_subset ~ taylor_decipher)
 summary(coxph_taylor_decipher)
 ```
