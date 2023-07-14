@@ -11,18 +11,16 @@ data resources concerning prostate cancer.
 
 ## Citation
 
-If you use `curatedPCaData`, please consider adding the following
-citation (bioRxiv preprint, [direct link
-here](https://www.biorxiv.org/content/10.1101/2023.01.17.524403v1)):
+If you use `curatedPCaData`, please use the following
+citation ([direct link](https://www.nature.com/articles/s41597-023-02335-4)):
 
     @article {Laajala2023.01.17.524403,
         author = {Laajala, Teemu D and Sreekanth, Varsha and Soupir, Alex and Creed, Jordan and Halkola, Anni S and Calboli, Federico CF and Singaravelu, Kalaimathy and Orman, Michael and Colin-Leitzinger, Christelle and Gerke, Travis and Fidley, Brooke L. and Tyekucheva, Svitlana and Costello, James C},
-        title = {curatedPCaData: Integration of clinical, genomic, and signature features in a curated and harmonized prostate cancer data resource},
+        title = {A harmonized resource of integrated prostate cancer clinical, -omic, and signature features},
         year = {2023},
-        doi = {10.1101/2023.01.17.524403},
-        URL = {https://www.biorxiv.org/content/early/2023/01/19/2023.01.17.524403},
-        eprint = {https://www.biorxiv.org/content/early/2023/01/19/2023.01.17.524403.full.pdf},
-        journal = {bioRxiv}
+        doi = {10.1038/s41597-023-02335-4},
+        URL = {https://www.nature.com/articles/s41597-023-02335-4},
+        journal = {Scientific Data}
     }
 
 ## Installation
