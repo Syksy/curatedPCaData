@@ -2,31 +2,31 @@ citHeader("To cite curatedPCaData, please reference the publication Laajala et a
 
 citEntry(
   entry    = "Article",
-  title    = "curatedPCaData: A harmonized resource of integrated prostate cancer clinical, -omic, and signature features",
+  title    = "A harmonized resource of integrated prostate cancer clinical, -omic, and signature features",
   author   = personList(
               as.person("Teemu D Laajala"),
-              as.person("Jordan Creed"),
               as.person("Varsha Sreekanth"),
               as.person("Alex Soupir"),
+              as.person("Jordan Creed"),
               as.person("Anni S Halkola"),
-              as.person("Federico Calboli"),
+              as.person("Federico CF Calboli"),
               as.person("Kalaimathy Singaravelu"),
               as.person("Christelle Colin Leitzinger"),
               as.person("Travis Gerke"),
-              as.person("Brooke Fidley"),
+              as.person("Brooke L Fidley"),
               as.person("Svitlana Tyekucheva"),
               as.person("James C Costello")), 
-  journal  = "arXiv.",
+  journal  = "Scientific Data",
   year     = "2023",
-  volume   = "",
-  number   = "",
+  volume   = "10",
+  number   = "1",
   pages    = "",
-  url      = "", 
-  doi      = "10.1101/2023.01.17.524403",
+  url      = "https://www.nature.com/articles/s41597-023-02335-4", 
+  doi      = "10.1038/s41597-023-02335-4",
   textVersion = paste(
              "Laajala, T.D., et al. (2023)",
-             "curatedPCaData: A harmonized resource of integrated prostate cancer clinical, -omic, and signature features",
-             "arXiv"
+             "A harmonized resource of integrated prostate cancer clinical, -omic, and signature features.",
+             "Sci Data"
   )
 )
 
