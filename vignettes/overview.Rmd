@@ -286,9 +286,9 @@ The main data class is a `MultiAssayExperiment` (MAE) object compatible with num
 
 3 different omics base data types and accompanying clinical/phenotype data are currently available: 
 
-1. `gex.*` slots contain gene expression values, with the suffix wildcard indicating unit or method for gene expression
-2. `cna.*` slots contain copy number values, with the suffix wildcard indicating method for copy number alterations
-3. `mut` slots contain somatic mutation calls
+1. `gex.*` assays contain gene expression values, with the suffix wildcard indicating unit or method for gene expression
+2. `cna.*` assays contain copy number values, with the suffix wildcard indicating method for copy number alterations
+3. `mut` assays contain somatic mutation calls
 4. `MultiAssayExperiment::colData(maeobj)` contains the clinical metadata curated based on a pre-defined template
 
 Their availability is subject to the study in question, and you will find coverage of the omics here-in. Furthermore, derived variables based on these base data types are provided in the constructed `MultiAssayExperiment` (MAE) class objects.
@@ -455,7 +455,7 @@ knitr::kable(template, caption = "Template for prostate adenocarcinoma clinical 
 
 ### Clinical end-points
 
-Three primary clinical end-points were utilized and are offered in colData-slots in the MAE-objects, if available:
+Three primary clinical end-points were utilized and are offered in the clinical metadata in colData for the MAE-objects, if available:
 
 * Gleason grade/Grade group(s)
 * Biochemical Recurrence (BCR)
@@ -483,9 +483,9 @@ knitr::kable(survivals, caption = "Overall survival end point across datasets in
 
 The function ```getPCa``` functions as the primary interface with building MAE-objects from either live download from ```ExperimentHub``` or by loading them from local cache, if the datasets have been downloaded previously.
 
-The syntax for the function ```getPCa(dataset, slots, timestamp, verbose, ...)``` consists of the following parameters:
+The syntax for the function ```getPCa(dataset, assays, timestamp, verbose, ...)``` consists of the following parameters:
 * ```dataset```: Primary indicator for which study to query from ```ExperimentHub```; notice that this may only be one of the allowed values.
-* ```slots```: This indicates which MAE-slots are fetched. Two slots are always required: ```colData``` which contains information on the clinical metadata, and ```sampleMap``` which maps the rownames of the metadata to columns in the fetched assay data. 
+* ```assays```: This indicates which MAE-assays are fetched from the candidate ExperimentList. Two names are always required (and are filled if missing): ```colData``` which contains information on the clinical metadata, and ```sampleMap``` which maps the rownames of the metadata to columns in the fetched assay data. 
 * ```timestamp```: When data is deposited in the ```ExperimentHub``` resources, they are time stamped to avoid ambiguity. The timestamps provided in this parameter are resolved from left to right, and the first deposit stamp is ```"20230215```. 
 * ```verbose```: Logical indicator whether additional information should be printed by ```getPCa```.
 * ```...```: Further custom parameters passed on to ```getPCa```.
@@ -493,12 +493,12 @@ The syntax for the function ```getPCa(dataset, slots, timestamp, verbose, ...)``
 As an example, let us consider querying the TCGA dataset, but suppose only wish to extract the gene expression data, and the immune deconvolution results derived by the method xCell. Further, we'll request risk and AR scores slot. This subset could be retrieved with:
 
 ```{r tcgaex}
-tcga_subset <- getPCa(dataset = "tcga", slots = c("gex.rsem.log", "xcell", "scores"), timestamp = "20230215")
+tcga_subset <- getPCa(dataset = "tcga", assays = c("gex.rsem.log", "xcell", "scores"), timestamp = "20230215")
 
 tcga_subset
 ``` 
 
-The standard way of extracting the latest MAE-object with all available slots is done via querying with just the dataset name:
+The standard way of extracting the latest MAE-object with all available assays is done via querying with just the dataset name:
 
 ```{r ehquery}
 mae_tcga <- getPCa("tcga")
@@ -507,10 +507,10 @@ mae_taylor <- getPCa("taylor")
 
 ### Accessing primary data
 
-The primary data types slots in the MAE objects for gene expression and copy number alteration will constist of two parts. Mutation data is provided as a ```RaggedExperiment``` object.
+The primary assay names in the MAE objects for gene expression and copy number alteration will consist of two parts. Mutation data is provided as a ```RaggedExperiment``` object.
 
-- Prefix indicating data type, either "gex_" or "cna_".
-- Suffix indicating unit and processing for the data; for example, a gene expression dataset (gex) may have a suffix of "rma" for RMA-processed data, "FPKM" for processed RNA-seq data, "relz" for relative z-score normalized expression values for tumor-normal gene expression pairs, or "logq" for logarithmic quantile-normalized data. The main suffix for copy number alteration is the discretized GISTIC alteration calls with values {-2,-1,0,1,2}, although earlier version also provided log-ratios ("logr")
+- Prefix indicating data type, either "gex." or "cna.".
+- Suffix indicating unit and processing for the data; for example, a gene expression dataset (gex) may have a suffix of "rma" for RMA-processed data, "fpkm" for processed RNA-seq data, "relz" for relative z-score normalized expression values for tumor-normal gene expression pairs, or "logq" for logarithmic quantile-normalized data. The main suffix for copy number alteration is the discretized GISTIC alteration calls with values {-2,-1,0,1,2}, although earlier version also provided log-ratios ("logr")
 - Mutation data is provided as `RaggedExperiment` objects as "mut".
 
 The standard way for accessing a data slot in MAE could be done for example via:
@@ -552,7 +552,7 @@ knitr::kable(overmat, caption = "Sample N counts for intersections between diffe
 
 # Derived variables
 
-In `curatedPCaData` we refer to derived variables as further downstream variables, which have been computed based on primarily data. For most cases, this was done by extracting key gene information from the `gex_*` slots and pre-computing informative downstream markers as described in their primary publications.
+In `curatedPCaData` we refer to derived variables as further downstream variables, which have been computed based on primarily data. For most cases, this was done by extracting key gene information from the `gex_*` assays and pre-computing informative downstream markers as described in their primary publications.
 
 ## Immune deconvolution
 
@@ -577,7 +577,7 @@ To access the quantiseq results for the Taylor et. al dataset, these pre-compute
 head(mae_taylor[["cibersort"]])[1:5, 1:3]
 ```
 
-Similarly to access results from the other immune deconvolution methods, the following slots are available:
+Similarly to access results from the other immune deconvolution methods, the following assays/experiments are also available:
 ```{r}
 head(mae_taylor[["quantiseq"]])[1:5, 1:3]
 head(mae_taylor[["xcell"]])[1:5, 1:3]

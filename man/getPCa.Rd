@@ -4,13 +4,13 @@
 \alias{getPCa}
 \title{Construct Prostate Cancer MultiAssayExperiment object from specific cohort}
 \usage{
-getPCa(dataset, slots, timestamp, verbose = FALSE, ...)
+getPCa(dataset, assays, timestamp, verbose = FALSE, ...)
 }
 \arguments{
 \item{dataset}{character() of PCa cancer cohort names
 (e.g., 'abida')}
 
-\item{slots}{character() A vector of PCa assays. If not included, returns all
+\item{assays}{character() A vector of PCa assays. If not included, returns all
 available for the selected dataset;
 see below for more details}
 
@@ -77,7 +77,7 @@ Shortname      Rd documentation file           Longer name(s)
 
 
 The list of ExperimentList assay names and their descriptions.
-These assays can be entered as part of the \code{slots} argument in the
+These assays can be entered as part of the \code{assays} argument in the
 main function.
 \preformatted{
 

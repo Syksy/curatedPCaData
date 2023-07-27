@@ -58,7 +58,7 @@
 #' @param dataset character() of PCa cancer cohort names
 #'     (e.g., 'abida')
 #'
-#' @param slots character() A vector of PCa assays. If not included, returns all
+#' @param assays character() A vector of PCa assays. If not included, returns all
 #'     available for the selected dataset;
 #'     see below for more details
 #'
@@ -108,7 +108,7 @@
 #' @section Available Assays:
 #'
 #' The list of ExperimentList assay names and their descriptions.
-#' These assays can be entered as part of the \code{slots} argument in the
+#' These assays can be entered as part of the \code{assays} argument in the
 #' main function.
 #' \preformatted{
 #'
@@ -153,8 +153,8 @@
 getPCa <- function(
     # Dataset name
     dataset,
-    # Data slots to retrieve (i.e. user can subset to just desired data)
-    slots,
+    # Names for the set of assay data objects to extract from the MAE object's whole available subset in ExperimentList
+    assays,
     # Timestamps of data from ExperimentHub; allowed values: '20230215'
     timestamp,
     # Verbosity
@@ -189,11 +189,11 @@ getPCa <- function(
   eh_assays_sep <- eh_assays_sep[dataId, ]
   assaysAvail <- unique(eh_assays_sep[, 2]) # Get available assays for selected dataset
   # Select user specified assays
-  if (!missing(slots)) { # If nothing specific requested, return all
-    if (any(!slots %in% assaysAvail)) { # If user asks for something that is not available,
-      stop(paste0(c("At least one of asked slots is not available. The available slots for this dataset are:", assaysAvail), collapse = "  "))
+  if (!missing(assays)) { # If nothing specific requested, return all
+    if (any(!assays %in% assaysAvail)) { # If user asks for something that is not available,
+      stop(paste0(c("At least one of asked assay names is not available. The available assays for this dataset are:", assaysAvail), collapse = "  "))
     } else { # Select only requested assays
-      assaysAvail <- unique(c(slots, "colData", "sampleMap"))
+      assaysAvail <- unique(c(assays, "colData", "sampleMap"))
     }
   }
   # Select assays by timestamp request. If more versions are added this has to be updated.
