@@ -415,7 +415,7 @@ Please note that the TCGA PCa dataset is a subset of the TCGA pan-cancer initiat
 
 ## Citations
 
-The use of ```curatedPCaData``` ought to be cited with [@Laajala2023].
+The use of `curatedPCaData` ought to be cited with [@Laajala2023].
 
 For individual datasets there-in, the following citations are suggested:
 
@@ -441,7 +441,7 @@ For individual datasets there-in, the following citations are suggested:
 
 ### Curated clinical variables
 
-The ```curatedPCaData```-package has been curated with an emphasis on the following primary clinical metadata, which were extracted and cleaned up always when available:
+The `curatedPCaData`-package has been curated with an emphasis on the following primary clinical metadata, which were extracted and cleaned up always when available:
 
 ```{r template_prad, results='asis', echo=FALSE}
 data(template_prad)
@@ -481,14 +481,14 @@ knitr::kable(survivals, caption = "Overall survival end point across datasets in
 
 ### Querying datasets
 
-The function ```getPCa``` functions as the primary interface with building MAE-objects from either live download from ```ExperimentHub``` or by loading them from local cache, if the datasets have been downloaded previously.
+The function `getPCa` functions as the primary interface with building MAE-objects from either live download from `ExperimentHub` or by loading them from local cache, if the datasets have been downloaded previously.
 
-The syntax for the function ```getPCa(dataset, assays, timestamp, verbose, ...)``` consists of the following parameters:
-* ```dataset```: Primary indicator for which study to query from ```ExperimentHub```; notice that this may only be one of the allowed values.
-* ```assays```: This indicates which MAE-assays are fetched from the candidate ExperimentList. Two names are always required (and are filled if missing): ```colData``` which contains information on the clinical metadata, and ```sampleMap``` which maps the rownames of the metadata to columns in the fetched assay data. 
-* ```timestamp```: When data is deposited in the ```ExperimentHub``` resources, they are time stamped to avoid ambiguity. The timestamps provided in this parameter are resolved from left to right, and the first deposit stamp is ```"20230215```. 
-* ```verbose```: Logical indicator whether additional information should be printed by ```getPCa```.
-* ```...```: Further custom parameters passed on to ```getPCa```.
+The syntax for the function `getPCa(dataset, assays, timestamp, verbose, ...)` consists of the following parameters:
+* `dataset`: Primary indicator for which study to query from `ExperimentHub`; notice that this may only be one of the allowed values.
+* `assays`: This indicates which MAE-assays are fetched from the candidate ExperimentList. Two names are always required (and are filled if missing): `colData` which contains information on the clinical metadata, and `sampleMap` which maps the rownames of the metadata to columns in the fetched assay data. 
+* `timestamp`: When data is deposited in the `ExperimentHub` resources, they are time stamped to avoid ambiguity. The timestamps provided in this parameter are resolved from left to right, and the first deposit stamp is `"20230215"`. 
+* `verbose`: Logical indicator whether additional information should be printed by `getPCa`.
+* `...`: Further custom parameters passed on to `getPCa`.
 
 As an example, let us consider querying the TCGA dataset, but suppose only wish to extract the gene expression data, and the immune deconvolution results derived by the method xCell. Further, we'll request risk and AR scores slot. This subset could be retrieved with:
 
@@ -507,7 +507,7 @@ mae_taylor <- getPCa("taylor")
 
 ### Accessing primary data
 
-The primary assay names in the MAE objects for gene expression and copy number alteration will consist of two parts. Mutation data is provided as a ```RaggedExperiment``` object.
+The primary assay names in the MAE objects for gene expression and copy number alteration will consist of two parts. Mutation data is provided as a `RaggedExperiment` object.
 
 - Prefix indicating data type, either "gex." or "cna.".
 - Suffix indicating unit and processing for the data; for example, a gene expression dataset (gex) may have a suffix of "rma" for RMA-processed data, "fpkm" for processed RNA-seq data, "relz" for relative z-score normalized expression values for tumor-normal gene expression pairs, or "logq" for logarithmic quantile-normalized data. The main suffix for copy number alteration is the discretized GISTIC alteration calls with values {-2,-1,0,1,2}, although earlier version also provided log-ratios ("logr")
@@ -518,7 +518,7 @@ The standard way for accessing a data slot in MAE could be done for example via:
 ```{r access}
 mae_taylor[["gex.rma"]][1:5, 1:5]
 ```
-The corresponding clinical variables have an accessor function ```colData``` provided by the ```MultiAssayExperiment```-package:
+The corresponding clinical variables have an accessor function `colData` provided by the `MultiAssayExperiment`-package:
 
 ```{r clinical}
 MultiAssayExperiment::colData(mae_tcga)[1:2, ]
@@ -528,7 +528,7 @@ While it is ideal to make sure user is using the correct namespaces, the `pckgNa
 
 ### ExperimentHub data listing
 
-In order to access the latest listing of ```curatedPCaData``` related resources available in ```ExperimentHub```, consult the ```metadata.csv``` file delivered with the package:
+In order to access the latest listing of `curatedPCaData` related resources available in `ExperimentHub`, consult the `metadata.csv` file delivered with the package:
 
 ```{r metadat}
 metadata <- read.csv(system.file("extdata", "metadata.csv", package = "curatedPCaData"))
@@ -552,11 +552,11 @@ knitr::kable(overmat, caption = "Sample N counts for intersections between diffe
 
 # Derived variables
 
-In `curatedPCaData` we refer to derived variables as further downstream variables, which have been computed based on primarily data. For most cases, this was done by extracting key gene information from the `gex_*` assays and pre-computing informative downstream markers as described in their primary publications.
+In `curatedPCaData` we refer to derived variables as further downstream variables, which have been computed based on primarily data. For most cases, this was done by extracting key gene information from the `gex.*` assays and pre-computing informative downstream markers as described in their primary publications.
 
 ## Immune deconvolution
 
-Tumor progression depends on the immune cell composition in the tumor microenvironment. The '[immunedeconv](https://github.com/icbi-lab/immunedeconv)' package consists of different computational methods to computationally estimate immune cell content using gene expression data. In addition, CIBERTSORTx is provided externally, as this method required registered access. For user convenience, it has been run separately and provided as a slot in the MAE objects. The other methods have been run using the ```immunedeconv``` package [@Sturm2019] and code for reproducing these derived variables are provided alongside the package.
+Tumor progression depends on the immune cell composition in the tumor microenvironment. The '[immunedeconv](https://github.com/icbi-lab/immunedeconv)' package consists of different computational methods to computationally estimate immune cell content using gene expression data. In addition, CIBERTSORTx is provided externally, as this method required registered access. For user convenience, it has been run separately and provided as a slot in the MAE objects. The other methods have been run using the `immunedeconv` package [@Sturm2019] and code for reproducing these derived variables are provided alongside the package.
 
 In this package, we provide estimates of immune cell content from the following deconvolution methods:
 
