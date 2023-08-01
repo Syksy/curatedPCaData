@@ -11,8 +11,9 @@ data resources concerning prostate cancer.
 
 ## Citation
 
-If you use `curatedPCaData`, please use the following
-citation ([direct link](https://www.nature.com/articles/s41597-023-02335-4)):
+If you use `curatedPCaData`, please consider adding the following
+citation (bioRxiv preprint, [direct link
+here](https://www.biorxiv.org/content/10.1101/2023.01.17.524403v1)):
 
     @article {Laajala2023.01.17.524403,
         author = {Laajala, Teemu D and Sreekanth, Varsha and Soupir, Alex and Creed, Jordan and Halkola, Anni S and Calboli, Federico CF and Singaravelu, Kalaimathy and Orman, Michael and Colin-Leitzinger, Christelle and Gerke, Travis and Fidley, Brooke L. and Tyekucheva, Svitlana and Costello, James C},
@@ -63,28 +64,25 @@ present for the R installation.
 
 ### Vignettes
 
-`curatedPCaData` delivers with a number of vignettes displaying the
-package’s generic use as well as summaries and application examples
-across the prostate cancer datasets provided there-in. The vignette
-`overview` is intended for gaining a first-line comprehensive view into
-the package’s contents.
+`curatedPCaData` delivers with basic vignette()s displaying the
+package’s generic use data retrieval and basic processing in R. The
+vignette `overview` is intended for gaining a first-line comprehensive
+view into the package’s contents. The intention is to display the basic
+functionality of the package as an `ExperimentHub` resource.
 
-The vignettes can be accessed via `vignette(package = "curatedPCaData")`
-or via `?curatedPCaData` section ‘*User guides, package vignettes and
-other documentation*’.
-
-A list of available vignettes, subset to suitable topics:
-
-    tools::getVignetteInfo("curatedPCaData")[, c("Topic", "Title")]
-    ##      Topic      Title                                
-    ## [1,] "analyses" "Analysis examples in curatedPCaData"
-    ## [2,] "overview" "Overview to curatedPCaData"
+A sister package, `curatedPCaWorkflow` (GitHub [link
+here](https://github.com/Syksy/curatedPCaWorkflow)), serves multiple
+specialized vignettes that delve deeper into analysis and further
+processing of the data. This workflow package reproduces the results
+presented in Laajala et al., and provides useful insight and examples
+for those looking to further leverage use of the multi-omics data
+provided in `curatedPCaData`.
 
 ### Downloading data
 
-The function `getPCa` with its main parameter with study shortname is
-the primary means of extracting data from a cohort. It will
-automatically create a `MultiAssayExperiment`-object of the study:
+The function `getPCa` is the primary means of extracting data from a
+cohort. It will automatically create a `MultiAssayExperiment`-object of
+the study:
 
     library(curatedPCaData)
 
@@ -95,9 +93,10 @@ automatically create a `MultiAssayExperiment`-object of the study:
     ## attr(,"package")
     ## [1] "MultiAssayExperiment"
     names(mae_tcga)
-    ##  [1] "cna.gistic"   "gex.rsem.log" "mut"          "cibersort"    "xcell"        "epic"         "quantiseq"    "mcp"          "estimate"     "scores"
+    ##  [1] "cna.gistic"   "gex.rsem.log" "mut"          "cibersort"    "xcell"       
+    ##  [6] "epic"         "quantiseq"    "mcp"          "estimate"     "scores"
 
-### Brief example
+### Brief examples
 
 Simple example use of curated datasets and ’omics there-in:
 
@@ -143,11 +142,16 @@ Simple example use of curated datasets and ’omics there-in:
 
     colData(mae_tcga)[1:3, 1:5]
     ## DataFrame with 3 rows and 5 columns
-    ##                  study_name   patient_id     sample_name        alt_sample_name overall_survival_status
-    ##                 <character>  <character>     <character>            <character>               <integer>
-    ## TCGA.2A.A8VL.01        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..                       0
-    ## TCGA.2A.A8VO.01        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..                       0
-    ## TCGA.2A.A8VT.01        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01 BFECF807-0658-417B-9..                       0
+    ##                  study_name   patient_id     sample_name        alt_sample_name
+    ##                 <character>  <character>     <character>            <character>
+    ## TCGA.2A.A8VL.01        TCGA TCGA.2A.A8VL TCGA.2A.A8VL.01 F9F392D3-E3C0-4CF2-A..
+    ## TCGA.2A.A8VO.01        TCGA TCGA.2A.A8VO TCGA.2A.A8VO.01 0BD35529-3416-42DD-A..
+    ## TCGA.2A.A8VT.01        TCGA TCGA.2A.A8VT TCGA.2A.A8VT.01 BFECF807-0658-417B-9..
+    ##                 overall_survival_status
+    ##                               <integer>
+    ## TCGA.2A.A8VL.01                       0
+    ## TCGA.2A.A8VO.01                       0
+    ## TCGA.2A.A8VT.01                       0
 
     mae_taylor
     ## A MultiAssayExperiment object of 11 listed
@@ -194,5 +198,5 @@ Simple example use of curated datasets and ’omics there-in:
     ##  assays() - convert ExperimentList to a SimpleList of matrices
     ##  exportClass() - save data to flat files
 
-For further hands-on examples, please see for example the
-`analyses`-vignette.
+For further details on the provided datasets and extra parameters for
+handling data extraction, please consult the `overview`-vignette.

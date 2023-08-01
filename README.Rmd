@@ -26,13 +26,12 @@ If you use `curatedPCaData`, please consider adding the following citation (bioR
 
 ```
 @article {Laajala2023.01.17.524403,
-	author = {Laajala, Teemu D and Sreekanth, Varsha and Soupir, Alex and Creed, Jordan and Halkola, Anni S and Calboli, Federico CF and Singaravelu, Kalaimathy and Orman, Michael and Colin-Leitzinger, Christelle and Gerke, Travis and Fidley, Brooke L. and Tyekucheva, Svitlana and Costello, James C},
-	title = {curatedPCaData: Integration of clinical, genomic, and signature features in a curated and harmonized prostate cancer data resource},
-	year = {2023},
-	doi = {10.1101/2023.01.17.524403},
-	URL = {https://www.biorxiv.org/content/early/2023/01/19/2023.01.17.524403},
-	eprint = {https://www.biorxiv.org/content/early/2023/01/19/2023.01.17.524403.full.pdf},
-	journal = {bioRxiv}
+    author = {Laajala, Teemu D and Sreekanth, Varsha and Soupir, Alex and Creed, Jordan and Halkola, Anni S and Calboli, Federico CF and Singaravelu, Kalaimathy and Orman, Michael and Colin-Leitzinger, Christelle and Gerke, Travis and Fidley, Brooke L. and Tyekucheva, Svitlana and Costello, James C},
+    title = {A harmonized resource of integrated prostate cancer clinical, -omic, and signature features},
+    year = {2023},
+    doi = {10.1038/s41597-023-02335-4},
+    URL = {https://www.nature.com/articles/s41597-023-02335-4},
+    journal = {Scientific Data}
 }
 ```
 
@@ -78,19 +77,13 @@ Note that building the package locally will require dependencies to be present f
 
 ### Vignettes
 
-`curatedPCaData` delivers with a number of vignettes displaying the package's generic use as well as summaries and application examples across the prostate cancer datasets provided there-in. The vignette `overview` is intended for gaining a first-line comprehensive view into the package's contents.
+`curatedPCaData` delivers with basic vignette()s displaying the package's generic use data retrieval and basic processing in R. The vignette `overview` is intended for gaining a first-line comprehensive view into the package's contents. The intention is to display the basic functionality of the package as an `ExperimentHub` resource.
 
-The vignettes can be accessed via `vignette(package = "curatedPCaData")` or via `?curatedPCaData` section '_User guides, package vignettes and other documentation_'.
-
-A list of available vignettes, subset to suitable topics:
-
-```{r vignettes, warning = FALSE, message = FALSE}
-tools::getVignetteInfo("curatedPCaData")[, c("Topic", "Title")]
-```
+A sister package, `curatedPCaWorkflow` (GitHub [link here](https://github.com/Syksy/curatedPCaWorkflow)), serves multiple specialized vignettes that delve deeper into analysis and further processing of the data. This workflow package reproduces the results presented in Laajala et al., and provides useful insight and examples for those looking to further leverage use of the multi-omics data provided in `curatedPCaData`.
 
 ### Downloading data
 
-The function `getPCa` with its main parameter with study shortname is the primary means of extracting data from a cohort. It will automatically create a `MultiAssayExperiment`-object of the study:
+The function `getPCa` is the primary means of extracting data from a cohort. It will automatically create a `MultiAssayExperiment`-object of the study:
 
 ```{r example_one, warning = FALSE, message = FALSE}
 library(curatedPCaData)
@@ -101,7 +94,7 @@ class(mae_tcga)
 names(mae_tcga)
 ```
 
-### Brief example
+### Brief examples
 
 Simple example use of curated datasets and 'omics there-in:
 
@@ -122,4 +115,4 @@ mae_taylor
 mae_sun
 ```
 
-For further hands-on examples, please see for example the `analyses`-vignette.
+For further details on the provided datasets and extra parameters for handling data extraction, please consult the `overview`-vignette.
