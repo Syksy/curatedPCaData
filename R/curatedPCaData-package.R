@@ -23,7 +23,6 @@
 #' @importFrom rlang .data
 #' @importFrom stats median
 #' @importFrom AnnotationHub query
-#' @importFrom testthat expect_s4_class
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage
