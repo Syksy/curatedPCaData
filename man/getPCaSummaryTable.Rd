@@ -2,7 +2,7 @@
 % Please edit documentation in R/getpcasummaries.R
 \name{getPCaSummaryTable}
 \alias{getPCaSummaryTable}
-\title{Create summary tables for metadata in curatedPCaData}
+\title{Create summary tables for colData metadata in curatedPCaData}
 \usage{
 getPCaSummaryTable(maes, var.name, vals, nas = TRUE)
 }

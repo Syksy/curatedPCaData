@@ -94,3 +94,74 @@ getPCaSummarySurv <- function(maes, event.name, time.name){
 	}
     mat
 }
+
+#' Create a summary table for sample counts for different omics across the datasets in curatedPCaData
+#'
+#' Create two types of summary matrices; first one takes all unique assay names, and summarizes sample counts available for 
+#' all provided studies. The second matrix takes gene expression, copy number alteration, and somatic mutation data, and displays
+#' sample counts for each omic individually, as well as all combinations of intersections for samples available for multi-omics.
+#'
+#' @param maes List of MultiAssayExperiment objects to summarize
+#'
+#' @return A list with two elements: first is a matrix depicting sample counts in each unique assay name for the studies; 
+#' second one is a matrix with sample count overlap between the three main omics (GEX = gene expression; CNA = copy number
+#' alteration; MUT = somatic mutations).
+#'
+#' @examples
+#' mae_taylor <- getPCa("taylor")
+#' mae_tcga <- getPCa("tcga")
+#' getPCaSummarySamples(maes = list(Taylor = mae_taylor, TCGA = mae_tcga))
+#'
+#' @export getPCaSummarySamples
+getPCaSummarySamples <- function(maes){
+	# Extract up-to-date assaynames over all MAE-objects
+	assaynames <- c()
+	for (mae in maes) {
+	  assaynames <- c(assaynames, names(mae))
+	}
+	# Unique slot names
+	assaynames <- unique(assaynames)
+	# Create n count or absent (NA) matrix to be printed out
+	assaymat <- matrix("", nrow = length(assaynames), ncol = length(maes))
+	# Create a list of lists for sample names in different omics
+	sampnames <- list()
+	rownames(assaymat) <- sort(assaynames) # Alphabetic ordering
+	colnames(assaymat) <- names(maes)
+	for (col in 1:length(maes)) {
+	  sampnames[[length(sampnames) + 1]] <- list()
+	  mae <- maes[[col]]
+	  for (row in 1:nrow(assaymat)) {
+	    if (rownames(assaymat)[row] %in% names(mae)) {
+	      assaymat[row, col] <- length(colnames(mae[[rownames(assaymat)[row]]]))
+	      sampnames[[length(sampnames)]][[length(sampnames[[length(sampnames)]]) + 1]] <- colnames(mae[[rownames(assaymat)[row]]])
+	      names(sampnames[[length(sampnames)]])[length(sampnames[[length(sampnames)]])] <- rownames(assaymat)[row]
+	    }
+	  }
+	}
+	# Give MAE names
+	names(sampnames) <- names(maes)
+	# Transpose for more user-friendly printing in rmarkdown
+	assaymat <- t(assaymat)
+	# Which MAEs had 2 or more omics
+	multiomics <- names(which(unlist(lapply(sampnames, FUN = function(x) {
+	  length(names(x)) > 1
+	}))))
+	# Create an overlap N count matrix for GEX & CNA, CNA & MUT, GEX & CNA & MUT based on sample names
+	overmat <- matrix("", ncol = 7, nrow = length(multiomics))
+	colnames(overmat) <- c("GEX", "CNA", "MUT", "GEX & CNA", "GEX & MUT", "CNA & MUT", "GEX & CNA & MUT")
+	rownames(overmat) <- multiomics
+	for (mult in multiomics) {
+	  samps <- sampnames[[mult]]
+	  gex <- samps[[grep("gex", names(samps))[1]]]
+	  cna <- samps[[grep("cna", names(samps))[1]]]
+	  mut <- samps[[grep("mut", names(samps))[1]]]
+	  gex_cna <- length(intersect(gex, cna))
+	  gex_mut <- length(intersect(gex, mut))
+	  cna_mut <- length(intersect(cna, mut))
+	  gex_cna_mut <- length(intersect(intersect(gex, cna), mut))
+	  overmat[mult, ] <- c(length(gex), length(cna), length(mut), gex_cna, gex_mut, cna_mut, gex_cna_mut)
+	}
+	
+	# Return the sample N count matrix and the overlap sample matrix
+	list(Samples = assaymat, Overlap = overmat)
+}

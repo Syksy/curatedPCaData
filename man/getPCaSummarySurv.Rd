@@ -17,7 +17,7 @@ getPCaSummarySurv(maes, event.name, time.name)
 A matrix describing the event and follow-up information as character strings
 }
 \description{
-Create summary for a survival-like columns (0/1 event with follow-up time) for metadata in curatedPCaData
+Create summary for survival-like columns (0/1 event with follow-up time) for colData metadata in curatedPCaData
 }
 \examples{
 mae_taylor <- getPCa("taylor")
