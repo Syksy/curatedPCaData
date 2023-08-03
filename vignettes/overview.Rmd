@@ -19,264 +19,8 @@ knitr::opts_chunk$set(
   tidy = TRUE,
   width.cutoff = 80
 )
-
-library(curatedPCaData)
-# Iterate over the available datasets and make them available in vignette space for the latest time stamp
-mae_abida <- curatedPCaData::getPCa("abida")
-mae_baca <- curatedPCaData::getPCa("baca")
-mae_barbieri <- curatedPCaData::getPCa("barbieri")
-mae_barwick <- curatedPCaData::getPCa("barwick")
-mae_chandran <- curatedPCaData::getPCa("chandran")
-mae_friedrich <- curatedPCaData::getPCa("friedrich")
-mae_hieronymus <- curatedPCaData::getPCa("hieronymus")
-mae_icgcca <- curatedPCaData::getPCa("icgcca")
-mae_igc <- curatedPCaData::getPCa("igc")
-mae_kim <- curatedPCaData::getPCa("kim")
-mae_kunderfranco <- curatedPCaData::getPCa("kunderfranco")
-mae_ren <- curatedPCaData::getPCa("ren")
-mae_sun <- curatedPCaData::getPCa("sun")
-mae_taylor <- curatedPCaData::getPCa("taylor")
-mae_tcga <- curatedPCaData::getPCa("tcga")
-mae_true <- curatedPCaData::getPCa("true")
-mae_wallace <- curatedPCaData::getPCa("wallace")
-mae_wang <- curatedPCaData::getPCa("wang")
-mae_weiner <- curatedPCaData::getPCa("weiner")
-
-###
-#
-# Create overview tables
-#
-###
-
-# List of MAE objects
-maes <- grep("mae_", ls(), value = TRUE)
-
-# Clinical metadata template
-data(template_prad)
-template <- template_prad
-# Only loop through the optional fields
-fields <- template[which(template$requiredness == "optional" & !template$col.name == "alt_sample_name"), "col.name"]
-
-# Create a template matrix for data per study
-mat <- matrix(NA, nrow = length(fields), ncol = 2)
-colnames(mat) <- c("Instances", "Missingness")
-rownames(mat) <- fields
-
-# Create functions for summarizing MAE-object fields
-summarize_feature <- function(mae, feature) {
-  x <- MultiAssayExperiment::colData(mae)[, feature]
-  # Summarizing character-fields
-  if (all(is.na(x))) {
-    "N/A"
-  } else if (template[which(template$col.name == feature), "var.class"] %in% c("character", "string")) {
-    # Tabulate and order tabulation
-    tab <- table(x, useNA = "ifany")
-    tab <- sort(tab, decreasing = TRUE)
-    # If there are only 3 or less unique character string entries summarize them
-    if (length(unique(x)) <= 3) {
-      return(paste0(paste0(paste0(names(tab), ": ", tab), " (", round(tab / sum(tab) * 100, 0), "%)"), collapse = ";"))
-    }
-    # Else summarize top 3 common entries and NAs
-    else {
-      return(paste0(paste0(paste0(paste0(names(tab)[1:3], ": ", tab[1:3]), " (", round(tab[1:3] / sum(tab) * 100, 0), "%)"), collapse = ";"), "; ..."))
-    }
-    # Summarizing numeric fields
-  } else if (template[which(template$col.name == feature), "var.class"] %in% c("integer", "numeric")) {
-    # Cast to numeric; for example, an error entry may be psa value ">2000" causing string value
-    x <- as.numeric(x)
-    # If there are only 3 or less unique numeric entries summarize them tabulated
-    if (length(unique(x)) <= 3) {
-      # Tabulate and order tabulation
-      tab <- table(x, useNA = "ifany")
-      tab <- sort(tab, decreasing = TRUE)
-      return(paste0(paste0(paste0(names(tab), ": ", tab), " (", round(tab / sum(tab) * 100, 0), "%)"), collapse = ";"))
-    }
-    # For 4 or more unique values, use quantiles
-    else {
-      # Contains missing values
-      if (any(is.na(x))) {
-        return(paste0("[", paste0(round(quantile(x, na.rm = TRUE), 2), collapse = ","), "], NA n=", sum(is.na(x))))
-        # No missing values
-      } else {
-        return(paste0("[", paste0(round(quantile(x), 2), collapse = ", "), "]"))
-      }
-    }
-  } else {
-    return("Unidentified var.class")
-  }
-}
-missingness_feature <- function(mae, feature) {
-  x <- MultiAssayExperiment::colData(mae)[, feature]
-  if (sum(is.na(x)) > 0) {
-    paste0("n=", sum(is.na(x)), " (", round(100 * sum(is.na(x)) / length(x), 0), "%)")
-  } else {
-    "-"
-  }
-}
-
-###
-#
-# Gleason grading tables
-#
-###
-
-# Create a Gleason grade end-point availability table; NA-value in addition to Gleason sums of 5-10; Other-values for debugging
-gleasons <- matrix(NA, nrow = length(maes), ncol = length(5:10) + 1 + 1)
-rownames(gleasons) <- paste(gsub("mae_", "", maes))
-colnames(gleasons) <- c(5:10, "Other", "N/A")
-for (i in 1:nrow(gleasons)) {
-  eval(parse(text = paste0("gl <- MultiAssayExperiment::colData(", maes[i], ")$gleason_grade")))
-  # Iterate through gleasons 5-10
-  gls <- 5:10
-  for (j in 1:(ncol(gleasons) - 2)) {
-    if (!sum(gl == gls[j], na.rm = TRUE) == 0) {
-      gleasons[i, j] <- paste0(sum(gl == gls[j], na.rm = TRUE), " (", round(100 * sum(gl == gls[j], na.rm = TRUE) / length(gl), 0), "%)")
-    } else {
-      gleasons[i, j] <- "-"
-    }
-  }
-  # Other values
-  vals <- c(5:10, NA, NA_real_)
-  gleasons[i, ncol(gleasons) - 1] <- paste0(sum(!gl %in% vals, na.rm = TRUE), " (", round(100 * sum(!gl %in% vals, na.rm = TRUE) / length(gl), 0), "%)")
-  # NA-values
-  gleasons[i, ncol(gleasons)] <- paste0(sum(is.na(gl), na.rm = TRUE), " (", round(100 * sum(is.na(gl), na.rm = TRUE) / length(gl), 0), "%)")
-}
-
-# Create a Grade group table; NA-value in addition to groups of <=6, 3+4, 4+3, 7 (if major+minor not separated), >=8, ; Other-values for debugging
-groups <- matrix(NA, nrow = length(maes), ncol = 5 + 1 + 1)
-rownames(groups) <- paste(gsub("mae_", "", maes))
-colnames(groups) <- c("<=6", "3+4", "4+3", "7", ">=8", "Other", "N/A")
-for (i in 1:nrow(groups)) {
-  eval(parse(text = paste0("gr <- MultiAssayExperiment::colData(", maes[i], ")$grade_group")))
-  # Iterate through Grade groups
-  grs <- c("<=6", "3+4", "4+3", "7", ">=8")
-  for (j in 1:(ncol(groups) - 2)) {
-    if (!sum(gr == grs[j], na.rm = TRUE) == 0) {
-      groups[i, j] <- paste0(sum(gr == grs[j], na.rm = TRUE), " (", round(100 * sum(gr == grs[j], na.rm = TRUE) / length(gr), 0), "%)")
-    } else {
-      groups[i, j] <- "-"
-    }
-  }
-  # Other values
-  vals <- c(grs, NA_character_, NA)
-  groups[i, ncol(groups) - 1] <- paste0(sum(!gr %in% vals, na.rm = TRUE), " (", round(100 * sum(!gr %in% vals, na.rm = TRUE) / length(gr), 0), "%)")
-  # NA-values
-  groups[i, ncol(groups)] <- paste0(sum(is.na(gr), na.rm = TRUE), " (", round(100 * sum(is.na(gr), na.rm = TRUE) / length(gr), 0), "%)")
-}
-
-
-###
-#
-# Survival/recurrence quantiles
-#
-###
-
-survivals <- matrix(NA, nrow = length(maes), ncol = 5)
-rownames(survivals) <- paste(gsub("mae_", "", maes))
-colnames(survivals) <- c("0 (no event)", "1 (event)", "N/A (event)", "Time (d)", "N/A (time)")
-for (i in 1:nrow(survivals)) {
-  eval(parse(text = paste0("surv_time <- MultiAssayExperiment::colData(", maes[i], ")$days_to_overall_survival")))
-  eval(parse(text = paste0("surv_event <- MultiAssayExperiment::colData(", maes[i], ")$overall_survival_status")))
-  ifelse(all(is.na(surv_event)),
-    survivals[i, 1] <- "-",
-    survivals[i, 1] <- paste0(sum(surv_event == 0, na.rm = TRUE), " (", round(100 * sum(surv_event == 0, na.rm = TRUE) / length(surv_event), 0), "%)")
-  )
-  ifelse(all(is.na(surv_event)),
-    survivals[i, 2] <- "-",
-    survivals[i, 2] <- paste0(sum(surv_event == 1, na.rm = TRUE), " (", round(100 * sum(surv_event == 1, na.rm = TRUE) / length(surv_event), 0), "%)")
-  )
-  survivals[i, 3] <- paste0(sum(is.na(surv_event)), " (", round(100 * sum(is.na(surv_event)) / length(surv_event), 0), "%)")
-  qs <- round(quantile(surv_time, na.rm = TRUE), 0)
-  ifelse(all(is.na(qs)),
-    survivals[i, 4] <- "-",
-    survivals[i, 4] <- paste0("[", qs[1], ",", qs[2], ",", qs[3], ",", qs[4], ",", qs[5], "]")
-  )
-  survivals[i, 5] <- paste0(sum(is.na(surv_time)), " (", round(100 * sum(is.na(surv_time)) / length(surv_time), 0), "%)")
-}
-
-recurrences <- matrix(NA, nrow = length(maes), ncol = 5)
-rownames(recurrences) <- paste(gsub("mae_", "", maes))
-colnames(recurrences) <- c("0 (no event)", "1 (event)", "N/A (event)", "Time (d)", "N/A (time)")
-for (i in 1:nrow(recurrences)) {
-  eval(parse(text = paste0("recur_time <- MultiAssayExperiment::colData(", maes[i], ")$days_to_disease_specific_recurrence")))
-  eval(parse(text = paste0("recur_event <- MultiAssayExperiment::colData(", maes[i], ")$disease_specific_recurrence_status")))
-  ifelse(all(is.na(recur_event)),
-    recurrences[i, 1] <- "-",
-    recurrences[i, 1] <- paste0(sum(recur_event == 0, na.rm = TRUE), " (", round(100 * sum(recur_event == 0, na.rm = TRUE) / length(recur_event), 0), "%)")
-  )
-  ifelse(all(is.na(recur_event)),
-    recurrences[i, 2] <- "-",
-    recurrences[i, 2] <- paste0(sum(recur_event == 1, na.rm = TRUE), " (", round(100 * sum(recur_event == 1, na.rm = TRUE) / length(recur_event), 0), "%)")
-  )
-  recurrences[i, 3] <- paste0(sum(is.na(recur_event)), " (", round(100 * sum(is.na(recur_event)) / length(recur_event), 0), "%)")
-  qs <- round(quantile(recur_time, na.rm = TRUE), 0)
-  ifelse(all(is.na(qs)),
-    recurrences[i, 4] <- "-",
-    recurrences[i, 4] <- paste0("[", qs[1], ",", qs[2], ",", qs[3], ",", qs[4], ",", qs[5], "]")
-  )
-  recurrences[i, 5] <- paste0(sum(is.na(recur_time)), " (", round(100 * sum(is.na(recur_time)) / length(recur_time), 0), "%)")
-}
-
-
-###
-#
-# 'omics slot name and N counts in each MAE object
-#
-###
-
-# Extract up-to-date slotnames over all MAE-objects
-slotnames <- c()
-for (mae in maes) {
-  eval(parse(text = paste0("maeobj <- ", mae)))
-  slotnames <- c(slotnames, names(maeobj))
-}
-# Unique slot names
-slotnames <- unique(slotnames)
-# Create n count or absent (NA) matrix to be printed out
-slotmat <- matrix("", nrow = length(slotnames), ncol = length(maes))
-# Create a list of lists for sample names in different omics
-sampnames <- list()
-rownames(slotmat) <- sort(slotnames) # Alphabetic ordering
-colnames(slotmat) <- maes
-for (col in 1:length(maes)) {
-  sampnames[[length(sampnames) + 1]] <- list()
-  eval(parse(text = paste0("maeobj <- ", maes[col])))
-  for (row in 1:nrow(slotmat)) {
-    if (rownames(slotmat)[row] %in% names(maeobj)) {
-      slotmat[row, col] <- length(colnames(maeobj[[rownames(slotmat)[row]]]))
-      sampnames[[length(sampnames)]][[length(sampnames[[length(sampnames)]]) + 1]] <- colnames(maeobj[[rownames(slotmat)[row]]])
-      names(sampnames[[length(sampnames)]])[length(sampnames[[length(sampnames)]])] <- rownames(slotmat)[row]
-    }
-  }
-}
-
-# Give MAE names
-names(sampnames) <- maes
-
-# Transpose for more user-friendly printing in rmarkdown
-slotmat <- t(slotmat)
-
-# Which MAEs had 2 or more omics
-multiomics <- names(which(unlist(lapply(sampnames, FUN = function(x) {
-  length(names(x)) > 1
-}))))
-# Create an overlap N count matrix for GEX & CNA, CNA & MUT, GEX & CNA & MUT based on sample names
-overmat <- matrix("", ncol = 7, nrow = length(multiomics))
-colnames(overmat) <- c("GEX", "CNA", "MUT", "GEX & CNA", "GEX & MUT", "CNA & MUT", "GEX & CNA & MUT")
-rownames(overmat) <- multiomics
-
-for (mult in multiomics) {
-  samps <- sampnames[[mult]]
-  gex <- samps[[grep("gex", names(samps))[1]]]
-  cna <- samps[[grep("cna", names(samps))[1]]]
-  mut <- samps[[grep("mut", names(samps))[1]]]
-  gex_cna <- length(intersect(gex, cna))
-  gex_mut <- length(intersect(gex, mut))
-  cna_mut <- length(intersect(cna, mut))
-  gex_cna_mut <- length(intersect(intersect(gex, cna), mut))
-  overmat[mult, ] <- c(length(gex), length(cna), length(mut), gex_cna, gex_mut, cna_mut, gex_cna_mut)
-}
 ```
+
 # Package overview
 
 This overview provides insight into the available datasets (R package version `r utils::packageVersion("curatedPCaData")`) provided via `ExperimentHub` cloud services. 
@@ -303,9 +47,59 @@ The `curatedPCaData` package contains a collection of manually curated datasets 
 
 To get a full list of available datasets see the documentation for `getPCa` function, or via querying `ExperimentHub`directly for the components used to construct `MultiAssayExperiments` for the studies. However, `getPCa` is aimed to comprehensively provide readily usable multi-omics compatible MAE-objects.
 
-# Overview to the available datasets
+## All available datasets
 
-## Datasets
+Fetching all datasets available in `curatedPCaData`:
+
+```{r message=FALSE}
+library(curatedPCaData)
+
+# Iterate over the available datasets and make them available in vignette space for the latest time stamp
+mae_abida <- curatedPCaData::getPCa("abida")
+mae_baca <- curatedPCaData::getPCa("baca")
+mae_barbieri <- curatedPCaData::getPCa("barbieri")
+mae_barwick <- curatedPCaData::getPCa("barwick")
+mae_chandran <- curatedPCaData::getPCa("chandran")
+mae_friedrich <- curatedPCaData::getPCa("friedrich")
+mae_hieronymus <- curatedPCaData::getPCa("hieronymus")
+mae_icgcca <- curatedPCaData::getPCa("icgcca")
+mae_igc <- curatedPCaData::getPCa("igc")
+mae_kim <- curatedPCaData::getPCa("kim")
+mae_kunderfranco <- curatedPCaData::getPCa("kunderfranco")
+mae_ren <- curatedPCaData::getPCa("ren")
+mae_sun <- curatedPCaData::getPCa("sun")
+mae_taylor <- curatedPCaData::getPCa("taylor")
+mae_tcga <- curatedPCaData::getPCa("tcga")
+mae_true <- curatedPCaData::getPCa("true")
+mae_wallace <- curatedPCaData::getPCa("wallace")
+mae_wang <- curatedPCaData::getPCa("wang")
+mae_weiner <- curatedPCaData::getPCa("weiner")
+
+# Create a list of the MAE objects for creating summary tables
+maes <- list(
+  abida = mae_abida,
+  baca = mae_baca,
+  barbieri = mae_barbieri,
+  barwick = mae_barwick,
+  chandran = mae_chandran,
+  friedrich = mae_friedrich,
+  hieronymus = mae_hieronymus,
+  icgcca = mae_icgcca,
+  igc = mae_igc,
+  kim = mae_kim,
+  kunderfranco = mae_kunderfranco,
+  ren = mae_ren,
+  sun = mae_sun,
+  taylor = mae_taylor,
+  tcga = mae_tcga,
+  true = mae_true,
+  wallace = mae_wallace,
+  wang = mae_wang,
+  weiner = mae_weiner
+)
+```
+
+## Dataset criteria
 
 The datasets were manually selected based on various criteria, such as:
 
@@ -443,7 +237,7 @@ For individual datasets there-in, the following citations are suggested:
 
 The `curatedPCaData`-package has been curated with an emphasis on the following primary clinical metadata, which were extracted and cleaned up always when available:
 
-```{r template_prad, results='asis', echo=FALSE}
+```{r template, results='asis', echo=FALSE}
 data(template_prad)
 template <- template_prad
 # Add spaces to |-dividers for linechanges
@@ -463,19 +257,47 @@ Three primary clinical end-points were utilized and are offered in the clinical 
 
 Below are summaries for each of these endpoints for each study. Of note, OS had very few events, thus survival modelling for this end-point may be considered unreliable.
 
-```{r gleasons, results = 'asis', echo=FALSE}
+Gleason grades:
+
+```{r gleasons1}
+# Create a summary table of Gleason grades
+gleasons <- curatedPCaData::getPCaSummaryTable(maes, var.name = "gleason_grade", vals=5:10)
+```
+
+```{r gleasons2, results = 'asis', echo=FALSE}
 knitr::kable(gleasons, caption = "Gleason grades across datasets in curatedPCaData")
 ```
 
-```{r groups, results = 'asis', echo=FALSE}
-knitr::kable(groups, caption = "Grade groups across datasets in curatedPCaData")
+Grade groups:
+
+```{r groups1}
+# Create a summary table of grade groups
+gradegroups <- curatedPCaData::getPCaSummaryTable(maes, var.name = "grade_group", vals=c("<=6", "3+4", "4+3", "7", ">=8"))
 ```
 
-```{r recurrences, results = 'asis', echo=FALSE}
+```{r groups2, results = 'asis', echo=FALSE}
+knitr::kable(gradegroups, caption = "Grade groups across datasets in curatedPCaData")
+```
+
+Biochemical recurrences:
+
+```{r recurrences1}
+# Create a summary table of biochemical recurrences
+recurrences <- curatedPCaData::getPCaSummarySurv(maes, event.name = "disease_specific_recurrence_status", time.name = "days_to_disease_specific_recurrence")
+```
+
+```{r recurrences2, results = 'asis', echo=FALSE}
 knitr::kable(recurrences, caption = "Disease recurrence end point across datasets in curatedPCaData")
 ```
 
-```{r os, results = 'asis', echo=FALSE}
+Overall survival:
+
+```{r os1}
+# Create a summary table of overall survival
+survivals <- curatedPCaData::getPCaSummarySurv(maes, event.name = "overall_survival_status", time.name = "days_to_overall_survival")
+```
+
+```{r os2, results = 'asis', echo=FALSE}
 knitr::kable(survivals, caption = "Overall survival end point across datasets in curatedPCaData")
 ```
 
@@ -535,19 +357,23 @@ metadata <- read.csv(system.file("extdata", "metadata.csv", package = "curatedPC
 head(metadata)
 ```
 
-
 ## Omics sample count and overlap
+
+```{r samplecountsoverlap}
+# Retrieve samples counts across different unique assay names as well as omics overlap sample counts
+samplecounts <- curatedPCaData::getPCaSummarySamples(maes)
+```
 
 The sample counts in each 'omics separately is listed below:
 
 ```{r samplecounts, results='asis', echo=FALSE}
-knitr::kable(slotmat, caption = "Sample N counts in each omics for every MAE object")
+knitr::kable(samplecounts$Samples, caption = "Sample N counts in each omics for every MAE object")
 ```
 
 However, taking intersections between different omics shows that different samples were analyzed on different platforms - therefore the effective N counts for analyzing multiple 'omics platforms simultaneously is smaller. The overlaps between gene expression (GEX), copy number alteration (CNA), and mutations (MUT) are shown below:
 
-```{r overlap, results='asis', echo=FALSE}
-knitr::kable(overmat, caption = "Sample N counts for intersections between different omics")
+```{r sampleoverlap, results='asis', echo=FALSE}
+knitr::kable(samplecounts$Overlap, caption = "Sample N counts for intersections between different omics")
 ```
 
 # Derived variables
