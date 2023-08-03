@@ -165,3 +165,32 @@ getPCaSummarySamples <- function(maes){
 	# Return the sample N count matrix and the overlap sample matrix
 	list(Samples = assaymat, Overlap = overmat)
 }
+
+#' Create a vector of unique study identifiers available in curatedPCaData
+#'
+#' This function accesses the metadata available together with the curatedPCaData package
+#' and creates a vector of unique study identifier names available in the ExperimentHub
+#' resources. This vector is useful, for example, when applying the 'getPCa' to create MAE
+#' from the studies.
+#'
+#' @param uniqs Should only unique instances be returned; by default TRUE
+#'
+#' @details Uses the internal 'metadata.csv' file, which is also used to provide the metadata
+#' available in ExperimentHub. 
+#'
+#' @examples
+#' studyids <- getPCaStudies()
+#'
+#' @export getPCaStudies
+getPCaStudies <- function(
+    uniqs = TRUE
+){
+    assays_file <- system.file("extdata", "metadata.csv", package = "curatedPCaData", mustWork = TRUE)
+    assay_metadat <- read.csv(assays_file, stringsAsFactors = FALSE)	
+	titles <- unlist(lapply(assay_metadat$Title, FUN=\(x) { strsplit(x, "_")[[1]][1] }))
+    if(uniqs){
+	    unique(titles)	
+    }else{
+	    titles
+	}
+}
