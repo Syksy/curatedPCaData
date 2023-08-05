@@ -3,6 +3,7 @@
 export(getPCa)
 export(getPCaStudies)
 export(getPCaSummarySamples)
+export(getPCaSummaryStudies)
 export(getPCaSummarySurv)
 export(getPCaSummaryTable)
 import(ExperimentHub)

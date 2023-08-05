@@ -166,6 +166,118 @@ getPCaSummarySamples <- function(maes){
 	list(Samples = assaymat, Overlap = overmat)
 }
 
+#' Create a summary table of key characteristics for each study
+#'
+#' 
+#' @return
+#' A table with study names, references, sample counts, data source, and other notes.
+#'
+#' @examples
+#' studies <- getPCaStudies(uniqs = TRUE)
+#' tab <- getPCaSummaryStudies(studies)
+#'
+#' @export getPCaSummaryStudies
+getPCaSummaryStudies <- function(
+    maes
+){
+    if(inherits(maes, "list")){
+        # OK
+    }else if(inherits(maes, "character")){
+        maenames <- maes
+        maes <- lapply(maenames, FUN=\(id) { curatedPCaData::getPCa(id) })
+        names(maes) <- maenames
+    }else{
+        stop("Parameter 'maes' should either be a study short id character vector or preferably a named list of MAE objects")
+    }
+    studies <- matrix("", nrow = length(maes), ncol = 6)
+    colnames(studies) <- c("Study short id", "Sample types", "GEX/CNA/MUT platform(s)", "Notes", "Data source", "Reference(s)")
+    studies[, 1] <- names(maes)
+    # Reformat names with special cases for abbreviations vs. names
+    for (index in 1:length(maes)) {
+      mae <- names(maes)[index]
+      samptypes <- table(MultiAssayExperiment::colData(maes[[index]])$sample_type)
+      sampnames <- names(samptypes)
+      samplecollapse <- paste(paste(sampnames, samptypes, sep = ": "), collapse = ", ")
+      studies[index, "Sample types"] <- samplecollapse
+      # Annotate additional useful information and append to correct positions
+      if (mae %in% c("abida", "mae_abida")) {
+        studies[index, "Data source"] <- "cBioPortal"
+        studies[index, "Reference(s)"] <- "Abida et al."
+      } else if (mae %in% c("baca", "mae_baca")) {
+        studies[index, "Data source"] <- "cBioPortal"
+        studies[index, "Reference(s)"] <- "Baca et al."
+      } else if (mae %in% c("barbieri", "mae_barbieri")) {
+        studies[index, "Data source"] <- "cBioPortal"
+        studies[index, "Reference(s)"] <- "Barbieri et al."
+      } else if (mae %in% c("barwick", "mae_barwick")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "Custom DASL"
+        studies[index, "Reference(s)"] <- "Barwick et al."
+      } else if (mae %in% c("chandran", "mae_chandran", "yu")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL8300 [HG_U95Av2]"
+        studies[index, "Reference(s)"] <- "Chandran et al., Yu et al."
+      } else if (mae %in% c("friedrich", "mae_friedrich")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "Custom Agilent array"
+        studies[index, "Reference(s)"] <- "Friedrich et al."
+      } else if (mae %in% c("hieronymus", "mae_hieronymus")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL8737 Agilent-021529 Human CGH"
+        studies[index, "Notes"] <- "CNA only"
+        studies[index, "Reference(s)"] <- "Hieronymus et al."
+      } else if (mae %in% c("icgcca", "mae_icgcca", "icgc-ca", "zhang")) {
+        studies[index, "Data source"] <- "ICGC Data Portal (PRAD-CA)"
+        studies[index, "Notes"] <- "Canadian data from International Cancer Genome Collaboratory"
+        studies[index, "Reference(s)"] <- "PRAD-CA in Zhang et al."
+      } else if (mae %in% c("igc", "mae_igc")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL570 [HG-U133_Plus_2]"
+        studies[index, "Reference(s)"] <- "GEO accession code GSE2109"
+      } else if (mae %in% c("kim", "mae_kim")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL5188 [HuEx-1_0-st]"
+        studies[index, "Reference(s)"] <- "Kim et al."
+      } else if (mae %in% c("kunderfranco", "mae_kunderfranco", "peraldo-neia", "longoni")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL887 Agilent-012097 Human 1A Microarray (V2)"
+        studies[index, "Reference(s)"] <- "Kunderfranco et al., Peraldo-Neia et al., Longoni et al."
+      } else if (mae %in% c("ren", "mae_ren")) {
+        studies[index, "Data source"] <- "cBioPortal"
+        studies[index, "Reference(s)"] <- "Ren et al."
+      } else if (mae %in% c("sun", "mae_sun")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL96 [HG-U133A]"
+        studies[index, "Reference(s)"] <- "Sun et al."
+      } else if (mae %in% c("taylor", "mae_taylor", "mskcc")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "Notes"] <- "Also known as MSKCC"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GEX: GPL5188 [HuEx-1_0-st], CNA: GPL4091 Agilent CGH"
+        studies[index, "Reference(s)"] <- "Taylor et al."
+      } else if (mae %in% c("tcga", "mae_tcga")) {
+        studies[index, "Data source"] <- "Xenabrowser"
+        studies[index, "Reference(s)"] <- "Cancer Genome Atlas Research Network, Goldman et al."
+      } else if (mae %in% c("true", "mae_true")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL3834 FHCRC Human Prostate PEDB cDNA v3 / v4"
+        studies[index, "Reference(s)"] <- "True et al."
+      } else if (mae %in% c("wallace", "mae_wallace")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL571 [HG-U133A_2]"
+        studies[index, "Reference(s)"] <- "Wallace et al."
+      } else if (mae %in% c("wang", "mae_wang")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL96 [HG-U133A]"
+        studies[index, "Reference(s)"] <- "Wang et al., Jia et al."
+      } else if (mae %in% c("weiner", "mae_weiner")) {
+        studies[index, "Data source"] <- "GEO"
+        studies[index, "GEX/CNA/MUT platform(s)"] <- "GPL5175 [HuEx-1_0-st]"
+        studies[index, "Reference(s)"] <- "Weiner et al."
+      }
+    }
+    studies
+}
+
 #' Create a vector of unique study identifiers available in curatedPCaData
 #'
 #' This function accesses the metadata available together with the curatedPCaData package
@@ -194,3 +306,5 @@ getPCaStudies <- function(
 	    titles
 	}
 }
+
+
