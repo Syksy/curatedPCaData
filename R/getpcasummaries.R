@@ -68,6 +68,7 @@ getPCaSummaryTable <- function(maes, var.name, vals, nas = TRUE)
 #' mae_tcga <- getPCa("tcga")
 #' getPCaSummarySurv(maes = list(Taylor = mae_taylor, TCGA = mae_tcga), event.name = "disease_specific_recurrence_status", time.name = "days_to_disease_specific_recurrence")
 #'
+#' @importFrom stats quantile
 #' @export getPCaSummarySurv
 getPCaSummarySurv <- function(maes, event.name, time.name){
 	mat <- matrix(NA, nrow = length(maes), ncol = 5)
@@ -168,6 +169,7 @@ getPCaSummarySamples <- function(maes){
 
 #' Create a summary table of key characteristics for each study
 #'
+#' @param maes A list of MAE objects or a character vector with study short ids
 #' 
 #' @return
 #' A table with study names, references, sample counts, data source, and other notes.

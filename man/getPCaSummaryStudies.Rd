@@ -6,6 +6,9 @@
 \usage{
 getPCaSummaryStudies(maes)
 }
+\arguments{
+\item{maes}{A list of MAE objects or a character vector with study short ids}
+}
 \value{
 A table with study names, references, sample counts, data source, and other notes.
 }
