@@ -289,6 +289,8 @@ getPCaSummaryStudies <- function(
 #'
 #' @param uniqs Should only unique instances be returned; by default TRUE
 #'
+#' @return A character vector with short study identifiers, e.g. 'abida', 'baca', ...
+#'
 #' @details Uses the internal 'metadata.csv' file, which is also used to provide the metadata
 #' available in ExperimentHub. 
 #'

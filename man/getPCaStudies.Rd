@@ -9,6 +9,9 @@ getPCaStudies(uniqs = TRUE)
 \arguments{
 \item{uniqs}{Should only unique instances be returned; by default TRUE}
 }
+\value{
+A character vector with short study identifiers, e.g. 'abida', 'baca', ...
+}
 \description{
 This function accesses the metadata available together with the curatedPCaData package
 and creates a vector of unique study identifier names available in the ExperimentHub
