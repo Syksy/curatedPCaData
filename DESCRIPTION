@@ -35,7 +35,7 @@ biocViews: ExperimentHub, ExperimentData, ProstateCancerData, CancerData,
 	CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
 URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
-Depends: R (>= 4.4.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, 
+Depends: R (>= 4.3.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, 
     RaggedExperiment 
 Imports: 
     ExperimentHub,
