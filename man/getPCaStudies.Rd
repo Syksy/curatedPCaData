@@ -10,16 +10,18 @@ getPCaStudies(uniqs = TRUE)
 \item{uniqs}{Should only unique instances be returned; by default TRUE}
 }
 \value{
-A character vector with short study identifiers, e.g. 'abida', 'baca', ...
+A character vector with short study identifiers, e.g. 'abida', 
+'baca', ...
 }
 \description{
-This function accesses the metadata available together with the curatedPCaData package
-and creates a vector of unique study identifier names available in the ExperimentHub
-resources. This vector is useful, for example, when applying the 'getPCa' to create MAE
-from the studies.
+This function accesses the metadata available together with the 
+curatedPCaData package and creates a vector of unique study identifier names 
+available in the ExperimentHub resources. This vector is useful, for example,
+when applying the 'getPCa' to create MAE from the studies.
 }
 \details{
-Uses the internal 'metadata.csv' file, which is also used to provide the metadata
+Uses the internal 'metadata.csv' file, which is also used to provide
+the metadata
 available in ExperimentHub.
 }
 \examples{

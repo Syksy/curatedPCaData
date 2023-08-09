@@ -6,16 +6,26 @@
 \format{
 A MAE object spanning 444 castrate resistant prostate cancer samples.
 \describe{
-   \item{cna.gistic}{matrix with 20291 rows and 444 columns, from GISTIC discretized copy number alteration calls.}
-   \item{gex.relz}{matrix with 18971 rows and 266 columns, from z-score normalized expression in relative to paired normals.}
-   \item{mut}{RaggedExperiment with 63184 rows and 444 columns, mutation data from cbioportal}
-   \item{cibersort}{matrix with 22 rows and 261 columns, of cibersort based deconvolution data}
-   \item{xcell}{matrix with 39 rows and 261 columns, of xcell based deconvolution data}
-   \item{epic}{matrix with 8 rows and 261 columns, of epic based deconvolution data}
-   \item{quantiseq}{matrix with 11 rows and 261 columns, of quantiseq based deconvolution data}
-   \item{estimate}{data.frame with 4 rows and 261 columns, of cell types based on ESTIMATE method}
-   \item{scores}{matrix with 4 rows and 261 columns, of risk scores and AR scores}
-   \item{mcp}{mmatrix with 11 rows and 261 columns, of mcp-counter based deconvolution data}
+    \item{cna.gistic}{matrix with 20291 rows and 444 columns, from GISTIC 
+        discretized copy number alteration calls.}
+    \item{gex.relz}{matrix with 18971 rows and 266 columns, from z-score 
+        normalized expression in relative to paired normals.}
+    \item{mut}{RaggedExperiment with 63184 rows and 444 columns, mutation 
+        data from cbioportal}
+    \item{cibersort}{matrix with 22 rows and 261 columns, of cibersort based 
+        deconvolution data}
+    \item{xcell}{matrix with 39 rows and 261 columns, of xcell based 
+        deconvolution data}
+    \item{epic}{matrix with 8 rows and 261 columns, of epic based 
+        deconvolution data}
+    \item{quantiseq}{matrix with 11 rows and 261 columns, of quantiseq based 
+        deconvolution data}
+    \item{estimate}{data.frame with 4 rows and 261 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 4 rows and 261 columns, of risk scores and AR 
+        scores}
+    \item{mcp}{mmatrix with 11 rows and 261 columns, of mcp-counter based 
+        deconvolution data}
 
 }
 }
@@ -23,17 +33,21 @@ A MAE object spanning 444 castrate resistant prostate cancer samples.
 \url{https://www.cbioportal.org/study/summary?id=prad_su2c_2019}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
 MultiAssayExperiment object containing gene expression (gex), copy
-number alteration (cna), mutations (mut) and immune cell estimates for Abida et al.
+number alteration (cna), mutations (mut) and immune cell estimates for Abida 
+et al.
 }
 \details{
-the clinical data refers to a sample of 444 tumors collected in 429 patients. The tissue was collected primarily at metastatic sites rather than from the prostate.
+the clinical data refers to a sample of 444 tumors collected in 429 
+patients. The tissue was collected primarily at metastatic sites rather than 
+from the prostate.
 }
 \examples{
-mae_abida <- getPCa("abida")
+mae_abida <- getPCa('abida')
 }
 \references{
 (\href{https://pubmed.ncbi.nlm.nih.gov/31061129/}{PubMed})

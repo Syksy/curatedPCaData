@@ -9,19 +9,27 @@ getPCaSummarySurv(maes, event.name, time.name)
 \arguments{
 \item{maes}{List of MultiAssayExperiment objects to summarize}
 
-\item{event.name}{Name for the colData column for the end-point event; typically one of 'days_to_disease_specific_recurrence' or 'days_to_overall_survival'}
+\item{event.name}{Name for the colData column for the end-point event; 
+typically one of 'days_to_disease_specific_recurrence' or 
+'days_to_overall_survival'}
 
-\item{time.name}{Name for the colData column for the time for the end-point until event or censoring; typically one of 'disease_specific_recurrence_status' or 'overall_survival_status'}
+\item{time.name}{Name for the colData column for the time for the end-point 
+until event or censoring; typically one of 
+'disease_specific_recurrence_status' or 'overall_survival_status'}
 }
 \value{
-A matrix describing the event and follow-up information as character strings
+A matrix describing the event and follow-up information as character 
+strings
 }
 \description{
-Create summary for survival-like columns (0/1 event with follow-up time) for colData metadata in curatedPCaData
+Create summary for survival-like columns (0/1 event with follow-up time) for 
+colData metadata in curatedPCaData
 }
 \examples{
-mae_taylor <- getPCa("taylor")
-mae_tcga <- getPCa("tcga")
-getPCaSummarySurv(maes = list(Taylor = mae_taylor, TCGA = mae_tcga), event.name = "disease_specific_recurrence_status", time.name = "days_to_disease_specific_recurrence")
+mae_taylor <- getPCa('taylor')
+mae_tcga <- getPCa('tcga')
+getPCaSummarySurv(maes = list(Taylor = mae_taylor, TCGA = mae_tcga), 
+    event.name = 'disease_specific_recurrence_status', time.name = 
+    'days_to_disease_specific_recurrence')
 
 }

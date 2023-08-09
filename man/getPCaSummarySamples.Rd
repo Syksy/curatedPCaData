@@ -2,7 +2,8 @@
 % Please edit documentation in R/getpcasummaries.R
 \name{getPCaSummarySamples}
 \alias{getPCaSummarySamples}
-\title{Create a summary table for sample counts for different omics across the datasets in curatedPCaData}
+\title{Create a summary table for sample counts for different omics across the 
+datasets in curatedPCaData}
 \usage{
 getPCaSummarySamples(maes)
 }
@@ -10,18 +11,22 @@ getPCaSummarySamples(maes)
 \item{maes}{List of MultiAssayExperiment objects to summarize}
 }
 \value{
-A list with two elements: first is a matrix depicting sample counts in each unique assay name for the studies; 
-second one is a matrix with sample count overlap between the three main omics (GEX = gene expression; CNA = copy number
-alteration; MUT = somatic mutations).
+A list with two elements: first is a matrix depicting sample counts 
+in each unique assay name for the studies; 
+second one is a matrix with sample count overlap between the three main omics
+(GEX = gene expression; CNA = copy number alteration; MUT = somatic 
+mutations).
 }
 \description{
-Create two types of summary matrices; first one takes all unique assay names, and summarizes sample counts available for 
-all provided studies. The second matrix takes gene expression, copy number alteration, and somatic mutation data, and displays
-sample counts for each omic individually, as well as all combinations of intersections for samples available for multi-omics.
+Create two types of summary matrices; first one takes all unique assay names,
+and summarizes sample counts available for all provided studies. The second 
+matrix takes gene expression, copy number alteration, and somatic mutation 
+data, and displays sample counts for each omic individually, as well as all 
+combinations of intersections for samples available for multi-omics.
 }
 \examples{
-mae_taylor <- getPCa("taylor")
-mae_tcga <- getPCa("tcga")
+mae_taylor <- getPCa('taylor')
+mae_tcga <- getPCa('tcga')
 getPCaSummarySamples(maes = list(Taylor = mae_taylor, TCGA = mae_tcga))
 
 }

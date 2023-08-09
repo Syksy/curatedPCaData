@@ -7,20 +7,24 @@
 \format{
 A MAE object spanning 56 prostate cancer samples.
 \describe{
-  \item{cna.gistic}{matrix with 20124 rows and 56 columns, from GISTIC discretized copy number alteration calls.}
-  \item{mut}{RaggedExperiment with 2734 rows and 57 columns, mutation data from cbioportal}
+    \item{cna.gistic}{matrix with 20124 rows and 56 columns, from GISTIC 
+        discretized copy number alteration calls.}
+    \item{mut}{RaggedExperiment with 2734 rows and 57 columns, mutation data 
+        from cbioportal}
 }
 }
 \source{
 \url{https://www.cbioportal.org/study/summary?id=prad_broad_2013}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
-MultiAssayExperiment object containing copy number alteration (cna) and mutations for Baca et al.
+MultiAssayExperiment object containing copy number alteration (cna) and 
+mutations for Baca et al.
 }
 \examples{
-mae_baca <- getPCa("baca")
+mae_baca <- getPCa('baca')
 }
 \keyword{datasets}

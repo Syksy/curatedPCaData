@@ -10,12 +10,11 @@ getPCa(dataset, assays, timestamp, verbose = FALSE, ...)
 \item{dataset}{character() of PCa cancer cohort names
 (e.g., 'abida')}
 
-\item{assays}{character() A vector of PCa assays. If not included, returns all
-available for the selected dataset;
-see below for more details}
+\item{assays}{character() A vector of PCa assays. If not included, 
+returns all available for the selected dataset; see below for more details.}
 
-\item{timestamp}{character(1) "20230215" indicating the data version to obtain
-from `ExperimentHub`. See `timestamp` section details.}
+\item{timestamp}{character(1) "20230215" indicating the data version to 
+obtain from `ExperimentHub`. See `timestamp` section details.}
 
 \item{verbose}{logical(1) Whether to show the dataset currenlty being
 (down)loaded (default TRUE)}
@@ -31,7 +30,8 @@ cancer cohort
 \description{
 curatedPCaData provides \linkS4class{MultiAssayExperiment}
 container objects that are constructed from ExperimentHub.
-User provides PCa dataset name (see list on the overview-vignette or help files).
+User provides PCa dataset name (see list on the overview-vignette or 
+help files).
 }
 \details{
 This function will check against available resources in
@@ -51,25 +51,25 @@ overview-vignette.
 Shortname      Rd documentation file           Longer name(s)
 ----------------------------------------------------------------------------
 
-  abida        curatedPCaDatasets_abida        Abida et al.
-  baca         curatedPCaDatasets_baca         Baca et al.
-  barbieri     curatedPCaDatasets_barbieri     Barbieri et al.
-  barwick      curatedPCaDatasets_barwick      Barwick et al.
-  chandran     curatedPCaDatasets_chandran     Chandran et al., Yu et al.     
-  friedrich    curatedPCaDatasets_friedrich    Friedrich et al.
-  hieronymus   curatedPCaDatasets_hieronymus   Hieronymus et al.
-  icgcca       curatedPCaDatasets_icgcca       ICGC Canadian subset
-  igc          curatedPCaDatasets_igc          International Genomics Consortium (PCa subset)
-  kim          curatedPCaDatasets_kim          Kim et al.
-  kunderfranco curatedPCaDatasets_kunderfranco Kunderfranco et al.
-  ren          curatedPCaDatasets_ren          Ren et al.
-  sun          curatedPCaDatasets_sun          Sun et al.
-  taylor       curatedPCaDatasets_taylor       Taylor et al.
-  tcga         curatedPCaDatasets_tcga         The Cancer Genome Atlas (PCa subset, PRAD-prefix)
-  true         curatedPCaDatasets_true         True et al.
-  wallace      curatedPCaDatasets_wallace      Wallace et al.
-  wang         curatedPCaDatasets_wang         Wang et al.
-  weiner       curatedPCaDatasets_weiner       Weiner et al.
+abida        curatedPCaDatasets_abida        Abida et al.
+baca         curatedPCaDatasets_baca         Baca et al.
+barbieri     curatedPCaDatasets_barbieri     Barbieri et al.
+barwick      curatedPCaDatasets_barwick      Barwick et al.
+chandran     curatedPCaDatasets_chandran     Chandran et al., Yu et al.
+friedrich    curatedPCaDatasets_friedrich    Friedrich et al.
+hieronymus   curatedPCaDatasets_hieronymus   Hieronymus et al.
+icgcca       curatedPCaDatasets_icgcca       ICGC Canadian subset
+igc          curatedPCaDatasets_igc          International Genomics Consortium (PCa subset)
+kim          curatedPCaDatasets_kim          Kim et al.
+kunderfranco curatedPCaDatasets_kunderfranco Kunderfranco et al.
+ren          curatedPCaDatasets_ren          Ren et al.
+sun          curatedPCaDatasets_sun          Sun et al.
+taylor       curatedPCaDatasets_taylor       Taylor et al.
+tcga         curatedPCaDatasets_tcga         The Cancer Genome Atlas (PCa subset, PRAD-prefix)
+true         curatedPCaDatasets_true         True et al.
+wallace      curatedPCaDatasets_wallace      Wallace et al.
+wang         curatedPCaDatasets_wang         Wang et al.
+weiner       curatedPCaDatasets_weiner       Weiner et al.
 }
 }
 
@@ -84,21 +84,21 @@ main function.
 ExperimentList data types   Description
 ----------------------------------------------------------------------------
 
-  gex.rma            Gene expression values (RMA normalized)
-  gex.logq                                  (Log-quantile)
-  gex.relz                                  (Relative z-scores)
-  gex.logr                                  (Log-ratios)
-  gex.rsem.log                              (Log-RSEM)
-  cna.gistic         Copy number alteration (GISTIC calls)
-  cna.logr                                  (Log-ratios)
-  mut                Somatic mutation calls
-  cibersort          Immune deconvolution as estimated by CIBERSORTx
-  xcell                                                   xCell
-  epic                                                    EPIC
-  quantiseq                                               quanTIseq
-  mcp                                                     MCP-counter
-  estimate                                                ESTIMATE
-  scores             Various risk and AR scores; see vignette references.
+gex.rma            Gene expression values (RMA normalized)
+gex.logq                                  (Log-quantile)
+gex.relz                                  (Relative z-scores)
+gex.logr                                  (Log-ratios)
+gex.rsem.log                              (Log-RSEM)
+cna.gistic         Copy number alteration (GISTIC calls)
+cna.logr                                  (Log-ratios)
+mut                Somatic mutation calls
+cibersort          Immune deconvolution as estimated by CIBERSORTx
+xcell                                                   xCell
+epic                                                    EPIC
+quantiseq                                               quanTIseq
+mcp                                                     MCP-counter
+estimate                                                ESTIMATE
+scores             Various risk and AR scores; see vignette references.
 }
 }
 
@@ -111,7 +111,7 @@ only data deposit is from 2023, Feb 15th, indicated by "20230215".
 
 \examples{
 mae_taylor <- getPCa(
-  dataset = "taylor", timestamp = "20230215"
+    dataset = "taylor", timestamp = "20230215"
 )
 
 }

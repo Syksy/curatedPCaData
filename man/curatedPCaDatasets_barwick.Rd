@@ -6,28 +6,38 @@
 \format{
 A MAE object spanning 146 prostate cancer samples.
 \describe{
-  \item{gex.logq}{matrix with 482 rows and 146 columns, for the log-quantile normalized gene expression data}
-  \item{cibersort}{matrix with 22 rows and 139 columns, of cibersort based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 139 columns, of quantiseq based deconvolution data}
-  \item{estimate}{data.frame with 4 rows and 139 columns, of cell types based on ESTIMATE method}
-  \item{scores}{matrix with 3 rows and 139 columns, of risk scores and AR scores}
-  \item{mcp}{matrix with 4 rows and 139 columns, of mcp-counter based deconvolution data}
+    \item{gex.logq}{matrix with 482 rows and 146 columns, for the 
+        log-quantile normalized gene expression data}
+    \item{cibersort}{matrix with 22 rows and 139 columns, of cibersort based 
+        deconvolution data}
+    \item{quantiseq}{matrix with 11 rows and 139 columns, of quantiseq based 
+        deconvolution data}
+    \item{estimate}{data.frame with 4 rows and 139 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 3 rows and 139 columns, of risk scores and AR 
+        scores}
+    \item{mcp}{matrix with 4 rows and 139 columns, of mcp-counter based 
+        deconvolution data}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18655}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for Barwick et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell 
+estimates for Barwick et al.
 }
 \details{
-Barwick et al. uses an older customized DASL array; therefore its gene coverage is lower, and many downstream methods fail due to lack of gene overlap.
+Barwick et al. uses an older customized DASL array; therefore its 
+gene coverage is lower, and many downstream methods fail due to lack of gene 
+overlap.
 }
 \examples{
-mae_barwick <- getPCa("barwick")
+mae_barwick <- getPCa('barwick')
 }
 \references{
 (\href{https://pubmed.ncbi.nlm.nih.gov/22610119/}{PubMed})

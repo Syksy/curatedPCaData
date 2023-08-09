@@ -6,30 +6,40 @@
 \format{
 An MAE object spanning 266 men with prostate cancer
 \describe{
-  \item{gex.rma}{matrix with 17638 rows and 266 columns, of gene expression data}
-  \item{cibersort}{matrix with 22 rows and 266 columns, of cibersort based deconvolution data}
-  \item{xcell}{matrix with 39 rows and 266 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 266 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 266 columns, of quantiseq based deconvolution data}
-  \item{estimate}{data.frame with 4 rows and 266 columns, of cell types based on ESTIMATE method}
-  \item{scores}{matrix with 2 rows and 266 columns, of risk scores and AR scores}
-  \item{mcp}{matrix with 11 rows and 266 columns, of mcp-counter based deconvolution data}
+    \item{gex.rma}{matrix with 17638 rows and 266 columns, of gene expression
+        data}
+    \item{cibersort}{matrix with 22 rows and 266 columns, of cibersort based 
+        deconvolution data}
+    \item{xcell}{matrix with 39 rows and 266 columns, of xcell based 
+        deconvolution data}
+    \item{epic}{matrix with 8 rows and 266 columns, of epic based 
+        deconvolution data}
+    \item{quantiseq}{matrix with 11 rows and 266 columns, of quantiseq based 
+        deconvolution data}
+    \item{estimate}{data.frame with 4 rows and 266 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 2 rows and 266 columns, of risk scores and AR 
+        scores}
+    \item{mcp}{matrix with 11 rows and 266 columns, of mcp-counter based 
+        deconvolution data}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119616}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from Kim et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell 
+estimates from Kim et al.
 }
 \details{
-The dataset consists of 266 NCCN very low/low or favorable-intermediate risk PCa patients
+The dataset consists of 266 NCCN very low/low or 
+favorable-intermediate risk PCa patients
 }
 \examples{
-mae_kim <- getPCa("kim")
+mae_kim <- getPCa('kim')
 }
 \references{
 (\href{https://pubmed.ncbi.nlm.nih.gov/30542054/}{PubMed})

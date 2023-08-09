@@ -6,32 +6,46 @@
 \format{
 An MAE object spanning 255 men with prostate cancer
 \describe{
-  \item{gex.logq}{matrix with 23097 rows and 255 columns, for the log-quantile normalized gene expression data}
-  \item{cibersort}{matrix with 22 rows and 255 columns, of cibersort based deconvolution data}
-  \item{xcell}{matrix with 39 rows and 255 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 255 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 255 columns, of quantiseq based deconvolution data}
-  \item{estimate}{data.frame with 4 rows and 255 columns, of cell types based on ESTIMATE method}
-  \item{scores}{matrix with 4 rows and 255 columns, of risk scores and AR scores}
-  \item{mcp}{matrix with 11 rows and 255 columns, of mcp-counter based deconvolution data}
+    \item{gex.logq}{matrix with 23097 rows and 255 columns, for the 
+        log-quantile normalized gene expression data}
+    \item{cibersort}{matrix with 22 rows and 255 columns, of cibersort based 
+        deconvolution data}
+    \item{xcell}{matrix with 39 rows and 255 columns, of xcell based 
+        deconvolution data}
+    \item{epic}{matrix with 8 rows and 255 columns, of epic based 
+        deconvolution data}
+    \item{quantiseq}{matrix with 11 rows and 255 columns, of quantiseq based 
+        deconvolution data}
+    \item{estimate}{data.frame with 4 rows and 255 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 4 rows and 255 columns, of risk scores and AR 
+        scores}
+    \item{mcp}{matrix with 11 rows and 255 columns, of mcp-counter based 
+        deconvolution data}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE134051}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for Friedrich et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell 
+estimates for Friedrich et al.
 }
 \details{
-The data comprises of 255 samples, with 164 primary tumors samples, 52 adjacent normal samples, and 39 benign prostate hyperplasia samples.  This dataset includes in its totality the 164 samples analysed in Kreutz et al. 2020.
+The data comprises of 255 samples, with 164 primary tumors samples, 
+52 adjacent normal samples, and 39 benign prostate hyperplasia samples.  
+This dataset includes in its totality the 164 samples analysed in Kreutz 
+et al. 2020.
 }
 \examples{
-mae_friedrich <- getPCa("friedrich")
+mae_friedrich <- getPCa('friedrich')
 }
 \references{
-(\href{https://pubmed.ncbi.nlm.nih.gov/32365858/}{PubMed}) (\href{https://pubmed.ncbi.nlm.nih.gov/32631745/}{PubMed})
+(\href{https://pubmed.ncbi.nlm.nih.gov/32365858/}{PubMed}) 
+(\href{https://pubmed.ncbi.nlm.nih.gov/32631745/}{PubMed})
 }
 \keyword{datasets}

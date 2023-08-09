@@ -6,30 +6,41 @@
 \format{
 An MAE object spanning 148 men with prostate cancer
 \describe{
-  \item{gex.rma}{matrix with 12798 rows and 148 columns, of gene expression data}
-  \item{cibersort}{matrix with 22 rows and 148 columns, of cibersort based deconvolution data}
-  \item{xcell}{matrix with 39 rows and 148 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 148 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 148 columns, of quantiseq based deconvolution data}
-  \item{estimate}{data.frame with 4 rows and 148 columns, of cell types based on ESTIMATE method}
-  \item{scores}{matrix with 4 rows and 148 columns, of risk scores and AR scores}
-  \item{mcp}{matrix with 11 rows and 148 columns, of mcp-counter based deconvolution data}
+    \item{gex.rma}{matrix with 12798 rows and 148 columns, of gene expression
+        data}
+    \item{cibersort}{matrix with 22 rows and 148 columns, of cibersort based 
+        deconvolution data}
+    \item{xcell}{matrix with 39 rows and 148 columns, of xcell based 
+        deconvolution data}
+    \item{epic}{matrix with 8 rows and 148 columns, of epic based 
+        deconvolution data}
+    \item{quantiseq}{matrix with 11 rows and 148 columns, of quantiseq based 
+        deconvolution data}
+    \item{estimate}{data.frame with 4 rows and 148 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 4 rows and 148 columns, of risk scores and AR 
+        scores}
+    \item{mcp}{matrix with 11 rows and 148 columns, of mcp-counter based 
+        deconvolution data}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8218}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from Wang et al.
+MultiAssayExperiment object containing gene expression (gex) and immune cell 
+estimates from Wang et al.
 }
 \details{
-148 prostate samples, with various amounts of tumor, stroma, BPH and atrophic gland, were used for this study.
+148 prostate samples, with various amounts of tumor, stroma, BPH and
+atrophic gland, were used for this study.
 }
 \examples{
-mae_wang <- getPCa("wang")
+mae_wang <- getPCa('wang')
 }
 \references{
 (\href{https://pubmed.ncbi.nlm.nih.gov/20663908/}{PubMed})

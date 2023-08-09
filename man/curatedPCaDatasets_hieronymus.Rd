@@ -6,23 +6,28 @@
 \format{
 A MAE object spanning 104 tumor samples
 \describe{
-  \item{cna.gistic}{matrix with 18026 rows and 104 columns, from GISTIC discretized copy number alteration calls}
+    \item{cna.gistic}{matrix with 18026 rows and 104 columns, from GISTIC 
+        discretized copy number alteration calls}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE54691}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
-MultiAssayExperiment object containing copy number alteration (cna) for Hieronymus et al.
+MultiAssayExperiment object containing copy number alteration (cna) for 
+Hieronymus et al.
 }
 \details{
-The data comprises of 104 samples, for which are available clinical data and Copy Number Alteration, but no gene expression data -- thus no deconvolution results are available.
+The data comprises of 104 samples, for which are available clinical 
+data and Copy Number Alteration, but no gene expression data -- thus no 
+deconvolution results are available.
 }
 \examples{
-mae_hieronymus <- getPCa("hieronymus")
+mae_hieronymus <- getPCa('hieronymus')
 }
 \references{
 (\href{https://pubmed.ncbi.nlm.nih.gov/25024180/}{PubMed})

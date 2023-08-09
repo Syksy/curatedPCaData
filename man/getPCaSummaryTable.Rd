@@ -13,17 +13,21 @@ getPCaSummaryTable(maes, var.name, vals, nas = TRUE)
 
 \item{vals}{Possible values for the metadata variable to tabulate}
 
-\item{nas}{Whether NA or values other than those contained in 'vals' should be appended as extra columns}
+\item{nas}{Whether NA or values other than those contained in 'vals' should 
+be appended as extra columns}
 }
 \value{
-A matrix describing the tabulates 'vals' and their proportions along with missingness
+A matrix describing the tabulates 'vals' and their proportions along 
+with missingness
 }
 \description{
-Create a variable value availability tables; NA-value in addition to provided 'vals' and Other-values for debugging or anomalies
+Create a variable value availability tables; NA-value in addition to provided
+'vals' and Other-values for debugging or anomalies
 }
 \examples{
-mae_taylor <- getPCa("taylor")
-mae_tcga <- getPCa("tcga")
-getPCaSummaryTable(maes = list(Taylor = mae_taylor, TCGA = mae_tcga), var.name = "gleason_grade", vals = 5:10)
+mae_taylor <- getPCa('taylor')
+mae_tcga <- getPCa('tcga')
+getPCaSummaryTable(maes = list(Taylor = mae_taylor, TCGA = mae_tcga), 
+    var.name = 'gleason_grade', vals = 5:10)
 
 }

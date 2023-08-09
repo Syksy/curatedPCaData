@@ -6,26 +6,37 @@
 \format{
 An MAE object spanning 83 men with prostate cancer
 \describe{
-  \item{gex.rma}{matrix with 12798 rows and 83 columns, of gene expression data}
-  \item{cibersort}{matrix with 22 rows and 83 columns, of cibersort based deconvolution data}
-  \item{xcell}{matrix with 39 rows and 83 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 83 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 83 columns, of quantiseq based deconvolution data}
-  \item{estimate}{data.frame with 4 rows and 83 columns, of cell types based on ESTIMATE method}
-  \item{scores}{matrix with 4 rows and 83 columns, of risk scores and AR scores}
-  \item{mcp}{matrix with 11 rows and 83 columns, of mcp-counter based deconvolution data}
+    \item{gex.rma}{matrix with 12798 rows and 83 columns, of gene expression 
+        data}
+    \item{cibersort}{matrix with 22 rows and 83 columns, of cibersort based 
+        deconvolution data}
+    \item{xcell}{matrix with 39 rows and 83 columns, of xcell based 
+        deconvolution data}
+    \item{epic}{matrix with 8 rows and 83 columns, of epic based 
+        deconvolution data}
+    \item{quantiseq}{matrix with 11 rows and 83 columns, of quantiseq based 
+        deconvolution data}
+    \item{estimate}{data.frame with 4 rows and 83 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 4 rows and 83 columns, of risk scores and AR 
+        scores}
+    \item{mcp}{matrix with 11 rows and 83 columns, of mcp-counter based 
+        deconvolution data}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse2109}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
-MultiAssayExperiment object containing gene expression (gex) and immune cell estimates from IGC's Expression Project for Oncology (expO) with a subset for prostate cancer
+MultiAssayExperiment object containing gene expression (gex) and immune cell 
+estimates from IGC's Expression Project for Oncology (expO) with a subset for
+prostate cancer
 }
 \examples{
-mae_igc <- getPCa("igc")
+mae_igc <- getPCa('igc')
 }
 \keyword{datasets}

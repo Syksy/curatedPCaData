@@ -10,7 +10,8 @@ getPCaSummaryStudies(maes)
 \item{maes}{A list of MAE objects or a character vector with study short ids}
 }
 \value{
-A table with study names, references, sample counts, data source, and other notes.
+A table with study names, references, sample counts, data source, and 
+other notes.
 }
 \description{
 Create a summary table of key characteristics for each study

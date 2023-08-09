@@ -6,23 +6,34 @@
 \format{
 An MAE object spanning 369 men with prostate cancer
 \describe{
-  \item{cna.gistic}{matrix with 23151 rows and 492 columns, from GISTIC discretized copy number alteration calls}
-  \item{gex.rsem.log}{matrix with 19658 rows and 461 columns, of gene expression data}
-  \item{mut}{RaggedExperiment with 30897 rows and 495 columns, of mutation data}
-  \item{cibersort}{matrix with 22 rows and 550 columns, of cibersort based deconvolution data}
-  \item{xcell}{matrix with 39 rows and 461 columns, of xcell based deconvolution data}
-  \item{epic}{matrix with 8 rows and 461 columns, of epic based deconvolution data}
-  \item{quantiseq}{matrix with 11 rows and 461 columns, of quantiseq based deconvolution data}
-  \item{mcp}{matrix with 11 rows and 461 columns, of mcp-counter based deconvolution data}
-  \item{estimate}{data.frame with 4 rows and 461 columns, of cell types based on ESTIMATE method}
-  \item{scores}{matrix with 4 rows and 416 columns, of risk scores and AR scores}
+    \item{cna.gistic}{matrix with 23151 rows and 492 columns, from GISTIC 
+        discretized copy number alteration calls}
+    \item{gex.rsem.log}{matrix with 19658 rows and 461 columns, of gene 
+        expression data}
+    \item{mut}{RaggedExperiment with 30897 rows and 495 columns, of mutation 
+        data}
+    \item{cibersort}{matrix with 22 rows and 550 columns, of cibersort based 
+        deconvolution data}
+    \item{xcell}{matrix with 39 rows and 461 columns, of xcell based 
+        deconvolution data}
+    \item{epic}{matrix with 8 rows and 461 columns, of epic based 
+        deconvolution data}
+    \item{quantiseq}{matrix with 11 rows and 461 columns, of quantiseq based 
+        deconvolution data}
+    \item{mcp}{matrix with 11 rows and 461 columns, of mcp-counter based 
+        deconvolution data}
+    \item{estimate}{data.frame with 4 rows and 461 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 4 rows and 416 columns, of risk scores and AR 
+        scores}
 }
 }
 \source{
 \url{https://xenabrowser.net/datapages/?cohort=GDC\%20TCGA\%20Prostate\%20Cancer\%20(PRAD)}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
 MultiAssayExperiment object containing gene expression (gex), copy
@@ -32,7 +43,7 @@ number alteration (cna), mutations and immune cell estimates from GDC TCGA.
 TCGA data was obtained from the latest GDC's XenaBrowser release.
 }
 \examples{
-mae_tcga <- getPCa("tcga")
+mae_tcga <- getPCa('tcga')
 }
 \references{
 (\href{https://pubmed.ncbi.nlm.nih.gov/26544944/}{PubMed})

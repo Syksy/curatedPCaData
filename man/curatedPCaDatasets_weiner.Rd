@@ -6,27 +6,37 @@
 \format{
 An MAE spanning 838 prostate cancer samples of two cohorts
 \describe{
- \item{gex.rma}{matrix of 17410 rows and 838 columns of gene expression data}
- \item{cibersort}{matrix with 22 rows and 838 columns, of cibersort based deconvolution data}
- \item{xcell}{matrix with 39 rows and 838 columns, the xcell deconvolution of the expression data}
- \item{epic}{matrix with 8 rows and 838 columns, the epic deconvolution of the expression data}
- \item{quantiseq}{matrix with 11 rows and 838 columns, the quantiseq deconvolution of the expression data}
- \item{estimate}{data.frame with 4 rows and 838 columns, of cell types based on ESTIMATE method}
- \item{scores}{matrix with 4 rows and 838 columns, of risk scores and AR scores}
- \item{mcp}{matrix with 11 rows and 838 columns, the mcp-counter deconvolution of the expression data}
+    \item{gex.rma}{matrix of 17410 rows and 838 columns of gene expression 
+        data}
+    \item{cibersort}{matrix with 22 rows and 838 columns, of cibersort based 
+        deconvolution data}
+    \item{xcell}{matrix with 39 rows and 838 columns, the xcell deconvolution
+        of the expression data}
+    \item{epic}{matrix with 8 rows and 838 columns, the epic deconvolution of
+        the expression data}
+    \item{quantiseq}{matrix with 11 rows and 838 columns, the quantiseq 
+        deconvolution of the expression data}
+    \item{estimate}{data.frame with 4 rows and 838 columns, of cell types 
+        based on ESTIMATE method}
+    \item{scores}{matrix with 4 rows and 838 columns, of risk scores and AR 
+        scores}
+    \item{mcp}{matrix with 11 rows and 838 columns, the mcp-counter 
+        deconvolution of the expression data}
 }
 }
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE157548}
 }
 \value{
-A MultiAssayExperiment corresponding to the study and its available omics.
+A MultiAssayExperiment corresponding to the study and its available 
+omics.
 }
 \description{
-A MultiAssayExperiment object containing gene expression (gex) and immune cell estimates for Weiner et al.
+A MultiAssayExperiment object containing gene expression (gex) and immune 
+cell estimates for Weiner et al.
 }
 \examples{
-mae_weiner <- getPCa("weiner")
+mae_weiner <- getPCa('weiner')
 }
 \references{
 (\href{https://pubmed.ncbi.nlm.nih.gov/33568675/}{PubMed})
