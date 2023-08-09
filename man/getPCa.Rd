@@ -4,7 +4,7 @@
 \alias{getPCa}
 \title{Construct Prostate Cancer MultiAssayExperiment object from specific cohort}
 \usage{
-getPCa(dataset, assays, timestamp, verbose = FALSE, ...)
+getPCa(dataset, assays, timestamp, sampletypes, verbose = FALSE, ...)
 }
 \arguments{
 \item{dataset}{character() of PCa cancer cohort names
@@ -15,6 +15,10 @@ returns all available for the selected dataset; see below for more details.}
 
 \item{timestamp}{character(1) "20230215" indicating the data version to 
 obtain from `ExperimentHub`. See `timestamp` section details.}
+
+\item{sampletypes}{A character vector of sample types to include in the MAE.
+If the parameter is missing, then all samples are returned. Allowed values
+are: 'primary', 'metastatic', 'normal', 'BPH', 'atrophic'}
 
 \item{verbose}{logical(1) Whether to show the dataset currenlty being
 (down)loaded (default TRUE)}

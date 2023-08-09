@@ -63,6 +63,10 @@
 #' @param timestamp character(1) "20230215" indicating the data version to 
 #' obtain from `ExperimentHub`. See `timestamp` section details.
 #'
+#' @param sampletypes A character vector of sample types to include in the MAE.
+#' If the parameter is missing, then all samples are returned. Allowed values
+#' are: 'primary', 'metastatic', 'normal', 'BPH', 'atrophic'
+#'
 #' @param ... Additional arguments passed on to the
 #'     \code{\link[ExperimentHub:ExperimentHub-class]{ExperimentHub}}
 #'     constructor
@@ -156,6 +160,8 @@ getPCa <- function(
     assays,
     # Timestamps of data from ExperimentHub; allowed values: '20230215'
     timestamp,
+    # If not missing, subsetting the MAE object to certain sample types
+    sampletypes,
     # Verbosity
     verbose = FALSE,
     # Additional parameters
@@ -268,10 +274,18 @@ getPCa <- function(
     # Inform user
     message("Constructing the MultiAssayExperiment object from retrieved 
         components.")
-    # Return MAE
-    MultiAssayExperiment::MultiAssayExperiment(
+    # Return MAE; if parameter 'sampletypes' is not missing, subsetting
+    mae <- MultiAssayExperiment::MultiAssayExperiment(
         experiments = eh_experiments,
         colData = assay_list[cD_idx][[1]],
         sampleMap = assay_list[sM_idx][[1]]
     )
+    # Return full MAE
+    if(missing(sampletypes)){
+        mae
+    # Return a MAE with a subset to certain sample_types
+    }else{
+        MultiAssayExperiment::subsetByColData(mae, mae$sample_types %in% 
+            sampletypes)
+    }
 }
