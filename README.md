@@ -12,8 +12,7 @@ data resources concerning prostate cancer.
 ## Citation
 
 If you use `curatedPCaData`, please consider adding the following
-citation (bioRxiv preprint, [direct link
-here](https://www.biorxiv.org/content/10.1101/2023.01.17.524403v1)):
+citation:
 
     @article {Laajala2023.01.17.524403,
         author = {Laajala, Teemu D and Sreekanth, Varsha and Soupir, Alex and Creed, Jordan and Halkola, Anni S and Calboli, Federico CF and Singaravelu, Kalaimathy and Orman, Michael and Colin-Leitzinger, Christelle and Gerke, Travis and Fidley, Brooke L. and Tyekucheva, Svitlana and Costello, James C},
