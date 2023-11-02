@@ -205,7 +205,25 @@ getPCaSummarySamples <- function(maes) {
 #' @export getPCaSummaryStudies
 getPCaSummaryStudies <- function(maes) {
     if (inherits(maes, "list")) {
-        # OK
+        # Check that all list objects are of class MultiAssayExperiment
+        if (!all(unlist(
+            lapply(maes, FUN=\(x){ inherits(x, "MultiAssayExperiment") }
+        )))){
+            stop("List should consist only of 
+                MAE-objects from the curatedPCaData-package")
+        }
+        # Check that list naming is ok and format it if necessary
+        if (is.null(names(maes)) | length(names(maes)) < length(maes)){
+            # If naming vector is not provided, extract it from MAE-objects
+            names(maes) <- 
+                base::tolower(unlist(lapply(maes, FUN=\(x){ 
+                    # Extract study names from the first word in study_name
+                    strsplit(
+                        MultiAssayExperiment::colData(x)$study_name, 
+                    " ")[[1]][1] 
+                })))
+        }
+    # Character vector of study names, will use 'getPCa' to fetch MAEs
     } else if (inherits(maes, "character")) {
         maenames <- maes
         maes <- lapply(maenames, FUN = \(id) {
