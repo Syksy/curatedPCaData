@@ -285,7 +285,7 @@ getPCa <- function(
         mae
     # Return a MAE with a subset to certain sample_types
     }else{
-        MultiAssayExperiment::subsetByColData(mae, mae$sample_types %in% 
+        MultiAssayExperiment::subsetByColData(mae, mae$sample_type %in% 
             sampletypes)
     }
 }
