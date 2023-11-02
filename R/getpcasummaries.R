@@ -220,7 +220,7 @@ getPCaSummaryStudies <- function(maes) {
                     # Extract study names from the first word in study_name
                     strsplit(
                         MultiAssayExperiment::colData(x)$study_name, 
-                    " ")[[1]][1] 
+                    ",| ")[[1]][1] 
                 })))
         }
     # Character vector of study names, will use 'getPCa' to fetch MAEs
