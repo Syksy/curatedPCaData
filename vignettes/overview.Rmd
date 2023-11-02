@@ -422,20 +422,22 @@ The following PCa risk scores are offered:
 - Oncotype DX `(rowname: oncotype)` [@Knezevic2013]
 - Prolaris `(rowname: prolaris)` [@NICE2018]
 
-Further, the 20-gene Androgen Receptor (AR) score is calculated as described in 
-the TCGA's Cell 2015 paper:
+Further, the 20-gene Androgen Receptor (AR) score is calculated as described 
+in the TCGA's Cell 2015 paper:
 
 - AR score `(rowname: ar_score)` [@TCGA2015]
 
 # Single study example for Taylor et al.
 
-Here, a brief example on how to download and process a single study is provided. 
-The example data is of Taylor et al. [@Taylor2010], also known as the MSKCC dataset.
+Here, a brief example on how to download and process a single study is 
+provided. The example data is of Taylor et al. [@Taylor2010], also known as 
+the MSKCC dataset.
 
 ## Downloading the MAE-object
 
-A character vector with the short study ID is used to download the MAE object; we will
-focus only on the primary prostate cancer samples and CNA (GISTIC) and GEX:
+A character vector with the short study ID is used to download the MAE 
+object; we will focus only on the primary prostate cancer samples and 
+CNA (GISTIC) and GEX:
 
 ```{r}
 taylor <- getPCa("taylor", 
@@ -448,8 +450,9 @@ class(taylor)
 taylor
 ```
 
-One typical end-point is an object of type `Surv`, exported from the `survival`
--package. We will create this end-point for biochemical recurrence:
+One typical end-point is an object of type `Surv`, exported from the 
+`survival`-package. We will create this end-point for biochemical 
+recurrence:
 
 ```{r}
 library(survival)
@@ -466,23 +469,24 @@ head(taylor_surv)
 
 ```
 
-With the response vector of type `Surv`, one can plot and analyze multiple survival
-modelling related tasks.
+With the response vector of type `Surv`, one can plot and analyze multiple 
+survival modelling related tasks.
 
 ## Kaplan-Meier curves
 
-One of the most common ways to depict survival curves (here BCR events), is a 
-Kaplan-Meier (KM) curve. Gleason grade is known to be a good prognostic factor for BCR,
-thus a KM curve in respect to biopsy Gleason grade shows differences in prognosis.
+One of the most common ways to depict survival curves (here BCR events), is 
+a Kaplan-Meier (KM) curve. Gleason grade is known to be a good prognostic 
+factor for BCR, thus a KM curve in respect to biopsy Gleason grade shows 
+differences in prognosis.
 
-For this visualization, package `survminer` offers a variety of functions building 
-on top of `ggplot`:
+For this visualization, package `survminer` offers a variety of functions 
+building on top of `ggplot`:
 
 ```{r}
 library(survminer)
 
 taylor_bcr_gleason <- data.frame(bcr = taylor_surv, 
-	gleason = colData(taylor)$gleason_grade)
+    gleason = colData(taylor)$gleason_grade)
 
 fit <- survfit(bcr ~ gleason, data = taylor_bcr_gleason)
 ggsurvplot(fit, 
@@ -495,13 +499,14 @@ ggsurvplot(fit,
     )
 ```
 
-For more settings for the KM plots, see documentation for `survminer::ggsurvplot`.
+For more settings for the KM plots, see documentation for 
+`survminer::ggsurvplot`.
 
 ## Cox regression
 
-Functions `longFormat` and `wideFormat` from `MultiAssayExperiment` are essential 
-for extracting multi-omics data and metadata in the right format. For the purposes 
-of Cox regression, we will utilize `wideFormat`:
+Functions `longFormat` and `wideFormat` from `MultiAssayExperiment` are 
+essential for extracting multi-omics data and metadata in the right format. 
+For the purposes of Cox regression, we will utilize `wideFormat`:
 
 ```{r}
 taylor_coxdat <- MultiAssayExperiment::wideFormat(taylor["PTEN",,],
@@ -511,7 +516,8 @@ taylor_coxdat <- MultiAssayExperiment::wideFormat(taylor["PTEN",,],
 
 taylor_coxdat <- as.data.frame(taylor_coxdat)
 
-taylor_coxdat$y <- Surv(time = taylor_coxdat$days_to_disease_specific_recurrence,
+taylor_coxdat$y <- Surv(
+    time = taylor_coxdat$days_to_disease_specific_recurrence,
     event = taylor_coxdat$disease_specific_recurrence_status)
     
 head(taylor_coxdat)    
