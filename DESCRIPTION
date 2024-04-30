@@ -1,6 +1,6 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 1.0.0
+Version: 1.1.0
 Date: 2023-11-02
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", 
         role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7016-7354")),
