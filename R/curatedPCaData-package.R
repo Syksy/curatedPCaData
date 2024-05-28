@@ -18,6 +18,7 @@
 #' @import MultiAssayExperiment
 #' @import RaggedExperiment
 #' @import ExperimentHub
+#' @import reshape2
 #' @importFrom methods slot is
 #' @importFrom utils read.table data read.csv
 #' @importFrom rlang .data
