@@ -1,7 +1,7 @@
 Package: curatedPCaData
 Title: Curated Prostate Cancer Data
-Version: 1.1.0
-Date: 2023-11-02
+Version: 1.1.1
+Date: 2024-05-28
 Authors@R: c(person("Teemu Daniel", "Laajala", email = "teelaa@utu.fi", 
         role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7016-7354")),
     person("Jordan", "Creed", email = "jordan.h.creed@moffitt.org", 
@@ -35,7 +35,7 @@ biocViews: ExperimentHub, ExperimentData, ProstateCancerData, CancerData,
 	CopyNumberVariationData, Somatic, GEO, ReproducibleResearch
 URL: https://github.com/Syksy/curatedPCaData
 BugReports: https://github.com/Syksy/curatedPCaData/issues
-Depends: R (>= 4.3.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, 
+Depends: R (>= 4.4.0), S4Vectors (>= 0.23.18), MultiAssayExperiment, 
     RaggedExperiment 
 Imports: 
     ExperimentHub,
@@ -43,7 +43,8 @@ Imports:
     utils, 
     methods,
     rlang,
-    stats 
+    stats,
+    reshape2
 Suggests: 
     BiocStyle,
     knitr,
@@ -52,4 +53,5 @@ Suggests:
     survival,
     survminer,
     ComplexHeatmap,
-    corrplot    
+    corrplot,
+    formatR
